@@ -592,6 +592,91 @@
             display: flex;
         }
 
+        /* Disclaimer Modal Styles */
+        .disclaimer-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 2500;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .disclaimer-modal.active {
+            display: flex;
+        }
+
+        .disclaimer-content {
+            background: #1e293b;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            position: relative;
+            text-align: center;
+        }
+
+        .disclaimer-header {
+            margin-bottom: 2rem;
+        }
+
+        .disclaimer-header i {
+            font-size: 3rem;
+            color: #f59e0b;
+            margin-bottom: 1rem;
+        }
+
+        .disclaimer-text {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            color: #fbbf24;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            background: rgba(148, 163, 184, 0.1);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            color: #06b6d4;
+            word-break: break-all;
+            margin: 0.5rem 0;
+        }
+
+        .disclaimer-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-confirm {
+            flex: 1;
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            border: none;
+            color: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-confirm:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+        }
+
         .donation-content {
             background: #1e293b;
             border-radius: 1rem;
@@ -829,122 +914,7 @@
 
             <div id="browse-content" class="content-section active">
                 <div id="tournaments-grid" class="tournament-grid">
-                    <div class="tournament-card">
-                        <div class="tournament-header">
-                            <div>
-                                <h3 class="tournament-title">Iron Crusher Daily</h3>
-                                <p class="tournament-description">Fast-paced daily tournament for beginners</p>
-                            </div>
-                            <span class="status-badge status-registration">Registration</span>
-                        </div>
-                        <div class="tournament-stats">
-                            <div class="stat-item">
-                                <div class="stat-value color-cyan">28/64</div>
-                                <div class="stat-label-small">Participants</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value color-green">13.44 SOL</div>
-                                <div class="stat-label-small">Prize Pool*</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value color-purple">0.5 SOL</div>
-                                <div class="stat-label-small">Entry Fee</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value color-orange">2h 15m</div>
-                                <div class="stat-label-small">Starts In</div>
-                            </div>
-                        </div>
-                        <div style="background: rgba(236, 72, 153, 0.05); border: 1px solid rgba(236, 72, 153, 0.2); border-radius: 0.5rem; padding: 0.75rem; margin: 0.5rem 0; font-size: 0.8rem; color: #ec4899; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-info-circle"></i>
-                            <span>*1% admin fee applies to all tournaments</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 44%;"></div>
-                        </div>
-                        <button class="btn-primary btn-full-width" onclick="connectWallet()">
-                            <i class="fas fa-sword"></i>
-                            Join Battle (0.5 SOL)
-                        </button>
-                    </div>
-
-                    <div class="tournament-card">
-                        <div class="tournament-header">
-                            <div>
-                                <h3 class="tournament-title">Silver Storm Weekly</h3>
-                                <p class="tournament-description">Week-long competitive tournament</p>
-                            </div>
-                            <span class="status-badge status-active">Active</span>
-                        </div>
-                        <div class="tournament-stats">
-                            <div class="stat-item">
-                                <div class="stat-value color-cyan">48/64</div>
-                                <div class="stat-label-small">Participants</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value color-green">31.68 SOL</div>
-                                <div class="stat-label-small">Prize Pool*</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value color-purple">1.0 SOL</div>
-                                <div class="stat-label-small">Entry Fee</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value color-orange">4d 12h</div>
-                                <div class="stat-label-small">Ends In</div>
-                            </div>
-                        </div>
-                        <div style="background: rgba(236, 72, 153, 0.05); border: 1px solid rgba(236, 72, 153, 0.2); border-radius: 0.5rem; padding: 0.75rem; margin: 0.5rem 0; font-size: 0.8rem; color: #ec4899; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-info-circle"></i>
-                            <span>*1% admin fee applies to all tournaments</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 75%;"></div>
-                        </div>
-                        <button class="btn-primary btn-full-width" onclick="connectWallet()">
-                            <i class="fas fa-sword"></i>
-                            Join Battle (1.0 SOL)
-                        </button>
-                    </div>
-
-                    <div class="tournament-card">
-                        <div class="tournament-header">
-                            <div>
-                                <h3 class="tournament-title">Gold Rush Championship</h3>
-                                <p class="tournament-description">Elite monthly championship event</p>
-                            </div>
-                            <span class="status-badge status-registration">Registration</span>
-                        </div>
-                        <div class="tournament-stats">
-                            <div class="stat-item">
-                                <div class="stat-value color-cyan">12/32</div>
-                                <div class="stat-label-small">Participants</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value color-green">79.2 SOL</div>
-                                <div class="stat-label-small">Prize Pool*</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value color-purple">2.5 SOL</div>
-                                <div class="stat-label-small">Entry Fee</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value color-orange">15d 8h</div>
-                                <div class="stat-label-small">Starts In</div>
-                            </div>
-                        </div>
-                        <div style="background: rgba(236, 72, 153, 0.05); border: 1px solid rgba(236, 72, 153, 0.2); border-radius: 0.5rem; padding: 0.75rem; margin: 0.5rem 0; font-size: 0.8rem; color: #ec4899; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-info-circle"></i>
-                            <span>*1% admin fee applies to all tournaments</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 38%;"></div>
-                        </div>
-                        <button class="btn-primary btn-full-width" onclick="connectWallet()">
-                            <i class="fas fa-sword"></i>
-                            Join Battle (2.5 SOL)
-                        </button>
-                    </div>
+                    <!-- Tournament cards will be dynamically generated -->
                 </div>
             </div>
 
@@ -997,7 +967,27 @@
         </div>
     </div>
 
-    <!-- Donation Modal -->
+    <!-- Disclaimer Modal -->
+    <div id="disclaimer-modal" class="disclaimer-modal">
+        <div class="disclaimer-content">
+            <div class="disclaimer-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h2>Donation Confirmation</h2>
+            </div>
+            <div class="disclaimer-text">
+                By donating, you agree to send <strong id="confirm-amount">0.0 SOL</strong> to wallet:
+                <div class="wallet-address">5RLDuPHsa7ohaKUSNc5iYvtgveL1qrCcVdxVHXPeG3b8</div>
+                <strong>This transaction cannot be reversed. Confirm to proceed.</strong>
+            </div>
+            <div class="disclaimer-buttons">
+                <button class="btn-cancel" onclick="closeDisclaimerModal()">Cancel</button>
+                <button class="btn-confirm" onclick="confirmDonation()">
+                    <i class="fas fa-check"></i>
+                    Confirm & Send
+                </button>
+            </div>
+        </div>
+    </div>
     <div id="donation-modal" class="donation-modal">
         <div class="donation-content">
             <button class="close-donation" onclick="closeDonationModal()">
@@ -1030,10 +1020,60 @@
         let walletAddress = null;
         let connection = null;
         let selectedDonationAmount = null;
+        let confirmedDonationAmount = null;
+
+        // Tournament data with proper N/A and TBD handling
+        const mockTournaments = [
+            {
+                id: 'iron-crusher',
+                title: 'Iron Crusher Daily',
+                description: 'Fast-paced daily tournament for beginners',
+                status: 'registration',
+                participants: { current: 28, max: 64 },
+                prizePool: 13.44,
+                entryFee: 0.5,
+                startsIn: { hours: 2, minutes: 15 },
+                endsIn: null
+            },
+            {
+                id: 'silver-storm',
+                title: 'Silver Storm Weekly',
+                description: 'Week-long competitive tournament',
+                status: 'active',
+                participants: { current: 48, max: 64 },
+                prizePool: 31.68,
+                entryFee: 1.0,
+                startsIn: null,
+                endsIn: { days: 4, hours: 12 }
+            },
+            {
+                id: 'gold-rush',
+                title: 'Gold Rush Championship',
+                description: 'Elite monthly championship event',
+                status: 'registration',
+                participants: { current: 12, max: 32 },
+                prizePool: null, // Will show N/A
+                entryFee: 2.5,
+                startsIn: null, // Will show TBD
+                endsIn: null
+            },
+            {
+                id: 'platinum-legends',
+                title: 'Platinum Legends',
+                description: 'Coming soon - details to be announced',
+                status: 'upcoming',
+                participants: { current: null, max: null }, // Will show N/A
+                prizePool: null,
+                entryFee: null,
+                startsIn: null, // Will show TBD
+                endsIn: null
+            }
+        ];
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
+            loadTournaments();
         });
 
         async function initializeApp() {
@@ -1069,6 +1109,123 @@
                 console.error('Failed to initialize app:', error);
                 showNetworkError('Failed to connect to Solana network');
             }
+        }
+
+        function loadTournaments() {
+            const tournamentsGrid = document.getElementById('tournaments-grid');
+            tournamentsGrid.innerHTML = '';
+            
+            mockTournaments.forEach(tournament => {
+                const tournamentCard = createTournamentCard(tournament);
+                tournamentsGrid.appendChild(tournamentCard);
+            });
+        }
+
+        function createTournamentCard(tournament) {
+            const card = document.createElement('div');
+            card.className = 'tournament-card';
+            
+            // Handle participants display
+            const participantsText = tournament.participants.current !== null && tournament.participants.max !== null
+                ? `${tournament.participants.current}/${tournament.participants.max}`
+                : 'N/A';
+            
+            // Handle prize pool display
+            const prizePoolText = tournament.prizePool !== null
+                ? `${tournament.prizePool} SOL`
+                : 'N/A';
+            
+            // Handle entry fee display
+            const entryFeeText = tournament.entryFee !== null
+                ? `${tournament.entryFee} SOL`
+                : 'N/A';
+            
+            // Handle timing display
+            let timingText = 'TBD';
+            let timingLabel = 'Timing';
+            
+            if (tournament.startsIn) {
+                const { days = 0, hours = 0, minutes = 0 } = tournament.startsIn;
+                if (days > 0) {
+                    timingText = `${days}d ${hours}h`;
+                } else {
+                    timingText = `${hours}h ${minutes}m`;
+                }
+                timingLabel = 'Starts In';
+            } else if (tournament.endsIn) {
+                const { days = 0, hours = 0, minutes = 0 } = tournament.endsIn;
+                if (days > 0) {
+                    timingText = `${days}d ${hours}h`;
+                } else {
+                    timingText = `${hours}h ${minutes}m`;
+                }
+                timingLabel = 'Ends In';
+            }
+            
+            // Calculate progress percentage
+            let progressWidth = '0%';
+            if (tournament.participants.current !== null && tournament.participants.max !== null) {
+                const percentage = (tournament.participants.current / tournament.participants.max) * 100;
+                progressWidth = `${Math.min(percentage, 100)}%`;
+            }
+            
+            // Determine status badge class
+            let statusClass = 'status-completed';
+            switch (tournament.status) {
+                case 'active': statusClass = 'status-active'; break;
+                case 'registration': statusClass = 'status-registration'; break;
+                case 'upcoming': statusClass = 'status-registration'; break;
+            }
+            
+            // Button text and action
+            const buttonText = tournament.entryFee !== null
+                ? `Join Battle (${tournament.entryFee} SOL)`
+                : 'Coming Soon';
+            const buttonDisabled = tournament.entryFee === null ? 'disabled' : '';
+            const buttonAction = tournament.entryFee !== null 
+                ? `onclick="joinTournament('${tournament.id}', ${tournament.entryFee})"`
+                : '';
+            
+            card.innerHTML = `
+                <div class="tournament-header">
+                    <div>
+                        <h3 class="tournament-title">${tournament.title}</h3>
+                        <p class="tournament-description">${tournament.description}</p>
+                    </div>
+                    <span class="status-badge ${statusClass}">${tournament.status.charAt(0).toUpperCase() + tournament.status.slice(1)}</span>
+                </div>
+                <div class="tournament-stats">
+                    <div class="stat-item">
+                        <div class="stat-value color-cyan">${participantsText}</div>
+                        <div class="stat-label-small">Participants</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value color-green">${prizePoolText}</div>
+                        <div class="stat-label-small">Prize Pool*</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value color-purple">${entryFeeText}</div>
+                        <div class="stat-label-small">Entry Fee</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value color-orange">${timingText}</div>
+                        <div class="stat-label-small">${timingLabel}</div>
+                    </div>
+                </div>
+                <div style="background: rgba(236, 72, 153, 0.05); border: 1px solid rgba(236, 72, 153, 0.2); border-radius: 0.5rem; padding: 0.75rem; margin: 0.5rem 0; font-size: 0.8rem; color: #ec4899; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-info-circle"></i>
+                    <span>*1% admin fee applies to all tournaments</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progressWidth};"></div>
+                </div>
+                <button class="btn-primary btn-full-width" ${buttonAction} ${buttonDisabled}>
+                    <i class="fas fa-sword"></i>
+                    ${buttonText}
+                </button>
+            `;
+            
+            return card;
         }
 
         async function connectWallet() {
@@ -1195,21 +1352,72 @@
                 return;
             }
 
+            // Store the donation amount for confirmation
+            confirmedDonationAmount = donationAmount;
+            
+            // Show disclaimer modal
+            document.getElementById('confirm-amount').textContent = `${donationAmount} SOL`;
+            document.getElementById('disclaimer-modal').classList.add('active');
+        }
+
+        function closeDisclaimerModal() {
+            document.getElementById('disclaimer-modal').classList.remove('active');
+            confirmedDonationAmount = null;
+        }
+
+        async function confirmDonation() {
+            if (!confirmedDonationAmount) {
+                alert('Error: No donation amount confirmed');
+                return;
+            }
+
             try {
                 showLoading('Processing donation...');
+                closeDisclaimerModal();
                 
-                // Here you would implement the actual Solana transaction
-                // This is a mock implementation
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                // Create the transaction
+                const transaction = new solanaWeb3.Transaction();
+                const recipientPubkey = new solanaWeb3.PublicKey('5RLDuPHsa7ohaKUSNc5iYvtgveL1qrCcVdxVHXPeG3b8');
+                const senderPubkey = new solanaWeb3.PublicKey(walletAddress);
+                
+                // Add transfer instruction
+                const transferInstruction = solanaWeb3.SystemProgram.transfer({
+                    fromPubkey: senderPubkey,
+                    toPubkey: recipientPubkey,
+                    lamports: confirmedDonationAmount * solanaWeb3.LAMPORTS_PER_SOL
+                });
+                
+                transaction.add(transferInstruction);
+                
+                // Get recent blockhash
+                const { blockhash } = await connection.getLatestBlockhash();
+                transaction.recentBlockhash = blockhash;
+                transaction.feePayer = senderPubkey;
+                
+                // Sign and send transaction
+                const signedTransaction = await window.solana.signTransaction(transaction);
+                const txId = await connection.sendRawTransaction(signedTransaction.serialize());
+                
+                // Wait for confirmation
+                await connection.confirmTransaction(txId, 'confirmed');
                 
                 hideLoading();
                 closeDonationModal();
-                alert(`Thank you for your ${donationAmount} SOL donation! 💜`);
+                alert(`Thank you for your ${confirmedDonationAmount} SOL donation! 💜\nTransaction: ${txId}`);
+                
+                // Reset donation amount
+                confirmedDonationAmount = null;
                 
             } catch (error) {
                 console.error('Donation failed:', error);
                 hideLoading();
-                alert('Donation failed. Please try again.');
+                closeDisclaimerModal();
+                
+                if (error.message.includes('User rejected')) {
+                    alert('Donation cancelled by user.');
+                } else {
+                    alert('Donation failed. Please try again.');
+                }
             }
         }
 
