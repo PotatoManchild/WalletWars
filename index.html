@@ -1022,6 +1022,48 @@
         let selectedDonationAmount = null;
         let confirmedDonationAmount = null;
 
+        // Utility function for consistent tournament field display
+        function displayTournamentField(value, type = 'general') {
+            if (value === null || value === undefined || value === '') {
+                return type === 'time' ? 'TBD' : 'N/A';
+            }
+            
+            if (type === 'time' && typeof value === 'object') {
+                const { days = 0, hours = 0, minutes = 0 } = value;
+                if (days > 0) {
+                    return `${days}d ${hours}h`;
+                } else if (hours > 0) {
+                    return `${hours}h ${minutes}m`;
+                } else if (minutes > 0) {
+                    return `${minutes}m`;
+                } else {
+                    return 'TBD';
+                }
+            }
+            
+            if (type === 'participants' && typeof value === 'object') {
+                if (value.current === null || value.max === null) {
+                    return 'N/A';
+                }
+                return `${value.current}/${value.max}`;
+            }
+            
+            if (type === 'sol' && typeof value === 'number') {
+                return `${value} SOL`;
+            }
+            
+            if (type === 'percentage' && typeof value === 'number') {
+                return `${value}%`;
+            }
+            
+            return value !== null && value !== undefined ? value.toString() : 'N/A';
+        }
+
+        // Function to determine if tournament is actively accepting participants
+        function isTournamentActive(tournament) {
+            return tournament.status === 'registration' || tournament.status === 'active';
+        }
+
         // Tournament data with proper N/A and TBD handling
         const mockTournaments = [
             {
@@ -1032,8 +1074,10 @@
                 participants: { current: 28, max: 64 },
                 prizePool: 13.44,
                 entryFee: 0.5,
+                winrate: 68.5,
                 startsIn: { hours: 2, minutes: 15 },
-                endsIn: null
+                endsIn: null,
+                nextRound: null
             },
             {
                 id: 'silver-storm',
@@ -1043,19 +1087,23 @@
                 participants: { current: 48, max: 64 },
                 prizePool: 31.68,
                 entryFee: 1.0,
+                winrate: null, // Will show N/A
                 startsIn: null,
-                endsIn: { days: 4, hours: 12 }
+                endsIn: { days: 4, hours: 12 },
+                nextRound: { hours: 6, minutes: 30 }
             },
             {
                 id: 'gold-rush',
                 title: 'Gold Rush Championship',
                 description: 'Elite monthly championship event',
-                status: 'registration',
+                status: 'upcoming',
                 participants: { current: 12, max: 32 },
                 prizePool: null, // Will show N/A
                 entryFee: 2.5,
+                winrate: null, // Will show N/A
                 startsIn: null, // Will show TBD
-                endsIn: null
+                endsIn: null,
+                nextRound: null // Will show TBD
             },
             {
                 id: 'platinum-legends',
@@ -1065,8 +1113,23 @@
                 participants: { current: null, max: null }, // Will show N/A
                 prizePool: null,
                 entryFee: null,
+                winrate: null,
                 startsIn: null, // Will show TBD
-                endsIn: null
+                endsIn: null,
+                nextRound: null // Will show TBD
+            },
+            {
+                id: 'diamond-elite',
+                title: 'Diamond Elite Series',
+                description: 'Professional tournament series',
+                status: 'planned',
+                participants: { current: null, max: 128 },
+                prizePool: null,
+                entryFee: null,
+                winrate: null,
+                startsIn: null, // Will show TBD
+                endsIn: null,
+                nextRound: null // Will show TBD
             }
         ];
 
@@ -1125,40 +1188,19 @@
             const card = document.createElement('div');
             card.className = 'tournament-card';
             
-            // Handle participants display
-            const participantsText = tournament.participants.current !== null && tournament.participants.max !== null
-                ? `${tournament.participants.current}/${tournament.participants.max}`
-                : 'N/A';
+            // Use utility function for all tournament fields
+            const participantsText = displayTournamentField(tournament.participants, 'participants');
+            const prizePoolText = displayTournamentField(tournament.prizePool, 'sol');
+            const entryFeeText = displayTournamentField(tournament.entryFee, 'sol');
+            const winrateText = displayTournamentField(tournament.winrate, 'percentage');
             
-            // Handle prize pool display
-            const prizePoolText = tournament.prizePool !== null
-                ? `${tournament.prizePool} SOL`
-                : 'N/A';
+            // Handle timing displays with proper TBD logic
+            let timingText = displayTournamentField(tournament.startsIn, 'time');
+            let timingLabel = 'Starts In';
+            let nextRoundText = displayTournamentField(tournament.nextRound, 'time');
             
-            // Handle entry fee display
-            const entryFeeText = tournament.entryFee !== null
-                ? `${tournament.entryFee} SOL`
-                : 'N/A';
-            
-            // Handle timing display
-            let timingText = 'TBD';
-            let timingLabel = 'Timing';
-            
-            if (tournament.startsIn) {
-                const { days = 0, hours = 0, minutes = 0 } = tournament.startsIn;
-                if (days > 0) {
-                    timingText = `${days}d ${hours}h`;
-                } else {
-                    timingText = `${hours}h ${minutes}m`;
-                }
-                timingLabel = 'Starts In';
-            } else if (tournament.endsIn) {
-                const { days = 0, hours = 0, minutes = 0 } = tournament.endsIn;
-                if (days > 0) {
-                    timingText = `${days}d ${hours}h`;
-                } else {
-                    timingText = `${hours}h ${minutes}m`;
-                }
+            if (tournament.status === 'active' && tournament.endsIn) {
+                timingText = displayTournamentField(tournament.endsIn, 'time');
                 timingLabel = 'Ends In';
             }
             
@@ -1169,22 +1211,53 @@
                 progressWidth = `${Math.min(percentage, 100)}%`;
             }
             
-            // Determine status badge class
+            // Determine status badge class and display text
             let statusClass = 'status-completed';
+            let statusText = tournament.status.charAt(0).toUpperCase() + tournament.status.slice(1);
+            
             switch (tournament.status) {
-                case 'active': statusClass = 'status-active'; break;
-                case 'registration': statusClass = 'status-registration'; break;
-                case 'upcoming': statusClass = 'status-registration'; break;
+                case 'active': 
+                    statusClass = 'status-active'; 
+                    break;
+                case 'registration': 
+                    statusClass = 'status-registration'; 
+                    break;
+                case 'upcoming':
+                case 'planned':
+                    statusClass = 'status-registration';
+                    statusText = 'Upcoming';
+                    break;
             }
             
-            // Button text and action
-            const buttonText = tournament.entryFee !== null
-                ? `Join Battle (${tournament.entryFee} SOL)`
-                : 'Coming Soon';
-            const buttonDisabled = tournament.entryFee === null ? 'disabled' : '';
-            const buttonAction = tournament.entryFee !== null 
-                ? `onclick="joinTournament('${tournament.id}', ${tournament.entryFee})"`
-                : '';
+            // Tournament action area logic
+            let actionContent = '';
+            const isActive = isTournamentActive(tournament);
+            
+            if (isActive && tournament.entryFee !== null) {
+                // Active tournament with entry fee - show join button
+                actionContent = `
+                    <button class="btn-primary btn-full-width" onclick="joinTournament('${tournament.id}', ${tournament.entryFee})">
+                        <i class="fas fa-sword"></i>
+                        Join Battle (${tournament.entryFee} SOL)
+                    </button>
+                `;
+            } else if (isActive && tournament.entryFee === null) {
+                // Active tournament but no entry fee set
+                actionContent = `
+                    <div style="background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 0.75rem; padding: 1rem; text-align: center; color: #94a3b8; font-weight: 500;">
+                        <i class="fas fa-clock"></i>
+                        Tournament details are being finalized
+                    </div>
+                `;
+            } else {
+                // Upcoming/planned tournaments
+                actionContent = `
+                    <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 0.75rem; padding: 1rem; text-align: center; color: #3b82f6; font-weight: 500;">
+                        <i class="fas fa-calendar-alt"></i>
+                        Tournament start dates are yet to be announced
+                    </div>
+                `;
+            }
             
             card.innerHTML = `
                 <div class="tournament-header">
@@ -1192,7 +1265,7 @@
                         <h3 class="tournament-title">${tournament.title}</h3>
                         <p class="tournament-description">${tournament.description}</p>
                     </div>
-                    <span class="status-badge ${statusClass}">${tournament.status.charAt(0).toUpperCase() + tournament.status.slice(1)}</span>
+                    <span class="status-badge ${statusClass}">${statusText}</span>
                 </div>
                 <div class="tournament-stats">
                     <div class="stat-item">
@@ -1212,6 +1285,18 @@
                         <div class="stat-label-small">${timingLabel}</div>
                     </div>
                 </div>
+                ${tournament.status === 'active' ? `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0;">
+                    <div class="stat-item">
+                        <div class="stat-value color-yellow">${winrateText}</div>
+                        <div class="stat-label-small">Avg Win Rate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value color-cyan">${nextRoundText}</div>
+                        <div class="stat-label-small">Next Round</div>
+                    </div>
+                </div>
+                ` : ''}
                 <div style="background: rgba(236, 72, 153, 0.05); border: 1px solid rgba(236, 72, 153, 0.2); border-radius: 0.5rem; padding: 0.75rem; margin: 0.5rem 0; font-size: 0.8rem; color: #ec4899; display: flex; align-items: center; gap: 0.5rem;">
                     <i class="fas fa-info-circle"></i>
                     <span>*1% admin fee applies to all tournaments</span>
@@ -1219,10 +1304,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${progressWidth};"></div>
                 </div>
-                <button class="btn-primary btn-full-width" ${buttonAction} ${buttonDisabled}>
-                    <i class="fas fa-sword"></i>
-                    ${buttonText}
-                </button>
+                ${actionContent}
             `;
             
             return card;
@@ -1287,10 +1369,10 @@
                 document.getElementById('player-balance').textContent = `${solBalance} SOL`;
                 
                 // In a real app, you would fetch these from your backend API
-                // For now, we'll use mock data
+                // For now, we'll use mock data with proper N/A handling
                 updatePlayerStats({
                     rank: Math.floor(Math.random() * 2000) + 1,
-                    winrate: (Math.random() * 40 + 60).toFixed(1) + '%',
+                    winrate: Math.random() > 0.3 ? (Math.random() * 40 + 60).toFixed(1) + '%' : null, // Sometimes null for N/A
                     games: Math.floor(Math.random() * 500) + 50,
                     victories: Math.floor(Math.random() * 10) + 1,
                     streak: Math.floor(Math.random() * 15) + 1
@@ -1298,16 +1380,16 @@
                 
             } catch (error) {
                 console.error('Failed to load player stats:', error);
-                document.getElementById('player-balance').textContent = 'Error';
+                document.getElementById('player-balance').textContent = 'N/A';
             }
         }
 
         function updatePlayerStats(stats) {
-            document.getElementById('player-rank').textContent = stats.rank.toLocaleString();
-            document.getElementById('player-winrate').textContent = stats.winrate;
-            document.getElementById('player-games').textContent = stats.games;
-            document.getElementById('player-victories').textContent = stats.victories;
-            document.getElementById('player-streak').textContent = stats.streak;
+            document.getElementById('player-rank').textContent = displayTournamentField(stats.rank);
+            document.getElementById('player-winrate').textContent = displayTournamentField(stats.winrate);
+            document.getElementById('player-games').textContent = displayTournamentField(stats.games);
+            document.getElementById('player-victories').textContent = displayTournamentField(stats.victories);
+            document.getElementById('player-streak').textContent = displayTournamentField(stats.streak);
         }
 
         function switchTab(tabName) {
