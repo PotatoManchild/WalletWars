@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WalletWars - Solana's Ultimate Tournament Platform</title>
+    
+    <!-- Solana Dependencies -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -89,6 +93,73 @@
         .connect-wallet-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Champion Info Section */
+        .champion-info-section {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid #374151;
+            padding: 1rem 0;
+            margin-top: 80px;
+            backdrop-filter: blur(10px);
+        }
+
+        .champion-card {
+            background: rgba(31, 41, 55, 0.7);
+            border: 1px solid #374151;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .champion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .champion-header h3 {
+            color: #06b6d4;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .champion-status {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .champion-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            padding: 1rem;
+            background: rgba(55, 65, 81, 0.5);
+            border-radius: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #06b6d4;
         }
 
         /* Hero Section */
@@ -606,6 +677,16 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+
+            .champion-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .champion-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
         }
 
         /* Animations */
@@ -634,6 +715,48 @@
         .pulse {
             animation: pulse 2s infinite;
         }
+
+        /* Notification Animations */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 1.25rem;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        
+        .notification-close:hover {
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -653,6 +776,36 @@
             <button class="connect-wallet-btn" onclick="connectWallet()">Connect Wallet</button>
         </nav>
     </header>
+
+    <!-- Champion Info Section (Hidden until connected) -->
+    <div id="champion-info" class="champion-info-section" style="display: none;">
+        <div class="container">
+            <div class="champion-card">
+                <div class="champion-header">
+                    <h3 id="champion-name">Loading...</h3>
+                    <div class="champion-status" id="champion-status">Active</div>
+                </div>
+                <div class="champion-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Winrate</span>
+                        <span class="stat-value" id="champion-winrate">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Tournaments</span>
+                        <span class="stat-value" id="champion-tournaments">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Winnings</span>
+                        <span class="stat-value" id="champion-winnings">0 SOL</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Current Balance</span>
+                        <span class="stat-value" id="wallet-balance">0 SOL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section id="home" class="hero">
@@ -897,154 +1050,424 @@
         </div>
     </div>
 
-    <script>
-        // Wallet connection state
-        let walletConnected = false;
-        let walletAddress = '';
-        let walletBalance = 0;
+    <script type="text/javascript">
+        // WalletWars Solana Integration
+        const PROGRAM_ID = "WaLLeTWaRsProgram11111111111111111111111111";
+        const NETWORK = "devnet";
+        const CONNECTION = new solanaWeb3.Connection(
+            solanaWeb3.clusterApiUrl(NETWORK),
+            'confirmed'
+        );
 
-        // Connect wallet function
+        // Global state
+        let walletAdapter = null;
+        let program = null;
+        let championData = null;
+        let isConnecting = false;
+
+        // Wallet connection
         async function connectWallet() {
+            if (isConnecting) return;
+            isConnecting = true;
+            
+            const connectBtn = document.querySelector('.connect-wallet-btn');
+            const originalText = connectBtn.textContent;
+            
             try {
-                // Simulate wallet connection (in production, use actual Solana wallet adapter)
-                const connectBtn = document.querySelector('.connect-wallet-btn');
                 connectBtn.textContent = 'Connecting...';
                 connectBtn.disabled = true;
 
-                // Simulate connection delay
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                // Check if Phantom wallet is available
+                if (!window.solana) {
+                    throw new Error('Phantom wallet not found! Please install Phantom wallet.');
+                }
 
-                // Mock wallet data
-                walletConnected = true;
-                walletAddress = 'DQvG4b3eQTHm3n4FdT8R9wL5X7vE2nM8kJ6pS1qA3bC9';
-                walletBalance = 15.7;
-
+                // Connect to Phantom
+                const response = await window.solana.connect();
+                const publicKey = response.publicKey;
+                
+                console.log('✅ Wallet connected:', publicKey.toString());
+                
                 // Update UI
-                connectBtn.textContent = `${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}`;
+                const shortKey = `${publicKey.toString().slice(0, 4)}...${publicKey.toString().slice(-4)}`;
+                connectBtn.textContent = shortKey;
                 connectBtn.style.background = 'linear-gradient(to right, #22c55e, #16a34a)';
                 
-                // Enable tournament join buttons
-                const joinButtons = document.querySelectorAll('.join-btn:not([disabled])');
-                joinButtons.forEach(btn => {
-                    btn.style.opacity = '1';
-                });
-
-                showNotification('Wallet connected successfully!', 'success');
+                // Store wallet info
+                walletAdapter = {
+                    publicKey: publicKey,
+                    connected: true
+                };
+                
+                // Check for existing champion
+                await checkChampionExists();
+                
+                // Load tournaments
+                await loadTournaments();
+                
+                // Update wallet balance
+                await updateWalletBalance();
+                
+                showNotification('Wallet connected successfully! 🎉', 'success');
+                
             } catch (error) {
-                console.error('Wallet connection failed:', error);
-                connectBtn.textContent = 'Connect Wallet';
+                console.error('❌ Wallet connection failed:', error);
+                connectBtn.textContent = originalText;
                 connectBtn.disabled = false;
-                showNotification('Failed to connect wallet. Please try again.', 'error');
+                
+                if (error.message.includes('User rejected')) {
+                    showNotification('Wallet connection cancelled by user.', 'warning');
+                } else if (error.message.includes('Phantom wallet not found')) {
+                    showNotification('Please install Phantom wallet to connect.', 'error');
+                } else {
+                    showNotification('Failed to connect wallet. Please try again.', 'error');
+                }
+            } finally {
+                isConnecting = false;
             }
         }
 
-        // Join tournament function
-        function joinTournament(type) {
-            if (!walletConnected) {
+        // Check if champion exists for connected wallet
+        async function checkChampionExists() {
+            if (!walletAdapter || !walletAdapter.publicKey) return false;
+            
+            try {
+                // For now, we'll simulate champion checking using localStorage
+                // In production, this would query the blockchain
+                const hasChampion = localStorage.getItem(`champion_${walletAdapter.publicKey.toString()}`);
+                
+                if (hasChampion) {
+                    championData = JSON.parse(hasChampion);
+                    showChampionInfo();
+                    return true;
+                } else {
+                    // Prompt to create champion
+                    setTimeout(() => createChampionPrompt(), 1000);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error checking champion:', error);
+                return false;
+            }
+        }
+
+        // Prompt user to create champion
+        function createChampionPrompt() {
+            const championName = prompt(
+                'Welcome to WalletWars! 🎮\n\nCreate your Champion name (3-32 characters):\n\nThis will be your identity in tournaments!'
+            );
+            
+            if (championName && championName.length >= 3 && championName.length <= 32) {
+                createChampion(championName);
+            } else if (championName !== null) {
+                showNotification('Champion name must be 3-32 characters long.', 'warning');
+                setTimeout(() => createChampionPrompt(), 2000);
+            }
+        }
+
+        // Create champion
+        async function createChampion(championName) {
+            if (!walletAdapter || !walletAdapter.publicKey) {
                 showNotification('Please connect your wallet first!', 'warning');
                 return;
             }
-
-            if (type === 'individual') {
-                showNotification('Tournament entry feature coming soon!', 'info');
-            } else {
-                showTeamModal();
+            
+            try {
+                showNotification('Creating your champion...', 'info');
+                
+                // Get wallet balance for initial value
+                const balance = await CONNECTION.getBalance(walletAdapter.publicKey);
+                
+                // Create champion data (in production, this would be on-chain)
+                championData = {
+                    name: championName,
+                    owner: walletAdapter.publicKey.toString(),
+                    wins: 0,
+                    losses: 0,
+                    totalTournaments: 0,
+                    totalWinnings: 0,
+                    currentWalletValue: balance,
+                    baselineWalletValue: balance,
+                    createdAt: Date.now(),
+                    isActive: true
+                };
+                
+                // Store locally (in production, this would be on-chain)
+                localStorage.setItem(`champion_${walletAdapter.publicKey.toString()}`, JSON.stringify(championData));
+                
+                showChampionInfo();
+                showNotification(`Champion "${championName}" created successfully! 🏆`, 'success');
+                
+            } catch (error) {
+                console.error('❌ Champion creation failed:', error);
+                showNotification('Failed to create champion. Please try again.', 'error');
             }
         }
 
-        // Show team tournament modal
-        function showTeamModal() {
-            document.getElementById('teamModal').classList.add('active');
+        // Show champion info
+        function showChampionInfo() {
+            if (!championData) return;
+            
+            const championSection = document.getElementById('champion-info');
+            const championNameEl = document.getElementById('champion-name');
+            const championWinrateEl = document.getElementById('champion-winrate');
+            const championTournamentsEl = document.getElementById('champion-tournaments');
+            const championWinningsEl = document.getElementById('champion-winnings');
+            
+            if (championSection && championNameEl) {
+                championSection.style.display = 'block';
+                championNameEl.textContent = `Champion: ${championData.name}`;
+                
+                const winrate = championData.totalTournaments > 0 
+                    ? ((championData.wins / championData.totalTournaments) * 100).toFixed(1)
+                    : '0.0';
+                
+                championWinrateEl.textContent = `${winrate}%`;
+                championTournamentsEl.textContent = championData.totalTournaments;
+                championWinningsEl.textContent = `${(championData.totalWinnings / solanaWeb3.LAMPORTS_PER_SOL).toFixed(2)} SOL`;
+            }
         }
 
-        // Close team tournament modal
-        function closeTeamModal() {
-            document.getElementById('teamModal').classList.remove('active');
+        // Update wallet balance display
+        async function updateWalletBalance() {
+            if (!walletAdapter || !walletAdapter.publicKey) return;
+            
+            try {
+                const balance = await CONNECTION.getBalance(walletAdapter.publicKey);
+                const balanceSOL = balance / solanaWeb3.LAMPORTS_PER_SOL;
+                
+                const balanceEl = document.getElementById('wallet-balance');
+                if (balanceEl) {
+                    balanceEl.textContent = `${balanceSOL.toFixed(3)} SOL`;
+                }
+                
+                // Update champion data if exists
+                if (championData) {
+                    championData.currentWalletValue = balance;
+                    localStorage.setItem(`champion_${walletAdapter.publicKey.toString()}`, JSON.stringify(championData));
+                }
+                
+            } catch (error) {
+                console.error('Error updating wallet balance:', error);
+            }
         }
 
-        // Show notification
+        // Load tournaments (enhance existing tournament cards with real functionality)
+        async function loadTournaments() {
+            try {
+                // In production, this would fetch from blockchain
+                // For now, we'll enhance the existing tournament cards with real functionality
+                const tournamentCards = document.querySelectorAll('.tournament-card:not(.team-disabled)');
+                
+                tournamentCards.forEach((card, index) => {
+                    const joinBtn = card.querySelector('.join-btn');
+                    if (joinBtn && walletAdapter && championData) {
+                        joinBtn.onclick = () => joinSpecificTournament(index);
+                        joinBtn.textContent = 'Join Battle';
+                        joinBtn.disabled = false;
+                        joinBtn.style.opacity = '1';
+                    }
+                });
+                
+                console.log('✅ Tournaments loaded and enhanced');
+                
+            } catch (error) {
+                console.error('Error loading tournaments:', error);
+            }
+        }
+
+        // Join specific tournament
+        async function joinSpecificTournament(tournamentIndex) {
+            if (!walletAdapter || !walletAdapter.connected) {
+                showNotification('Please connect your wallet first!', 'warning');
+                return;
+            }
+            
+            if (!championData) {
+                showNotification('Please create a champion first!', 'warning');
+                return;
+            }
+            
+            try {
+                showNotification('Joining tournament...', 'info');
+                
+                // Get tournament info from DOM
+                const tournamentCards = document.querySelectorAll('.tournament-card:not(.team-disabled)');
+                const tournamentCard = tournamentCards[tournamentIndex];
+                const tournamentName = tournamentCard.querySelector('.tournament-title').textContent;
+                const entryFeeText = tournamentCard.querySelector('.entry-fee').textContent;
+                const entryFee = parseFloat(entryFeeText.replace(' SOL', ''));
+                
+                // Check wallet balance
+                const balance = await CONNECTION.getBalance(walletAdapter.publicKey);
+                const balanceSOL = balance / solanaWeb3.LAMPORTS_PER_SOL;
+                
+                if (balanceSOL < entryFee) {
+                    showNotification(`Insufficient balance! You need ${entryFee} SOL but have ${balanceSOL.toFixed(3)} SOL.`, 'error');
+                    return;
+                }
+                
+                // Check if already joined
+                const participationKey = `participation_${walletAdapter.publicKey.toString()}_${tournamentIndex}`;
+                if (localStorage.getItem(participationKey)) {
+                    showNotification('You have already joined this tournament!', 'warning');
+                    return;
+                }
+                
+                // Simulate joining tournament
+                const participantData = {
+                    tournament: tournamentName,
+                    champion: championData.name,
+                    entryTime: Date.now(),
+                    entryFee: entryFee,
+                    status: 'active',
+                    startingBalance: balance
+                };
+                
+                // Store participation (in production, this would be on-chain)
+                localStorage.setItem(participationKey, JSON.stringify(participantData));
+                
+                // Update tournament UI
+                const joinBtn = tournamentCard.querySelector('.join-btn');
+                joinBtn.textContent = 'Joined! 🎮';
+                joinBtn.disabled = true;
+                joinBtn.style.background = '#22c55e';
+                
+                // Start monitoring wallet performance
+                startWalletMonitoring(tournamentIndex);
+                
+                showNotification(`Successfully joined "${tournamentName}"! Your performance is now being tracked. Good luck! 🍀`, 'success');
+                
+            } catch (error) {
+                console.error('❌ Failed to join tournament:', error);
+                showNotification('Failed to join tournament. Please try again.', 'error');
+            }
+        }
+
+        // Start wallet monitoring for tournament
+        function startWalletMonitoring(tournamentIndex) {
+            if (!walletAdapter || !championData) return;
+            
+            const monitoringInterval = setInterval(async () => {
+                try {
+                    await updateWalletBalance();
+                    
+                    // Calculate performance
+                    const participationKey = `participation_${walletAdapter.publicKey.toString()}_${tournamentIndex}`;
+                    const participantData = JSON.parse(localStorage.getItem(participationKey));
+                    
+                    if (participantData) {
+                        const currentBalance = championData.currentWalletValue;
+                        const startingBalance = participantData.startingBalance;
+                        const performance = ((currentBalance - startingBalance) / startingBalance) * 100;
+                        
+                        // Update participant data
+                        participantData.currentBalance = currentBalance;
+                        participantData.performance = performance;
+                        participantData.lastUpdate = Date.now();
+                        
+                        localStorage.setItem(participationKey, JSON.stringify(participantData));
+                        
+                        console.log(`📊 Tournament ${tournamentIndex} Performance: ${performance.toFixed(2)}%`);
+                    }
+                    
+                } catch (error) {
+                    console.error('⚠️ Monitoring error:', error);
+                }
+            }, 30000); // Update every 30 seconds
+            
+            // Store interval to clear later (simplified for demo)
+            console.log(`🔍 Started monitoring for tournament ${tournamentIndex}`);
+        }
+
+        // Enhanced notification system
         function showNotification(message, type = 'info') {
             // Remove existing notifications
             const existingNotifications = document.querySelectorAll('.notification');
             existingNotifications.forEach(notification => notification.remove());
 
-            // Create notification element
+            // Create notification
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <span class="notification-icon">${getNotificationIcon(type)}</span>
-                    <span class="notification-message">${message}</span>
-                    <button class="notification-close" onclick="closeNotification(this)">×</button>
-                </div>
-            `;
-
-            // Add notification styles
-            notification.style.cssText = `
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                z-index: 3000;
-                background: ${getNotificationBg(type)};
-                border: 1px solid ${getNotificationBorder(type)};
-                border-radius: 0.75rem;
-                padding: 1rem;
-                max-width: 400px;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-                backdrop-filter: blur(10px);
-                animation: slideIn 0.3s ease-out;
-            `;
-
-            // Add to DOM
-            document.body.appendChild(notification);
-
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.style.animation = 'slideOut 0.3s ease-in';
-                    setTimeout(() => notification.remove(), 300);
-                }
-            }, 5000);
-        }
-
-        // Close notification
-        function closeNotification(button) {
-            const notification = button.closest('.notification');
-            notification.style.animation = 'slideOut 0.3s ease-in';
-            setTimeout(() => notification.remove(), 300);
-        }
-
-        // Get notification icon
-        function getNotificationIcon(type) {
+            
             const icons = {
                 success: '✅',
-                error: '❌',
+                error: '❌', 
                 warning: '⚠️',
                 info: 'ℹ️'
             };
-            return icons[type] || icons.info;
-        }
-
-        // Get notification background
-        function getNotificationBg(type) {
+            
             const backgrounds = {
                 success: 'rgba(34, 197, 94, 0.1)',
                 error: 'rgba(239, 68, 68, 0.1)',
                 warning: 'rgba(251, 191, 36, 0.1)',
                 info: 'rgba(59, 130, 246, 0.1)'
             };
-            return backgrounds[type] || backgrounds.info;
-        }
-
-        // Get notification border
-        function getNotificationBorder(type) {
+            
             const borders = {
                 success: 'rgba(34, 197, 94, 0.3)',
                 error: 'rgba(239, 68, 68, 0.3)',
                 warning: 'rgba(251, 191, 36, 0.3)',
                 info: 'rgba(59, 130, 246, 0.3)'
             };
-            return borders[type] || borders.info;
+
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-icon">${icons[type]}</span>
+                    <span class="notification-message">${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                z-index: 3000;
+                background: ${backgrounds[type]};
+                border: 1px solid ${borders[type]};
+                border-radius: 0.75rem;
+                padding: 1rem;
+                max-width: 400px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(10px);
+                animation: slideInRight 0.3s ease-out;
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOutRight 0.3s ease-in';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Keep existing functions that don't need to change
+        function showTeamModal() {
+            document.getElementById('teamModal').classList.add('active');
+        }
+
+        function closeTeamModal() {
+            document.getElementById('teamModal').classList.remove('active');
+        }
+
+        // Enhanced tournament join function for team tournaments
+        function joinTournament(type) {
+            if (type === 'team') {
+                showTeamModal();
+                return;
+            }
+            
+            // Individual tournaments are handled by the new joinSpecificTournament function
+            if (!walletAdapter || !walletAdapter.connected) {
+                showNotification('Please connect your wallet first!', 'warning');
+                return;
+            }
+            
+            showNotification('Click on a specific tournament "Join Battle" button to enter!', 'info');
         }
 
         // Smooth scrolling for navigation links
@@ -1064,244 +1487,50 @@
             });
         }
 
-        // Update tournament progress bars with animation
-        function animateProgressBars() {
-            const progressBars = document.querySelectorAll('.progress-fill');
-            progressBars.forEach(bar => {
-                const width = bar.style.width;
-                bar.style.width = '0%';
-                setTimeout(() => {
-                    bar.style.width = width;
-                }, 500);
-            });
-        }
-
-        // Add floating animation to tournament cards
-        function addFloatingAnimation() {
-            const cards = document.querySelectorAll('.tournament-card:not(.team-disabled)');
-            cards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.2}s`;
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-10px) scale(1.02)';
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-        }
-
-        // Modal click outside to close
-        function setupModalClickOutside() {
-            const modal = document.getElementById('teamModal');
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeTeamModal();
-                }
-            });
-        }
-
-        // Keyboard navigation for modal
-        function setupKeyboardNavigation() {
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeTeamModal();
-                }
-            });
-        }
-
-        // Update stats with animation
-        function animateStats() {
-            const statNumbers = document.querySelectorAll('.stat-number');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const target = entry.target;
-                        const finalNumber = target.textContent;
-                        let currentNumber = 0;
-                        const increment = parseInt(finalNumber.replace(/[^0-9]/g, '')) / 50;
-                        
-                        const timer = setInterval(() => {
-                            currentNumber += increment;
-                            if (currentNumber >= parseInt(finalNumber.replace(/[^0-9]/g, ''))) {
-                                target.textContent = finalNumber;
-                                clearInterval(timer);
-                            } else {
-                                if (finalNumber.includes('K')) {
-                                    target.textContent = (currentNumber / 1000).toFixed(1) + 'K';
-                                } else {
-                                    target.textContent = Math.floor(currentNumber).toLocaleString();
-                                }
-                            }
-                        }, 50);
-                        
-                        observer.unobserve(target);
-                    }
-                });
-            });
-            
-            statNumbers.forEach(stat => observer.observe(stat));
-        }
-
-        // Add particle effect to hero section
-        function createParticles() {
-            const hero = document.querySelector('.hero');
-            const particlesContainer = document.createElement('div');
-            particlesContainer.style.cssText = `
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                pointer-events: none;
-                overflow: hidden;
-            `;
-            hero.appendChild(particlesContainer);
-
-            // Create particles
-            for (let i = 0; i < 50; i++) {
-                const particle = document.createElement('div');
-                particle.style.cssText = `
-                    position: absolute;
-                    width: 2px;
-                    height: 2px;
-                    background: rgba(6, 182, 212, 0.3);
-                    border-radius: 50%;
-                    animation: float ${Math.random() * 3 + 2}s ease-in-out infinite;
-                    animation-delay: ${Math.random() * 2}s;
-                    left: ${Math.random() * 100}%;
-                    top: ${Math.random() * 100}%;
-                `;
-                particlesContainer.appendChild(particle);
-            }
-        }
-
-        // Tournament countdown timers
-        function startCountdowns() {
-            const countdowns = document.querySelectorAll('.tournament-info span:last-child');
-            countdowns.forEach((countdown, index) => {
-                if (countdown.textContent.includes('Starts in:')) {
-                    const timeText = countdown.textContent.replace('Starts in: ', '');
-                    if (timeText !== 'Coming Soon') {
-                        updateCountdown(countdown, timeText);
-                        setInterval(() => updateCountdown(countdown, timeText), 60000); // Update every minute
-                    }
-                }
-            });
-        }
-
-        function updateCountdown(element, initialTime) {
-            // This is a simplified countdown - in production you'd calculate from actual start times
-            element.textContent = `Starts in: ${initialTime}`;
-        }
-
-        // Initialize everything when DOM is loaded
+        // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎮 WalletWars with Solana Integration Loaded!');
+            
             setupSmoothScrolling();
-            animateProgressBars();
-            addFloatingAnimation();
-            setupModalClickOutside();
-            setupKeyboardNavigation();
-            animateStats();
-            createParticles();
-            startCountdowns();
             
-            // Add CSS animations
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideIn {
-                    from {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
+            // Auto-update wallet balance every 30 seconds if connected
+            setInterval(() => {
+                if (walletAdapter && walletAdapter.connected) {
+                    updateWalletBalance();
                 }
-                
-                @keyframes slideOut {
-                    from {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                    to {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                }
-                
-                .notification-content {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                }
-                
-                .notification-close {
-                    background: none;
-                    border: none;
-                    color: #9ca3af;
-                    font-size: 1.25rem;
-                    cursor: pointer;
-                    margin-left: auto;
-                }
-                
-                .notification-close:hover {
-                    color: #ffffff;
-                }
-                
-                @media (max-width: 768px) {
-                    .nav-links {
-                        position: absolute;
-                        top: 100%;
-                        left: 0;
-                        width: 100%;
-                        background: rgba(31, 41, 55, 0.95);
-                        backdrop-filter: blur(10px);
-                        flex-direction: column;
-                        padding: 1rem;
-                        transform: translateY(-100%);
-                        opacity: 0;
-                        transition: all 0.3s ease;
-                    }
-                    
-                    .nav-links.mobile-open {
-                        display: flex;
-                        transform: translateY(0);
-                        opacity: 1;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            console.log('🎮 WalletWars initialized successfully!');
+            }, 30000);
         });
 
-        // Add some Easter eggs
-        function addEasterEggs() {
-            // Konami code easter egg
-            let konamiCode = [];
-            const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // ↑↑↓↓←→←→BA
-            
-            document.addEventListener('keydown', function(e) {
-                konamiCode.push(e.keyCode);
-                if (konamiCode.length > konamiSequence.length) {
-                    konamiCode.shift();
+        // Auto-connect if wallet was previously connected
+        window.addEventListener('load', async () => {
+            if (window.solana && window.solana.isPhantom) {
+                try {
+                    const response = await window.solana.connect({ onlyIfTrusted: true });
+                    if (response.publicKey) {
+                        walletAdapter = {
+                            publicKey: response.publicKey,
+                            connected: true
+                        };
+                        
+                        const connectBtn = document.querySelector('.connect-wallet-btn');
+                        const shortKey = `${response.publicKey.toString().slice(0, 4)}...${response.publicKey.toString().slice(-4)}`;
+                        connectBtn.textContent = shortKey;
+                        connectBtn.style.background = 'linear-gradient(to right, #22c55e, #16a34a)';
+                        
+                        await checkChampionExists();
+                        await loadTournaments();
+                        await updateWalletBalance();
+                        
+                        console.log('🔄 Auto-connected to previously authorized wallet');
+                    }
+                } catch (error) {
+                    // User hasn't authorized the app yet
+                    console.log('ℹ️ Wallet not previously authorized');
                 }
-                
-                if (konamiCode.length === konamiSequence.length && 
-                    konamiCode.every((code, index) => code === konamiSequence[index])) {
-                    showNotification('🎉 Konami Code activated! You found the secret!', 'success');
-                    document.body.style.filter = 'hue-rotate(180deg)';
-                    setTimeout(() => {
-                        document.body.style.filter = 'none';
-                    }, 3000);
-                }
-            });
-        }
+            }
+        });
 
-        // Call easter eggs function
-        setTimeout(addEasterEggs, 1000);
-
+        console.log('🚀 WalletWars Solana Integration Ready!');
     </script>
 </body>
 </html>
