@@ -430,10 +430,9 @@
             }
 
             .hero-title {
-                font-size: clamp(2.5rem, 12vw, 4rem);
-                white-space: normal;
-                word-break: break-word;
-                padding: 0 0.5rem;
+                font-size: clamp(2.5rem, 10vw, 4rem);
+                padding: 0 1rem;
+                letter-spacing: -0.02em;
             }
         }
 
@@ -480,8 +479,10 @@
         }
 
         .hero-content {
-            max-width: 800px;
+            max-width: 1000px;
+            width: 100%;
             z-index: 10;
+            padding: 0 1rem;
         }
 
         .hero-title {
@@ -494,13 +495,16 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1.2;
-            letter-spacing: -0.01em;
+            letter-spacing: 0;
             text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
             animation: titleGlow 3s ease-in-out infinite alternate;
-            word-break: keep-all;
-            white-space: nowrap;
-            overflow: visible;
-            padding: 0 1rem;
+            width: 100%;
+            text-align: center;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 2rem;
+            box-sizing: border-box;
         }
 
         .hero-motto {
