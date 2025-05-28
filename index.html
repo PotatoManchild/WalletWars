@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WalletWars - Solana's Ultimate Tournament Platform</title>
+    <title>WalletWars - Solana's Ultimate Winrate Battleground</title>
     
     <!-- Solana Dependencies -->
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -16,71 +19,155 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #111827;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
             color: #ffffff;
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+        /* Animated Background */
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(45deg, #0a0a0a, #1a1a2e, #16213e, #0f0f23);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
         }
 
-        /* Header Styles */
-        .header {
-            background: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #374151;
-            padding: 1rem 0;
+        .geometric-patterns {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            background-image: 
+                radial-gradient(circle at 25% 25%, #8b5cf6 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #06b6d4 0%, transparent 50%),
+                radial-gradient(circle at 75% 25%, #ec4899 0%, transparent 50%),
+                radial-gradient(circle at 25% 75%, #10b981 0%, transparent 50%);
+            animation: patternFloat 20s ease-in-out infinite;
+        }
+
+        .geometric-patterns::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(139, 92, 246, 0.03) 2px, rgba(139, 92, 246, 0.03) 4px),
+                repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(6, 182, 212, 0.03) 2px, rgba(6, 182, 212, 0.03) 4px);
+            animation: geometricMove 25s linear infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes patternFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(10px) rotate(240deg); }
+        }
+
+        @keyframes geometricMove {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(100px) translateY(100px); }
+        }
+
+        /* Navigation */
+        .navbar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
         }
 
-        .nav {
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-family: 'Orbitron', monospace;
             font-size: 1.5rem;
-            font-weight: bold;
-            background: linear-gradient(to right, #06b6d4, #8b5cf6);
+            font-weight: 700;
+            background: linear-gradient(135deg, #e879f9, #c084fc, #a855f7, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: 1px;
+            cursor: pointer;
         }
 
         .nav-links {
             display: flex;
             gap: 2rem;
             list-style: none;
+            align-items: center;
         }
 
         .nav-links a {
             color: #d1d5db;
             text-decoration: none;
+            font-weight: 500;
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .nav-links a:hover {
-            color: #06b6d4;
-            background: rgba(6, 182, 212, 0.1);
+            color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
         }
 
-        .connect-wallet-btn {
-            background: linear-gradient(to right, #8b5cf6, #ec4899);
+        .nav-links a:focus {
+            outline: 2px solid #8b5cf6;
+            outline-offset: 2px;
+        }
+
+        .nav-links .donate-link {
+            color: #10b981;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .nav-links .donate-link:hover {
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.1);
+            opacity: 1;
+        }
+
+        /* Wallet Button & Dropdown */
+        .wallet-section {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .connect-wallet-nav {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
             border: none;
             color: white;
             padding: 0.5rem 1rem;
@@ -88,78 +175,290 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-family: inherit;
         }
 
-        .connect-wallet-btn:hover {
+        .connect-wallet-nav:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
         }
 
-        /* Champion Info Section */
-        .champion-info-section {
-            background: rgba(15, 23, 42, 0.95);
-            border-bottom: 1px solid #374151;
-            padding: 1rem 0;
-            margin-top: 80px;
-            backdrop-filter: blur(10px);
-        }
-
-        .champion-card {
-            background: rgba(31, 41, 55, 0.7);
-            border: 1px solid #374151;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .champion-header {
+        .wallet-connected {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 0.5rem;
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #d1d5db;
+            font-weight: 500;
+        }
+
+        .wallet-connected:hover {
+            background: rgba(31, 41, 55, 1);
+            border-color: #8b5cf6;
+            transform: translateY(-1px);
+        }
+
+        .wallet-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .wallet-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            min-width: 280px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .wallet-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
             margin-bottom: 1rem;
         }
 
-        .champion-header h3 {
-            color: #06b6d4;
-            font-size: 1.5rem;
+        .champion-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
             font-weight: bold;
         }
 
-        .champion-status {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.8rem;
+        .champion-info h3 {
+            color: #8b5cf6;
+            font-size: 1.1rem;
             font-weight: 600;
-            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .champion-name-edit {
+            background: transparent;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.25rem;
+            color: #8b5cf6;
+            padding: 0.25rem 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .champion-name-edit:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .wallet-address {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            font-family: monospace;
         }
 
         .champion-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 1rem;
+            margin-bottom: 1rem;
         }
 
         .stat-item {
-            display: flex;
-            flex-direction: column;
             text-align: center;
-            padding: 1rem;
-            background: rgba(55, 65, 81, 0.5);
+            padding: 0.75rem;
+            background: rgba(31, 41, 55, 0.5);
             border-radius: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            margin-bottom: 0.25rem;
+            border: 1px solid rgba(139, 92, 246, 0.1);
         }
 
         .stat-value {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #06b6d4;
+            color: #8b5cf6;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-top: 0.25rem;
+        }
+
+        .dropdown-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .dropdown-btn {
+            background: transparent;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .dropdown-btn:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        .dropdown-btn.disconnect {
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .dropdown-btn.disconnect:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+        }
+
+        /* Mobile Navigation */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .mobile-menu-toggle:focus {
+            outline: 2px solid #8b5cf6;
+            outline-offset: 2px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10, 10, 10, 0.95);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                gap: 0;
+                padding: 1rem 0;
+                border-top: 1px solid rgba(139, 92, 246, 0.2);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 1rem 2rem;
+                width: 100%;
+                text-align: center;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .wallet-dropdown {
+                right: 1rem;
+                min-width: calc(100vw - 2rem);
+                max-width: 320px;
+            }
+
+            .champion-stats {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .learn-more-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        /* Dropdown Animation */
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .wallet-dropdown.active {
+            animation: dropdownFadeIn 0.3s ease;
+        }
+
+        /* Click outside to close */
+        .dropdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 999;
+            display: none;
+        }
+
+        .dropdown-overlay.active {
+            display: block;
         }
 
         /* Hero Section */
@@ -170,7 +469,7 @@
             justify-content: center;
             text-align: center;
             position: relative;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 50%, rgba(236, 72, 153, 0.1) 100%);
+            padding: 8rem 2rem 4rem;
         }
 
         .hero-content {
@@ -178,60 +477,86 @@
             z-index: 10;
         }
 
-        .hero h1 {
+        .hero-title {
+            font-family: 'Orbitron', monospace;
             font-size: clamp(3rem, 8vw, 8rem);
             font-weight: 900;
-            margin-bottom: 1rem;
-            background: linear-gradient(to right, #06b6d4, #3b82f6, #8b5cf6, #ec4899);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #e879f9 0%, #c084fc 25%, #a855f7 50%, #7c3aed 75%, #3b82f6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1.1;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            animation: titleGlow 3s ease-in-out infinite alternate;
         }
 
-        .hero p {
-            font-size: 1.25rem;
+        .hero-motto {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
             color: #d1d5db;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: 3rem;
+            font-weight: 300;
+            letter-spacing: 0.5px;
         }
 
-        .hero-buttons {
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 40px rgba(168, 85, 247, 0.3); }
+            100% { text-shadow: 0 0 60px rgba(168, 85, 247, 0.5), 0 0 80px rgba(59, 130, 246, 0.3); }
+        }
+
+        /* CTA Buttons */
+        .cta-buttons {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
         }
 
         .btn-primary {
-            background: linear-gradient(to right, #06b6d4, #3b82f6);
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
             border: none;
             color: white;
-            padding: 1rem 2rem;
+            padding: 1.2rem 3rem;
             border-radius: 0.75rem;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);
         }
 
         .btn-secondary {
             background: transparent;
             border: 2px solid #8b5cf6;
             color: #8b5cf6;
-            padding: 1rem 2rem;
+            padding: 1.2rem 3rem;
             border-radius: 0.75rem;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -241,817 +566,250 @@
 
         .btn-secondary:hover {
             background: rgba(139, 92, 246, 0.1);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.2);
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-top: 4rem;
-        }
-
-        .stat-card {
-            background: rgba(31, 41, 55, 0.5);
+        /* Learn More Section */
+        .learn-more-section {
+            padding: 6rem 2rem;
+            background: rgba(15, 23, 42, 0.5);
             backdrop-filter: blur(10px);
-            border: 1px solid #374151;
-            border-radius: 1rem;
-            padding: 2rem;
+        }
+
+        .learn-more-container {
+            max-width: 1000px;
+            margin: 0 auto;
             text-align: center;
         }
 
-        .stat-number {
+        .learn-more-title {
+            font-family: 'Orbitron', monospace;
             font-size: 2.5rem;
-            font-weight: bold;
-            color: #06b6d4;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: #9ca3af;
-            font-size: 0.9rem;
-        }
-
-        /* Tournaments Section */
-        .tournaments-section {
-            padding: 5rem 0;
-            background: #0f172a;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            background: linear-gradient(to right, #06b6d4, #8b5cf6);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #e879f9, #a855f7, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .section-subtitle {
-            text-align: center;
-            color: #9ca3af;
-            margin-bottom: 3rem;
-            font-size: 1.2rem;
-        }
-
-        .tournaments-grid {
+        .learn-more-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
             margin-top: 3rem;
         }
 
-        .tournament-card {
-            background: rgba(31, 41, 55, 0.5);
+        .concept-card {
+            background: rgba(31, 41, 55, 0.3);
             backdrop-filter: blur(10px);
-            border: 1px solid #374151;
+            border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 1rem;
             padding: 2rem;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
-        .tournament-card:hover {
+        .concept-card:hover {
             transform: translateY(-5px);
-            border-color: #06b6d4;
-            box-shadow: 0 20px 40px rgba(6, 182, 212, 0.2);
+            border-color: #8b5cf6;
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
         }
 
-        .tournament-card.team-disabled {
-            opacity: 0.7;
-            border-color: #fbbf24;
-            cursor: not-allowed;
-        }
-
-        .tournament-card.team-disabled::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(251, 191, 36, 0.05);
-            pointer-events: none;
-        }
-
-        .construction-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: #fbbf24;
-            z-index: 10;
-        }
-
-        .tournament-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .tournament-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .tournament-type {
-            padding: 0.25rem 0.75rem;
+        .concept-icon {
+            width: 4rem;
+            height: 4rem;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
             border-radius: 1rem;
-            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .concept-title {
+            font-size: 1.3rem;
             font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .type-daily {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-        }
-
-        .type-weekly {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
-        }
-
-        .type-monthly {
-            background: rgba(139, 92, 246, 0.2);
+            margin-bottom: 1rem;
             color: #8b5cf6;
         }
 
-        .tournament-description {
-            color: #9ca3af;
-            margin-bottom: 1.5rem;
+        .concept-description {
+            color: #d1d5db;
+            line-height: 1.6;
         }
 
-        .tournament-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
 
-        .stat-box {
-            background: rgba(55, 65, 81, 0.5);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            text-align: center;
+        /* Focus States */
+        button:focus,
+        a:focus {
+            outline: 2px solid #8b5cf6;
+            outline-offset: 2px;
         }
 
-        .stat-box-label {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            margin-bottom: 0.25rem;
+        /* Loading States */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
         }
 
-        .stat-box-value {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .entry-fee {
-            color: #06b6d4;
-        }
-
-        .prize-pool {
-            color: #fbbf24;
-        }
-
-        .progress-bar {
-            background: #374151;
-            height: 0.5rem;
-            border-radius: 1rem;
-            overflow: hidden;
-            margin: 1rem 0;
-        }
-
-        .progress-fill {
-            background: linear-gradient(to right, #06b6d4, #3b82f6);
-            height: 100%;
-            transition: width 0.3s ease;
-        }
-
-        .tournament-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #9ca3af;
-            margin-bottom: 1.5rem;
-        }
-
-        .join-btn {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(to right, #06b6d4, #3b82f6);
-            border: none;
-            color: white;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .join-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-        }
-
-        .join-btn:disabled {
-            background: #374151;
-            color: #9ca3af;
-            cursor: not-allowed;
-        }
-
-        /* Features Section */
-        .features-section {
-            padding: 5rem 0;
-            background: #111827;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .feature-card {
-            background: rgba(31, 41, 55, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid #374151;
-            border-radius: 1rem;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: #06b6d4;
-        }
-
-        .feature-icon {
-            width: 4rem;
-            height: 4rem;
-            margin: 0 auto 1rem;
-            background: linear-gradient(to right, #06b6d4, #8b5cf6);
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .feature-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .feature-description {
-            color: #9ca3af;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 1rem;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            position: relative;
-        }
-
-        .modal-close {
+        .loading::after {
+            content: '';
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: #9ca3af;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .construction-icon {
-            width: 5rem;
-            height: 5rem;
-            background: rgba(251, 191, 36, 0.2);
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid #8b5cf6;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 2rem;
-            color: #fbbf24;
+            animation: spin 1s linear infinite;
         }
 
-        .modal-title {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .modal-warning {
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .warning-title {
-            color: #fbbf24;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-features {
-            text-align: left;
-            margin: 1.5rem 0;
-        }
-
-        .modal-features li {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            color: #9ca3af;
-        }
-
-        .coming-soon {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .coming-soon-title {
-            color: #3b82f6;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Footer */
-        .footer {
-            background: rgba(31, 41, 55, 0.8);
-            border-top: 1px solid #374151;
-            padding: 3rem 0;
-            text-align: center;
-        }
-
-        .footer-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .footer-logo {
-            font-size: 2rem;
-            font-weight: bold;
-            background: linear-gradient(to right, #06b6d4, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .footer-tagline {
-            color: #9ca3af;
-            margin-bottom: 1rem;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 2rem;
-            color: #6b7280;
-            font-size: 0.9rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .hero h1 {
-                font-size: 4rem;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .tournaments-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .champion-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .champion-header {
-                flex-direction: column;
-                gap: 0.5rem;
-                text-align: center;
-            }
-        }
-
-        /* Animations */
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-        }
-
-        .floating {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        /* Notification Animations */
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-        
-        .notification-content {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .notification-close {
-            background: none;
-            border: none;
-            color: #9ca3af;
-            font-size: 1.25rem;
-            cursor: pointer;
-            margin-left: auto;
-        }
-        
-        .notification-close:hover {
-            color: #ffffff;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav container">
-            <div class="logo">
-                ⚔️ WalletWars
-            </div>
-            <ul class="nav-links">
+    <!-- Animated Background -->
+    <div class="animated-background"></div>
+    <div class="geometric-patterns"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="scrollToTop()">WalletWars</div>
+            
+            <ul class="nav-links" id="navLinks">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#tournaments">Tournaments</a></li>
                 <li><a href="#leaderboards">Leaderboards</a></li>
                 <li><a href="#hall-of-fame">Hall of Fame</a></li>
-                <li><a href="#donate">Donate</a></li>
+                <li><a href="#donate" class="donate-link">Donate</a></li>
             </ul>
-            <button class="connect-wallet-btn" onclick="connectWallet()">Connect Wallet</button>
-        </nav>
-    </header>
-
-    <!-- Champion Info Section (Hidden until connected) -->
-    <div id="champion-info" class="champion-info-section" style="display: none;">
-        <div class="container">
-            <div class="champion-card">
-                <div class="champion-header">
-                    <h3 id="champion-name">Loading...</h3>
-                    <div class="champion-status" id="champion-status">Active</div>
+            
+            <div class="wallet-section">
+                <!-- Connect Wallet Button (shown when not connected) -->
+                <button class="connect-wallet-nav" id="connectWalletNav" onclick="connectWallet()" style="display: block;">
+                    Connect Wallet
+                </button>
+                
+                <!-- Connected Wallet Display (hidden initially) -->
+                <div class="wallet-connected" id="walletConnected" onclick="toggleWalletDropdown()" style="display: none;" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
+                    <div class="wallet-icon">👤</div>
+                    <span id="walletAddress">4x7k...9mPt</span>
+                    <span style="margin-left: 0.25rem;">▼</span>
                 </div>
-                <div class="champion-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Winrate</span>
-                        <span class="stat-value" id="champion-winrate">0%</span>
+                
+                <!-- Wallet Dropdown Menu -->
+                <div class="wallet-dropdown" id="walletDropdown" role="menu">
+                    <div class="dropdown-header">
+                        <div class="champion-avatar" id="championAvatar">🏆</div>
+                        <div class="champion-info">
+                            <h3 id="championNameDisplay">Champion Name</h3>
+                            <input type="text" class="champion-name-edit" id="championNameEdit" style="display: none;" placeholder="Enter champion name" maxlength="32">
+                            <div class="wallet-address" id="fullWalletAddress">4x7k...9mPt</div>
+                        </div>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Tournaments</span>
-                        <span class="stat-value" id="champion-tournaments">0</span>
+                    
+                    <div class="champion-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="championWinrate">0%</span>
+                            <div class="stat-label">Winrate</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="championTournaments">0</span>
+                            <div class="stat-label">Tournaments</div>
+                        </div>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Total Winnings</span>
-                        <span class="stat-value" id="champion-winnings">0 SOL</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Current Balance</span>
-                        <span class="stat-value" id="wallet-balance">0 SOL</span>
+                    
+                    <div class="dropdown-actions">
+                        <button class="dropdown-btn" onclick="editChampionName()" id="editNameBtn">
+                            ✏️ Edit Name
+                        </button>
+                        <button class="dropdown-btn" onclick="viewFullProfile()">
+                            📊 View Full Profile
+                        </button>
+                        <button class="dropdown-btn disconnect" onclick="disconnectWallet()">
+                            🔌 Disconnect Wallet
+                        </button>
                     </div>
                 </div>
+                
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">
+                    ☰
+                </button>
             </div>
         </div>
-    </div>
+    </nav>
+
+    <!-- Dropdown Overlay (for clicking outside to close) -->
+    <div class="dropdown-overlay" id="dropdownOverlay" onclick="closeWalletDropdown()"></div>
 
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1 class="floating">WALLET WARS</h1>
-            <p>Solana's ultimate winrate battleground where crypto warriors clash, strategies collide, and legends are born.</p>
-            <div class="hero-buttons">
-                <a href="#tournaments" class="btn-primary">Enter the Arena</a>
-                <a href="#donate" class="btn-secondary">Support the Platform</a>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">1,247</div>
-                    <div class="stat-label">Active Warriors</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">89</div>
-                    <div class="stat-label">Active Battles</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">12.5K</div>
-                    <div class="stat-label">SOL Distributed</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Tournaments Section -->
-    <section id="tournaments" class="tournaments-section">
-        <div class="container">
-            <h2 class="section-title">Active Tournaments</h2>
-            <p class="section-subtitle">Choose your battlefield and prove your worth</p>
+            <h1 class="hero-title">WalletWars</h1>
+            <p class="hero-motto">Solana's ultimate winrate battleground</p>
             
-            <div class="tournaments-grid">
-                <!-- Individual Tournament 1 -->
-                <div class="tournament-card">
-                    <div class="tournament-header">
-                        <div>
-                            <h3 class="tournament-title">Solana Speed Clash</h3>
-                            <p class="tournament-description">Fast-paced individual tournament for solo warriors</p>
-                        </div>
-                        <span class="tournament-type type-daily">Daily</span>
-                    </div>
-                    <div class="tournament-stats">
-                        <div class="stat-box">
-                            <div class="stat-box-label">Entry Fee</div>
-                            <div class="stat-box-value entry-fee">0.5 SOL</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-box-label">Prize Pool</div>
-                            <div class="stat-box-value prize-pool">25 SOL</div>
-                        </div>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 64%"></div>
-                    </div>
-                    <div class="tournament-info">
-                        <span>Players: 32/50</span>
-                        <span>Starts in: 2h 15m</span>
-                    </div>
-                    <button class="join-btn" onclick="joinTournament('individual')">Join Battle</button>
-                </div>
-
-                <!-- Individual Tournament 2 -->
-                <div class="tournament-card">
-                    <div class="tournament-header">
-                        <div>
-                            <h3 class="tournament-title">Weekly Warriors Championship</h3>
-                            <p class="tournament-description">Prestigious individual tournament with massive rewards</p>
-                        </div>
-                        <span class="tournament-type type-weekly">Weekly</span>
-                    </div>
-                    <div class="tournament-stats">
-                        <div class="stat-box">
-                            <div class="stat-box-label">Entry Fee</div>
-                            <div class="stat-box-value entry-fee">3 SOL</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-box-label">Prize Pool</div>
-                            <div class="stat-box-value prize-pool">150 SOL</div>
-                        </div>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 67%"></div>
-                    </div>
-                    <div class="tournament-info">
-                        <span>Players: 67/100</span>
-                        <span>Starts in: 1d 6h</span>
-                    </div>
-                    <button class="join-btn" onclick="joinTournament('individual')">Join Battle</button>
-                </div>
-
-                <!-- Team Tournament (Disabled) -->
-                <div class="tournament-card team-disabled" onclick="showTeamModal()">
-                    <div class="construction-overlay">
-                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">🚧</div>
-                        <div style="font-weight: bold; font-size: 1.2rem;">Under Construction</div>
-                    </div>
-                    <div class="tournament-header">
-                        <div>
-                            <h3 class="tournament-title">Team Alliance Battle</h3>
-                            <p class="tournament-description">Epic team-based tournament for coordinated squads</p>
-                        </div>
-                        <span class="tournament-type type-weekly">Weekly</span>
-                    </div>
-                    <div class="tournament-stats">
-                        <div class="stat-box">
-                            <div class="stat-box-label">Entry Fee</div>
-                            <div class="stat-box-value entry-fee">2 SOL</div>
-                            <div style="font-size: 0.8rem; color: #fbbf24;">per player</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-box-label">Prize Pool</div>
-                            <div class="stat-box-value prize-pool">200 SOL</div>
-                        </div>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%; background: #fbbf24;"></div>
-                    </div>
-                    <div class="tournament-info">
-                        <span>Teams: 0/16 (4 players each)</span>
-                        <span>Coming Soon</span>
-                    </div>
-                    <button class="join-btn" disabled>🔒 Under Construction</button>
-                </div>
-
-                <!-- Monthly Tournament -->
-                <div class="tournament-card">
-                    <div class="tournament-header">
-                        <div>
-                            <h3 class="tournament-title">Elite Masters Solo Cup</h3>
-                            <p class="tournament-description">Individual tournament for the most skilled solo fighters</p>
-                        </div>
-                        <span class="tournament-type type-monthly">Monthly</span>
-                    </div>
-                    <div class="tournament-stats">
-                        <div class="stat-box">
-                            <div class="stat-box-label">Entry Fee</div>
-                            <div class="stat-box-value entry-fee">8 SOL</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-box-label">Prize Pool</div>
-                            <div class="stat-box-value prize-pool">500 SOL</div>
-                        </div>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 56%"></div>
-                    </div>
-                    <div class="tournament-info">
-                        <span>Players: 18/32</span>
-                        <span>Starts in: 7d</span>
-                    </div>
-                    <button class="join-btn" onclick="joinTournament('individual')">Register Now</button>
-                </div>
+            <div class="cta-buttons">
+                <button class="btn-primary" onclick="connectWallet()">
+                    Connect Wallet
+                </button>
+                <a href="#learn-more" class="btn-secondary">
+                    Learn More
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features-section">
-        <div class="container">
-            <h2 class="section-title">Battle Features</h2>
-            <p class="section-subtitle">Everything you need to dominate the arena</p>
+    <!-- Learn More Section -->
+    <section id="learn-more" class="learn-more-section">
+        <div class="learn-more-container">
+            <h2 class="learn-more-title">How WalletWars Works</h2>
             
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">⚔️</div>
-                    <h3 class="feature-title">Tournament Battles</h3>
-                    <p class="feature-description">Engage in epic wallet-vs-wallet combat across multiple tournament formats.</p>
+            <div class="learn-more-content">
+                <div class="concept-card">
+                    <div class="concept-icon">⚔️</div>
+                    <h3 class="concept-title">Skill-Based Competition</h3>
+                    <p class="concept-description">
+                        Compete based on your wallet's performance and trading skills, not luck. Your winrate determines your rank in tournaments.
+                    </p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🏆</div>
-                    <h3 class="feature-title">Real Rewards</h3>
-                    <p class="feature-description">Win SOL, NFTs, and exclusive rewards in every tournament victory.</p>
+                
+                <div class="concept-card">
+                    <div class="concept-icon">🏆</div>
+                    <h3 class="concept-title">Real SOL Rewards</h3>
+                    <p class="concept-description">
+                        Win real SOL prizes in tournaments. Top performers take home the largest share of the prize pool based on their wallet performance.
+                    </p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">👑</div>
-                    <h3 class="feature-title">Hall of Fame</h3>
-                    <p class="feature-description">Immortalize your victories and climb the ranks of legendary warriors.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3 class="feature-title">Secure Platform</h3>
-                    <p class="feature-description">Built on Solana's robust blockchain with advanced security monitoring.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3 class="feature-title">Analytics</h3>
-                    <p class="feature-description">Track your performance with detailed statistics and progress graphs.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3 class="feature-title">Fast Transactions</h3>
-                    <p class="feature-description">Lightning-fast Solana transactions with minimal fees.</p>
+                
+                <div class="concept-card">
+                    <div class="concept-icon">📊</div>
+                    <h3 class="concept-title">Performance Tracking</h3>
+                    <p class="concept-description">
+                        Advanced analytics track your wallet's value changes over time, calculating your performance percentage for tournament rankings.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">⚔️ WalletWars</div>
-                <p class="footer-tagline">Where legends are forged in the fires of competition</p>
-                <div class="footer-links">
-                    <span>© 2025 WalletWars</span>
-                    <span>•</span>
-                    <span>Built on Solana</span>
-                    <span>•</span>
-                    <span>Powered by Web3</span>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Team Tournament Modal -->
-    <div id="teamModal" class="modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeTeamModal()">&times;</button>
-            <div class="construction-icon">🚧</div>
-            <h3 class="modal-title">Team Tournaments</h3>
-            <div class="modal-warning">
-                <div class="warning-title">⚠️ Under Construction</div>
-                <p>Team tournaments are currently being developed and are not available yet. We're working hard to bring you epic team-based battles!</p>
-            </div>
-            <ul class="modal-features">
-                <li>👥 Team formation and management system</li>
-                <li>🎯 Coordinated team strategies and tactics</li>
-                <li>🏆 Larger prize pools and team rewards</li>
-            </ul>
-            <div class="coming-soon">
-                <div class="coming-soon-title">Coming Soon:</div>
-                <ul style="text-align: left; color: #d1d5db; font-size: 0.9rem;">
-                    <li>Team registration and member management</li>
-                    <li>Advanced team communication tools</li>
-                    <li>Team leaderboards and rankings</li>
-                    <li>Coordinated battle mechanics</li>
-                </ul>
-            </div>
-            <button class="btn-primary" onclick="closeTeamModal()" style="margin-top: 1rem;">Got it, thanks!</button>
-        </div>
-    </div>
-
-    <script type="text/javascript">
-        // WalletWars Solana Integration
+    <script>
+        // WalletWars Core JavaScript
         const PROGRAM_ID = "WaLLeTWaRsProgram11111111111111111111111111";
         const NETWORK = "devnet";
         const CONNECTION = new solanaWeb3.Connection(
@@ -1061,476 +819,50 @@
 
         // Global state
         let walletAdapter = null;
-        let program = null;
         let championData = null;
         let isConnecting = false;
+        let isInTournament = false; // Track if user is in active tournament
 
-        // Wallet connection
-        async function connectWallet() {
-            if (isConnecting) return;
-            isConnecting = true;
-            
-            const connectBtn = document.querySelector('.connect-wallet-btn');
-            const originalText = connectBtn.textContent;
-            
-            try {
-                connectBtn.textContent = 'Connecting...';
-                connectBtn.disabled = true;
-
-                // Check if Phantom wallet is available
-                if (!window.solana) {
-                    throw new Error('Phantom wallet not found! Please install Phantom wallet.');
-                }
-
-                // Connect to Phantom
-                const response = await window.solana.connect();
-                const publicKey = response.publicKey;
-                
-                console.log('✅ Wallet connected:', publicKey.toString());
-                
-                // Update UI
-                const shortKey = `${publicKey.toString().slice(0, 4)}...${publicKey.toString().slice(-4)}`;
-                connectBtn.textContent = shortKey;
-                connectBtn.style.background = 'linear-gradient(to right, #22c55e, #16a34a)';
-                
-                // Store wallet info
-                walletAdapter = {
-                    publicKey: publicKey,
-                    connected: true
-                };
-                
-                // Check for existing champion
-                await checkChampionExists();
-                
-                // Load tournaments
-                await loadTournaments();
-                
-                // Update wallet balance
-                await updateWalletBalance();
-                
-                showNotification('Wallet connected successfully! 🎉', 'success');
-                
-            } catch (error) {
-                console.error('❌ Wallet connection failed:', error);
-                connectBtn.textContent = originalText;
-                connectBtn.disabled = false;
-                
-                if (error.message.includes('User rejected')) {
-                    showNotification('Wallet connection cancelled by user.', 'warning');
-                } else if (error.message.includes('Phantom wallet not found')) {
-                    showNotification('Please install Phantom wallet to connect.', 'error');
-                } else {
-                    showNotification('Failed to connect wallet. Please try again.', 'error');
-                }
-            } finally {
-                isConnecting = false;
-            }
+        // Navigation functions
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Check if champion exists for connected wallet
-        async function checkChampionExists() {
-            if (!walletAdapter || !walletAdapter.publicKey) return false;
-            
-            try {
-                // For now, we'll simulate champion checking using localStorage
-                // In production, this would query the blockchain
-                const hasChampion = localStorage.getItem(`champion_${walletAdapter.publicKey.toString()}`);
-                
-                if (hasChampion) {
-                    championData = JSON.parse(hasChampion);
-                    showChampionInfo();
-                    return true;
-                } else {
-                    // Prompt to create champion
-                    setTimeout(() => createChampionPrompt(), 1000);
-                    return false;
-                }
-            } catch (error) {
-                console.error('Error checking champion:', error);
-                return false;
-            }
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
         }
 
-        // Prompt user to create champion
-        function createChampionPrompt() {
-            const championName = prompt(
-                'Welcome to WalletWars! 🎮\n\nCreate your Champion name (3-32 characters):\n\nThis will be your identity in tournaments!'
-            );
+        // Wallet dropdown functions
+        function toggleWalletDropdown() {
+            const dropdown = document.getElementById('walletDropdown');
+            const overlay = document.getElementById('dropdownOverlay');
+            const walletConnected = document.getElementById('walletConnected');
             
-            if (championName && championName.length >= 3 && championName.length <= 32) {
-                createChampion(championName);
-            } else if (championName !== null) {
-                showNotification('Champion name must be 3-32 characters long.', 'warning');
-                setTimeout(() => createChampionPrompt(), 2000);
-            }
-        }
-
-        // Create champion
-        async function createChampion(championName) {
-            if (!walletAdapter || !walletAdapter.publicKey) {
-                showNotification('Please connect your wallet first!', 'warning');
-                return;
-            }
+            const isActive = dropdown.classList.contains('active');
             
-            try {
-                showNotification('Creating your champion...', 'info');
+            if (isActive) {
+                closeWalletDropdown();
+            } else {
+                dropdown.classList.add('active');
+                overlay.classList.add('active');
+                walletConnected.setAttribute('aria-expanded', 'true');
                 
-                // Get wallet balance for initial value
-                const balance = await CONNECTION.getBalance(walletAdapter.publicKey);
-                
-                // Create champion data (in production, this would be on-chain)
-                championData = {
-                    name: championName,
-                    owner: walletAdapter.publicKey.toString(),
-                    wins: 0,
-                    losses: 0,
-                    totalTournaments: 0,
-                    totalWinnings: 0,
-                    currentWalletValue: balance,
-                    baselineWalletValue: balance,
-                    createdAt: Date.now(),
-                    isActive: true
-                };
-                
-                // Store locally (in production, this would be on-chain)
-                localStorage.setItem(`champion_${walletAdapter.publicKey.toString()}`, JSON.stringify(championData));
-                
-                showChampionInfo();
-                showNotification(`Champion "${championName}" created successfully! 🏆`, 'success');
-                
-            } catch (error) {
-                console.error('❌ Champion creation failed:', error);
-                showNotification('Failed to create champion. Please try again.', 'error');
-            }
-        }
-
-        // Show champion info
-        function showChampionInfo() {
-            if (!championData) return;
-            
-            const championSection = document.getElementById('champion-info');
-            const championNameEl = document.getElementById('champion-name');
-            const championWinrateEl = document.getElementById('champion-winrate');
-            const championTournamentsEl = document.getElementById('champion-tournaments');
-            const championWinningsEl = document.getElementById('champion-winnings');
-            
-            if (championSection && championNameEl) {
-                championSection.style.display = 'block';
-                championNameEl.textContent = `Champion: ${championData.name}`;
-                
-                const winrate = championData.totalTournaments > 0 
-                    ? ((championData.wins / championData.totalTournaments) * 100).toFixed(1)
-                    : '0.0';
-                
-                championWinrateEl.textContent = `${winrate}%`;
-                championTournamentsEl.textContent = championData.totalTournaments;
-                championWinningsEl.textContent = `${(championData.totalWinnings / solanaWeb3.LAMPORTS_PER_SOL).toFixed(2)} SOL`;
-            }
-        }
-
-        // Update wallet balance display
-        async function updateWalletBalance() {
-            if (!walletAdapter || !walletAdapter.publicKey) return;
-            
-            try {
-                const balance = await CONNECTION.getBalance(walletAdapter.publicKey);
-                const balanceSOL = balance / solanaWeb3.LAMPORTS_PER_SOL;
-                
-                const balanceEl = document.getElementById('wallet-balance');
-                if (balanceEl) {
-                    balanceEl.textContent = `${balanceSOL.toFixed(3)} SOL`;
-                }
-                
-                // Update champion data if exists
-                if (championData) {
-                    championData.currentWalletValue = balance;
-                    localStorage.setItem(`champion_${walletAdapter.publicKey.toString()}`, JSON.stringify(championData));
-                }
-                
-            } catch (error) {
-                console.error('Error updating wallet balance:', error);
-            }
-        }
-
-        // Load tournaments (enhance existing tournament cards with real functionality)
-        async function loadTournaments() {
-            try {
-                // In production, this would fetch from blockchain
-                // For now, we'll enhance the existing tournament cards with real functionality
-                const tournamentCards = document.querySelectorAll('.tournament-card:not(.team-disabled)');
-                
-                tournamentCards.forEach((card, index) => {
-                    const joinBtn = card.querySelector('.join-btn');
-                    if (joinBtn && walletAdapter && championData) {
-                        joinBtn.onclick = () => joinSpecificTournament(index);
-                        joinBtn.textContent = 'Join Battle';
-                        joinBtn.disabled = false;
-                        joinBtn.style.opacity = '1';
-                    }
-                });
-                
-                console.log('✅ Tournaments loaded and enhanced');
-                
-            } catch (error) {
-                console.error('Error loading tournaments:', error);
-            }
-        }
-
-        // Join specific tournament
-        async function joinSpecificTournament(tournamentIndex) {
-            if (!walletAdapter || !walletAdapter.connected) {
-                showNotification('Please connect your wallet first!', 'warning');
-                return;
-            }
-            
-            if (!championData) {
-                showNotification('Please create a champion first!', 'warning');
-                return;
-            }
-            
-            try {
-                showNotification('Joining tournament...', 'info');
-                
-                // Get tournament info from DOM
-                const tournamentCards = document.querySelectorAll('.tournament-card:not(.team-disabled)');
-                const tournamentCard = tournamentCards[tournamentIndex];
-                const tournamentName = tournamentCard.querySelector('.tournament-title').textContent;
-                const entryFeeText = tournamentCard.querySelector('.entry-fee').textContent;
-                const entryFee = parseFloat(entryFeeText.replace(' SOL', ''));
-                
-                // Check wallet balance
-                const balance = await CONNECTION.getBalance(walletAdapter.publicKey);
-                const balanceSOL = balance / solanaWeb3.LAMPORTS_PER_SOL;
-                
-                if (balanceSOL < entryFee) {
-                    showNotification(`Insufficient balance! You need ${entryFee} SOL but have ${balanceSOL.toFixed(3)} SOL.`, 'error');
-                    return;
-                }
-                
-                // Check if already joined
-                const participationKey = `participation_${walletAdapter.publicKey.toString()}_${tournamentIndex}`;
-                if (localStorage.getItem(participationKey)) {
-                    showNotification('You have already joined this tournament!', 'warning');
-                    return;
-                }
-                
-                // Simulate joining tournament
-                const participantData = {
-                    tournament: tournamentName,
-                    champion: championData.name,
-                    entryTime: Date.now(),
-                    entryFee: entryFee,
-                    status: 'active',
-                    startingBalance: balance
-                };
-                
-                // Store participation (in production, this would be on-chain)
-                localStorage.setItem(participationKey, JSON.stringify(participantData));
-                
-                // Update tournament UI
-                const joinBtn = tournamentCard.querySelector('.join-btn');
-                joinBtn.textContent = 'Joined! 🎮';
-                joinBtn.disabled = true;
-                joinBtn.style.background = '#22c55e';
-                
-                // Start monitoring wallet performance
-                startWalletMonitoring(tournamentIndex);
-                
-                showNotification(`Successfully joined "${tournamentName}"! Your performance is now being tracked. Good luck! 🍀`, 'success');
-                
-            } catch (error) {
-                console.error('❌ Failed to join tournament:', error);
-                showNotification('Failed to join tournament. Please try again.', 'error');
-            }
-        }
-
-        // Start wallet monitoring for tournament
-        function startWalletMonitoring(tournamentIndex) {
-            if (!walletAdapter || !championData) return;
-            
-            const monitoringInterval = setInterval(async () => {
-                try {
-                    await updateWalletBalance();
-                    
-                    // Calculate performance
-                    const participationKey = `participation_${walletAdapter.publicKey.toString()}_${tournamentIndex}`;
-                    const participantData = JSON.parse(localStorage.getItem(participationKey));
-                    
-                    if (participantData) {
-                        const currentBalance = championData.currentWalletValue;
-                        const startingBalance = participantData.startingBalance;
-                        const performance = ((currentBalance - startingBalance) / startingBalance) * 100;
-                        
-                        // Update participant data
-                        participantData.currentBalance = currentBalance;
-                        participantData.performance = performance;
-                        participantData.lastUpdate = Date.now();
-                        
-                        localStorage.setItem(participationKey, JSON.stringify(participantData));
-                        
-                        console.log(`📊 Tournament ${tournamentIndex} Performance: ${performance.toFixed(2)}%`);
-                    }
-                    
-                } catch (error) {
-                    console.error('⚠️ Monitoring error:', error);
-                }
-            }, 30000); // Update every 30 seconds
-            
-            // Store interval to clear later (simplified for demo)
-            console.log(`🔍 Started monitoring for tournament ${tournamentIndex}`);
-        }
-
-        // Enhanced notification system
-        function showNotification(message, type = 'info') {
-            // Remove existing notifications
-            const existingNotifications = document.querySelectorAll('.notification');
-            existingNotifications.forEach(notification => notification.remove());
-
-            // Create notification
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            
-            const icons = {
-                success: '✅',
-                error: '❌', 
-                warning: '⚠️',
-                info: 'ℹ️'
-            };
-            
-            const backgrounds = {
-                success: 'rgba(34, 197, 94, 0.1)',
-                error: 'rgba(239, 68, 68, 0.1)',
-                warning: 'rgba(251, 191, 36, 0.1)',
-                info: 'rgba(59, 130, 246, 0.1)'
-            };
-            
-            const borders = {
-                success: 'rgba(34, 197, 94, 0.3)',
-                error: 'rgba(239, 68, 68, 0.3)',
-                warning: 'rgba(251, 191, 36, 0.3)',
-                info: 'rgba(59, 130, 246, 0.3)'
-            };
-
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <span class="notification-icon">${icons[type]}</span>
-                    <span class="notification-message">${message}</span>
-                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
-                </div>
-            `;
-
-            notification.style.cssText = `
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                z-index: 3000;
-                background: ${backgrounds[type]};
-                border: 1px solid ${borders[type]};
-                border-radius: 0.75rem;
-                padding: 1rem;
-                max-width: 400px;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-                backdrop-filter: blur(10px);
-                animation: slideInRight 0.3s ease-out;
-            `;
-
-            document.body.appendChild(notification);
-
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.style.animation = 'slideOutRight 0.3s ease-in';
-                    setTimeout(() => notification.remove(), 300);
-                }
-            }, 5000);
-        }
-
-        // Keep existing functions that don't need to change
-        function showTeamModal() {
-            document.getElementById('teamModal').classList.add('active');
-        }
-
-        function closeTeamModal() {
-            document.getElementById('teamModal').classList.remove('active');
-        }
-
-        // Enhanced tournament join function for team tournaments
-        function joinTournament(type) {
-            if (type === 'team') {
-                showTeamModal();
-                return;
-            }
-            
-            // Individual tournaments are handled by the new joinSpecificTournament function
-            if (!walletAdapter || !walletAdapter.connected) {
-                showNotification('Please connect your wallet first!', 'warning');
-                return;
-            }
-            
-            showNotification('Click on a specific tournament "Join Battle" button to enter!', 'info');
-        }
-
-        // Smooth scrolling for navigation links
-        function setupSmoothScrolling() {
-            const links = document.querySelectorAll('a[href^="#"]');
-            links.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-        }
-
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎮 WalletWars with Solana Integration Loaded!');
-            
-            setupSmoothScrolling();
-            
-            // Auto-update wallet balance every 30 seconds if connected
-            setInterval(() => {
-                if (walletAdapter && walletAdapter.connected) {
-                    updateWalletBalance();
-                }
-            }, 30000);
-        });
-
-        // Auto-connect if wallet was previously connected
-        window.addEventListener('load', async () => {
-            if (window.solana && window.solana.isPhantom) {
-                try {
-                    const response = await window.solana.connect({ onlyIfTrusted: true });
-                    if (response.publicKey) {
-                        walletAdapter = {
-                            publicKey: response.publicKey,
-                            connected: true
-                        };
-                        
-                        const connectBtn = document.querySelector('.connect-wallet-btn');
-                        const shortKey = `${response.publicKey.toString().slice(0, 4)}...${response.publicKey.toString().slice(-4)}`;
-                        connectBtn.textContent = shortKey;
-                        connectBtn.style.background = 'linear-gradient(to right, #22c55e, #16a34a)';
-                        
-                        await checkChampionExists();
-                        await loadTournaments();
-                        await updateWalletBalance();
-                        
-                        console.log('🔄 Auto-connected to previously authorized wallet');
-                    }
-                } catch (error) {
-                    // User hasn't authorized the app yet
-                    console.log('ℹ️ Wallet not previously authorized');
+                // Focus first dropdown item for accessibility
+                const firstButton = dropdown.querySelector('.dropdown-btn');
+                if (firstButton) {
+                    setTimeout(() => firstButton.focus(), 100);
                 }
             }
-        });
+        }
 
-        console.log('🚀 WalletWars Solana Integration Ready!');
-    </script>
-</body>
-</html>
+        function closeWalletDropdown() {
+            const dropdown = document.getElementById('walletDropdown');
+            const overlay = document.getElementById('dropdownOverlay');
+            const walletConnected = document.getElementById('walletConnected');
+            
+            dropdown.classList.remove('active');
+            overlay.classList.remove('active');
+            walletConnected.setAttribute('aria-expanded', 'false');
+            
+            
