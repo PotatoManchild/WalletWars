@@ -368,6 +368,79 @@
             outline-offset: 2px;
         }
 
+        /* Placeholder Sections */
+        .placeholder-section {
+            min-height: 60vh;
+            padding: 8rem 2rem 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.3);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(139, 92, 246, 0.1);
+        }
+
+        .placeholder-content {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .placeholder-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .placeholder-description {
+            font-size: 1.2rem;
+            color: #d1d5db;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        .placeholder-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .placeholder-feature {
+            background: rgba(31, 41, 55, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .placeholder-feature:hover {
+            transform: translateY(-5px);
+            border-color: #8b5cf6;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+        }
+
+        .placeholder-feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .placeholder-feature h4 {
+            color: #8b5cf6;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .placeholder-feature p {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .nav-links {
@@ -433,6 +506,11 @@
                 font-size: clamp(2.5rem, 10vw, 4rem);
                 padding: 0 1rem;
                 letter-spacing: -0.02em;
+            }
+
+            .placeholder-features {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
         }
 
@@ -695,6 +773,38 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem 1.5rem;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .toast.error {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -823,6 +933,118 @@
         </div>
     </section>
 
+    <!-- Tournaments Section -->
+    <section id="tournaments" class="placeholder-section">
+        <div class="placeholder-content">
+            <h2 class="placeholder-title">Tournaments</h2>
+            <p class="placeholder-description">
+                Compete in skill-based tournaments where your wallet's performance determines victory, not chance.
+            </p>
+            
+            <div class="placeholder-features">
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">🎯</div>
+                    <h4>Daily Tournaments</h4>
+                    <p>Quick 24-hour competitions with immediate SOL rewards</p>
+                </div>
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">🏅</div>
+                    <h4>Weekly Championships</h4>
+                    <p>Larger prize pools for sustained performance over 7 days</p>
+                </div>
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">👑</div>
+                    <h4>Grand Tournaments</h4>
+                    <p>Epic monthly battles with massive SOL prizes for top Champions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leaderboards Section -->
+    <section id="leaderboards" class="placeholder-section">
+        <div class="placeholder-content">
+            <h2 class="placeholder-title">Leaderboards</h2>
+            <p class="placeholder-description">
+                Track the performance of elite Champions and see where you rank in the competitive landscape.
+            </p>
+            
+            <div class="placeholder-features">
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">📈</div>
+                    <h4>Global Rankings</h4>
+                    <p>See the top-performing Champions across all tournaments</p>
+                </div>
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">🔥</div>
+                    <h4>Hot Streaks</h4>
+                    <p>Champions on winning streaks with consecutive victories</p>
+                </div>
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">💰</div>
+                    <h4>Earnings Leaders</h4>
+                    <p>Top earners ranked by total SOL won in tournaments</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hall of Fame Section -->
+    <section id="hall-of-fame" class="placeholder-section">
+        <div class="placeholder-content">
+            <h2 class="placeholder-title">Hall of Fame</h2>
+            <p class="placeholder-description">
+                Legendary Champions who have achieved greatness in WalletWars competitions.
+            </p>
+            
+            <div class="placeholder-features">
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">🏛️</div>
+                    <h4>Legendary Champions</h4>
+                    <p>Elite performers with exceptional tournament records</p>
+                </div>
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">🎖️</div>
+                    <h4>Achievement Unlocks</h4>
+                    <p>Special honors for remarkable feats and milestones</p>
+                </div>
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">⚡</div>
+                    <h4>Record Holders</h4>
+                    <p>Champions who set new standards in performance metrics</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Donate Section -->
+    <section id="donate" class="placeholder-section">
+        <div class="placeholder-content">
+            <h2 class="placeholder-title">Support WalletWars</h2>
+            <p class="placeholder-description">
+                Help us build the future of skill-based competition on Solana. Your support funds development and larger prize pools.
+            </p>
+            
+            <div class="placeholder-features">
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">🚀</div>
+                    <h4>Platform Development</h4>
+                    <p>Fund new features, tournaments, and platform improvements</p>
+                </div>
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">💎</div>
+                    <h4>Prize Pool Boost</h4>
+                    <p>Donations directly increase tournament rewards for Champions</p>
+                </div>
+                <div class="placeholder-feature">
+                    <div class="placeholder-feature-icon">🌟</div>
+                    <h4>Community Growth</h4>
+                    <p>Support marketing and community building efforts</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <script>
         // WalletWars Core JavaScript
         const PROGRAM_ID = "WaLLeTWaRsProgram11111111111111111111111111";
@@ -836,7 +1058,7 @@
         let walletAdapter = null;
         let championData = null;
         let isConnecting = false;
-        let isInTournament = false; // Track if user is in active tournament
+        let isInTournament = false;
 
         // Navigation functions
         function scrollToTop() {
@@ -846,6 +1068,144 @@
         function toggleMobileMenu() {
             const navLinks = document.getElementById('navLinks');
             navLinks.classList.toggle('active');
+        }
+
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Wallet connection functions
+        async function connectWallet() {
+            if (isConnecting) return;
+            
+            try {
+                isConnecting = true;
+                const connectBtn = document.getElementById('connectWalletNav');
+                connectBtn.classList.add('loading');
+                connectBtn.textContent = 'Connecting...';
+
+                // Check if Phantom wallet is available
+                if (!window.solana || !window.solana.isPhantom) {
+                    showToast('Phantom wallet not found. Please install Phantom.', 'error');
+                    return;
+                }
+
+                // Connect to Phantom
+                const response = await window.solana.connect();
+                walletAdapter = window.solana;
+                
+                if (response.publicKey) {
+                    const publicKey = response.publicKey.toString();
+                    await initializeChampion(publicKey);
+                    updateWalletUI(publicKey);
+                    showToast('Wallet connected successfully!', 'success');
+                } else {
+                    throw new Error('Failed to get public key');
+                }
+                
+            } catch (error) {
+                console.error('Wallet connection error:', error);
+                showToast('Failed to connect wallet. Please try again.', 'error');
+            } finally {
+                isConnecting = false;
+                const connectBtn = document.getElementById('connectWalletNav');
+                connectBtn.classList.remove('loading');
+                connectBtn.textContent = 'Connect Wallet';
+            }
+        }
+
+        async function disconnectWallet() {
+            try {
+                if (walletAdapter && walletAdapter.disconnect) {
+                    await walletAdapter.disconnect();
+                }
+                
+                walletAdapter = null;
+                championData = null;
+                
+                // Reset UI
+                document.getElementById('connectWalletNav').style.display = 'block';
+                document.getElementById('walletConnected').style.display = 'none';
+                closeWalletDropdown();
+                
+                showToast('Wallet disconnected', 'success');
+                
+            } catch (error) {
+                console.error('Disconnect error:', error);
+                showToast('Error disconnecting wallet', 'error');
+            }
+        }
+
+        // Champion management functions
+        async function initializeChampion(publicKey) {
+            const championKey = `champion_${publicKey}`;
+            let champion = JSON.parse(localStorage.getItem(championKey));
+            
+            if (!champion) {
+                // Create new champion
+                champion = {
+                    walletAddress: publicKey,
+                    championName: `Champion ${publicKey.slice(-4)}`,
+                    winrate: 0,
+                    tournamentsAttended: 0,
+                    totalWins: 0,
+                    totalLosses: 0,
+                    totalEarnings: 0,
+                    createdAt: Date.now(),
+                    lastActive: Date.now()
+                };
+                
+                localStorage.setItem(championKey, JSON.stringify(champion));
+                showToast('Welcome, new Champion! Profile created.', 'success');
+            } else {
+                // Update last active
+                champion.lastActive = Date.now();
+                localStorage.setItem(championKey, JSON.stringify(champion));
+            }
+            
+            championData = champion;
+            return champion;
+        }
+
+        function updateWalletUI(publicKey) {
+            const shortAddress = `${publicKey.slice(0, 4)}...${publicKey.slice(-4)}`;
+            
+            // Hide connect button, show connected wallet
+            document.getElementById('connectWalletNav').style.display = 'none';
+            document.getElementById('walletConnected').style.display = 'flex';
+            
+            // Update addresses
+            document.getElementById('walletAddress').textContent = shortAddress;
+            document.getElementById('fullWalletAddress').textContent = shortAddress;
+            
+            // Update champion info
+            if (championData) {
+                document.getElementById('championNameDisplay').textContent = championData.championName;
+                document.getElementById('championWinrate').textContent = `${championData.winrate}%`;
+                document.getElementById('championTournaments').textContent = championData.tournamentsAttended;
+                
+                // Update avatar based on performance
+                const avatar = document.getElementById('championAvatar');
+                if (championData.winrate >= 75) {
+                    avatar.textContent = '👑';
+                } else if (championData.winrate >= 50) {
+                    avatar.textContent = '🏆';
+                } else if (championData.winrate >= 25) {
+                    avatar.textContent = '🥈';
+                } else {
+                    avatar.textContent = '🔰';
+                }
+            }
         }
 
         // Wallet dropdown functions
@@ -880,4 +1240,187 @@
             overlay.classList.remove('active');
             walletConnected.setAttribute('aria-expanded', 'false');
             
+            // Hide name edit input if open
+            const nameEdit = document.getElementById('championNameEdit');
+            const nameDisplay = document.getElementById('championNameDisplay');
+            const editBtn = document.getElementById('editNameBtn');
             
+            if (nameEdit.style.display !== 'none') {
+                nameEdit.style.display = 'none';
+                nameDisplay.style.display = 'block';
+                editBtn.textContent = '✏️ Edit Name';
+            }
+        }
+
+        // Champion name editing
+        function editChampionName() {
+            const nameEdit = document.getElementById('championNameEdit');
+            const nameDisplay = document.getElementById('championNameDisplay');
+            const editBtn = document.getElementById('editNameBtn');
+            
+            if (nameEdit.style.display === 'none' || !nameEdit.style.display) {
+                // Switch to edit mode
+                if (isInTournament) {
+                    showToast('Cannot edit name while in tournament', 'error');
+                    return;
+                }
+                
+                nameEdit.value = championData.championName;
+                nameEdit.style.display = 'block';
+                nameDisplay.style.display = 'none';
+                editBtn.textContent = '💾 Save Name';
+                nameEdit.focus();
+                
+                // Handle Enter key
+                nameEdit.onkeypress = function(e) {
+                    if (e.key === 'Enter') {
+                        saveChampionName();
+                    }
+                };
+                
+            } else {
+                // Save mode
+                saveChampionName();
+            }
+        }
+
+        function saveChampionName() {
+            const nameEdit = document.getElementById('championNameEdit');
+            const nameDisplay = document.getElementById('championNameDisplay');
+            const editBtn = document.getElementById('editNameBtn');
+            
+            const newName = nameEdit.value.trim();
+            
+            if (newName.length < 3) {
+                showToast('Champion name must be at least 3 characters', 'error');
+                return;
+            }
+            
+            if (newName.length > 32) {
+                showToast('Champion name must be less than 32 characters', 'error');
+                return;
+            }
+            
+            // Update champion data
+            championData.championName = newName;
+            const championKey = `champion_${championData.walletAddress}`;
+            localStorage.setItem(championKey, JSON.stringify(championData));
+            
+            // Update UI
+            nameDisplay.textContent = newName;
+            nameEdit.style.display = 'none';
+            nameDisplay.style.display = 'block';
+            editBtn.textContent = '✏️ Edit Name';
+            
+            showToast('Champion name updated!', 'success');
+        }
+
+        // Profile functions
+        function viewFullProfile() {
+            if (!championData) return;
+            
+            showToast('Full profile view coming soon!', 'success');
+            // TODO: Implement full profile modal or page
+        }
+
+        // Auto-connect on page load if previously connected
+        window.addEventListener('load', async () => {
+            try {
+                if (window.solana && window.solana.isPhantom && window.solana.isConnected) {
+                    const publicKey = window.solana.publicKey.toString();
+                    walletAdapter = window.solana;
+                    await initializeChampion(publicKey);
+                    updateWalletUI(publicKey);
+                }
+            } catch (error) {
+                console.log('Auto-connect failed:', error);
+            }
+        });
+
+        // Handle wallet events
+        if (window.solana) {
+            window.solana.on('connect', () => {
+                console.log('Wallet connected');
+            });
+            
+            window.solana.on('disconnect', () => {
+                console.log('Wallet disconnected');
+                disconnectWallet();
+            });
+        }
+
+        // Keyboard navigation for dropdown
+        document.addEventListener('keydown', (e) => {
+            const dropdown = document.getElementById('walletDropdown');
+            if (dropdown.classList.contains('active') && e.key === 'Escape') {
+                closeWalletDropdown();
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                
+                // Close mobile menu if open
+                const navLinks = document.getElementById('navLinks');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Tournament integration placeholder functions
+        function joinTournament(tournamentId) {
+            if (!walletAdapter) {
+                showToast('Please connect your wallet first', 'error');
+                return;
+            }
+            
+            // TODO: Implement tournament joining logic
+            showToast('Tournament joining coming soon!', 'success');
+        }
+
+        function leaveTournament() {
+            if (!isInTournament) return;
+            
+            // TODO: Implement tournament leaving logic
+            isInTournament = false;
+            showToast('Left tournament', 'success');
+        }
+
+        // Update champion stats (called after tournaments)
+        function updateChampionStats(won, earnings = 0) {
+            if (!championData) return;
+            
+            championData.tournamentsAttended++;
+            
+            if (won) {
+                championData.totalWins++;
+            } else {
+                championData.totalLosses++;
+            }
+            
+            championData.totalEarnings += earnings;
+            
+            // Calculate winrate
+            const totalGames = championData.totalWins + championData.totalLosses;
+            championData.winrate = totalGames > 0 ? Math.round((championData.totalWins / totalGames) * 100) : 0;
+            
+            // Save to localStorage
+            const championKey = `champion_${championData.walletAddress}`;
+            localStorage.setItem(championKey, JSON.stringify(championData));
+            
+            // Update UI if wallet is connected
+            if (walletAdapter) {
+                updateWalletUI(championData.walletAddress);
+            }
+        }
+    </script>
+</body>
+</html>
