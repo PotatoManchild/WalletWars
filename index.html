@@ -134,9 +134,11 @@
             border-radius: 0.5rem;
             transition: all 0.3s ease;
             position: relative;
+            cursor: pointer;
         }
 
-        .nav-links a:hover {
+        .nav-links a:hover,
+        .nav-links a.active {
             color: #8b5cf6;
             background: rgba(139, 92, 246, 0.1);
         }
@@ -156,6 +158,17 @@
             color: #34d399;
             background: rgba(16, 185, 129, 0.1);
             opacity: 1;
+        }
+
+        /* Page Sections */
+        .page-section {
+            display: none;
+            min-height: 100vh;
+            padding-top: 6rem;
+        }
+
+        .page-section.active {
+            display: block;
         }
 
         /* Wallet Button & Dropdown */
@@ -368,168 +381,6 @@
             outline-offset: 2px;
         }
 
-        /* Placeholder Sections */
-        .placeholder-section {
-            min-height: 60vh;
-            padding: 8rem 2rem 4rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background: rgba(15, 23, 42, 0.3);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(139, 92, 246, 0.1);
-        }
-
-        .placeholder-content {
-            max-width: 800px;
-            width: 100%;
-        }
-
-        .placeholder-title {
-            font-family: 'Orbitron', monospace;
-            font-size: clamp(2rem, 6vw, 4rem);
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .placeholder-description {
-            font-size: 1.2rem;
-            color: #d1d5db;
-            margin-bottom: 2rem;
-            opacity: 0.8;
-        }
-
-        .placeholder-features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .placeholder-feature {
-            background: rgba(31, 41, 55, 0.3);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .placeholder-feature:hover {
-            transform: translateY(-5px);
-            border-color: #8b5cf6;
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
-        }
-
-        .placeholder-feature-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .placeholder-feature h4 {
-            color: #8b5cf6;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .placeholder-feature p {
-            color: #9ca3af;
-            font-size: 0.9rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: rgba(10, 10, 10, 0.95);
-                backdrop-filter: blur(20px);
-                flex-direction: column;
-                gap: 0;
-                padding: 1rem 0;
-                border-top: 1px solid rgba(139, 92, 246, 0.2);
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links a {
-                padding: 1rem 2rem;
-                width: 100%;
-                text-align: center;
-            }
-
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .wallet-dropdown {
-                right: 1rem;
-                min-width: calc(100vw - 2rem);
-                max-width: 320px;
-            }
-
-            .champion-stats {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-
-            .nav-container {
-                padding: 0 1rem;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn-primary,
-            .btn-secondary {
-                width: 100%;
-                max-width: 300px;
-            }
-
-            .learn-more-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .hero-title {
-                font-size: clamp(2.5rem, 10vw, 4rem);
-                padding: 0 1rem;
-                letter-spacing: -0.02em;
-            }
-
-            .placeholder-features {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-        }
-
-        /* Dropdown Animation */
-        @keyframes dropdownFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .wallet-dropdown.active {
-            animation: dropdownFadeIn 0.3s ease;
-        }
-
         /* Click outside to close */
         .dropdown-overlay {
             position: fixed;
@@ -733,45 +584,731 @@
             line-height: 1.6;
         }
 
-        /* Accessibility */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
+        /* TOURNAMENTS PAGE STYLES */
+        .tournaments-page {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Focus States */
-        button:focus,
-        a:focus {
+        .tournaments-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .tournaments-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tournaments-subtitle {
+            font-size: 1.2rem;
+            color: #d1d5db;
+            opacity: 0.8;
+        }
+
+        /* Filter Section */
+        .filters-section {
+            background: rgba(31, 41, 55, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .filters-title {
+            font-weight: 600;
+            color: #8b5cf6;
+            font-size: 1.1rem;
+        }
+
+        .mobile-filter-toggle {
+            display: none;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            color: #d1d5db;
+            font-weight: 500;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        .filter-btn:focus {
             outline: 2px solid #8b5cf6;
             outline-offset: 2px;
         }
 
-        /* Loading States */
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
+        /* Tournament Cards */
+        .tournaments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
         }
 
-        .loading::after {
-            content: '';
+        .tournament-card {
+            background: rgba(31, 41, 55, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tournament-card:hover {
+            transform: translateY(-5px);
+            border-color: #8b5cf6;
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+        }
+
+        .tournament-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .tournament-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-live {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+
+        .status-upcoming {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+
+        .status-completed {
+            background: rgba(107, 114, 128, 0.2);
+            color: #9ca3af;
+            border: 1px solid #6b7280;
+        }
+
+        .tournament-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #d1d5db;
+        }
+
+        .detail-label {
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .info-icon {
+            color: #8b5cf6;
+            cursor: help;
+            font-size: 0.8rem;
+            position: relative;
+        }
+
+        .tooltip {
             position: absolute;
-            top: 50%;
+            bottom: 125%;
             left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
-            border: 2px solid transparent;
-            border-top: 2px solid #8b5cf6;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+            color: #d1d5db;
+            white-space: nowrap;
+            max-width: 200px;
+            white-space: normal;
+            width: max-content;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .info-icon:hover .tooltip,
+        .info-icon:focus .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tournament-participants {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 0.5rem;
+        }
+
+        .participants-count {
+            font-weight: 600;
+            color: #8b5cf6;
+        }
+
+        .tournament-timer {
+            font-size: 0.9rem;
+            color: #06b6d4;
+            font-weight: 500;
+        }
+
+        .tournament-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-register {
+            flex: 1;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-view {
+            flex: 1;
+            background: transparent;
+            border: 1px solid #8b5cf6;
+            color: #8b5cf6;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .btn-quick-view {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #d1d5db;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .btn-quick-view:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: #8b5cf6;
+        }
+
+        .quick-view-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .quick-view-content.expanded {
+            max-height: 500px;
+        }
+
+        .quick-view-details {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .quick-view-section {
+            margin-bottom: 1rem;
+        }
+
+        .quick-view-section h4 {
+            color: #8b5cf6;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .quick-view-section p {
+            color: #d1d5db;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* Registration Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .registration-modal {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .registration-modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #8b5cf6;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #ffffff;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .registration-steps {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-indicator {
+            flex: 1;
+            height: 4px;
+            background: rgba(107, 114, 128, 0.3);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .step-indicator.active {
+            background: #8b5cf6;
+        }
+
+        .step-indicator.completed {
+            background: #10b981;
+        }
+
+        .registration-step {
+            display: none;
+        }
+
+        .registration-step.active {
+            display: block;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .step-description {
+            color: #d1d5db;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: #d1d5db;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(31, 41, 55, 0.8);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-input.error {
+            border-color: #ef4444;
+        }
+
+        .form-error {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-success {
+            color: #10b981;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .warning-title {
+            color: #f59e0b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .warning-text {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-input {
+            margin-top: 0.25rem;
+            accent-color: #8b5cf6;
+        }
+
+        .checkbox-label {
+            color: #d1d5db;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-modal-primary {
+            flex: 1;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-modal-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-modal-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-modal-secondary {
+            background: transparent;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #8b5cf6;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-modal-secondary:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: #8b5cf6;
+        }
+
+        /* Mobile Filter Drawer */
+        .filter-dropdown {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: none;
+        }
+
+        .filter-dropdown.active {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .filter-dropdown-content {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1rem 1rem 0 0;
+            padding: 2rem;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .filter-dropdown.active .filter-dropdown-content {
+            transform: translateY(0);
+        }
+
+        .filter-dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-dropdown-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #8b5cf6;
+        }
+
+        .filter-dropdown-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .filter-dropdown-close:hover {
+            color: #ffffff;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* Placeholder sections for other pages */
+        .placeholder-section {
+            min-height: 60vh;
+            padding: 8rem 2rem 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .placeholder-content {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .placeholder-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .placeholder-description {
+            font-size: 1.2rem;
+            color: #d1d5db;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        .placeholder-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .placeholder-feature {
+            background: rgba(31, 41, 55, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .placeholder-feature:hover {
+            transform: translateY(-5px);
+            border-color: #8b5cf6;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+        }
+
+        .placeholder-feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .placeholder-feature h4 {
+            color: #8b5cf6;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .placeholder-feature p {
+            color: #9ca3af;
+            font-size: 0.9rem;
         }
 
         /* Toast notifications */
@@ -805,6 +1342,183 @@
             border-color: #ef4444;
             background: rgba(239, 68, 68, 0.1);
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10, 10, 10, 0.95);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                gap: 0;
+                padding: 1rem 0;
+                border-top: 1px solid rgba(139, 92, 246, 0.2);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 1rem 2rem;
+                width: 100%;
+                text-align: center;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .wallet-dropdown {
+                right: 1rem;
+                min-width: calc(100vw - 2rem);
+                max-width: 320px;
+            }
+
+            .champion-stats {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .learn-more-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .hero-title {
+                font-size: clamp(2.5rem, 10vw, 4rem);
+                padding: 0 1rem;
+                letter-spacing: -0.02em;
+            }
+
+            .placeholder-features {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            /* Mobile tournaments page */
+            .tournaments-page {
+                padding: 1rem;
+            }
+
+            .tournaments-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .tournament-card {
+                padding: 1rem;
+            }
+
+            .tournament-details {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .mobile-filter-toggle {
+                display: block;
+            }
+
+            .filters-grid {
+                display: none;
+            }
+
+            .registration-modal {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .tooltip {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                transform: none;
+                max-width: none;
+                width: auto;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus States */
+        button:focus,
+        a:focus,
+        input:focus {
+            outline: 2px solid #8b5cf6;
+            outline-offset: 2px;
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid #8b5cf6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Dropdown Animation */
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .wallet-dropdown.active {
+            animation: dropdownFadeIn 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -815,14 +1529,14 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo" onclick="scrollToTop()">WalletWars</div>
+            <div class="logo" onclick="navigateToPage('home')">WalletWars</div>
             
             <ul class="nav-links" id="navLinks">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#tournaments">Tournaments</a></li>
-                <li><a href="#leaderboards">Leaderboards</a></li>
-                <li><a href="#hall-of-fame">Hall of Fame</a></li>
-                <li><a href="#donate" class="donate-link">Donate</a></li>
+                <li><a onclick="navigateToPage('home')" id="nav-home">Home</a></li>
+                <li><a onclick="navigateToPage('tournaments')" id="nav-tournaments">Tournaments</a></li>
+                <li><a onclick="navigateToPage('leaderboards')" id="nav-leaderboards">Leaderboards</a></li>
+                <li><a onclick="navigateToPage('hall-of-fame')" id="nav-hall-of-fame">Hall of Fame</a></li>
+                <li><a onclick="navigateToPage('donate')" id="nav-donate" class="donate-link">Donate</a></li>
             </ul>
             
             <div class="wallet-section">
@@ -883,167 +1597,390 @@
     <!-- Dropdown Overlay (for clicking outside to close) -->
     <div class="dropdown-overlay" id="dropdownOverlay" onclick="closeWalletDropdown()"></div>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">WalletWars</h1>
-            <p class="hero-motto">Solana's ultimate winrate battleground</p>
-            
-            <div class="cta-buttons">
-                <button class="btn-primary" onclick="connectWallet()">
-                    Connect Wallet
-                </button>
-                <a href="#learn-more" class="btn-secondary">
-                    Learn More
-                </a>
+    <!-- HOME PAGE -->
+    <section id="home" class="page-section active">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">WalletWars</h1>
+                <p class="hero-motto">Solana's ultimate winrate battleground</p>
+                
+                <div class="cta-buttons">
+                    <button class="btn-primary" onclick="connectWallet()">
+                        Connect Wallet
+                    </button>
+                    <a href="#learn-more" class="btn-secondary">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learn More Section -->
+        <div id="learn-more" class="learn-more-section">
+            <div class="learn-more-container">
+                <h2 class="learn-more-title">How WalletWars Works</h2>
+                
+                <div class="learn-more-content">
+                    <div class="concept-card">
+                        <div class="concept-icon">⚔️</div>
+                        <h3 class="concept-title">Skill-Based Competition</h3>
+                        <p class="concept-description">
+                            Compete based on your wallet's performance and trading skills, not luck. Your winrate determines your rank in tournaments.
+                        </p>
+                    </div>
+                    
+                    <div class="concept-card">
+                        <div class="concept-icon">🏆</div>
+                        <h3 class="concept-title">Real SOL Rewards</h3>
+                        <p class="concept-description">
+                            Win real SOL prizes in tournaments. Top performers take home the largest share of the prize pool based on their wallet performance.
+                        </p>
+                    </div>
+                    
+                    <div class="concept-card">
+                        <div class="concept-icon">📊</div>
+                        <h3 class="concept-title">Performance Tracking</h3>
+                        <p class="concept-description">
+                            Advanced analytics track your wallet's value changes over time, calculating your performance percentage for tournament rankings.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Learn More Section -->
-    <section id="learn-more" class="learn-more-section">
-        <div class="learn-more-container">
-            <h2 class="learn-more-title">How WalletWars Works</h2>
-            
-            <div class="learn-more-content">
-                <div class="concept-card">
-                    <div class="concept-icon">⚔️</div>
-                    <h3 class="concept-title">Skill-Based Competition</h3>
-                    <p class="concept-description">
-                        Compete based on your wallet's performance and trading skills, not luck. Your winrate determines your rank in tournaments.
-                    </p>
+    <!-- TOURNAMENTS PAGE -->
+    <section id="tournaments" class="page-section">
+        <div class="tournaments-page">
+            <div class="tournaments-header">
+                <h1 class="tournaments-title">Tournaments</h1>
+                <p class="tournaments-subtitle">Compete in skill-based tournaments where your wallet's performance determines victory</p>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <div class="filters-header">
+                    <h3 class="filters-title">Filter Tournaments</h3>
+                    <button class="mobile-filter-toggle" onclick="toggleMobileFilters()" aria-label="Open filters">
+                        🔍 Filters
+                    </button>
                 </div>
                 
-                <div class="concept-card">
-                    <div class="concept-icon">🏆</div>
-                    <h3 class="concept-title">Real SOL Rewards</h3>
-                    <p class="concept-description">
-                        Win real SOL prizes in tournaments. Top performers take home the largest share of the prize pool based on their wallet performance.
-                    </p>
+                <div class="filters-grid" id="filtersGrid">
+                    <div class="filter-group">
+                        <label class="filter-label">Timeframe</label>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="timeframe" data-value="all" onclick="applyFilter('timeframe', 'all', this)">All</button>
+                            <button class="filter-btn" data-filter="timeframe" data-value="weekly" onclick="applyFilter('timeframe', 'weekly', this)">Weekly</button>
+                            <button class="filter-btn" data-filter="timeframe" data-value="monthly" onclick="applyFilter('timeframe', 'monthly', this)">Monthly</button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Entry Fee</label>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="entryFee" data-value="all" onclick="applyFilter('entryFee', 'all', this)">All</button>
+                            <button class="filter-btn" data-filter="entryFee" data-value="0.01" onclick="applyFilter('entryFee', '0.01', this)">0.01 SOL</button>
+                            <button class="filter-btn" data-filter="entryFee" data-value="0.1" onclick="applyFilter('entryFee', '0.1', this)">0.1 SOL</button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Max Players</label>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="maxPlayers" data-value="all" onclick="applyFilter('maxPlayers', 'all', this)">All</button>
+                            <button class="filter-btn" data-filter="maxPlayers" data-value="100" onclick="applyFilter('maxPlayers', '100', this)">100</button>
+                            <button class="filter-btn" data-filter="maxPlayers" data-value="1000" onclick="applyFilter('maxPlayers', '1000', this)">1000</button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Ranking Bracket</label>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="bracket" data-value="all" onclick="applyFilter('bracket', 'all', this)">All</button>
+                            <button class="filter-btn" data-filter="bracket" data-value="beginner" onclick="applyFilter('bracket', 'beginner', this)">Beginner</button>
+                            <button class="filter-btn" data-filter="bracket" data-value="intermediate" onclick="applyFilter('bracket', 'intermediate', this)">Intermediate</button>
+                            <button class="filter-btn" data-filter="bracket" data-value="advanced" onclick="applyFilter('bracket', 'advanced', this)">Advanced</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tournament Cards -->
+            <div class="tournaments-grid" id="tournamentsGrid">
+                <!-- Tournament cards will be dynamically generated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- LEADERBOARDS PAGE -->
+    <section id="leaderboards" class="page-section">
+        <div class="placeholder-section">
+            <div class="placeholder-content">
+                <h2 class="placeholder-title">Leaderboards</h2>
+                <p class="placeholder-description">
+                    Track the performance of elite Champions and see where you rank in the competitive landscape.
+                </p>
+                
+                <div class="placeholder-features">
+                    <div class="placeholder-feature">
+                        <div class="placeholder-feature-icon">📈</div>
+                        <h4>Global Rankings</h4>
+                        <p>See the top-performing Champions across all tournaments</p>
+                    </div>
+                    <div class="placeholder-feature">
+                        <div class="placeholder-feature-icon">🔥</div>
+                        <h4>Hot Streaks</h4>
+                        <p>Champions on winning streaks with consecutive victories</p>
+                    </div>
+                    <div class="placeholder-feature">
+                        <div class="placeholder-feature-icon">💰</div>
+                        <h4>Earnings Leaders</h4>
+                        <p>Top earners ranked by total SOL won in tournaments</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HALL OF FAME PAGE -->
+    <section id="hall-of-fame" class="page-section">
+        <div class="placeholder-section">
+            <div class="placeholder-content">
+                <h2 class="placeholder-title">Hall of Fame</h2>
+                <p class="placeholder-description">
+                    Legendary Champions who have achieved greatness in WalletWars competitions.
+                </p>
+                
+                <div class="placeholder-features">
+                    <div class="placeholder-feature">
+                        <div class="placeholder-feature-icon">🏛️</div>
+                        <h4>Legendary Champions</h4>
+                        <p>Elite performers with exceptional tournament records</p>
+                    </div>
+                    <div class="placeholder-feature">
+                        <div class="placeholder-feature-icon">🎖️</div>
+                        <h4>Achievement Unlocks</h4>
+                        <p>Special honors for remarkable feats and milestones</p>
+                    </div>
+                    <div class="placeholder-feature">
+                        <div class="placeholder-feature-icon">⚡</div>
+                        <h4>Record Holders</h4>
+                        <p>Champions who set new standards in performance metrics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DONATE PAGE -->
+    <section id="donate" class="page-section">
+        <div class="placeholder-section">
+            <div class="placeholder-content">
+                <h2 class="placeholder-title">Support WalletWars</h2>
+                <p class="placeholder-description">
+                    Help us build the future of skill-based competition on Solana. Your support funds development and larger prize pools.
+                </p>
+                
+                <div class="placeholder-features">
+                    <div class="placeholder-feature">
+                        <div class="placeholder-feature-icon">🚀</div>
+                        <h4>Platform Development</h4>
+                        <p>Fund new features, tournaments, and platform improvements</p>
+                    </div>
+                    <div class="placeholder-feature">
+                        <div class="placeholder-feature-icon">💎</div>
+                        <h4>Prize Pool Boost</h4>
+                        <p>Donations directly increase tournament rewards for Champions</p>
+                    </div>
+                    <div class="placeholder-feature">
+                        <div class="placeholder-feature-icon">🌟</div>
+                        <h4>Community Growth</h4>
+                        <p>Support marketing and community building efforts</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mobile Filter Dropdown -->
+    <div class="filter-dropdown" id="filterDropdown">
+        <div class="filter-dropdown-content">
+            <div class="filter-dropdown-header">
+                <h3 class="filter-dropdown-title">Filter Tournaments</h3>
+                <button class="filter-dropdown-close" onclick="closeMobileFilters()" aria-label="Close filters">×</button>
+            </div>
+            
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Timeframe</label>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="timeframe" data-value="all" onclick="applyFilter('timeframe', 'all', this)">All</button>
+                        <button class="filter-btn" data-filter="timeframe" data-value="weekly" onclick="applyFilter('timeframe', 'weekly', this)">Weekly</button>
+                        <button class="filter-btn" data-filter="timeframe" data-value="monthly" onclick="applyFilter('timeframe', 'monthly', this)">Monthly</button>
+                    </div>
                 </div>
                 
-                <div class="concept-card">
-                    <div class="concept-icon">📊</div>
-                    <h3 class="concept-title">Performance Tracking</h3>
-                    <p class="concept-description">
-                        Advanced analytics track your wallet's value changes over time, calculating your performance percentage for tournament rankings.
-                    </p>
+                <div class="filter-group">
+                    <label class="filter-label">Entry Fee</label>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="entryFee" data-value="all" onclick="applyFilter('entryFee', 'all', this)">All</button>
+                        <button class="filter-btn" data-filter="entryFee" data-value="0.01" onclick="applyFilter('entryFee', '0.01', this)">0.01 SOL</button>
+                        <button class="filter-btn" data-filter="entryFee" data-value="0.1" onclick="applyFilter('entryFee', '0.1', this)">0.1 SOL</button>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Max Players</label>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="maxPlayers" data-value="all" onclick="applyFilter('maxPlayers', 'all', this)">All</button>
+                        <button class="filter-btn" data-filter="maxPlayers" data-value="100" onclick="applyFilter('maxPlayers', '100', this)">100</button>
+                        <button class="filter-btn" data-filter="maxPlayers" data-value="1000" onclick="applyFilter('maxPlayers', '1000', this)">1000</button>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Ranking Bracket</label>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="bracket" data-value="all" onclick="applyFilter('bracket', 'all', this)">All</button>
+                        <button class="filter-btn" data-filter="bracket" data-value="beginner" onclick="applyFilter('bracket', 'beginner', this)">Beginner</button>
+                        <button class="filter-btn" data-filter="bracket" data-value="intermediate" onclick="applyFilter('bracket', 'intermediate', this)">Intermediate</button>
+                        <button class="filter-btn" data-filter="bracket" data-value="advanced" onclick="applyFilter('bracket', 'advanced', this)">Advanced</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Tournaments Section -->
-    <section id="tournaments" class="placeholder-section">
-        <div class="placeholder-content">
-            <h2 class="placeholder-title">Tournaments</h2>
-            <p class="placeholder-description">
-                Compete in skill-based tournaments where your wallet's performance determines victory, not chance.
-            </p>
+    <!-- Registration Modal -->
+    <div class="modal-overlay" id="registrationModal">
+        <div class="registration-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Tournament Registration</h2>
+                <button class="modal-close" onclick="closeRegistrationModal()" aria-label="Close modal">×</button>
+            </div>
             
-            <div class="placeholder-features">
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">🎯</div>
-                    <h4>Daily Tournaments</h4>
-                    <p>Quick 24-hour competitions with immediate SOL rewards</p>
+            <div class="registration-steps">
+                <div class="step-indicator active" id="step1Indicator"></div>
+                <div class="step-indicator" id="step2Indicator"></div>
+                <div class="step-indicator" id="step3Indicator"></div>
+                <div class="step-indicator" id="step4Indicator"></div>
+            </div>
+            
+            <!-- Step 1: Champion Name -->
+            <div class="registration-step active" id="step1">
+                <h3 class="step-title">Choose Your Champion Name</h3>
+                <p class="step-description">Select a unique name for this tournament. This will be your identity in the competition.</p>
+                
+                <div class="form-group">
+                    <label class="form-label" for="championNameInput">Champion Name</label>
+                    <input type="text" id="championNameInput" class="form-input" placeholder="Enter your champion name" maxlength="16" autocomplete="off">
+                    <div class="form-error" id="nameError" style="display: none;"></div>
+                    <div class="form-success" id="nameSuccess" style="display: none;"></div>
                 </div>
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">🏅</div>
-                    <h4>Weekly Championships</h4>
-                    <p>Larger prize pools for sustained performance over 7 days</p>
+                
+                <div class="modal-actions">
+                    <button class="btn-modal-secondary" onclick="closeRegistrationModal()">Cancel</button>
+                    <button class="btn-modal-primary" onclick="nextStep()" id="step1Next" disabled>Next</button>
                 </div>
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">👑</div>
-                    <h4>Grand Tournaments</h4>
-                    <p>Epic monthly battles with massive SOL prizes for top Champions</p>
+            </div>
+            
+            <!-- Step 2: Wallet Connection -->
+            <div class="registration-step" id="step2">
+                <h3 class="step-title">Connect Your Wallet</h3>
+                <p class="step-description">Connect your Solana wallet to participate in the tournament.</p>
+                
+                <div id="walletConnectionStatus">
+                    <div class="warning-box" id="walletNotConnected">
+                        <div class="warning-title">
+                            <span>⚠️</span>
+                            Wallet Not Connected
+                        </div>
+                        <p class="warning-text">Please connect your Solana wallet to continue with registration.</p>
+                    </div>
+                    
+                    <div class="form-group" id="walletConnected" style="display: none;">
+                        <div class="form-success">
+                            <strong>✓ Wallet Connected</strong><br>
+                            <span id="connectedWalletAddress"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn-modal-secondary" onclick="previousStep()">Back</button>
+                    <button class="btn-modal-primary" onclick="nextStep()" id="step2Next" disabled>Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Warnings -->
+            <div class="registration-step" id="step3">
+                <h3 class="step-title">Important Warnings</h3>
+                <p class="step-description">Please read these important rules carefully before proceeding.</p>
+                
+                <div class="warning-box">
+                    <div class="warning-title">
+                        <span>🔒</span>
+                        Champion Name Lock
+                    </div>
+                    <p class="warning-text">Once you choose your Champion name, it will be locked to this wallet address for this tournament.</p>
+                    <br>
+                    <p class="warning-text"><strong>Tip:</strong> For privacy and security, consider creating a new wallet dedicated to WalletWars tournaments.</p>
+                </div>
+                
+                <div class="warning-box">
+                    <div class="warning-title">
+                        <span>🚫</span>
+                        Incoming Transfers Warning
+                        <span class="info-icon" tabindex="0">
+                            ⓘ
+                            <div class="tooltip">Any incoming transfer to your wallet during the tournament will result in disqualification.</div>
+                        </span>
+                    </div>
+                    <p class="warning-text">No incoming transfers are allowed during the tournament. To ensure fairness, wallet balances must remain static except for tournament-related transactions.</p>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn-modal-secondary" onclick="previousStep()">Back</button>
+                    <button class="btn-modal-primary" onclick="nextStep()">I Understand</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Confirmation -->
+            <div class="registration-step" id="step4">
+                <h3 class="step-title">Confirm Registration</h3>
+                <p class="step-description">Review your tournament registration details and confirm your participation.</p>
+                
+                <div class="form-group">
+                    <div class="warning-box">
+                        <div class="warning-title">
+                            <span>📋</span>
+                            Registration Summary
+                        </div>
+                        <p class="warning-text">
+                            <strong>Tournament:</strong> <span id="confirmTournamentName"></span><br>
+                            <strong>Champion Name:</strong> <span id="confirmChampionName"></span><br>
+                            <strong>Entry Fee:</strong> <span id="confirmEntryFee"></span><br>
+                            <strong>Wallet:</strong> <span id="confirmWalletAddress"></span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="acceptRules" class="checkbox-input">
+                    <label for="acceptRules" class="checkbox-label">
+                        I have read and accept the tournament rules and restrictions.
+                    </label>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn-modal-secondary" onclick="previousStep()">Back</button>
+                    <button class="btn-modal-primary" onclick="confirmRegistration()" id="confirmBtn" disabled>Accept and Proceed</button>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Leaderboards Section -->
-    <section id="leaderboards" class="placeholder-section">
-        <div class="placeholder-content">
-            <h2 class="placeholder-title">Leaderboards</h2>
-            <p class="placeholder-description">
-                Track the performance of elite Champions and see where you rank in the competitive landscape.
-            </p>
-            
-            <div class="placeholder-features">
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">📈</div>
-                    <h4>Global Rankings</h4>
-                    <p>See the top-performing Champions across all tournaments</p>
-                </div>
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">🔥</div>
-                    <h4>Hot Streaks</h4>
-                    <p>Champions on winning streaks with consecutive victories</p>
-                </div>
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">💰</div>
-                    <h4>Earnings Leaders</h4>
-                    <p>Top earners ranked by total SOL won in tournaments</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Hall of Fame Section -->
-    <section id="hall-of-fame" class="placeholder-section">
-        <div class="placeholder-content">
-            <h2 class="placeholder-title">Hall of Fame</h2>
-            <p class="placeholder-description">
-                Legendary Champions who have achieved greatness in WalletWars competitions.
-            </p>
-            
-            <div class="placeholder-features">
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">🏛️</div>
-                    <h4>Legendary Champions</h4>
-                    <p>Elite performers with exceptional tournament records</p>
-                </div>
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">🎖️</div>
-                    <h4>Achievement Unlocks</h4>
-                    <p>Special honors for remarkable feats and milestones</p>
-                </div>
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">⚡</div>
-                    <h4>Record Holders</h4>
-                    <p>Champions who set new standards in performance metrics</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Donate Section -->
-    <section id="donate" class="placeholder-section">
-        <div class="placeholder-content">
-            <h2 class="placeholder-title">Support WalletWars</h2>
-            <p class="placeholder-description">
-                Help us build the future of skill-based competition on Solana. Your support funds development and larger prize pools.
-            </p>
-            
-            <div class="placeholder-features">
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">🚀</div>
-                    <h4>Platform Development</h4>
-                    <p>Fund new features, tournaments, and platform improvements</p>
-                </div>
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">💎</div>
-                    <h4>Prize Pool Boost</h4>
-                    <p>Donations directly increase tournament rewards for Champions</p>
-                </div>
-                <div class="placeholder-feature">
-                    <div class="placeholder-feature-icon">🌟</div>
-                    <h4>Community Growth</h4>
-                    <p>Support marketing and community building efforts</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
 
     <script>
         // WalletWars Core JavaScript
@@ -1059,6 +1996,599 @@
         let championData = null;
         let isConnecting = false;
         let isInTournament = false;
+        let currentPage = 'home';
+        let currentRegistrationStep = 1;
+        let registrationData = {};
+        let currentFilters = {
+            timeframe: 'all',
+            entryFee: 'all',
+            maxPlayers: 'all',
+            bracket: 'all'
+        };
+
+        // Tournament timing utilities
+        function getNextMondayNoon() {
+            const now = new Date();
+            const nextMonday = new Date(now);
+            
+            // Get days until next Monday (0 = Sunday, 1 = Monday, etc.)
+            const daysUntilMonday = (8 - now.getDay()) % 7;
+            if (daysUntilMonday === 0 && now.getHours() >= 12) {
+                // If it's Monday and past noon, get next Monday
+                nextMonday.setDate(now.getDate() + 7);
+            } else {
+                nextMonday.setDate(now.getDate() + daysUntilMonday);
+            }
+            
+            // Set to 12:00 noon UTC
+            nextMonday.setUTCHours(12, 0, 0, 0);
+            return nextMonday.getTime();
+        }
+
+        function getFirstMondayOfNextMonth() {
+            const now = new Date();
+            const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            
+            // Find first Monday of the month
+            const firstDay = nextMonth.getDay(); // 0 = Sunday, 1 = Monday, etc.
+            const daysToAdd = firstDay === 0 ? 1 : (8 - firstDay) % 7;
+            nextMonth.setDate(1 + daysToAdd);
+            
+            // Set to 12:00 noon UTC
+            nextMonth.setUTCHours(12, 0, 0, 0);
+            return nextMonth.getTime();
+        }
+
+        function getLastMondayNoon() {
+            const now = new Date();
+            const lastMonday = new Date(now);
+            
+            // Get days since last Monday
+            const daysSinceMonday = (now.getDay() + 6) % 7;
+            lastMonday.setDate(now.getDate() - daysSinceMonday);
+            
+            // Set to 12:00 noon UTC
+            lastMonday.setUTCHours(12, 0, 0, 0);
+            return lastMonday.getTime();
+        }
+
+        function getFirstMondayOfCurrentMonth() {
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            
+            // Find first Monday of current month
+            const firstDayOfWeek = firstDay.getDay();
+            const daysToAdd = firstDayOfWeek === 0 ? 1 : (8 - firstDayOfWeek) % 7;
+            firstDay.setDate(1 + daysToAdd);
+            
+            // Set to 12:00 noon UTC
+            firstDay.setUTCHours(12, 0, 0, 0);
+            return firstDay.getTime();
+        }
+
+        // Sample tournament data with realistic UTC timing
+        const sampleTournaments = [
+            {
+                id: 1,
+                name: "Weekly Warrior Challenge",
+                status: "upcoming",
+                timeframe: "weekly",
+                entryFee: 0.01,
+                maxPlayers: 100,
+                currentPlayers: 23,
+                bracket: "beginner",
+                startTime: getNextMondayNoon(),
+                endTime: getNextMondayNoon() + 7 * 24 * 60 * 60 * 1000, // 7 days later
+                minBalance: 0.05,
+                prizePool: 0.8,
+                rules: "Track wallet performance over 7 days. Best performing wallet wins.",
+                schedule: "Starts every Monday at 12:00 noon UTC"
+            },
+            {
+                id: 2,
+                name: "Monthly Masters Tournament",
+                status: "live",
+                timeframe: "monthly",
+                entryFee: 0.1,
+                maxPlayers: 1000,
+                currentPlayers: 542,
+                bracket: "advanced",
+                startTime: getFirstMondayOfCurrentMonth(),
+                endTime: getFirstMondayOfNextMonth(),
+                minBalance: 0.5,
+                prizePool: 80,
+                rules: "30-day competition with daily performance tracking. Top 10% share the prize pool.",
+                schedule: "Starts first Monday of each month at 12:00 noon UTC"
+            },
+            {
+                id: 3,
+                name: "Beginner's Luck Tournament",
+                status: "upcoming",
+                timeframe: "weekly",
+                entryFee: 0.01,
+                maxPlayers: 100,
+                currentPlayers: 67,
+                bracket: "beginner",
+                startTime: getNextMondayNoon() + 7 * 24 * 60 * 60 * 1000, // Next week
+                endTime: getNextMondayNoon() + 14 * 24 * 60 * 60 * 1000, // Week after
+                minBalance: 0.05,
+                prizePool: 0.5,
+                rules: "Perfect for new Champions. Conservative strategies encouraged.",
+                schedule: "Starts every Monday at 12:00 noon UTC"
+            },
+            {
+                id: 4,
+                name: "High Stakes Championship",
+                status: "completed",
+                timeframe: "monthly",
+                entryFee: 0.1,
+                maxPlayers: 500,
+                currentPlayers: 500,
+                bracket: "advanced",
+                startTime: getFirstMondayOfCurrentMonth() - 30 * 24 * 60 * 60 * 1000, // Last month
+                endTime: getFirstMondayOfCurrentMonth() - 24 * 60 * 60 * 1000, // Ended yesterday
+                minBalance: 1.0,
+                prizePool: 40,
+                rules: "Elite tournament for experienced Champions only.",
+                schedule: "Starts first Monday of each month at 12:00 noon UTC"
+            },
+            {
+                id: 5,
+                name: "Intermediate Challenge",
+                status: "upcoming",
+                timeframe: "weekly",
+                entryFee: 0.01,
+                maxPlayers: 200,
+                currentPlayers: 89,
+                bracket: "intermediate",
+                startTime: getNextMondayNoon() + 14 * 24 * 60 * 60 * 1000, // Two weeks from next Monday
+                endTime: getNextMondayNoon() + 21 * 24 * 60 * 60 * 1000, // Three weeks from next Monday
+                minBalance: 0.1,
+                prizePool: 1.5,
+                rules: "Balanced tournament for developing Champions.",
+                schedule: "Starts every Monday at 12:00 noon UTC"
+            },
+            {
+                id: 6,
+                name: "Lightning Round",
+                status: "live",
+                timeframe: "weekly",
+                entryFee: 0.1,
+                maxPlayers: 50,
+                currentPlayers: 34,
+                bracket: "intermediate",
+                startTime: getLastMondayNoon(), // Started last Monday
+                endTime: getLastMondayNoon() + 7 * 24 * 60 * 60 * 1000, // Ends this Monday
+                minBalance: 0.2,
+                prizePool: 4.5,
+                rules: "Fast-paced tournament with daily performance checks.",
+                schedule: "Starts every Monday at 12:00 noon UTC"
+            }
+        ];
+
+        // Page navigation
+        function navigateToPage(page) {
+            // Hide all pages
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(page).classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.getElementById(`nav-${page}`).classList.add('active');
+            
+            // Update URL
+            window.history.pushState({}, '', `#${page}`);
+            currentPage = page;
+            
+            // Close mobile menu if open
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.remove('active');
+            
+            // Initialize page-specific content
+            if (page === 'tournaments') {
+                initializeTournaments();
+            }
+        }
+
+        // Initialize tournaments page
+        function initializeTournaments() {
+            renderTournaments();
+            startTournamentTimers();
+        }
+
+        // Render tournament cards
+        function renderTournaments() {
+            const grid = document.getElementById('tournamentsGrid');
+            if (!grid) return;
+            
+            const filteredTournaments = filterTournaments();
+            
+            if (filteredTournaments.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #9ca3af;">
+                        <h3>No tournaments found</h3>
+                        <p>Try adjusting your filters to see more tournaments.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = filteredTournaments.map(tournament => createTournamentCard(tournament)).join('');
+        }
+
+        // Filter tournaments based on current filters
+        function filterTournaments() {
+            return sampleTournaments.filter(tournament => {
+                if (currentFilters.timeframe !== 'all' && tournament.timeframe !== currentFilters.timeframe) return false;
+                if (currentFilters.entryFee !== 'all' && tournament.entryFee.toString() !== currentFilters.entryFee) return false;
+                if (currentFilters.maxPlayers !== 'all' && tournament.maxPlayers.toString() !== currentFilters.maxPlayers) return false;
+                if (currentFilters.bracket !== 'all' && tournament.bracket !== currentFilters.bracket) return false;
+                return true;
+            });
+        }
+
+        // Create tournament card HTML
+        function createTournamentCard(tournament) {
+            const statusClass = `status-${tournament.status}`;
+            const timeLeft = formatTimeLeft(tournament.status === 'upcoming' ? tournament.startTime : tournament.endTime);
+            const timeLabel = tournament.status === 'upcoming' ? 'Starts in' : tournament.status === 'live' ? 'Ends in' : 'Completed';
+            
+            return `
+                <div class="tournament-card" data-tournament-id="${tournament.id}">
+                    <div class="tournament-header">
+                        <div>
+                            <h3 class="tournament-title">${tournament.name}</h3>
+                            <div class="status-badge ${statusClass}">${tournament.status}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tournament-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Timeframe:</span>
+                            <span class="detail-value">${tournament.timeframe}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Entry Fee:</span>
+                            <span class="detail-value">${tournament.entryFee} SOL</span>
+                            <span class="info-icon" tabindex="0">
+                                ⓘ
+                                <div class="tooltip">This is the amount of SOL required to enter this tournament. Entry fee is non-refundable.</div>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Max Players:</span>
+                            <span class="detail-value">${tournament.maxPlayers} players</span>
+                            <span class="info-icon" tabindex="0">
+                                ⓘ
+                                <div class="tooltip">This is the maximum number of participants allowed in this tournament.</div>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Min Balance:</span>
+                            <span class="detail-value">${tournament.minBalance} SOL</span>
+                            <span class="info-icon" tabindex="0">
+                                ⓘ
+                                <div class="tooltip">You must have at least this much SOL in your wallet to join. This ensures fair play and prize eligibility.</div>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Bracket:</span>
+                            <span class="detail-value">${tournament.bracket}</span>
+                            <span class="info-icon" tabindex="0">
+                                ⓘ
+                                <div class="tooltip">Brackets are based on your historical winrate and experience. Beginners: <20% winrate, Intermediate: 20–50%, Advanced: >50%.</div>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Prize Pool:</span>
+                            <span class="detail-value">${tournament.prizePool} SOL</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tournament-participants">
+                        <span class="participants-count">${tournament.currentPlayers}/${tournament.maxPlayers} players</span>
+                        <span class="tournament-timer">${timeLabel}: ${timeLeft}</span>
+                    </div>
+                    
+                    <div class="tournament-actions">
+                        ${tournament.status === 'upcoming' ? 
+                            `<button class="btn-register" onclick="openRegistrationModal(${tournament.id})">Register</button>` :
+                            `<button class="btn-view" onclick="viewTournament(${tournament.id})">View</button>`
+                        }
+                        <button class="btn-quick-view" onclick="toggleQuickView(${tournament.id})">Quick View</button>
+                    </div>
+                    
+                    <div class="quick-view-content" id="quickView${tournament.id}">
+                        <div class="quick-view-details">
+                            <div class="quick-view-section">
+                                <h4>Rules</h4>
+                                <p>${tournament.rules}</p>
+                            </div>
+                            <div class="quick-view-section">
+                                <h4>Schedule</h4>
+                                <p>${tournament.schedule}</p>
+                            </div>
+                            <div class="quick-view-section">
+                                <h4>Prize Distribution</h4>
+                                <p>Winner takes 60%, Runner-up 25%, Third place 15% of the prize pool.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Format time left
+        function formatTimeLeft(timestamp) {
+            const now = Date.now();
+            const diff = timestamp - now;
+            
+            if (diff <= 0) return 'Ended';
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (days > 0) return `${days}d ${hours}h`;
+            if (hours > 0) return `${hours}h ${minutes}m`;
+            return `${minutes}m`;
+        }
+
+        // Start tournament timers
+        function startTournamentTimers() {
+            setInterval(() => {
+                if (currentPage === 'tournaments') {
+                    document.querySelectorAll('.tournament-timer').forEach(timer => {
+                        const card = timer.closest('.tournament-card');
+                        const tournamentId = parseInt(card.dataset.tournamentId);
+                        const tournament = sampleTournaments.find(t => t.id === tournamentId);
+                        
+                        if (tournament) {
+                            const timeLeft = formatTimeLeft(tournament.status === 'upcoming' ? tournament.startTime : tournament.endTime);
+                            const timeLabel = tournament.status === 'upcoming' ? 'Starts in' : tournament.status === 'live' ? 'Ends in' : 'Completed';
+                            timer.textContent = `${timeLabel}: ${timeLeft}`;
+                        }
+                    });
+                }
+            }, 60000); // Update every minute
+        }
+
+        // Apply filter
+        function applyFilter(filterType, value, button) {
+            currentFilters[filterType] = value;
+            
+            // Update button states
+            const filterGroup = button.closest('.filter-group');
+            filterGroup.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Also update mobile filters if they exist
+            const mobileFilterGroup = document.querySelector(`#filterDropdown .filter-group:has([data-filter="${filterType}"])`);
+            if (mobileFilterGroup) {
+                mobileFilterGroup.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                mobileFilterGroup.querySelector(`[data-value="${value}"]`).classList.add('active');
+            }
+            
+            renderTournaments();
+        }
+
+        // Toggle quick view
+        function toggleQuickView(tournamentId) {
+            const quickView = document.getElementById(`quickView${tournamentId}`);
+            quickView.classList.toggle('expanded');
+        }
+
+        // Mobile filters
+        function toggleMobileFilters() {
+            document.getElementById('filterDropdown').classList.add('active');
+        }
+
+        function closeMobileFilters() {
+            document.getElementById('filterDropdown').classList.remove('active');
+        }
+
+        // Registration modal functions
+        function openRegistrationModal(tournamentId) {
+            const tournament = sampleTournaments.find(t => t.id === tournamentId);
+            if (!tournament) return;
+            
+            registrationData = { tournament };
+            currentRegistrationStep = 1;
+            
+            // Reset modal
+            document.querySelectorAll('.registration-step').forEach(step => step.classList.remove('active'));
+            document.getElementById('step1').classList.add('active');
+            
+            // Reset step indicators
+            document.querySelectorAll('.step-indicator').forEach(indicator => {
+                indicator.classList.remove('active', 'completed');
+            });
+            document.getElementById('step1Indicator').classList.add('active');
+            
+            // Clear form
+            document.getElementById('championNameInput').value = '';
+            document.getElementById('nameError').style.display = 'none';
+            document.getElementById('nameSuccess').style.display = 'none';
+            document.getElementById('step1Next').disabled = true;
+            
+            // Show modal
+            document.getElementById('registrationModal').classList.add('active');
+        }
+
+        function closeRegistrationModal() {
+            document.getElementById('registrationModal').classList.remove('active');
+            registrationData = {};
+            currentRegistrationStep = 1;
+        }
+
+        function nextStep() {
+            if (currentRegistrationStep === 1) {
+                // Validate champion name
+                const name = document.getElementById('championNameInput').value.trim();
+                if (!validateChampionName(name)) return;
+                
+                registrationData.championName = name;
+            } else if (currentRegistrationStep === 2) {
+                // Check wallet connection
+                if (!walletAdapter) {
+                    showToast('Please connect your wallet first', 'error');
+                    return;
+                }
+            }
+            
+            // Move to next step
+            currentRegistrationStep++;
+            updateRegistrationStep();
+        }
+
+        function previousStep() {
+            if (currentRegistrationStep > 1) {
+                currentRegistrationStep--;
+                updateRegistrationStep();
+            }
+        }
+
+        function updateRegistrationStep() {
+            // Hide all steps
+            document.querySelectorAll('.registration-step').forEach(step => step.classList.remove('active'));
+            
+            // Show current step
+            document.getElementById(`step${currentRegistrationStep}`).classList.add('active');
+            
+            // Update step indicators
+            document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+                indicator.classList.remove('active', 'completed');
+                if (index + 1 < currentRegistrationStep) {
+                    indicator.classList.add('completed');
+                } else if (index + 1 === currentRegistrationStep) {
+                    indicator.classList.add('active');
+                }
+            });
+            
+            // Update content based on step
+            if (currentRegistrationStep === 2) {
+                updateWalletConnectionStatus();
+            } else if (currentRegistrationStep === 4) {
+                updateConfirmationDetails();
+            }
+        }
+
+        function updateWalletConnectionStatus() {
+            const walletNotConnected = document.getElementById('walletNotConnected');
+            const walletConnected = document.getElementById('walletConnected');
+            const step2Next = document.getElementById('step2Next');
+            
+            if (walletAdapter) {
+                walletNotConnected.style.display = 'none';
+                walletConnected.style.display = 'block';
+                document.getElementById('connectedWalletAddress').textContent = walletAdapter.publicKey.toString();
+                step2Next.disabled = false;
+            } else {
+                walletNotConnected.style.display = 'block';
+                walletConnected.style.display = 'none';
+                step2Next.disabled = true;
+            }
+        }
+
+        function updateConfirmationDetails() {
+            document.getElementById('confirmTournamentName').textContent = registrationData.tournament.name;
+            document.getElementById('confirmChampionName').textContent = registrationData.championName;
+            document.getElementById('confirmEntryFee').textContent = `${registrationData.tournament.entryFee} SOL`;
+            document.getElementById('confirmWalletAddress').textContent = walletAdapter.publicKey.toString();
+        }
+
+        function validateChampionName(name) {
+            const nameError = document.getElementById('nameError');
+            const nameSuccess = document.getElementById('nameSuccess');
+            const nextBtn = document.getElementById('step1Next');
+            
+            nameError.style.display = 'none';
+            nameSuccess.style.display = 'none';
+            nextBtn.disabled = true;
+            
+            if (name.length < 3) {
+                nameError.textContent = 'Name must be at least 3 characters long';
+                nameError.style.display = 'block';
+                return false;
+            }
+            
+            if (name.length > 16) {
+                nameError.textContent = 'Name must be less than 16 characters';
+                nameError.style.display = 'block';
+                return false;
+            }
+            
+            if (!/^[a-zA-Z0-9_]+$/.test(name)) {
+                nameError.textContent = 'Name can only contain letters, numbers, and underscores';
+                nameError.style.display = 'block';
+                return false;
+            }
+            
+            // Check if name is already taken (simulate)
+            const takenNames = ['Champion123', 'SolanaKing', 'WalletWarrior'];
+            if (takenNames.includes(name)) {
+                nameError.textContent = 'This name is already taken in the tournament';
+                nameError.style.display = 'block';
+                return false;
+            }
+            
+            // Check for inappropriate content (basic filter)
+            const inappropriateWords = ['spam', 'scam', 'hack'];
+            if (inappropriateWords.some(word => name.toLowerCase().includes(word))) {
+                nameError.textContent = 'Please choose a different name';
+                nameError.style.display = 'block';
+                return false;
+            }
+            
+            nameSuccess.textContent = 'Name is available!';
+            nameSuccess.style.display = 'block';
+            nextBtn.disabled = false;
+            return true;
+        }
+
+        function confirmRegistration() {
+            const acceptRules = document.getElementById('acceptRules').checked;
+            if (!acceptRules) {
+                showToast('Please accept the tournament rules to continue', 'error');
+                return;
+            }
+            
+            // Simulate registration process
+            showToast('Registration successful! Welcome to the tournament!', 'success');
+            closeRegistrationModal();
+            
+            // Update tournament participant count
+            const tournament = registrationData.tournament;
+            tournament.currentPlayers++;
+            renderTournaments();
+        }
+
+        function viewTournament(tournamentId) {
+            showToast('Tournament details view coming soon!', 'success');
+        }
+
+        // Champion name input validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const championNameInput = document.getElementById('championNameInput');
+            if (championNameInput) {
+                championNameInput.addEventListener('input', function() {
+                    validateChampionName(this.value.trim());
+                });
+            }
+            
+            const acceptRules = document.getElementById('acceptRules');
+            if (acceptRules) {
+                acceptRules.addEventListener('change', function() {
+                    document.getElementById('confirmBtn').disabled = !this.checked;
+                });
+            }
+        });
 
         // Navigation functions
         function scrollToTop() {
@@ -1109,6 +2639,11 @@
                     await initializeChampion(publicKey);
                     updateWalletUI(publicKey);
                     showToast('Wallet connected successfully!', 'success');
+                    
+                    // Update registration modal if open
+                    if (currentRegistrationStep === 2) {
+                        updateWalletConnectionStatus();
+                    }
                 } else {
                     throw new Error('Failed to get public key');
                 }
@@ -1326,6 +2861,13 @@
         // Auto-connect on page load if previously connected
         window.addEventListener('load', async () => {
             try {
+                // Handle URL hash navigation
+                const hash = window.location.hash.slice(1);
+                if (hash && ['home', 'tournaments', 'leaderboards', 'hall-of-fame', 'donate'].includes(hash)) {
+                    navigateToPage(hash);
+                }
+                
+                // Auto-connect wallet
                 if (window.solana && window.solana.isPhantom && window.solana.isConnected) {
                     const publicKey = window.solana.publicKey.toString();
                     walletAdapter = window.solana;
@@ -1349,30 +2891,31 @@
             });
         }
 
-        // Keyboard navigation for dropdown
+        // Keyboard navigation for dropdowns and modals
         document.addEventListener('keydown', (e) => {
             const dropdown = document.getElementById('walletDropdown');
-            if (dropdown.classList.contains('active') && e.key === 'Escape') {
-                closeWalletDropdown();
+            const modal = document.getElementById('registrationModal');
+            const filterDropdown = document.getElementById('filterDropdown');
+            
+            if (e.key === 'Escape') {
+                if (dropdown.classList.contains('active')) {
+                    closeWalletDropdown();
+                }
+                if (modal.classList.contains('active')) {
+                    closeRegistrationModal();
+                }
+                if (filterDropdown.classList.contains('active')) {
+                    closeMobileFilters();
+                }
             }
         });
 
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-                
-                // Close mobile menu if open
-                const navLinks = document.getElementById('navLinks');
-                navLinks.classList.remove('active');
-            });
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', () => {
+            const hash = window.location.hash.slice(1) || 'home';
+            if (['home', 'tournaments', 'leaderboards', 'hall-of-fame', 'donate'].includes(hash)) {
+                navigateToPage(hash);
+            }
         });
 
         // Tournament integration placeholder functions
@@ -1382,8 +2925,7 @@
                 return;
             }
             
-            // TODO: Implement tournament joining logic
-            showToast('Tournament joining coming soon!', 'success');
+            openRegistrationModal(tournamentId);
         }
 
         function leaveTournament() {
@@ -1421,6 +2963,32 @@
                 updateWalletUI(championData.walletAddress);
             }
         }
+
+        // Close mobile filter dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const filterDropdown = document.getElementById('filterDropdown');
+            const mobileFilterToggle = document.querySelector('.mobile-filter-toggle');
+            
+            if (filterDropdown.classList.contains('active') && 
+                !filterDropdown.contains(e.target) && 
+                !mobileFilterToggle.contains(e.target)) {
+                closeMobileFilters();
+            }
+        });
+
+        // Close registration modal when clicking overlay
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('registrationModal');
+            if (e.target === modal) {
+                closeRegistrationModal();
+            }
+        });
+
+        // Initialize default page
+        document.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.slice(1) || 'home';
+            navigateToPage(hash);
+        });
     </script>
 </body>
 </html>
