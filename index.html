@@ -314,7 +314,7 @@
             line-height: 1.6;
         }
 
-        /* ENHANCED TOURNAMENTS PAGE STYLES */
+        /* TOURNAMENTS PAGE STYLES */
         .tournaments-page {
             padding: 2rem;
             max-width: 1400px;
@@ -410,7 +410,7 @@
             transform: translateY(-1px);
         }
 
-        /* Enhanced Tournament Grid */
+        /* Tournament Grid */
         .tournaments-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
@@ -487,7 +487,6 @@
             border: 1px solid #6b7280;
         }
 
-        /* Enhanced Tournament Details */
         .tournament-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -523,7 +522,6 @@
             color: #8b5cf6;
         }
 
-        /* Enhanced Tournament Meta */
         .tournament-meta {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -929,6 +927,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .legend-card::before {
@@ -1049,69 +1048,153 @@
             font-weight: 500;
         }
 
-        /* Sub-tabs styling */
-        .sub-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 0.75rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            overflow-x: auto;
+        .legend-btn:hover {
+            background: rgba(251, 191, 36, 0.3);
+            border-color: #fbbf24;
         }
 
-        .sub-tab-btn {
+        /* Records Grid */
+        .records-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .record-card {
+            background: rgba(31, 41, 55, 0.4);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .record-card:hover {
+            transform: translateY(-5px);
+            border-color: #fbbf24;
+            box-shadow: 0 20px 40px rgba(251, 191, 36, 0.2);
+        }
+
+        .record-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .record-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fbbf24;
+            margin-bottom: 0.5rem;
+        }
+
+        .record-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .record-holder {
+            margin-bottom: 1rem;
+        }
+
+        .record-holder-name {
+            font-weight: 600;
+            color: #d1d5db;
+        }
+
+        .record-date {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .record-description {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            line-height: 1.5;
+        }
+
+        /* Epic Moments Timeline */
+        .moments-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .moment-item {
+            background: rgba(31, 41, 55, 0.4);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .moment-item:hover {
+            transform: translateY(-3px);
+            border-color: #fbbf24;
+            box-shadow: 0 15px 30px rgba(251, 191, 36, 0.2);
+        }
+
+        .moment-content {
+            flex: 1;
+        }
+
+        .moment-date {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+        }
+
+        .moment-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #fbbf24;
+            margin-bottom: 0.5rem;
+        }
+
+        .moment-description {
+            color: #d1d5db;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .moment-stats {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .moment-stat {
+            text-align: center;
+        }
+
+        .moment-stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fbbf24;
+            display: block;
+        }
+
+        .moment-stat-label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .moment-icon {
+            font-size: 4rem;
+            opacity: 0.8;
+        }
+
+        .placeholder-content {
             background: rgba(31, 41, 55, 0.3);
             border: 1px solid rgba(139, 92, 246, 0.2);
-            color: #d1d5db;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            white-space: nowrap;
-            font-size: 0.85rem;
-        }
-
-        .sub-tab-btn:hover,
-        .sub-tab-btn.active {
-            background: rgba(139, 92, 246, 0.15);
-            border-color: #8b5cf6;
-            color: #a855f7;
-            transform: translateY(-1px);
-        }
-
-        .bracket-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.3);
             border-radius: 1rem;
-            padding: 0.2rem 0.5rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-left: 0.5rem;
-        }
-
-        .bracket-beginner { color: #10b981; border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.1); }
-        .bracket-intermediate { color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.1); }
-        .bracket-advanced { color: #ef4444; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1); }
-        .bracket-legendary { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.1); }
-
-        .time-period-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            background: rgba(6, 182, 212, 0.1);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            border-radius: 1rem;
-            padding: 0.2rem 0.5rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #06b6d4;
-            margin-left: 0.5rem;
+            padding: 4rem 2rem;
+            text-align: center;
         }
 
         /* Responsive Design */
@@ -1140,6 +1223,15 @@
             .earnings-col {
                 display: none;
             }
+
+            .moment-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .moment-stats {
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -1158,7 +1250,7 @@
                 <li><a onclick="navigateToPage('tournaments')" id="nav-tournaments">Tournaments</a></li>
                 <li><a onclick="navigateToPage('leaderboards')" id="nav-leaderboards">Leaderboards</a></li>
                 <li><a onclick="navigateToPage('hall-of-fame')" id="nav-hall-of-fame">Hall of Fame</a></li>
-                <li><a href="#" class="btn-primary" style="padding: 0.5rem 1rem; margin-left: 1rem;">Connect Wallet</a></li>
+                <li><a href="#" class="btn-primary" style="padding: 0.5rem 1rem; margin-left: 1rem;" onclick="connectWallet()">Connect Wallet</a></li>
             </ul>
         </div>
     </nav>
@@ -1170,8 +1262,8 @@
                 <h1 class="hero-title">WalletWars</h1>
                 <p class="hero-motto">Solana's ultimate winrate battleground</p>
                 <div class="cta-buttons">
-                    <button class="btn-primary">Connect Wallet</button>
-                    <a href="#learn-more" class="btn-secondary">Learn More</a>
+                    <button class="btn-primary" onclick="connectWallet()">Connect Wallet</button>
+                    <a href="#" class="btn-secondary" onclick="scrollToLearnMore()">Learn More</a>
                 </div>
             </div>
         </div>
@@ -1210,7 +1302,7 @@
         </div>
     </section>
 
-    <!-- ENHANCED TOURNAMENTS PAGE -->
+    <!-- TOURNAMENTS PAGE -->
     <section id="tournaments" class="page-section">
         <div class="tournaments-page">
             <div class="tournaments-header">
@@ -1218,7 +1310,7 @@
                 <p class="tournaments-subtitle">Compete in skill-based tournaments where your wallet's performance determines victory</p>
             </div>
 
-            <!-- Enhanced Filters Section -->
+            <!-- Filters Section -->
             <div class="filters-section">
                 <div class="filters-header">
                     <h3 class="filters-title">Filter Tournaments</h3>
@@ -1264,7 +1356,7 @@
                 </div>
             </div>
 
-            <!-- Enhanced Tournament Cards -->
+            <!-- Tournament Cards -->
             <div class="tournaments-grid" id="tournamentsGrid">
                 <!-- Tournament cards will be populated by JavaScript -->
             </div>
@@ -1294,25 +1386,6 @@
                 <button class="tab-btn active" onclick="switchLeaderboardCategory('global')">🌍 Global Rankings</button>
                 <button class="tab-btn" onclick="switchLeaderboardCategory('brackets')">🎯 By Brackets</button>
                 <button class="tab-btn" onclick="switchLeaderboardCategory('time-based')">⏰ Time-Based</button>
-            </div>
-
-            <!-- Sub-tabs for filtered categories -->
-            <div id="sub-tabs-container" style="display: none;">
-                <div class="sub-tabs" id="brackets-subtabs" style="display: none;">
-                    <button class="sub-tab-btn active" onclick="switchBracketFilter('all')">All Brackets</button>
-                    <button class="sub-tab-btn" onclick="switchBracketFilter('beginner')">🟢 Beginner</button>
-                    <button class="sub-tab-btn" onclick="switchBracketFilter('intermediate')">🟡 Intermediate</button>
-                    <button class="sub-tab-btn" onclick="switchBracketFilter('advanced')">🔴 Advanced</button>
-                    <button class="sub-tab-btn" onclick="switchBracketFilter('legendary')">👑 Legendary</button>
-                </div>
-                
-                <div class="sub-tabs" id="time-subtabs" style="display: none;">
-                    <button class="sub-tab-btn active" onclick="switchTimeFilter('all-time')">All-Time</button>
-                    <button class="sub-tab-btn" onclick="switchTimeFilter('weekly')">📅 Weekly</button>
-                    <button class="sub-tab-btn" onclick="switchTimeFilter('monthly')">📊 Monthly</button>
-                    <button class="sub-tab-btn" onclick="switchTimeFilter('quarterly')">📈 Quarterly</button>
-                    <button class="sub-tab-btn" onclick="switchTimeFilter('yearly')">📅 Yearly</button>
-                </div>
             </div>
 
             <!-- Leaderboard Table -->
@@ -1379,912 +1452,630 @@
             </div>
 
             <!-- Legendary Champions Section -->
-            <div class="hall-section active">
+            <div class="hall-section active" id="legends-section">
                 <div class="section-header">
                     <h2 class="section-title">Legendary Champions</h2>
                     <p class="section-description">Elite performers who have transcended ordinary competition</p>
                 </div>
 
                 <div class="legends-grid">
-                    <div class="legend-card">
-                        <div class="legend-rank">#1</div>
-                        <div class="legend-avatar">🔥</div>
-                        <div class="legend-name">The Golden Phoenix</div>
-                        <div class="legend-title">First Immortal Champion</div>
-                        
-                        <div class="legend-stats">
-                            <div class="legend-stat">
-                                <span class="legend-stat-value">94.7%</span>
-                                <div class="legend-stat-label">Winrate</div>
-                            </div>
-                            <div class="legend-stat">
-                                <span class="legend-stat-value">1247.83</span>
-                                <div class="legend-stat-label">SOL Earned</div>
-                            </div>
-                            <div class="legend-stat">
-                                <span class="legend-stat-value">47</span>
-                                <div class="legend-stat-label">Tournaments Won</div>
-                            </div>
-                            <div class="legend-stat">
-                                <span class="legend-stat-value">12</span>
-                                <div class="legend-stat-label">Perfect Streaks</div>
-                            </div>
-                        </div>
-                        
-                        <div class="legend-achievements">
-                            <span class="legend-badge">First Champion</span>
-                            <span class="legend-badge">Unbreakable</span>
-                            <span class="legend-badge">Golden Streak</span>
-                        </div>
-                        
-                        <div class="legend-actions">
-                            <button class="legend-btn" onclick="openLegendProfile(1)">View Profile</button>
-                            <button class="legend-btn" onclick="challengeLegend(1)">Challenge</button>
-                        </div>
+                    <!-- Legends will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Record Holders Section -->
+            <div class="hall-section" id="records-section">
+                <div class="section-header">
+                    <h2 class="section-title">Record Holders</h2>
+                    <p class="section-description">Champions who have achieved extraordinary milestones</p>
+                </div>
+
+                <div class="records-grid">
+                    <!-- Records will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Achievement Gallery Section -->
+            <div class="hall-section" id="achievements-section">
+                <div class="section-header">
+                    <h2 class="section-title">Achievement Gallery</h2>
+                    <p class="section-description">Unlock legendary status through skill and dedication</p>
+                </div>
+
+                <div class="placeholder-content">
+                    <div style="text-align: center; padding: 4rem; color: #9ca3af;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+                        <div style="font-size: 1.5rem; margin-bottom: 1rem; color: #fbbf24;">Achievement Gallery</div>
+                        <div style="font-size: 1rem;">Coming Soon - Unlock legendary achievements and track your progress!</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Epic Moments Section -->
+            <div class="hall-section" id="moments-section">
+                <div class="section-header">
+                    <h2 class="section-title">Epic Moments</h2>
+                    <p class="section-description">Legendary moments that defined WalletWars history</p>
+                </div>
+
+                <div class="moments-timeline">
+                    <!-- Epic moments will be populated by JavaScript -->
                 </div>
             </div>
         </div>
     </section>
     
     <script>
-        // Enhanced Tournament System with Complete Data and Filtering
-        let currentFilters = {
-            timeframe: 'all',
-            entryFee: 'all',
-            maxPlayers: 'all',
-            bracket: 'all'
-        };
+        (function() {
+            'use strict';
 
-        // Comprehensive tournament data matching the screenshot design
-        const enhancedTournaments = [
-            {
-                id: 1,
-                name: "Weekly Warrior Challenge",
-                status: "upcoming",
-                timeframe: "weekly",
-                entryFee: 0.01,
-                maxPlayers: 100,
-                currentPlayers: 23,
-                bracket: "beginner",
-                startTime: getNextMondayNoon(),
-                endTime: getNextMondayNoon() + 7 * 24 * 60 * 60 * 1000,
-                minBalance: 0.05,
-                prizePool: 0.8,
-                rules: "Track wallet performance over 7 days. Best performing wallet wins.",
-                schedule: "Starts every Monday at 12:00 noon UTC"
-            },
-            {
-                id: 2,
-                name: "Monthly Masters Tournament",
-                status: "live",
-                timeframe: "monthly",
-                entryFee: 0.1,
-                maxPlayers: 1000,
-                currentPlayers: 542,
-                bracket: "advanced",
-                startTime: getFirstMondayOfCurrentMonth(),
-                endTime: getFirstMondayOfCurrentMonth() + 30 * 24 * 60 * 60 * 1000,
-                minBalance: 0.5,
-                prizePool: 80,
-                rules: "30-day competition with daily performance tracking.",
-                schedule: "Starts first Monday of each month at 12:00 noon UTC"
-            },
-            {
-                id: 3,
-                name: "Beginner's Luck Tournament",
-                status: "upcoming",
-                timeframe: "weekly",
-                entryFee: 0.01,
-                maxPlayers: 100,
-                currentPlayers: 67,
-                bracket: "beginner",
-                startTime: getNextMondayNoon() + 24 * 60 * 60 * 1000,
-                endTime: getNextMondayNoon() + 8 * 24 * 60 * 60 * 1000,
-                minBalance: 0.05,
-                prizePool: 0.5,
-                rules: "Perfect for new champions to test their skills.",
-                schedule: "Tuesday tournaments for beginners"
-            },
-            {
-                id: 4,
-                name: "High Stakes Championship",
-                status: "completed",
-                timeframe: "monthly",
-                entryFee: 0.1,
-                maxPlayers: 500,
-                currentPlayers: 500,
-                bracket: "advanced",
-                startTime: getFirstMondayOfCurrentMonth() - 30 * 24 * 60 * 60 * 1000,
-                endTime: getFirstMondayOfCurrentMonth(),
-                minBalance: 1.5,
-                prizePool: 40,
-                rules: "Elite competition for top performers only.",
-                schedule: "Monthly high-stakes tournaments"
-            },
-            {
-                id: 5,
-                name: "Intermediate Challenge",
-                status: "upcoming",
-                timeframe: "weekly",
-                entryFee: 0.01,
-                maxPlayers: 200,
-                currentPlayers: 89,
-                bracket: "intermediate",
-                startTime: getNextMondayNoon() + 3 * 24 * 60 * 60 * 1000,
-                endTime: getNextMondayNoon() + 10 * 24 * 60 * 60 * 1000,
-                minBalance: 0.1,
-                prizePool: 1.5,
-                rules: "For champions ready to level up their game.",
-                schedule: "Thursday tournaments for intermediate players"
-            },
-            {
-                id: 6,
-                name: "Lightning Round",
-                status: "live",
-                timeframe: "weekly",
-                entryFee: 0.1,
-                maxPlayers: 50,
-                currentPlayers: 34,
-                bracket: "intermediate",
-                startTime: Date.now() - 2 * 24 * 60 * 60 * 1000,
-                endTime: Date.now() + 5 * 24 * 60 * 60 * 1000,
-                minBalance: 0.2,
-                prizePool: 4.5,
-                rules: "Fast-paced tournament with quick results.",
-                schedule: "Weekly lightning rounds"
+            // Global state variables
+            var currentFilters = {
+                timeframe: 'all',
+                entryFee: 'all',
+                maxPlayers: 'all',
+                bracket: 'all'
+            };
+
+            var currentHallCategory = 'legends';
+            var currentLeaderboardCategory = 'global';
+
+            // Data initialization
+            var recordsData = null;
+            var epicMomentsData = null;
+
+            // TOURNAMENT FUNCTIONALITY
+            function getMinimalTournaments() {
+                return [
+                    {
+                        id: 1,
+                        name: "Weekly Warrior Challenge",
+                        status: "upcoming",
+                        timeframe: "weekly",
+                        entryFee: 0.01,
+                        maxPlayers: 100,
+                        currentPlayers: 23,
+                        bracket: "beginner",
+                        minBalance: 0.05,
+                        prizePool: 0.8
+                    },
+                    {
+                        id: 2,
+                        name: "Monthly Masters Tournament", 
+                        status: "live",
+                        timeframe: "monthly",
+                        entryFee: 0.1,
+                        maxPlayers: 1000,
+                        currentPlayers: 542,
+                        bracket: "advanced",
+                        minBalance: 0.5,
+                        prizePool: 80
+                    }
+                ];
             }
-        ];
 
-        // Tournament timing utilities
-        function getNextMondayNoon() {
-            const now = new Date();
-            const nextMonday = new Date(now);
-            const daysUntilMonday = (8 - now.getDay()) % 7;
-            if (daysUntilMonday === 0 && now.getHours() >= 12) {
-                nextMonday.setDate(now.getDate() + 7);
-            } else {
-                nextMonday.setDate(now.getDate() + daysUntilMonday);
-            }
-            nextMonday.setUTCHours(12, 0, 0, 0);
-            return nextMonday.getTime();
-        }
-
-        function getFirstMondayOfCurrentMonth() {
-            const now = new Date();
-            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-            const firstDayOfWeek = firstDay.getDay();
-            const daysToAdd = firstDayOfWeek === 0 ? 1 : (8 - firstDayOfWeek) % 7;
-            firstDay.setDate(1 + daysToAdd);
-            firstDay.setUTCHours(12, 0, 0, 0);
-            return firstDay.getTime();
-        }
-
-        // Format time left
-        function formatTimeLeft(timestamp) {
-            const now = Date.now();
-            const diff = timestamp - now;
-            if (diff <= 0) return 'Ended';
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            if (days > 0) return `${days}d ${hours}h`;
-            return `${hours}h`;
-        }
-
-        // Filter management
-        function setFilter(category, value) {
-            currentFilters[category] = value;
-            
-            // Update button states
-            document.querySelectorAll(`.filter-group`).forEach(group => {
-                const label = group.querySelector('.filter-label').textContent.toLowerCase().replace(' ', '');
-                if (label.includes(category.toLowerCase())) {
-                    group.querySelectorAll('.filter-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                        if (btn.textContent.toLowerCase().includes(value) || 
-                            (value === 'all' && btn.textContent === 'All')) {
-                            btn.classList.add('active');
+            function setFilter(category, value) {
+                currentFilters[category] = value;
+                
+                // Update button states
+                var filterGroups = document.querySelectorAll('.filter-group');
+                for (var i = 0; i < filterGroups.length; i++) {
+                    var group = filterGroups[i];
+                    var label = group.querySelector('.filter-label').textContent.toLowerCase().replace(' ', '');
+                    if (label.includes(category.toLowerCase()) || 
+                        (category === 'entryFee' && label.includes('entry')) ||
+                        (category === 'maxPlayers' && label.includes('max'))) {
+                        var buttons = group.querySelectorAll('.filter-btn');
+                        for (var j = 0; j < buttons.length; j++) {
+                            var btn = buttons[j];
+                            btn.classList.remove('active');
+                            var btnText = btn.textContent.toLowerCase();
+                            if ((value === 'all' && btnText === 'all') || 
+                                btnText.includes(value.toString().toLowerCase())) {
+                                btn.classList.add('active');
+                            }
                         }
-                    });
-                }
-            });
-            
-            renderTournaments();
-        }
-
-        // Enhanced tournament rendering
-        function renderTournaments() {
-            const grid = document.getElementById('tournamentsGrid');
-            if (!grid) return;
-            
-            const filteredTournaments = enhancedTournaments.filter(tournament => {
-                if (currentFilters.timeframe !== 'all' && tournament.timeframe !== currentFilters.timeframe) return false;
-                if (currentFilters.entryFee !== 'all' && tournament.entryFee.toString() !== currentFilters.entryFee) return false;
-                if (currentFilters.maxPlayers !== 'all' && tournament.maxPlayers.toString() !== currentFilters.maxPlayers) return false;
-                if (currentFilters.bracket !== 'all' && tournament.bracket !== currentFilters.bracket) return false;
-                return true;
-            });
-            
-            grid.innerHTML = filteredTournaments.map(tournament => {
-                const statusClass = `status-${tournament.status}`;
-                const timeLeft = formatTimeLeft(tournament.status === 'upcoming' ? tournament.startTime : tournament.endTime);
-                const timeLabel = tournament.status === 'upcoming' ? 'Starts in' : tournament.status === 'live' ? 'Ends in' : 'Completed';
-                const registerDisabled = tournament.status !== 'upcoming' ? 'disabled' : '';
-                const registerText = tournament.status === 'upcoming' ? 'Register' : tournament.status === 'live' ? 'View' : 'View';
-                
-                return `
-                    <div class="tournament-card">
-                        <div class="tournament-header">
-                            <div>
-                                <h3 class="tournament-title">${tournament.name}</h3>
-                            </div>
-                            <div class="status-badge ${statusClass}">${tournament.status}</div>
-                        </div>
-                        
-                        <div class="tournament-details">
-                            <div class="detail-item">
-                                <span class="detail-label">Timeframe</span>
-                                <span class="detail-value">${tournament.timeframe}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Entry Fee</span>
-                                <span class="detail-value"><span class="highlight">${tournament.entryFee} SOL</span></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Max Players</span>
-                                <span class="detail-value">${tournament.maxPlayers} <span class="highlight">players</span></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Min Balance</span>
-                                <span class="detail-value"><span class="highlight">${tournament.minBalance} SOL</span></span>
-                            </div>
-                        </div>
-                        
-                        <div class="tournament-meta">
-                            <div class="meta-item">
-                                <span class="meta-label">Bracket</span>
-                                <span class="meta-value">${tournament.bracket}</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-label">Prize Pool</span>
-                                <span class="meta-value">${tournament.prizePool} SOL</span>
-                            </div>
-                        </div>
-                        
-                        <div class="participants-display">
-                            <span class="participants-count">${tournament.currentPlayers}/${tournament.maxPlayers} players</span>
-                            <span class="tournament-timer">${timeLabel}: ${timeLeft}</span>
-                        </div>
-                        
-                        <div class="tournament-actions">
-                            <button class="btn-register" ${registerDisabled} onclick="openRegistrationModal(${tournament.id})">${registerText}</button>
-                            <button class="btn-quick-view" onclick="viewTournamentDetails(${tournament.id})">Quick View</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Tournament actions
-        function openRegistrationModal(tournamentId) {
-            const tournament = enhancedTournaments.find(t => t.id === tournamentId);
-            if (tournament) {
-                alert(`Registration for "${tournament.name}"\nEntry Fee: ${tournament.entryFee} SOL\nBracket: ${tournament.bracket}\n\nConnect your wallet to register!`);
-            }
-        }
-
-        function viewTournamentDetails(tournamentId) {
-            const tournament = enhancedTournaments.find(t => t.id === tournamentId);
-            if (tournament) {
-                alert(`Tournament Details:\n\nName: ${tournament.name}\nStatus: ${tournament.status}\nRules: ${tournament.rules}\nSchedule: ${tournament.schedule}`);
-            }
-        }
-
-        // Enhanced navigation system
-        function navigateToPage(page) {
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(page).classList.add('active');
-            document.querySelectorAll('.nav-links a').forEach(link => {
-                link.classList.remove('active');
-            });
-            document.getElementById(`nav-${page}`).classList.add('active');
-            
-            if (page === 'tournaments') {
-                setTimeout(() => {
-                    renderTournaments();
-                }, 100);
-            } else if (page === 'leaderboards') {
-                setTimeout(initializeLeaderboards, 100);
-            } else if (page === 'hall-of-fame') {
-                setTimeout(initializeHallOfFame, 100);
-            }
-        }
-
-        // Enhanced Leaderboards System
-        let currentLeaderboardCategory = 'global';
-        let currentBracketFilter = 'all';
-        let currentTimeFilter = 'all-time';
-        let searchQuery = '';
-
-        // Enhanced champion data with brackets and time-based performance
-        const enhancedChampions = [
-            {
-                id: 1,
-                name: "SolanaKing",
-                walletAddress: "4x7kNm2vX9pTq3uL8jYz5mPtR6wE",
-                winrate: 87.5,
-                totalEarnings: 45.67,
-                tournamentsAttended: 24,
-                totalWins: 21,
-                totalLosses: 3,
-                currentStreak: 8,
-                bracket: "advanced",
-                avatar: "👑",
-                badges: ["legend", "hot-streak"],
-                consistencyScore: 92,
-                lastActive: Date.now() - 2 * 60 * 60 * 1000,
-                weeklyStats: { winrate: 92.3, earnings: 12.5, tournaments: 6 },
-                monthlyStats: { winrate: 89.1, earnings: 23.8, tournaments: 15 },
-                quarterlyStats: { winrate: 88.2, earnings: 41.2, tournaments: 22 },
-                yearlyStats: { winrate: 86.8, earnings: 44.1, tournaments: 24 }
-            },
-            {
-                id: 2,
-                name: "CryptoChampion",
-                walletAddress: "8mRt5Px4sQ9vH2uK7jLz3nYc1wF",
-                winrate: 82.1,
-                totalEarnings: 38.92,
-                tournamentsAttended: 19,
-                totalWins: 15,
-                totalLosses: 4,
-                currentStreak: 5,
-                bracket: "advanced",
-                avatar: "🏆",
-                badges: ["rising-star"],
-                consistencyScore: 88,
-                lastActive: Date.now() - 30 * 60 * 1000,
-                weeklyStats: { winrate: 85.7, earnings: 8.2, tournaments: 4 },
-                monthlyStats: { winrate: 83.3, earnings: 18.5, tournaments: 12 },
-                quarterlyStats: { winrate: 81.8, earnings: 35.1, tournaments: 18 },
-                yearlyStats: { winrate: 81.9, earnings: 38.2, tournaments: 19 }
-            },
-            {
-                id: 3,
-                name: "WalletWarrior",
-                walletAddress: "9dQt6Ry7tW0vN3uM8kMz4oZd2xG",
-                winrate: 76.9,
-                totalEarnings: 29.45,
-                tournamentsAttended: 13,
-                totalWins: 10,
-                totalLosses: 3,
-                currentStreak: 3,
-                bracket: "intermediate",
-                avatar: "⚔️",
-                badges: [],
-                consistencyScore: 79,
-                lastActive: Date.now() - 1 * 60 * 60 * 1000,
-                weeklyStats: { winrate: 80.0, earnings: 5.8, tournaments: 3 },
-                monthlyStats: { winrate: 78.5, earnings: 12.3, tournaments: 8 },
-                quarterlyStats: { winrate: 77.2, earnings: 26.1, tournaments: 12 },
-                yearlyStats: { winrate: 76.5, earnings: 28.9, tournaments: 13 }
-            },
-            {
-                id: 4,
-                name: "RookieRocker",
-                walletAddress: "2fHt8Kx3qP5mN9uJ6vMz7oXc4yB",
-                winrate: 65.4,
-                totalEarnings: 12.34,
-                tournamentsAttended: 8,
-                totalWins: 5,
-                totalLosses: 3,
-                currentStreak: 2,
-                bracket: "beginner",
-                avatar: "🌟",
-                badges: ["newcomer"],
-                consistencyScore: 68,
-                lastActive: Date.now() - 3 * 60 * 60 * 1000,
-                weeklyStats: { winrate: 75.0, earnings: 3.2, tournaments: 2 },
-                monthlyStats: { winrate: 70.0, earnings: 8.1, tournaments: 5 },
-                quarterlyStats: { winrate: 66.7, earnings: 11.9, tournaments: 7 },
-                yearlyStats: { winrate: 65.0, earnings: 12.1, tournaments: 8 }
-            },
-            {
-                id: 5,
-                name: "LegendaryPhoenix",
-                walletAddress: "7xRt3Mq9pL2vN5uK8jHz6nPc1wD",
-                winrate: 94.2,
-                totalEarnings: 127.89,
-                tournamentsAttended: 45,
-                totalWins: 42,
-                totalLosses: 3,
-                currentStreak: 15,
-                bracket: "legendary",
-                avatar: "🔥",
-                badges: ["legend", "unstoppable", "hall-of-fame"],
-                consistencyScore: 97,
-                lastActive: Date.now() - 45 * 60 * 1000,
-                weeklyStats: { winrate: 100.0, earnings: 18.7, tournaments: 3 },
-                monthlyStats: { winrate: 96.2, earnings: 45.3, tournaments: 11 },
-                quarterlyStats: { winrate: 95.1, earnings: 89.2, tournaments: 28 },
-                yearlyStats: { winrate: 94.0, earnings: 125.4, tournaments: 44 }
-            },
-            {
-                id: 6,
-                name: "ProTrader",
-                walletAddress: "5kQt9Nx4tW8vM2uL7jKz3oYd6xF",
-                winrate: 73.3,
-                totalEarnings: 22.67,
-                tournamentsAttended: 15,
-                totalWins: 11,
-                totalLosses: 4,
-                currentStreak: 1,
-                bracket: "intermediate",
-                avatar: "📈",
-                badges: ["consistent"],
-                consistencyScore: 75,
-                lastActive: Date.now() - 4 * 60 * 60 * 1000,
-                weeklyStats: { winrate: 66.7, earnings: 4.5, tournaments: 3 },
-                monthlyStats: { winrate: 71.4, earnings: 11.2, tournaments: 7 },
-                quarterlyStats: { winrate: 72.7, earnings: 20.1, tournaments: 13 },
-                yearlyStats: { winrate: 73.1, earnings: 22.3, tournaments: 15 }
-            }
-        ];
-
-        // Switch main leaderboard category
-        function switchLeaderboardCategory(category) {
-            currentLeaderboardCategory = category;
-            
-            // Update main tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                if ((category === 'global' && btn.textContent.includes('Global')) ||
-                    (category === 'brackets' && btn.textContent.includes('Brackets')) ||
-                    (category === 'time-based' && btn.textContent.includes('Time-Based'))) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            // Show/hide sub-tabs
-            const subTabsContainer = document.getElementById('sub-tabs-container');
-            const bracketsSubtabs = document.getElementById('brackets-subtabs');
-            const timeSubtabs = document.getElementById('time-subtabs');
-            
-            if (category === 'global') {
-                subTabsContainer.style.display = 'none';
-            } else if (category === 'brackets') {
-                subTabsContainer.style.display = 'block';
-                bracketsSubtabs.style.display = 'flex';
-                timeSubtabs.style.display = 'none';
-            } else if (category === 'time-based') {
-                subTabsContainer.style.display = 'block';
-                bracketsSubtabs.style.display = 'none';
-                timeSubtabs.style.display = 'flex';
-            }
-            
-            renderLeaderboardTable();
-        }
-
-        // Switch bracket filter
-        function switchBracketFilter(bracket) {
-            currentBracketFilter = bracket;
-            
-            document.querySelectorAll('#brackets-subtabs .sub-tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            document.querySelectorAll('#brackets-subtabs .sub-tab-btn').forEach(btn => {
-                if ((bracket === 'all' && btn.textContent.includes('All')) ||
-                    btn.textContent.toLowerCase().includes(bracket)) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            renderLeaderboardTable();
-        }
-
-        // Switch time filter
-        function switchTimeFilter(period) {
-            currentTimeFilter = period;
-            
-            document.querySelectorAll('#time-subtabs .sub-tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            document.querySelectorAll('#time-subtabs .sub-tab-btn').forEach(btn => {
-                if ((period === 'all-time' && btn.textContent.includes('All-Time')) ||
-                    btn.textContent.toLowerCase().includes(period)) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            renderLeaderboardTable();
-        }
-
-        // Enhanced render function for leaderboard table
-        function renderLeaderboardTable() {
-            const tableBody = document.querySelector('.table-body');
-            if (!tableBody) return;
-            
-            let filteredChampions = [...enhancedChampions];
-            
-            // Apply search filter
-            if (searchQuery) {
-                filteredChampions = filteredChampions.filter(champion => 
-                    champion.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    champion.walletAddress.toLowerCase().includes(searchQuery.toLowerCase())
-                );
-            }
-            
-            // Apply bracket filter
-            if (currentLeaderboardCategory === 'brackets' && currentBracketFilter !== 'all') {
-                filteredChampions = filteredChampions.filter(champion => 
-                    champion.bracket === currentBracketFilter
-                );
-            }
-            
-            // Sort based on category and time period
-            filteredChampions.sort((a, b) => {
-                if (currentLeaderboardCategory === 'time-based') {
-                    const getStats = (champion) => {
-                        switch (currentTimeFilter) {
-                            case 'weekly': return champion.weeklyStats;
-                            case 'monthly': return champion.monthlyStats;
-                            case 'quarterly': return champion.quarterlyStats;
-                            default: return champion; // all-time
-                        }
-                    };
-                    return getStats(b).winrate - getStats(a).winrate;
-                } else {
-                    return b.winrate - a.winrate; // Default sort by winrate
-                }
-            });
-            
-            if (filteredChampions.length === 0) {
-                tableBody.innerHTML = `
-                    <div style="text-align: center; padding: 3rem; color: #9ca3af;">
-                        <div style="font-size: 2rem; margin-bottom: 1rem;">🔍</div>
-                        <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">No champions found</div>
-                        <div style="font-size: 0.9rem;">Try adjusting your filters or search terms</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            tableBody.innerHTML = filteredChampions.map((champion, index) => {
-                const rank = index + 1;
-                
-                // Get appropriate stats based on current view
-                let stats = champion;
-                let periodBadge = '';
-                
-                if (currentLeaderboardCategory === 'time-based' && currentTimeFilter !== 'all-time') {
-                    switch (currentTimeFilter) {
-                        case 'weekly':
-                            stats = champion.weeklyStats;
-                            periodBadge = '<span class="time-period-badge">📅 7d</span>';
-                            break;
-                        case 'monthly':
-                            stats = champion.monthlyStats;
-                            periodBadge = '<span class="time-period-badge">📊 30d</span>';
-                            break;
-                        case 'quarterly':
-                            stats = champion.quarterlyStats;
-                            periodBadge = '<span class="time-period-badge">📈 90d</span>';
-                            break;
-                        case 'yearly':
-                            stats = champion.yearlyStats;
-                            periodBadge = '<span class="time-period-badge">📅 365d</span>';
-                            break;
                     }
                 }
                 
-                // Bracket badge
-                let bracketBadge = '';
-                if (currentLeaderboardCategory === 'brackets' || currentLeaderboardCategory === 'global') {
-                    const bracketIcons = {
-                        'beginner': '🟢',
-                        'intermediate': '🟡', 
-                        'advanced': '🔴',
-                        'legendary': '👑'
-                    };
-                    bracketBadge = `<span class="bracket-indicator bracket-${champion.bracket}">${bracketIcons[champion.bracket]} ${champion.bracket}</span>`;
-                }
-                
-                // Performance badges
-                const badges = champion.badges.map(badge => {
-                    const icons = {
-                        'legend': '👑',
-                        'hot-streak': '🔥',
-                        'rising-star': '⭐',
-                        'newcomer': '🌟',
-                        'unstoppable': '💎',
-                        'hall-of-fame': '🏛️',
-                        'consistent': '📈'
-                    };
-                    return `<span class="performance-badge ${badge}">${icons[badge] || '🏆'}</span>`;
-                }).join('');
-                
-                const trendIcon = stats.winrate > 60 ? '↗️' : stats.winrate < 40 ? '↘️' : '→';
-                
-                return `
-                    <div class="leaderboard-row" onclick="viewChampionProfile(${champion.id})">
-                        <div class="rank-col">${rank}</div>
-                        <div class="champion-col">
-                            <div class="champion-info">
-                                <div class="champion-avatar">${champion.avatar}</div>
-                                <div class="champion-details">
-                                    <div class="champion-name">
-                                        ${champion.name}${badges}${bracketBadge}${periodBadge}
-                                    </div>
-                                    <div class="champion-address">${champion.walletAddress}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="winrate-col">
-                            ${stats.winrate}%<span style="margin-left: 0.5rem; font-size: 0.8rem;">${trendIcon}</span>
-                        </div>
-                        <div class="tournaments-col">
-                            ${currentLeaderboardCategory === 'time-based' && currentTimeFilter !== 'all-time' ? 
-                                stats.tournaments : champion.tournamentsAttended}
-                        </div>
-                        <div class="earnings-col">
-                            ${currentLeaderboardCategory === 'time-based' && currentTimeFilter !== 'all-time' ? 
-                                stats.earnings : champion.totalEarnings} SOL
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Enhanced search functionality
-        function setupLeaderboardSearch() {
-            const searchInput = document.getElementById('championSearch');
-            if (!searchInput) return;
-            
-            searchInput.addEventListener('input', function(e) {
-                searchQuery = e.target.value.trim();
-                setTimeout(() => {
-                    renderLeaderboardTable();
-                }, 300);
-            });
-        }
-
-        // Enhanced leaderboards initialization
-        function initializeLeaderboards() {
-            if (!document.getElementById('leaderboards').classList.contains('active')) return;
-            setupLeaderboardSearch();
-            renderLeaderboardTable();
-        }
-
-        // Hall of Fame functionality
-        function initializeHallOfFame() {
-            console.log('Hall of Fame initialized');
-        }
-
-        function switchHallCategory(category) {
-            console.log('Switching to category:', category);
-            
-            // Update navigation buttons
-            document.querySelectorAll('.hall-nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Find and activate the clicked button
-            const buttons = document.querySelectorAll('.hall-nav-btn');
-            buttons.forEach(btn => {
-                if (btn.onclick && btn.onclick.toString().includes(category)) {
-                    btn.classList.add('active');
-                }
-            });
-        }
-
-        function openLegendProfile(legendId) {
-            console.log('Opening legend profile:', legendId);
-            alert(`Legend Profile #${legendId}\n\nProfile details would open in a modal here.\nThis would show detailed stats, achievements, and tournament history.`);
-        }
-
-        function challengeLegend(legendId) {
-            console.log('Challenging legend:', legendId);
-            alert(`Challenge Legend #${legendId}\n\nThis would initiate a direct challenge.\nConnect your wallet to send a challenge!`);
-        }
-
-        // Enhanced search functionality for leaderboards
-        function setupSearch() {
-            const searchInput = document.getElementById('championSearch');
-            if (!searchInput) return;
-            
-            searchInput.addEventListener('input', function(e) {
-                const query = e.target.value.trim().toLowerCase();
-                console.log('Searching for:', query);
-                // In a real implementation, this would filter the leaderboard data
-            });
-        }
-
-        // Initialize the application
-        function initializeApp() {
-            console.log('WalletWars application initialized');
-            
-            // Set up initial tournament rendering if on tournaments page
-            if (document.getElementById('tournaments').classList.contains('active')) {
                 renderTournaments();
             }
-            
-            // Set up search functionality
-            setupSearch();
-        }
 
-        // Wait for DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-            
-            // Auto-render tournaments on page load if tournaments section is active
-            setTimeout(() => {
+            function renderTournaments() {
+                var grid = document.getElementById('tournamentsGrid');
+                if (!grid) return;
+                
+                var tournaments = getMinimalTournaments();
+                
+                var html = '';
+                for (var i = 0; i < tournaments.length; i++) {
+                    var t = tournaments[i];
+                    var statusClass = 'status-' + t.status;
+                    var timeLeft = t.status === 'upcoming' ? '2d 5h' : '3d 12h';
+                    var timeLabel = t.status === 'upcoming' ? 'Starts in' : 'Ends in';
+                    
+                    html += '<div class="tournament-card">' +
+                        '<div class="tournament-header">' +
+                            '<div><h3 class="tournament-title">' + t.name + '</h3></div>' +
+                            '<div class="status-badge ' + statusClass + '">' + t.status + '</div>' +
+                        '</div>' +
+                        '<div class="tournament-details">' +
+                            '<div class="detail-item">' +
+                                '<span class="detail-label">Timeframe</span>' +
+                                '<span class="detail-value">' + t.timeframe + '</span>' +
+                            '</div>' +
+                            '<div class="detail-item">' +
+                                '<span class="detail-label">Entry Fee</span>' +
+                                '<span class="detail-value"><span class="highlight">' + t.entryFee + ' SOL</span></span>' +
+                            '</div>' +
+                            '<div class="detail-item">' +
+                                '<span class="detail-label">Max Players</span>' +
+                                '<span class="detail-value">' + t.maxPlayers + ' <span class="highlight">players</span></span>' +
+                            '</div>' +
+                            '<div class="detail-item">' +
+                                '<span class="detail-label">Min Balance</span>' +
+                                '<span class="detail-value"><span class="highlight">' + t.minBalance + ' SOL</span></span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="tournament-meta">' +
+                            '<div class="meta-item">' +
+                                '<span class="meta-label">Bracket</span>' +
+                                '<span class="meta-value">' + t.bracket + '</span>' +
+                            '</div>' +
+                            '<div class="meta-item">' +
+                                '<span class="meta-label">Prize Pool</span>' +
+                                '<span class="meta-value">' + t.prizePool + ' SOL</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="participants-display">' +
+                            '<span class="participants-count">' + t.currentPlayers + '/' + t.maxPlayers + ' players</span>' +
+                            '<span class="tournament-timer">' + timeLabel + ': ' + timeLeft + '</span>' +
+                        '</div>' +
+                        '<div class="tournament-actions">' +
+                            '<button class="btn-register" onclick="registerTournament(' + t.id + ')">Register</button>' +
+                            '<button class="btn-quick-view" onclick="viewTournament(' + t.id + ')">Quick View</button>' +
+                        '</div>' +
+                    '</div>';
+                }
+                grid.innerHTML = html;
+            }
+
+            // HALL OF FAME FUNCTIONALITY
+            function initializeRecordsData() {
+                recordsData = [
+                    {
+                        id: 1,
+                        icon: "🏆",
+                        title: "Highest Tournament Winrate",
+                        value: "94.7%",
+                        holder: "The Golden Phoenix",
+                        date: "November 2024",
+                        description: "Achieved through 47 consecutive tournament victories"
+                    },
+                    {
+                        id: 2,
+                        icon: "💰",
+                        title: "Most SOL Earned",
+                        value: "1,247.83 SOL",
+                        holder: "The Golden Phoenix",
+                        date: "December 2024",
+                        description: "Accumulated through strategic tournament wins"
+                    },
+                    {
+                        id: 3,
+                        icon: "🔥",
+                        title: "Longest Win Streak",
+                        value: "47 Wins",
+                        holder: "The Golden Phoenix",
+                        date: "Ongoing",
+                        description: "Unbroken chain of tournament victories"
+                    },
+                    {
+                        id: 4,
+                        icon: "⚡",
+                        title: "Fastest Tournament Win",
+                        value: "2.3 Hours",
+                        holder: "Lightning Bolt",
+                        date: "October 2024",
+                        description: "Record speed in weekly tournament completion"
+                    }
+                ];
+            }
+
+            function initializeEpicMomentsData() {
+                epicMomentsData = [
+                    {
+                        id: 1,
+                        date: "December 15, 2024",
+                        title: "The Golden Phoenix Rises",
+                        description: "The first champion to achieve legendary status with an unprecedented 47-tournament winning streak, establishing the gold standard for excellence.",
+                        icon: "🔥",
+                        stats: {
+                            "Winrate": "94.7%",
+                            "Earnings": "1,247 SOL",
+                            "Streak": "47 wins"
+                        }
+                    },
+                    {
+                        id: 2,
+                        date: "November 28, 2024",
+                        title: "The Great Whale Hunt",
+                        description: "Whale Hunter pulled off the biggest upset in WalletWars history, defeating 5 legendary players in a single tournament to claim 156.7 SOL.",
+                        icon: "🐋",
+                        stats: {
+                            "Prize Pool": "156.7 SOL",
+                            "Opponents": "127 players",
+                            "Final Winrate": "89.3%"
+                        }
+                    },
+                    {
+                        id: 3,
+                        date: "October 10, 2024",
+                        title: "Lightning Speed Record",
+                        description: "Lightning Bolt shattered all expectations by completing a weekly tournament in just 2.3 hours, showcasing unprecedented trading velocity.",
+                        icon: "⚡",
+                        stats: {
+                            "Duration": "2.3 hours",
+                            "Trades": "847",
+                            "Efficiency": "98.2%"
+                        }
+                    }
+                ];
+            }
+
+            function getLegendaryChampions() {
+                return [
+                    {
+                        id: 1,
+                        name: "The Golden Phoenix",
+                        title: "First Immortal Champion",
+                        avatar: "🔥",
+                        rank: "#1",
+                        winrate: 94.7,
+                        totalEarnings: 1247.83,
+                        tournamentsWon: 47,
+                        perfectStreaks: 12,
+                        achievements: ["First Champion", "Unbreakable", "Golden Streak", "Tournament Master"]
+                    },
+                    {
+                        id: 2,
+                        name: "Diamond Samurai",
+                        title: "The Precision Master",
+                        avatar: "⚔️",
+                        rank: "#2",
+                        winrate: 91.2,
+                        totalEarnings: 983.45,
+                        tournamentsWon: 34,
+                        perfectStreaks: 8,
+                        achievements: ["Precision Master", "Diamond Hand", "Streak Killer", "Consistency King"]
+                    },
+                    {
+                        id: 3,
+                        name: "Lightning Bolt",
+                        title: "Speed Demon",
+                        avatar: "⚡",
+                        rank: "#3",
+                        winrate: 88.9,
+                        totalEarnings: 756.23,
+                        tournamentsWon: 28,
+                        perfectStreaks: 6,
+                        achievements: ["Lightning Fast", "Speed Record", "Quick Draw", "Rapid Fire"]
+                    }
+                ];
+            }
+
+            function switchHallCategory(category) {
+                currentHallCategory = category;
+                
+                // Initialize data if needed
+                if (!recordsData) initializeRecordsData();
+                if (!epicMomentsData) initializeEpicMomentsData();
+                
+                // Update navigation buttons
+                var navButtons = document.querySelectorAll('.hall-nav-btn');
+                for (var i = 0; i < navButtons.length; i++) {
+                    navButtons[i].classList.remove('active');
+                }
+                
+                for (var i = 0; i < navButtons.length; i++) {
+                    var btn = navButtons[i];
+                    if ((category === 'legends' && btn.textContent.includes('Legendary')) ||
+                        (category === 'records' && btn.textContent.includes('Record')) ||
+                        (category === 'achievements' && btn.textContent.includes('Achievement')) ||
+                        (category === 'moments' && btn.textContent.includes('Epic'))) {
+                        btn.classList.add('active');
+                    }
+                }
+                
+                // Show/hide sections
+                var sections = document.querySelectorAll('.hall-section');
+                for (var i = 0; i < sections.length; i++) {
+                    sections[i].classList.remove('active');
+                }
+                
+                var targetSection = document.getElementById(category + '-section');
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                }
+                
+                // Render content for the selected category
+                if (category === 'legends') {
+                    renderLegends();
+                } else if (category === 'records') {
+                    renderRecords();
+                } else if (category === 'moments') {
+                    renderEpicMoments();
+                }
+            }
+
+            function renderLegends() {
+                var legendsGrid = document.querySelector('.legends-grid');
+                if (!legendsGrid) return;
+                
+                var legendaryChampions = getLegendaryChampions();
+                
+                var legendsHTML = '';
+                for (var i = 0; i < legendaryChampions.length; i++) {
+                    var legend = legendaryChampions[i];
+                    
+                    var achievementsHTML = '';
+                    var achievementsToShow = legend.achievements.slice(0, 3);
+                    for (var j = 0; j < achievementsToShow.length; j++) {
+                        achievementsHTML += '<span class="legend-badge">' + achievementsToShow[j] + '</span>';
+                    }
+                    
+                    legendsHTML += '<div class="legend-card" onclick="openLegendProfile(' + legend.id + ')">' +
+                        '<div class="legend-rank">' + legend.rank + '</div>' +
+                        '<div class="legend-avatar">' + legend.avatar + '</div>' +
+                        '<div class="legend-name">' + legend.name + '</div>' +
+                        '<div class="legend-title">' + legend.title + '</div>' +
+                        '<div class="legend-stats">' +
+                            '<div class="legend-stat">' +
+                                '<span class="legend-stat-value">' + legend.winrate + '%</span>' +
+                                '<div class="legend-stat-label">Winrate</div>' +
+                            '</div>' +
+                            '<div class="legend-stat">' +
+                                '<span class="legend-stat-value">' + legend.totalEarnings + '</span>' +
+                                '<div class="legend-stat-label">SOL Earned</div>' +
+                            '</div>' +
+                            '<div class="legend-stat">' +
+                                '<span class="legend-stat-value">' + legend.tournamentsWon + '</span>' +
+                                '<div class="legend-stat-label">Tournaments Won</div>' +
+                            '</div>' +
+                            '<div class="legend-stat">' +
+                                '<span class="legend-stat-value">' + legend.perfectStreaks + '</span>' +
+                                '<div class="legend-stat-label">Perfect Streaks</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="legend-achievements">' + achievementsHTML + '</div>' +
+                        '<div class="legend-actions">' +
+                            '<button class="legend-btn" onclick="event.stopPropagation(); openLegendProfile(' + legend.id + ')">View Profile</button>' +
+                            '<button class="legend-btn" onclick="event.stopPropagation(); challengeLegend(' + legend.id + ')">Challenge</button>' +
+                        '</div>' +
+                    '</div>';
+                }
+                legendsGrid.innerHTML = legendsHTML;
+            }
+
+            function renderRecords() {
+                var recordsGrid = document.querySelector('.records-grid');
+                if (!recordsGrid || !recordsData) return;
+                
+                var recordsHTML = '';
+                for (var i = 0; i < recordsData.length; i++) {
+                    var record = recordsData[i];
+                    recordsHTML += '<div class="record-card">' +
+                        '<div class="record-icon">' + record.icon + '</div>' +
+                        '<div class="record-title">' + record.title + '</div>' +
+                        '<div class="record-value">' + record.value + '</div>' +
+                        '<div class="record-holder">' +
+                            '<div class="record-holder-name">' + record.holder + '</div>' +
+                            '<div class="record-date">' + record.date + '</div>' +
+                        '</div>' +
+                        '<div class="record-description">' + record.description + '</div>' +
+                    '</div>';
+                }
+                recordsGrid.innerHTML = recordsHTML;
+            }
+
+            function renderEpicMoments() {
+                var momentsTimeline = document.querySelector('.moments-timeline');
+                if (!momentsTimeline || !epicMomentsData) return;
+                
+                var momentsHTML = '';
+                for (var i = 0; i < epicMomentsData.length; i++) {
+                    var moment = epicMomentsData[i];
+                    
+                    var statsHTML = '';
+                    var statsKeys = Object.keys(moment.stats);
+                    for (var j = 0; j < statsKeys.length; j++) {
+                        var key = statsKeys[j];
+                        var value = moment.stats[key];
+                        statsHTML += '<div class="moment-stat">' +
+                            '<span class="moment-stat-value">' + value + '</span>' +
+                            '<div class="moment-stat-label">' + key + '</div>' +
+                        '</div>';
+                    }
+                    
+                    momentsHTML += '<div class="moment-item">' +
+                        '<div class="moment-content">' +
+                            '<div class="moment-date">' + moment.date + '</div>' +
+                            '<div class="moment-title">' + moment.title + '</div>' +
+                            '<div class="moment-description">' + moment.description + '</div>' +
+                            '<div class="moment-stats">' + statsHTML + '</div>' +
+                        '</div>' +
+                        '<div class="moment-icon">' + moment.icon + '</div>' +
+                    '</div>';
+                }
+                momentsTimeline.innerHTML = momentsHTML;
+            }
+
+            function initializeHallOfFame() {
+                if (!document.getElementById('hall-of-fame').classList.contains('active')) return;
+                
+                // Initialize data
+                if (!recordsData) initializeRecordsData();
+                if (!epicMomentsData) initializeEpicMomentsData();
+                
+                // Initialize with legends view
+                if (currentHallCategory === 'legends') {
+                    renderLegends();
+                } else if (currentHallCategory === 'records') {
+                    renderRecords();
+                } else if (currentHallCategory === 'moments') {
+                    renderEpicMoments();
+                }
+            }
+
+            // LEADERBOARD FUNCTIONALITY
+            function switchLeaderboardCategory(category) {
+                currentLeaderboardCategory = category;
+                
+                var tabButtons = document.querySelectorAll('.tab-btn');
+                for (var i = 0; i < tabButtons.length; i++) {
+                    tabButtons[i].classList.remove('active');
+                }
+                
+                for (var i = 0; i < tabButtons.length; i++) {
+                    var btn = tabButtons[i];
+                    if ((category === 'global' && btn.textContent.includes('Global')) ||
+                        (category === 'brackets' && btn.textContent.includes('Brackets')) ||
+                        (category === 'time-based' && btn.textContent.includes('Time-Based'))) {
+                        btn.classList.add('active');
+                    }
+                }
+                
+                console.log('Switched to leaderboard category:', category);
+            }
+
+            function initializeLeaderboards() {
+                if (!document.getElementById('leaderboards').classList.contains('active')) return;
+                console.log('Leaderboards initialized');
+            }
+
+            // NAVIGATION FUNCTIONALITY
+            function navigateToPage(page) {
+                var sections = document.querySelectorAll('.page-section');
+                for (var i = 0; i < sections.length; i++) {
+                    sections[i].classList.remove('active');
+                }
+                
+                document.getElementById(page).classList.add('active');
+                
+                var navLinks = document.querySelectorAll('.nav-links a');
+                for (var i = 0; i < navLinks.length; i++) {
+                    navLinks[i].classList.remove('active');
+                }
+                
+                var navElement = document.getElementById('nav-' + page);
+                if (navElement) {
+                    navElement.classList.add('active');
+                }
+                
+                setTimeout(function() {
+                    if (page === 'tournaments') {
+                        renderTournaments();
+                    } else if (page === 'leaderboards') {
+                        initializeLeaderboards();
+                    } else if (page === 'hall-of-fame') {
+                        initializeHallOfFame();
+                    }
+                }, 100);
+            }
+
+            // UTILITY FUNCTIONS
+            function registerTournament(id) {
+                alert('Registration for tournament ' + id + '\n\nConnect your wallet to register for this tournament!');
+            }
+
+            function viewTournament(id) {
+                alert('Tournament Details #' + id + '\n\nDetailed tournament information would be shown here.');
+            }
+
+            function openLegendProfile(legendId) {
+                var legends = getLegendaryChampions();
+                var legend = null;
+                for (var i = 0; i < legends.length; i++) {
+                    if (legends[i].id === legendId) {
+                        legend = legends[i];
+                        break;
+                    }
+                }
+                
+                if (!legend) return;
+                
+                alert('🏆 ' + legend.name + '\n' +
+                      legend.title + '\n\n' +
+                      '📊 Winrate: ' + legend.winrate + '%\n' +
+                      '💰 Total Earnings: ' + legend.totalEarnings + ' SOL\n\n' +
+                      'In a full implementation, this would open a detailed profile modal with:\n' +
+                      '• Complete tournament history\n' +
+                      '• Achievement gallery\n' +
+                      '• Performance analytics\n' +
+                      '• Challenge options');
+            }
+
+            function challengeLegend(legendId) {
+                var legends = getLegendaryChampions();
+                var legend = null;
+                for (var i = 0; i < legends.length; i++) {
+                    if (legends[i].id === legendId) {
+                        legend = legends[i];
+                        break;
+                    }
+                }
+                
+                if (!legend) return;
+                
+                alert('⚔️ Challenge ' + legend.name + '!\n\n' +
+                      'Are you ready to face a legendary champion?\n\n' +
+                      'Requirements:\n' +
+                      '• Advanced bracket or higher\n' +
+                      '• 5+ SOL challenge fee\n' +
+                      '• 80%+ recent winrate\n\n' +
+                      'Winner takes 90% of the prize pool!\n\n' +
+                      'Connect your wallet to send this challenge!');
+            }
+
+            function connectWallet() {
+                alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!\n\nThis would integrate with Solana wallet adapters like Phantom, Solflare, etc.');
+            }
+
+            function scrollToLearnMore() {
+                var learnMore = document.getElementById('learn-more');
+                if (learnMore) {
+                    learnMore.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            // GLOBAL FUNCTION ASSIGNMENTS
+            window.navigateToPage = navigateToPage;
+            window.setFilter = setFilter;
+            window.registerTournament = registerTournament;
+            window.viewTournament = viewTournament;
+            window.switchHallCategory = switchHallCategory;
+            window.openLegendProfile = openLegendProfile;
+            window.challengeLegend = challengeLegend;
+            window.switchLeaderboardCategory = switchLeaderboardCategory;
+            window.connectWallet = connectWallet;
+            window.scrollToLearnMore = scrollToLearnMore;
+
+            // INITIALIZATION
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('WalletWars application initialized successfully! 🚀');
+                
+                // Auto-render tournaments if on tournaments page
                 if (document.getElementById('tournaments').classList.contains('active')) {
                     renderTournaments();
                 }
-            }, 500);
-        });
-
-        // Additional utility functions
-        function connectWallet() {
-            alert('Wallet connection feature coming soon!\n\nThis would integrate with Solana wallet adapters like Phantom, Solflare, etc.');
-        }
-
-        function scrollToLearnMore() {
-            document.getElementById('learn-more').scrollIntoView({ 
-                behavior: 'smooth' 
-            });
-        }
-
-        // Update connect wallet buttons to use the function
-        document.addEventListener('DOMContentLoaded', function() {
-            const connectButtons = document.querySelectorAll('.btn-primary');
-            connectButtons.forEach(button => {
-                if (button.textContent.includes('Connect Wallet')) {
-                    button.onclick = connectWallet;
+                
+                // Auto-render legends if on hall of fame page
+                if (document.getElementById('hall-of-fame').classList.contains('active')) {
+                    renderLegends();
                 }
             });
-            
-            // Update learn more link
-            const learnMoreLink = document.querySelector('a[href="#learn-more"]');
-            if (learnMoreLink) {
-                learnMoreLink.onclick = function(e) {
-                    e.preventDefault();
-                    scrollToLearnMore();
-                };
-            }
-        });
 
-        // Performance optimizations
-        let debounceTimer;
-        function debounce(func, delay) {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(func, delay);
-        }
-
-        // Responsive tournament card adjustments
-        function adjustTournamentLayout() {
-            const cards = document.querySelectorAll('.tournament-card');
-            const screenWidth = window.innerWidth;
-            
-            cards.forEach(card => {
-                if (screenWidth < 768) {
-                    // Mobile adjustments
-                    const details = card.querySelector('.tournament-details');
-                    if (details) {
-                        details.style.gridTemplateColumns = '1fr';
-                    }
-                } else {
-                    // Desktop layout
-                    const details = card.querySelector('.tournament-details');
-                    if (details) {
-                        details.style.gridTemplateColumns = '1fr 1fr';
-                    }
-                }
-            });
-        }
-
-        // Window resize handler
-        window.addEventListener('resize', function() {
-            debounce(adjustTournamentLayout, 250);
-        });
-
-        // Tournament status update simulation (for demo purposes)
-        function simulateStatusUpdates() {
-            setInterval(() => {
-                // Update time remaining for live tournaments
-                const timerElements = document.querySelectorAll('.tournament-timer');
-                timerElements.forEach(timer => {
-                    if (timer.textContent.includes('Ends in')) {
-                        // Simulate countdown (in a real app, this would be calculated from actual timestamps)
-                        console.log('Updating tournament timers...');
-                    }
-                });
-            }, 60000); // Update every minute
-        }
-
-        // Start status updates
-        document.addEventListener('DOMContentLoaded', function() {
-            simulateStatusUpdates();
-        });
-
-        // Analytics tracking (placeholder)
-        function trackEvent(eventName, eventData) {
-            console.log('Analytics Event:', eventName, eventData);
-            // In a real implementation, this would send data to analytics service
-        }
-
-        // Track navigation events
-        function navigateToPage(page) {
-            trackEvent('page_navigation', { page: page });
-            
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(page).classList.add('active');
-            document.querySelectorAll('.nav-links a').forEach(link => {
-                link.classList.remove('active');
-            });
-            document.getElementById(`nav-${page}`).classList.add('active');
-            
-            if (page === 'tournaments') {
-                setTimeout(() => {
-                    renderTournaments();
-                }, 100);
-            } else if (page === 'leaderboards') {
-                setTimeout(initializeLeaderboards, 100);
-            } else if (page === 'hall-of-fame') {
-                setTimeout(initializeHallOfFame, 100);
-            }
-        }
-
-        // Enhanced filter tracking
-        function setFilter(category, value) {
-            trackEvent('filter_applied', { category: category, value: value });
-            
-            currentFilters[category] = value;
-            
-            // Update button states
-            document.querySelectorAll(`.filter-group`).forEach(group => {
-                const label = group.querySelector('.filter-label').textContent.toLowerCase().replace(' ', '');
-                if (label.includes(category.toLowerCase()) || 
-                    (category === 'entryFee' && label.includes('entry')) ||
-                    (category === 'maxPlayers' && label.includes('max'))) {
-                    group.querySelectorAll('.filter-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                        const btnText = btn.textContent.toLowerCase();
-                        if ((value === 'all' && btnText === 'all') || 
-                            btnText.includes(value.toString().toLowerCase())) {
-                            btn.classList.add('active');
-                        }
-                    });
-                }
-            });
-            
-            renderTournaments();
-        }
-
-        // Error handling
-        window.addEventListener('error', function(e) {
-            console.error('Application error:', e.error);
-            // In a real app, this would report to error tracking service
-        });
-
-        // Final initialization check
-        console.log('WalletWars Enhanced Tournament System Loaded Successfully! 🚀');
-        console.log('Features:', {
-            'Enhanced Tournaments': '✅',
-            'Advanced Filtering': '✅', 
-            'Responsive Design': '✅',
-            'Real Tournament Data': '✅',
-            'Status Tracking': '✅',
-            'Professional UI': '✅'
-        });
+        })();
     </script>
 </body>
 </html>
