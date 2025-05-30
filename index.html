@@ -1,4 +1,606 @@
-<!DOCTYPE html>
+        // Enhanced Hall of Fame System
+        let currentHallCategory = 'legends';
+        let currentAchievementCategory = 'tournament';
+
+        // Comprehensive Records Data
+        const recordsData = [
+            {
+                id: 1,
+                icon: "🏆",
+                title: "Highest Tournament Winrate",
+                value: "94.7%",
+                holder: "The Golden Phoenix",
+                date: "November 2024",
+                description: "Achieved through 47 consecutive tournament victories"
+            },
+            {
+                id: 2,
+                icon: "💰",
+                title: "Most SOL Earned",
+                value: "1,247.83 SOL",
+                holder: "The Golden Phoenix",
+                date: "December 2024",
+                description: "Accumulated through strategic tournament wins"
+            },
+            {
+                id: 3,
+                icon: "🔥",
+                title: "Longest Win Streak",
+                value: "47 Wins",
+                holder: "The Golden Phoenix",
+                date: "Ongoing",
+                description: "Unbroken chain of tournament victories"
+            },
+            {
+                id: 4,
+                icon: "⚡",
+                title: "Fastest Tournament Win",
+                value: "2.3 Hours",
+                holder: "Lightning Bolt",
+                date: "October 2024",
+                description: "Record speed in weekly tournament completion"
+            },
+            {
+                id: 5,
+                icon: "📈",
+                title: "Biggest Single Tournament Win",
+                value: "156.7 SOL",
+                holder: "Whale Hunter",
+                date: "September 2024",
+                description: "Largest prize pool victory in WalletWars history"
+            },
+            {
+                id: 6,
+                icon: "🎯",
+                title: "Most Tournaments Entered",
+                value: "89 Tournaments",
+                holder: "Tournament Grinder",
+                date: "December 2024",
+                description: "Dedication to competitive excellence"
+            }
+        ];
+
+        // Comprehensive Achievements Data
+        const achievementsData = {
+            tournament: [
+                {
+                    id: 1,
+                    name: "First Victory",
+                    description: "Win your first tournament",
+                    icon: "🏆",
+                    rarity: "common",
+                    progress: 1,
+                    maxProgress: 1,
+                    unlocked: true
+                },
+                {
+                    id: 2,
+                    name: "Tournament Master",
+                    description: "Win 50 tournaments",
+                    icon: "👑",
+                    rarity: "legendary",
+                    progress: 12,
+                    maxProgress: 50,
+                    unlocked: false
+                },
+                {
+                    id: 3,
+                    name: "Weekly Warrior",
+                    description: "Win 10 weekly tournaments",
+                    icon: "⚔️",
+                    rarity: "rare",
+                    progress: 7,
+                    maxProgress: 10,
+                    unlocked: false
+                },
+                {
+                    id: 4,
+                    name: "Monthly Champion",
+                    description: "Win a monthly tournament",
+                    icon: "🥇",
+                    rarity: "epic",
+                    progress: 0,
+                    maxProgress: 1,
+                    unlocked: false
+                }
+            ],
+            performance: [
+                {
+                    id: 5,
+                    name: "High Roller",
+                    description: "Maintain 90%+ winrate for 10 tournaments",
+                    icon: "💎",
+                    rarity: "legendary",
+                    progress: 3,
+                    maxProgress: 10,
+                    unlocked: false
+                },
+                {
+                    id: 6,
+                    name: "Consistency King",
+                    description: "Maintain 80%+ winrate for 20 tournaments",
+                    icon: "📊",
+                    rarity: "epic",
+                    progress: 15,
+                    maxProgress: 20,
+                    unlocked: false
+                },
+                {
+                    id: 7,
+                    name: "Profit Prophet",
+                    description: "Earn 100 SOL in total winnings",
+                    icon: "💰",
+                    rarity: "rare",
+                    progress: 45.67,
+                    maxProgress: 100,
+                    unlocked: false
+                }
+            ],
+            streak: [
+                {
+                    id: 8,
+                    name: "Hot Streak",
+                    description: "Win 5 tournaments in a row",
+                    icon: "🔥",
+                    rarity: "rare",
+                    progress: 5,
+                    maxProgress: 5,
+                    unlocked: true
+                },
+                {
+                    id: 9,
+                    name: "Unstoppable",
+                    description: "Win 15 tournaments in a row",
+                    icon: "⚡",
+                    rarity: "epic",
+                    progress: 8,
+                    maxProgress: 15,
+                    unlocked: false
+                },
+                {
+                    id: 10,
+                    name: "Immortal",
+                    description: "Win 30 tournaments in a row",
+                    icon: "👹",
+                    rarity: "legendary",
+                    progress: 0,
+                    maxProgress: 30,
+                    unlocked: false
+                }
+            ],
+            special: [
+                {
+                    id: 11,
+                    name: "First Champion",
+                    description: "Be the first to win a tournament",
+                    icon: "🌟",
+                    rarity: "legendary",
+                    progress: 1,
+                    maxProgress: 1,
+                    unlocked: true
+                },
+                {
+                    id: 12,
+                    name: "David vs Goliath",
+                    description: "Win against a legendary bracket player",
+                    icon: "🏹",
+                    rarity: "epic",
+                    progress: 0,
+                    maxProgress: 1,
+                    unlocked: false
+                },
+                {
+                    id: 13,
+                    name: "Community Hero",
+                    description: "Help 10 new players win their first tournament",
+                    icon: "❤️",
+                    rarity: "rare",
+                    progress: 3,
+                    maxProgress: 10,
+                    unlocked: false
+                }
+            ]
+        };
+
+        // Epic Moments Data
+        const epicMomentsData = [
+            {
+                id: 1,
+                date: "December 15, 2024",
+                title: "The Golden Phoenix Rises",
+                description: "The first champion to achieve legendary status with an unprecedented 47-tournament winning streak, establishing the gold standard for excellence.",
+                icon: "🔥",
+                stats: {
+                    "Winrate": "94.7%",
+                    "Earnings": "1,247 SOL",
+                    "Streak": "47 wins"
+                }
+            },
+            {
+                id: 2,
+                date: "November 28, 2024",
+                title: "The Great Whale Hunt",
+                description: "Whale Hunter pulled off the biggest upset in WalletWars history, defeating 5 legendary players in a single tournament to claim 156.7 SOL.",
+                icon: "🐋",
+                stats: {
+                    "Prize Pool": "156.7 SOL",
+                    "Opponents": "127 players",
+                    "Final Winrate": "89.3%"
+                }
+            },
+            {
+                id: 3,
+                date: "October 10, 2024",
+                title: "Lightning Speed Record",
+                description: "Lightning Bolt shattered all expectations by completing a weekly tournament in just 2.3 hours, showcasing unprecedented trading velocity.",
+                icon: "⚡",
+                stats: {
+                    "Duration": "2.3 hours",
+                    "Trades": "847",
+                    "Efficiency": "98.2%"
+                }
+            },
+            {
+                id: 4,
+                date: "September 5, 2024",
+                title: "The Birth of WalletWars",
+                description: "The very first tournament launched with 23 brave pioneers, marking the beginning of Solana's ultimate winrate battleground.",
+                icon: "🚀",
+                stats: {
+                    "First Prize": "0.8 SOL",
+                    "Players": "23",
+                    "Winner": "Golden Phoenix"
+                }
+            }
+        ];
+
+        // Enhanced Hall of Fame navigation
+        function switchHallCategory(category) {
+            currentHallCategory = category;
+            
+            // Update navigation buttons
+            document.querySelectorAll('.hall-nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.hall-nav-btn').forEach(btn => {
+                if ((category === 'legends' && btn.textContent.includes('Legendary')) ||
+                    (category === 'records' && btn.textContent.includes('Record')) ||
+                    (category === 'achievements' && btn.textContent.includes('Achievement')) ||
+                    (category === 'moments' && btn.textContent.includes('Epic'))) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Show/hide sections
+            document.querySelectorAll('.hall-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById(`${category}-section`).classList.add('active');
+            
+            // Render content for the selected category
+            if (category === 'records') {
+                renderRecords();
+            } else if (category === 'achievements') {
+                renderAchievements();
+            } else if (category === 'moments') {
+                renderEpicMoments();
+            }
+        }
+
+        // Render Records section
+        function renderRecords() {
+            const recordsGrid = document.querySelector('.records-grid');
+            if (!recordsGrid) return;
+            
+            let recordsHTML = '';
+            for (let i = 0; i < recordsData.length; i++) {
+                const record = recordsData[i];
+                recordsHTML += '<div class="record-card">' +
+                    '<div class="record-icon">' + record.icon + '</div>' +
+                    '<div class="record-title">' + record.title + '</div>' +
+                    '<div class="record-value">' + record.value + '</div>' +
+                    '<div class="record-holder">' +
+                        '<div class="record-holder-name">' + record.holder + '</div>' +
+                        '<div class="record-date">' + record.date + '</div>' +
+                    '</div>' +
+                    '<div class="record-description">' + record.description + '</div>' +
+                '</div>';
+            }
+            recordsGrid.innerHTML = recordsHTML;
+        }
+
+        // Switch achievement category
+        function switchAchievementCategory(category) {
+            currentAchievementCategory = category;
+            
+            document.querySelectorAll('.achievement-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.achievement-tab-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(category)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            renderAchievements();
+        }
+
+        // Render Achievements section
+        function renderAchievements() {
+            const achievementsDisplay = document.querySelector('.achievements-display');
+            if (!achievementsDisplay) return;
+            
+            const categoryAchievements = achievementsData[currentAchievementCategory] || [];
+            
+            let achievementsHTML = '';
+            for (let i = 0; i < categoryAchievements.length; i++) {
+                const achievement = categoryAchievements[i];
+                const progressPercent = (achievement.progress / achievement.maxProgress) * 100;
+                const unlockedClass = achievement.unlocked ? 'unlocked' : '';
+                const statusText = achievement.unlocked ? '✅ Unlocked' : '🔒 Locked';
+                
+                achievementsHTML += '<div class="achievement-card ' + unlockedClass + '">' +
+                    '<div class="achievement-header">' +
+                        '<div class="achievement-icon">' + achievement.icon + '</div>' +
+                        '<div class="achievement-info">' +
+                            '<div class="achievement-name">' + achievement.name + '</div>' +
+                            '<div class="achievement-rarity">' + achievement.rarity + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="achievement-description">' + achievement.description + '</div>' +
+                    '<div class="achievement-progress">' +
+                        '<div class="achievement-progress-bar">' +
+                            '<div class="achievement-progress-fill" style="width: ' + progressPercent + '%"></div>' +
+                        '</div>' +
+                        '<div class="achievement-progress-text">' +
+                            achievement.progress + '/' + achievement.maxProgress + ' ' + statusText +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            }
+            achievementsDisplay.innerHTML = achievementsHTML;
+        }
+
+        // Render Epic Moments section
+        function renderEpicMoments() {
+            const momentsTimeline = document.querySelector('.moments-timeline');
+            if (!momentsTimeline) return;
+            
+            momentsTimeline.innerHTML = epicMomentsData.map(moment => `
+                <div class="moment-item">
+                    <div class="moment-content">
+                        <div class="moment-date">${moment.date}</div>
+                        <div class="moment-title">${moment.title}</div>
+                        <div class="moment-description">${moment.description}</div>
+        // Render Epic Moments section
+        function renderEpicMoments() {
+            const momentsTimeline = document.querySelector('.moments-timeline');
+            if (!momentsTimeline) return;
+            
+            let momentsHTML = '';
+            for (let i = 0; i < epicMomentsData.length; i++) {
+                const moment = epicMomentsData[i];
+                
+                let statsHTML = '';
+                const statsEntries = Object.entries(moment.stats);
+                for (let j = 0; j < statsEntries.length; j++) {
+                    const key = statsEntries[j][0];
+                    const value = statsEntries[j][1];
+                    statsHTML += '<div class="moment-stat">' +
+                        '<span class="moment-stat-value">' + value + '</span>' +
+                        '<div class="moment-stat-label">' + key + '</div>' +
+                    '</div>';
+                }
+                
+                momentsHTML += '<div class="moment-item">' +
+                    '<div class="moment-content">' +
+                        '<div class="moment-date">' + moment.date + '</div>' +
+                        '<div class="moment-title">' + moment.title + '</div>' +
+                        '<div class="moment-description">' + moment.description + '</div>' +
+                        '<div class="moment-stats">' + statsHTML + '</div>' +
+                    '</div>' +
+                    '<div class="moment-icon">' + moment.icon + '</div>' +
+                '</div>';
+            }
+            momentsTimeline.innerHTML = momentsHTML;
+        }
+
+        // Enhanced Hall of Fame initialization
+        function initializeHallOfFame() {
+            if (!document.getElementById('hall-of-fame').classList.contains('active')) return;
+            
+            // Initialize with legends view
+            if (currentHallCategory === 'legends') {
+                renderLegends();
+            } else if (currentHallCategory === 'records') {
+                renderRecords();
+            } else if (currentHallCategory === 'achievements') {
+                renderAchievements();
+            } else if (currentHallCategory === 'moments') {
+                renderEpicMoments();
+            }
+        }
+
+        // Enhanced render legends function
+        function renderLegends() {
+            const legendsGrid = document.querySelector('.legends-grid');
+            if (!legendsGrid) return;
+            
+            const legendaryChampions = [
+                {
+                    id: 1,
+                    name: "The Golden Phoenix",
+                    title: "First Immortal Champion",
+                    avatar: "🔥",
+                    rank: "#1",
+                    winrate: 94.7,
+                    totalEarnings: 1247.83,
+                    tournamentsWon: 47,
+                    perfectStreaks: 12,
+                    achievements: ["First Champion", "Unbreakable", "Golden Streak", "Tournament Master"],
+                    joinDate: "March 2024",
+                    bio: "The legendary first champion who set the standard for excellence. Known for innovative strategies and unmatched consistency."
+                },
+                {
+                    id: 2,
+                    name: "Diamond Samurai",
+                    title: "The Precision Master",
+                    avatar: "⚔️",
+                    rank: "#2",
+                    winrate: 91.2,
+                    totalEarnings: 983.45,
+                    tournamentsWon: 34,
+                    perfectStreaks: 8,
+                    achievements: ["Precision Master", "Diamond Hand", "Streak Killer", "Consistency King"],
+                    joinDate: "April 2024",
+                    bio: "A master of calculated moves and strategic precision. Never makes a move without considering all possible outcomes."
+                },
+                {
+                    id: 3,
+                    name: "Lightning Bolt",
+                    title: "Speed Demon",
+                    avatar: "⚡",
+                    rank: "#3",
+                    winrate: 88.9,
+                    totalEarnings: 756.23,
+                    tournamentsWon: 28,
+                    perfectStreaks: 6,
+                    achievements: ["Lightning Fast", "Speed Record", "Quick Draw", "Rapid Fire"],
+                    joinDate: "May 2024",
+                    bio: "Known for lightning-fast decision making and record-breaking tournament completion times."
+                }
+            ];
+            
+            let legendsHTML = '';
+            for (let i = 0; i < legendaryChampions.length; i++) {
+                const legend = legendaryChampions[i];
+                
+                let achievementsHTML = '';
+                const achievementsToShow = legend.achievements.slice(0, 3);
+                for (let j = 0; j < achievementsToShow.length; j++) {
+                    achievementsHTML += '<span class="legend-badge">' + achievementsToShow[j] + '</span>';
+                }
+                
+                legendsHTML += '<div class="legend-card" onclick="openLegendProfile(' + legend.id + ')">' +
+                    '<div class="legend-rank">' + legend.rank + '</div>' +
+                    '<div class="legend-avatar">' + legend.avatar + '</div>' +
+                    '<div class="legend-name">' + legend.name + '</div>' +
+                    '<div class="legend-title">' + legend.title + '</div>' +
+                    '<div class="legend-stats">' +
+                        '<div class="legend-stat">' +
+                            '<span class="legend-stat-value">' + legend.winrate + '%</span>' +
+                            '<div class="legend-stat-label">Winrate</div>' +
+                        '</div>' +
+                        '<div class="legend-stat">' +
+                            '<span class="legend-stat-value">' + legend.totalEarnings + '</span>' +
+                            '<div class="legend-stat-label">SOL Earned</div>' +
+                        '</div>' +
+                        '<div class="legend-stat">' +
+                            '<span class="legend-stat-value">' + legend.tournamentsWon + '</span>' +
+                            '<div class="legend-stat-label">Tournaments Won</div>' +
+                        '</div>' +
+                        '<div class="legend-stat">' +
+                            '<span class="legend-stat-value">' + legend.perfectStreaks + '</span>' +
+                            '<div class="legend-stat-label">Perfect Streaks</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="legend-achievements">' + achievementsHTML + '</div>' +
+                    '<div class="legend-actions">' +
+                        '<button class="legend-btn" onclick="event.stopPropagation(); openLegendProfile(' + legend.id + ')">View Profile</button>' +
+                        '<button class="legend-btn" onclick="event.stopPropagation(); challengeLegend(' + legend.id + ')">Challenge</button>' +
+                    '</div>' +
+                '</div>';
+            }
+            legendsGrid.innerHTML = legendsHTML;
+        }
+
+        // Enhanced legend profile function
+        function openLegendProfile(legendId) {
+            const legends = [
+                {
+                    id: 1,
+                    name: "The Golden Phoenix",
+                    title: "First Immortal Champion",
+                    bio: "The legendary first champion who set the standard for excellence. Known for innovative strategies and unmatched consistency.",
+                    winrate: 94.7,
+                    totalEarnings: 1247.83
+                },
+                {
+                    id: 2,
+                    name: "Diamond Samurai", 
+                    title: "The Precision Master",
+                    bio: "A master of calculated moves and strategic precision. Never makes a move without considering all possible outcomes.",
+                    winrate: 91.2,
+                    totalEarnings: 983.45
+                },
+                {
+                    id: 3,
+                    name: "Lightning Bolt",
+                    title: "Speed Demon", 
+                    bio: "Known for lightning-fast decision making and record-breaking tournament completion times.",
+                    winrate: 88.9,
+                    totalEarnings: 756.23
+                }
+            ];
+            
+            const legend = legends.find(l => l.id === legendId);
+            if (!legend) return;
+            
+            alert(`🏆 ${legend.name}\n` +
+                  `${legend.title}\n\n` +
+                  `📊 Winrate: ${legend.winrate}%\n` +
+                  `💰 Total Earnings: ${legend.totalEarnings} SOL\n\n` +
+                  `📖 Bio: ${legend.bio}\n\n` +
+                  `In a full implementation, this would open a detailed profile modal with:\n` +
+                  `• Complete tournament history\n` +
+                  `• Achievement gallery\n` +
+                  `• Performance analytics\n` +
+                  `• Challenge options`);
+        }
+
+        // Enhanced challenge function
+        function challengeLegend(legendId) {
+            const legends = [
+                { id: 1, name: "The Golden Phoenix" },
+                { id: 2, name: "Diamond Samurai" },
+                { id: 3, name: "Lightning Bolt" }
+            ];
+            
+            const legend = legends.find(l => l.id === legendId);
+            if (!legend) return;
+            
+            alert(`⚔️ Challenge ${legend.name}!\n\n` +
+                  `Are you ready to face a legendary champion?\n\n` +
+                  `Requirements:\n` +
+                  `• Advanced bracket or higher\n` +
+                  `• 5+ SOL challenge fee\n` +
+                  `• 80%+ recent winrate\n\n` +
+                  `Winner takes 90% of the prize pool!\n\n` +
+                  `Connect your wallet to send this challenge!`);
+        }
+
+        // Achievement unlock simulation
+        function unlockAchievement(achievementId) {
+            console.log(`Achievement unlocked: ${achievementId}`);
+            // In a real implementation, this would:
+            // 1. Update user's achievement progress
+            // 2. Show animated unlock notification
+            // 3. Update achievement display
+            // 4. Grant any associated rewards
+        }
+
+        // Record attempt tracking
+        function attemptRecord(recordType) {
+            console.log(`Attempting to break record: ${recordType}`);
+            // In a real implementation, this would:
+            // 1. Validate current performance
+            // 2. Check if record is breakable
+            // 3. Show progress towards record
+            // 4. Update leaderboards if record is broken
+        }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1379,7 +1981,7 @@
             </div>
 
             <!-- Legendary Champions Section -->
-            <div class="hall-section active">
+            <div class="hall-section active" id="legends-section">
                 <div class="section-header">
                     <h2 class="section-title">Legendary Champions</h2>
                     <p class="section-description">Elite performers who have transcended ordinary competition</p>
@@ -1422,6 +2024,51 @@
                             <button class="legend-btn" onclick="challengeLegend(1)">Challenge</button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Record Holders Section -->
+            <div class="hall-section" id="records-section">
+                <div class="section-header">
+                    <h2 class="section-title">Record Holders</h2>
+                    <p class="section-description">Champions who have achieved extraordinary milestones</p>
+                </div>
+
+                <div class="records-grid">
+                    <!-- Records will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Achievement Gallery Section -->
+            <div class="hall-section" id="achievements-section">
+                <div class="section-header">
+                    <h2 class="section-title">Achievement Gallery</h2>
+                    <p class="section-description">Unlock legendary status through skill and dedication</p>
+                </div>
+
+                <div class="achievement-categories">
+                    <div class="achievement-category-tabs">
+                        <button class="achievement-tab-btn active" onclick="switchAchievementCategory('tournament')">🏆 Tournament</button>
+                        <button class="achievement-tab-btn" onclick="switchAchievementCategory('performance')">📊 Performance</button>
+                        <button class="achievement-tab-btn" onclick="switchAchievementCategory('streak')">🔥 Streak</button>
+                        <button class="achievement-tab-btn" onclick="switchAchievementCategory('special')">⭐ Special</button>
+                    </div>
+                    
+                    <div class="achievements-display">
+                        <!-- Achievements will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Epic Moments Section -->
+            <div class="hall-section" id="moments-section">
+                <div class="section-header">
+                    <h2 class="section-title">Epic Moments</h2>
+                    <p class="section-description">Legendary moments that defined WalletWars history</p>
+                </div>
+
+                <div class="moments-timeline">
+                    <!-- Epic moments will be populated by JavaScript -->
                 </div>
             </div>
         </div>
