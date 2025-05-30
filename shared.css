@@ -1,4 +1,4 @@
-/* WalletWars - Shared Styles */
+/* WalletWars - Mobile-First Shared Styles */
 
 * {
     margin: 0;
@@ -13,6 +13,9 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     min-height: 100vh;
+    /* Improve mobile performance */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Animated Background */
@@ -73,31 +76,32 @@ body {
     100% { transform: translateX(50px) translateY(50px); }
 }
 
-/* Navigation */
+/* Enhanced Mobile-First Navigation */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    background: rgba(10, 10, 10, 0.85);
+    background: rgba(10, 10, 10, 0.95);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-    padding: 1rem 0;
+    padding: 0.75rem 0;
 }
 
 .nav-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
 }
 
 .logo {
     font-family: 'Orbitron', monospace;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 700;
     background: linear-gradient(135deg, #e879f9, #c084fc, #a855f7, #3b82f6);
     -webkit-background-clip: text;
@@ -105,22 +109,53 @@ body {
     background-clip: text;
     letter-spacing: 1px;
     text-decoration: none;
+    z-index: 1001;
 }
 
+/* Mobile Navigation Menu */
 .nav-links {
-    display: flex;
-    gap: 2rem;
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(10, 10, 10, 0.98);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-top: none;
+    border-radius: 0 0 1rem 1rem;
+    padding: 1rem;
+    margin: 0;
     list-style: none;
-    align-items: center;
+    flex-direction: column;
+    gap: 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.nav-links.active {
+    display: flex;
+}
+
+.nav-links li {
+    width: 100%;
 }
 
 .nav-links a {
     color: #d1d5db;
     text-decoration: none;
     font-weight: 500;
-    padding: 0.5rem 1rem;
+    padding: 1rem;
     border-radius: 0.5rem;
     transition: all 0.3s ease;
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 1rem;
+    /* Ensure minimum touch target size */
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav-links a:hover,
@@ -133,15 +168,20 @@ body {
     background: linear-gradient(135deg, #8b5cf6, #ec4899);
     border: none;
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 0.75rem;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
     display: inline-block;
-    margin-left: 1rem;
+    /* Ensure minimum touch target size */
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5rem;
 }
 
 .btn-primary:hover {
@@ -149,34 +189,250 @@ body {
     box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
 }
 
-/* Page Layout */
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: block;
+    background: none;
+    border: none;
+    color: #d1d5db;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    /* Ensure minimum touch target size */
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-menu-toggle:hover {
+    color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.1);
+}
+
+/* Hamburger Icon */
+.hamburger {
+    width: 24px;
+    height: 18px;
+    position: relative;
+    transform: rotate(0deg);
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.hamburger span {
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: currentColor;
+    border-radius: 3px;
+    opacity: 1;
+    left: 0;
+    transform: rotate(0deg);
+    transition: 0.3s ease-in-out;
+}
+
+.hamburger span:nth-child(1) {
+    top: 0px;
+}
+
+.hamburger span:nth-child(2) {
+    top: 7px;
+}
+
+.hamburger span:nth-child(3) {
+    top: 14px;
+}
+
+.hamburger.active span:nth-child(1) {
+    top: 7px;
+    transform: rotate(135deg);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+    left: -30px;
+}
+
+.hamburger.active span:nth-child(3) {
+    top: 7px;
+    transform: rotate(-135deg);
+}
+
+/* Page Layout - Mobile First */
 .page-container {
     min-height: 100vh;
-    padding-top: 6rem;
+    padding-top: 4rem;
 }
 
 .page-header {
     text-align: center;
-    padding: 4rem 2rem 2rem;
+    padding: 2rem 1rem 1.5rem;
 }
 
 .page-title {
     font-family: 'Orbitron', monospace;
-    font-size: clamp(2rem, 6vw, 4rem);
+    font-size: clamp(1.8rem, 8vw, 4rem);
     font-weight: 700;
     margin-bottom: 1rem;
+    line-height: 1.2;
 }
 
 .page-subtitle {
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 4vw, 1.2rem);
     color: #d1d5db;
     opacity: 0.8;
+    line-height: 1.4;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .page-content {
-    padding: 2rem;
+    padding: 1rem;
     max-width: 1400px;
     margin: 0 auto;
+}
+
+/* Enhanced Responsive Grid Systems */
+.tournaments-grid,
+.achievements-grid,
+.legends-grid,
+.records-grid,
+.moments-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Mobile-Optimized Cards */
+.tournament-card,
+.achievement-card,
+.legend-card,
+.record-category,
+.moment-card {
+    background: rgba(31, 41, 55, 0.4);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Enhanced Touch Targets */
+.filter-btn,
+.tab-btn,
+.achievement-filter-btn,
+.section-nav-btn,
+.btn-register,
+.btn-view {
+    background: rgba(31, 41, 55, 0.5);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    color: #d1d5db;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    /* Ensure minimum touch target size */
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.filter-btn:hover,
+.filter-btn.active,
+.tab-btn:hover,
+.tab-btn.active,
+.achievement-filter-btn:hover,
+.achievement-filter-btn.active,
+.section-nav-btn:hover,
+.section-nav-btn.active {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+    transform: translateY(-1px);
+}
+
+/* Mobile-Optimized Filter Sections */
+.tournament-filters,
+.achievement-filters,
+.section-nav {
+    background: rgba(31, 41, 55, 0.3);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-buttons,
+.achievement-filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.section-nav {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Mobile-Optimized Tables */
+.leaderboard-container {
+    background: rgba(31, 41, 55, 0.3);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 1rem;
+    padding: 1rem;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Ensure table doesn't get too cramped */
+}
+
+.table-header th,
+.leaderboard-row td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Hide less important columns on mobile */
+.earnings-cell {
+    display: none;
+}
+
+/* Search Input Optimization */
+.search-input {
+    width: 100%;
+    background: rgba(31, 41, 55, 0.5);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    /* Ensure proper mobile input handling */
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    background: rgba(31, 41, 55, 0.8);
 }
 
 /* Utility Classes */
@@ -185,19 +441,211 @@ body {
 .mb-2 { margin-bottom: 2rem; }
 .mb-3 { margin-bottom: 3rem; }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* Hidden elements for screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Tablet Breakpoint (768px+) */
+@media (min-width: 768px) {
+    .nav-container {
+        padding: 0 2rem;
+    }
+    
+    .mobile-menu-toggle {
+        display: none;
+    }
+    
     .nav-links {
-        gap: 1rem;
+        display: flex;
+        position: static;
+        background: none;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        flex-direction: row;
+        gap: 1.5rem;
+        align-items: center;
+        box-shadow: none;
+    }
+    
+    .nav-links li {
+        width: auto;
     }
     
     .nav-links a {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        min-height: auto;
+        display: inline-block;
+        width: auto;
+        text-align: left;
+        font-size: 0.95rem;
     }
     
     .btn-primary {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.9rem;
+        margin-top: 0;
+        margin-left: 1rem;
+        min-height: auto;
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
     }
+    
+    .logo {
+        font-size: 1.5rem;
+    }
+    
+    .page-header {
+        padding: 3rem 2rem 2rem;
+    }
+    
+    .page-content {
+        padding: 2rem;
+    }
+    
+    .tournaments-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+    }
+    
+    .achievements-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+    
+    .legends-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
+    
+    .leaderboard-container {
+        padding: 1.5rem;
+    }
+    
+    .table-header th,
+    .leaderboard-row td {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    .earnings-cell {
+        display: table-cell;
+    }
+    
+    .filter-buttons,
+    .achievement-filter-buttons {
+        gap: 1rem;
+    }
+    
+    .section-nav {
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+}
+
+/* Desktop Breakpoint (1024px+) */
+@media (min-width: 1024px) {
+    .nav-links {
+        gap: 2rem;
+    }
+    
+    .nav-links a {
+        font-size: 1rem;
+    }
+    
+    .tournaments-grid {
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    }
+    
+    .legends-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+    
+    .page-container {
+        padding-top: 6rem;
+    }
+    
+    .page-header {
+        padding: 4rem 2rem 2rem;
+    }
+}
+
+/* Large Desktop Breakpoint (1440px+) */
+@media (min-width: 1440px) {
+    .tournaments-grid,
+    .achievements-grid,
+    .legends-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Enhance touch interactions */
+    .tournament-card:hover,
+    .achievement-card:hover,
+    .legend-card:hover,
+    .record-category:hover,
+    .moment-card:hover {
+        transform: none; /* Disable hover transforms on touch devices */
+    }
+    
+    .filter-btn:hover,
+    .tab-btn:hover,
+    .achievement-filter-btn:hover,
+    .section-nav-btn:hover {
+        transform: none;
+    }
+}
+
+/* High DPI Display Optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Ensure crisp rendering on high DPI displays */
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Landscape Mobile Optimization */
+@media (max-height: 500px) and (orientation: landscape) {
+    .page-header {
+        padding: 1rem 1rem 0.5rem;
+    }
+    
+    .page-title {
+        font-size: clamp(1.5rem, 6vw, 2.5rem);
+        margin-bottom: 0.5rem;
+    }
+    
+    .navbar {
+        padding: 0.5rem 0;
+    }
+}
+
+/* Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus Visible for Keyboard Navigation */
+.nav-links a:focus-visible,
+.btn-primary:focus-visible,
+.filter-btn:focus-visible,
+.tab-btn:focus-visible,
+.achievement-filter-btn:focus-visible,
+.section-nav-btn:focus-visible,
+.search-input:focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
 }
