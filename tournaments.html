@@ -152,11 +152,23 @@
         }
 
         .tournament-card.flipped {
-            transform: rotateY(180deg) scale(1.15);
+            transform: scale(1.15);
             z-index: 10;
             min-height: 320px;
             box-shadow: 0 25px 50px rgba(139, 92, 246, 0.4);
             border-color: #8b5cf6;
+        }
+
+        .tournament-card.flipped .card-front {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .tournament-card.flipped .card-back {
+            opacity: 1;
+            pointer-events: auto;
+            visibility: visible;
         }
 
         /* Card Front (Compact View) */
