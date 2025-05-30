@@ -166,18 +166,17 @@
 
         .hero-title {
             font-family: 'Orbitron', monospace;
-            font-size: clamp(4rem, 12vw, 12rem);
+            font-size: clamp(3rem, 8vw, 8rem);
             font-weight: 900;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #e879f9 0%, #c084fc 20%, #a855f7 40%, #8b5cf6 60%, #7c3aed 80%, #6366f1 100%);
+            background: linear-gradient(135deg, #c084fc 0%, #a855f7 25%, #7c3aed 50%, #6366f1 75%, #3b82f6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            background-size: 200% 200%;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            text-shadow: 0 0 80px rgba(168, 85, 247, 0.4), 0 0 120px rgba(139, 92, 246, 0.3);
-            animation: titleGlow 4s ease-in-out infinite alternate, gradientMove 8s ease-in-out infinite;
+            line-height: 1.2;
+            letter-spacing: 0;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            animation: titleGlow 3s ease-in-out infinite alternate;
             width: 100%;
             text-align: center;
             display: block;
@@ -185,23 +184,11 @@
             margin-right: auto;
             padding: 0 2rem;
             box-sizing: border-box;
-            filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.3));
         }
 
         @keyframes titleGlow {
-            0% { 
-                text-shadow: 0 0 80px rgba(168, 85, 247, 0.4), 0 0 120px rgba(139, 92, 246, 0.3);
-                filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.3));
-            }
-            100% { 
-                text-shadow: 0 0 120px rgba(168, 85, 247, 0.6), 0 0 160px rgba(139, 92, 246, 0.4), 0 0 200px rgba(59, 130, 246, 0.3);
-                filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.5));
-            }
-        }
-
-        @keyframes gradientMove {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+            0% { text-shadow: 0 0 40px rgba(168, 85, 247, 0.3); }
+            100% { text-shadow: 0 0 60px rgba(168, 85, 247, 0.5), 0 0 80px rgba(59, 130, 246, 0.3); }
         }
 
         .hero-motto {
@@ -481,43 +468,29 @@
             border: 1px solid #6b7280;
         }
 
-        .tournament-info-grid {
+        .tournament-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
             margin-bottom: 1rem;
         }
 
-        .info-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
+        .detail-item {
+            display: flex;
+            align-items: center;
             gap: 0.5rem;
-            margin-bottom: 0.5rem;
             font-size: 0.9rem;
+            color: #d1d5db;
         }
 
-        .info-label {
+        .detail-label {
             color: #9ca3af;
             font-weight: 500;
         }
 
-        .info-value {
+        .detail-value {
             color: #ffffff;
             font-weight: 600;
-        }
-
-        .btn-view {
-            flex: 1;
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #8b5cf6;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-view:hover {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: #8b5cf6;
         }
 
         .tournament-participants {
@@ -1009,38 +982,6 @@
             background: rgba(251, 191, 36, 0.3);
             border-color: #fbbf24;
         }
-
-        /* Performance badge styles */
-        .performance-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            background: rgba(139, 92, 246, 0.2);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 1rem;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.7rem;
-            color: #8b5cf6;
-            margin-left: 0.5rem;
-        }
-
-        .performance-badge.hot-streak {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: rgba(239, 68, 68, 0.3);
-            color: #ef4444;
-        }
-
-        .performance-badge.rising-star {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: rgba(16, 185, 129, 0.3);
-            color: #10b981;
-        }
-
-        .performance-badge.legend {
-            background: rgba(251, 191, 36, 0.2);
-            border-color: rgba(251, 191, 36, 0.3);
-            color: #fbbf24;
-        }
     </style>
 </head>
 <body>
@@ -1127,34 +1068,9 @@
                     <div class="filter-group">
                         <label class="filter-label">Timeframe</label>
                         <div class="filter-buttons">
-                            <button class="filter-btn active" onclick="setFilter('timeframe', 'all')">All</button>
-                            <button class="filter-btn" onclick="setFilter('timeframe', 'weekly')">Weekly</button>
-                            <button class="filter-btn" onclick="setFilter('timeframe', 'monthly')">Monthly</button>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Entry Fee</label>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" onclick="setFilter('entryFee', 'all')">All</button>
-                            <button class="filter-btn" onclick="setFilter('entryFee', 'low')">0.01 SOL</button>
-                            <button class="filter-btn" onclick="setFilter('entryFee', 'high')">0.1 SOL</button>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Max Players</label>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" onclick="setFilter('maxPlayers', 'all')">All</button>
-                            <button class="filter-btn" onclick="setFilter('maxPlayers', '100')">100</button>
-                            <button class="filter-btn" onclick="setFilter('maxPlayers', '1000')">1000</button>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Ranking Bracket</label>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" onclick="setFilter('bracket', 'all')">All</button>
-                            <button class="filter-btn" onclick="setFilter('bracket', 'beginner')">Beginner</button>
-                            <button class="filter-btn" onclick="setFilter('bracket', 'intermediate')">Intermediate</button>
-                            <button class="filter-btn" onclick="setFilter('bracket', 'advanced')">Advanced</button>
+                            <button class="filter-btn active">All</button>
+                            <button class="filter-btn">Weekly</button>
+                            <button class="filter-btn">Monthly</button>
                         </div>
                     </div>
                 </div>
@@ -1162,7 +1078,30 @@
 
             <!-- Tournament Cards -->
             <div class="tournaments-grid" id="tournamentsGrid">
-                <!-- Tournament cards will be dynamically rendered here -->
+                <div class="tournament-card">
+                    <div class="tournament-header">
+                        <h3 class="tournament-title">Weekly Warrior Challenge</h3>
+                        <div class="status-badge status-upcoming">upcoming</div>
+                    </div>
+                    <div class="tournament-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Entry Fee:</span>
+                            <span class="detail-value">0.01 SOL</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Max Players:</span>
+                            <span class="detail-value">100 players</span>
+                        </div>
+                    </div>
+                    <div class="tournament-participants">
+                        <span class="participants-count">23/100 players</span>
+                        <span class="tournament-timer">Starts in: 2d 5h</span>
+                    </div>
+                    <div class="tournament-actions">
+                        <button class="btn-register">Register</button>
+                        <button class="btn-quick-view">Quick View</button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1305,10 +1244,10 @@
     </section>
     
     <script>
-        // Navigation function - moved to top for immediate availability
+        // Basic navigation
         function navigateToPage(page) {
             // Hide all pages
-            document.querySelectorAll('.page-section').forEach(function(section) {
+            document.querySelectorAll('.page-section').forEach(section => {
                 section.classList.remove('active');
             });
             
@@ -1316,19 +1255,10 @@
             document.getElementById(page).classList.add('active');
             
             // Update navigation
-            document.querySelectorAll('.nav-links a').forEach(function(link) {
+            document.querySelectorAll('.nav-links a').forEach(link => {
                 link.classList.remove('active');
             });
-            document.getElementById('nav-' + page).classList.add('active');
-            
-            // Initialize page-specific functionality
-            if (page === 'tournaments') {
-                setTimeout(initializeTournaments, 100);
-            } else if (page === 'leaderboards') {
-                setTimeout(initializeLeaderboards, 100);
-            } else if (page === 'hall-of-fame') {
-                setTimeout(initializeHallOfFame, 100);
-            }
+            document.getElementById(`nav-${page}`).classList.add('active');
         }
 
         console.log('Navigation system loaded successfully');
@@ -1469,7 +1399,7 @@
             return firstDay.getTime();
         }
 
-        // Sample tournament data - updated to match screenshot
+        // Sample tournament data
         const sampleTournaments = [
             {
                 id: 1,
@@ -1480,12 +1410,12 @@
                 maxPlayers: 100,
                 currentPlayers: 23,
                 bracket: "beginner",
-                startTime: Date.now() + 2 * 24 * 60 * 60 * 1000,
-                endTime: Date.now() + 9 * 24 * 60 * 60 * 1000,
+                startTime: getNextMondayNoon(),
+                endTime: getNextMondayNoon() + 7 * 24 * 60 * 60 * 1000,
                 minBalance: 0.05,
                 prizePool: 0.8,
                 rules: "Track wallet performance over 7 days. Best performing wallet wins.",
-                schedule: "Starts in: 4d 6h"
+                schedule: "Starts every Monday at 12:00 noon UTC"
             },
             {
                 id: 2,
@@ -1496,76 +1426,12 @@
                 maxPlayers: 1000,
                 currentPlayers: 542,
                 bracket: "advanced",
-                startTime: Date.now() - 5 * 24 * 60 * 60 * 1000,
-                endTime: Date.now() + 25 * 24 * 60 * 60 * 1000,
+                startTime: getFirstMondayOfCurrentMonth(),
+                endTime: getFirstMondayOfCurrentMonth() + 30 * 24 * 60 * 60 * 1000,
                 minBalance: 0.5,
                 prizePool: 80,
                 rules: "30-day competition with daily performance tracking.",
-                schedule: "Ends in: 3d 0h"
-            },
-            {
-                id: 3,
-                name: "Beginner's Luck Tournament",
-                status: "upcoming",
-                timeframe: "weekly",
-                entryFee: 0.01,
-                maxPlayers: 100,
-                currentPlayers: 67,
-                bracket: "beginner",
-                startTime: Date.now() + 1 * 24 * 60 * 60 * 1000,
-                endTime: Date.now() + 8 * 24 * 60 * 60 * 1000,
-                minBalance: 0.05,
-                prizePool: 0.5,
-                rules: "Perfect for newcomers to test their skills.",
-                schedule: "Starts in: 1d 0h"
-            },
-            {
-                id: 4,
-                name: "High Stakes Championship",
-                status: "completed",
-                timeframe: "monthly",
-                entryFee: 0.1,
-                maxPlayers: 500,
-                currentPlayers: 500,
-                bracket: "advanced",
-                startTime: Date.now() - 35 * 24 * 60 * 60 * 1000,
-                endTime: Date.now() - 5 * 24 * 60 * 60 * 1000,
-                minBalance: 1.0,
-                prizePool: 40,
-                rules: "Elite tournament for experienced traders.",
-                schedule: "Completed: Ended"
-            },
-            {
-                id: 5,
-                name: "Intermediate Challenge",
-                status: "upcoming",
-                timeframe: "weekly",
-                entryFee: 0.01,
-                maxPlayers: 200,
-                currentPlayers: 89,
-                bracket: "intermediate",
-                startTime: Date.now() + 3 * 24 * 60 * 60 * 1000,
-                endTime: Date.now() + 10 * 24 * 60 * 60 * 1000,
-                minBalance: 0.1,
-                prizePool: 1.5,
-                rules: "Mid-level competition for growing traders.",
-                schedule: "Starts in: 18d 0h"
-            },
-            {
-                id: 6,
-                name: "Lightning Round",
-                status: "live",
-                timeframe: "weekly",
-                entryFee: 0.1,
-                maxPlayers: 50,
-                currentPlayers: 34,
-                bracket: "intermediate",
-                startTime: Date.now() - 1 * 24 * 60 * 60 * 1000,
-                endTime: Date.now() + 2 * 24 * 60 * 60 * 1000,
-                minBalance: 0.2,
-                prizePool: 4.5,
-                rules: "Fast-paced tournament for quick wins.",
-                schedule: "Ends in: 4d 0h"
+                schedule: "Starts first Monday of each month at 12:00 noon UTC"
             }
         ];
 
@@ -1580,7 +1446,7 @@
             return hours + 'h';
         }
 
-        // Render tournaments - updated to match screenshot layout
+        // Render tournaments
         function renderTournaments() {
             const grid = document.getElementById('tournamentsGrid');
             if (!grid) return;
@@ -1588,72 +1454,52 @@
             const filteredTournaments = sampleTournaments.filter(tournament => {
                 if (currentFilters.timeframe !== 'all' && tournament.timeframe !== currentFilters.timeframe) return false;
                 if (currentFilters.bracket !== 'all' && tournament.bracket !== currentFilters.bracket) return false;
-                if (currentFilters.entryFee !== 'all') {
-                    if (currentFilters.entryFee === 'low' && tournament.entryFee > 0.05) return false;
-                    if (currentFilters.entryFee === 'high' && tournament.entryFee <= 0.05) return false;
-                }
-                if (currentFilters.maxPlayers !== 'all' && tournament.maxPlayers.toString() !== currentFilters.maxPlayers) return false;
                 return true;
             });
             
             grid.innerHTML = filteredTournaments.map(tournament => {
                 const statusClass = 'status-' + tournament.status;
-                const statusText = tournament.status.toUpperCase();
+                const timeLeft = formatTimeLeft(tournament.status === 'upcoming' ? tournament.startTime : tournament.endTime);
+                const timeLabel = tournament.status === 'upcoming' ? 'Starts in' : tournament.status === 'live' ? 'Ends in' : 'Completed';
                 
                 return '<div class="tournament-card">' +
                     '<div class="tournament-header">' +
-                        '<h3 class="tournament-title">' + tournament.name + '</h3>' +
-                        '<div class="status-badge ' + statusClass + '">' + statusText + '</div>' +
+                        '<div>' +
+                            '<h3 class="tournament-title">' + tournament.name + '</h3>' +
+                            '<div class="status-badge ' + statusClass + '">' + tournament.status + '</div>' +
+                        '</div>' +
                     '</div>' +
-                    '<div class="tournament-info-grid">' +
-                        '<div class="info-row">' +
-                            '<span class="info-label">Timeframe:</span>' +
-                            '<span class="info-value">' + tournament.timeframe + '</span>' +
-                            '<span class="info-label">Entry Fee:</span>' +
-                            '<span class="info-value">' + tournament.entryFee + ' SOL</span>' +
+                    '<div class="tournament-details">' +
+                        '<div class="detail-item">' +
+                            '<span class="detail-label">Entry Fee:</span>' +
+                            '<span class="detail-value">' + tournament.entryFee + ' SOL</span>' +
                         '</div>' +
-                        '<div class="info-row">' +
-                            '<span class="info-label">Max Players:</span>' +
-                            '<span class="info-value">' + tournament.maxPlayers + ' players</span>' +
-                            '<span class="info-label">Min Balance:</span>' +
-                            '<span class="info-value">' + tournament.minBalance + ' SOL</span>' +
+                        '<div class="detail-item">' +
+                            '<span class="detail-label">Max Players:</span>' +
+                            '<span class="detail-value">' + tournament.maxPlayers + ' players</span>' +
                         '</div>' +
-                        '<div class="info-row">' +
-                            '<span class="info-label">Bracket:</span>' +
-                            '<span class="info-value">' + tournament.bracket + '</span>' +
-                            '<span class="info-label">Prize Pool:</span>' +
-                            '<span class="info-value">' + tournament.prizePool + ' SOL</span>' +
+                        '<div class="detail-item">' +
+                            '<span class="detail-label">Bracket:</span>' +
+                            '<span class="detail-value">' + tournament.bracket + '</span>' +
+                        '</div>' +
+                        '<div class="detail-item">' +
+                            '<span class="detail-label">Prize Pool:</span>' +
+                            '<span class="detail-value">' + tournament.prizePool + ' SOL</span>' +
                         '</div>' +
                     '</div>' +
                     '<div class="tournament-participants">' +
                         '<span class="participants-count">' + tournament.currentPlayers + '/' + tournament.maxPlayers + ' players</span>' +
-                        '<span class="tournament-timer">' + tournament.schedule + '</span>' +
+                        '<span class="tournament-timer">' + timeLabel + ': ' + timeLeft + '</span>' +
                     '</div>' +
                     '<div class="tournament-actions">' +
                         (tournament.status === 'upcoming' ? 
                             '<button class="btn-register" onclick="openRegistrationModal(' + tournament.id + ')">Register</button>' :
-                            tournament.status === 'live' ?
-                            '<button class="btn-view">View</button>' :
-                            '<button class="btn-view">View</button>'
+                            '<button class="btn-register" style="background: #6b7280;">View</button>'
                         ) +
                         '<button class="btn-quick-view">Quick View</button>' +
                     '</div>' +
                 '</div>';
             }).join('');
-        }
-
-        // Filter functionality
-        function setFilter(filterType, value) {
-            currentFilters[filterType] = value;
-            
-            // Update active filter button
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Re-render tournaments
-            renderTournaments();
         }
 
         // Registration modal functions
@@ -1662,7 +1508,7 @@
             alert('Registration modal would open here for tournament ' + tournamentId);
         }
 
-        // Enhanced navigation with tournament initialization
+        // Initialize tournaments
         function initializeTournaments() {
             if (document.getElementById('tournaments').classList.contains('active')) {
                 renderTournaments();
@@ -1670,7 +1516,7 @@
         }
 
         // Enhanced navigation with tournament initialization
-        function navigateToPageOld(page) {
+        function navigateToPage(page) {
             document.querySelectorAll('.page-section').forEach(section => {
                 section.classList.remove('active');
             });
@@ -1746,3 +1592,395 @@
                 badges: [],
                 consistencyScore: 79,
                 lastActive: Date.now() - 1 * 60 * 60 * 1000
+            }
+        ];
+
+        // Initialize leaderboards
+        function initializeLeaderboards() {
+            if (!document.getElementById('leaderboards').classList.contains('active')) return;
+            setupSearch();
+            filterAndSortChampions();
+            renderLeaderboards();
+        }
+
+        // Set up search functionality
+        function setupSearch() {
+            const searchInput = document.getElementById('championSearch');
+            if (!searchInput) return;
+            
+            searchInput.addEventListener('input', function(e) {
+                searchQuery = e.target.value.trim();
+                setTimeout(function() {
+                    filterAndSortChampions();
+                    renderLeaderboards();
+                }, 300);
+            });
+        }
+
+        // Filter and sort champions
+        function filterAndSortChampions() {
+            let champions = sampleChampions.slice();
+            
+            if (searchQuery) {
+                champions = champions.filter(function(champion) {
+                    return champion.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           champion.walletAddress.toLowerCase().includes(searchQuery.toLowerCase());
+                });
+            }
+            
+            champions.sort(function(a, b) {
+                return b.winrate - a.winrate;
+            });
+            
+            filteredChampions = champions;
+        }
+
+        // Render leaderboards
+        function renderLeaderboards() {
+            renderTable();
+        }
+
+        // Render table
+        function renderTable() {
+            const tableBody = document.querySelector('.table-body');
+            if (!tableBody) return;
+            
+            const startIndex = (currentPageLb - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageChampions = filteredChampions.slice(startIndex, endIndex);
+            
+            if (pageChampions.length === 0) {
+                tableBody.innerHTML = '<div style="text-align: center; padding: 2rem; color: #9ca3af;">No champions found</div>';
+                return;
+            }
+            
+            tableBody.innerHTML = pageChampions.map(function(champion, index) {
+                const rank = startIndex + index + 1;
+                const trendIcon = champion.winrate > 60 ? '↗️' : champion.winrate < 40 ? '↘️' : '→';
+                
+                const badges = champion.badges.map(function(badge) {
+                    const icon = badge === 'legend' ? '👑' : badge === 'hot-streak' ? '🔥' : badge === 'rising-star' ? '⭐' : '🏆';
+                    return '<span class="performance-badge ' + badge + '">' + icon + '</span>';
+                }).join('');
+                
+                return '<div class="leaderboard-row" onclick="viewChampionProfile(' + champion.id + ')">' +
+                    '<div class="rank-col">' + rank + '</div>' +
+                    '<div class="champion-col">' +
+                        '<div class="champion-info">' +
+                            '<div class="champion-avatar">' + champion.avatar + '</div>' +
+                            '<div class="champion-details">' +
+                                '<div class="champion-name">' + champion.name + badges + '</div>' +
+                                '<div class="champion-address">' + champion.walletAddress + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="winrate-col">' + champion.winrate + '%<span style="margin-left: 0.5rem; font-size: 0.8rem;">' + trendIcon + '</span></div>' +
+                    '<div class="tournaments-col">' + champion.tournamentsAttended + '</div>' +
+                    '<div class="earnings-col">' + champion.totalEarnings + ' SOL</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        // Champion profile functions
+        function viewChampionProfile(championId) {
+            const champion = sampleChampions.find(function(c) { return c.id === championId; });
+            if (champion) {
+                alert('Viewing profile for ' + champion.name + '\nWinrate: ' + champion.winrate + '%\nEarnings: ' + champion.totalEarnings + ' SOL');
+            }
+        }
+
+        // Performance badge styles
+        const badgeStyles = document.createElement('style');
+        badgeStyles.textContent = `
+            .performance-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+                background: rgba(139, 92, 246, 0.2);
+                border: 1px solid rgba(139, 92, 246, 0.3);
+                border-radius: 1rem;
+                padding: 0.25rem 0.5rem;
+                font-size: 0.7rem;
+                color: #8b5cf6;
+                margin-left: 0.5rem;
+            }
+            .performance-badge.hot-streak {
+                background: rgba(239, 68, 68, 0.2);
+                border-color: rgba(239, 68, 68, 0.3);
+                color: #ef4444;
+            }
+            .performance-badge.rising-star {
+                background: rgba(16, 185, 129, 0.2);
+                border-color: rgba(16, 185, 129, 0.3);
+                color: #10b981;
+            }
+            .performance-badge.legend {
+                background: rgba(251, 191, 36, 0.2);
+                border-color: rgba(251, 191, 36, 0.3);
+                color: #fbbf24;
+            }
+        `;
+        document.head.appendChild(badgeStyles);
+
+        // FULL HALL OF FAME SYSTEM
+        let currentHallCategory = 'legends';
+        let currentAchievementTab = 'tournament';
+
+        // Legendary champions data
+        const legendaryChampions = [
+            {
+                id: 1,
+                name: "The Golden Phoenix",
+                title: "First Immortal Champion",
+                avatar: "🔥",
+                rank: "#1",
+                winrate: 94.7,
+                totalEarnings: 1247.83,
+                tournamentsWon: 47,
+                perfectStreaks: 12,
+                achievements: ["First Champion", "Unbreakable", "Golden Streak", "Tournament Master"],
+                joinDate: "March 2024",
+                bio: "The legendary first champion who set the standard for excellence. Known for innovative strategies and unmatched consistency."
+            },
+            {
+                id: 2,
+                name: "Diamond Samurai",
+                title: "The Precision Master",
+                avatar: "⚔️",
+                rank: "#2",
+                winrate: 91.2,
+                totalEarnings: 983.45,
+                tournamentsWon: 34,
+                perfectStreaks: 8,
+                achievements: ["Precision Master", "Diamond Hand", "Streak Killer", "Consistency King"],
+                joinDate: "April 2024",
+                bio: "A master of calculated moves and strategic precision. Never makes a move without considering all possible outcomes."
+            }
+        ];
+
+        // Records data
+        const recordsData = [
+            {
+                id: 1,
+                icon: "🏆",
+                title: "Highest Tournament Winrate",
+                value: "94.7%",
+                holder: "The Golden Phoenix",
+                date: "November 2024"
+            },
+            {
+                id: 2,
+                icon: "💰",
+                title: "Most SOL Earned",
+                value: "1,247.83 SOL",
+                holder: "The Golden Phoenix",
+                date: "December 2024"
+            }
+        ];
+
+        // Achievements data
+        const achievementsData = {
+            tournament: [
+                {
+                    id: 1,
+                    name: "First Victory",
+                    description: "Win your first tournament",
+                    icon: "🏆",
+                    rarity: "common",
+                    progress: 0,
+                    maxProgress: 1,
+                    unlocked: false
+                },
+                {
+                    id: 2,
+                    name: "Tournament Master",
+                    description: "Win 50 tournaments",
+                    icon: "👑",
+                    rarity: "legendary",
+                    progress: 0,
+                    maxProgress: 50,
+                    unlocked: false
+                }
+            ],
+            performance: [
+                {
+                    id: 3,
+                    name: "High Roller",
+                    description: "Maintain 90%+ winrate for 10 tournaments",
+                    icon: "💎",
+                    rarity: "legendary",
+                    progress: 0,
+                    maxProgress: 10,
+                    unlocked: false
+                }
+            ]
+        };
+
+        // Epic moments data
+        const epicMoments = [
+            {
+                id: 1,
+                date: "December 15, 2024",
+                title: "The Golden Phoenix Rises",
+                description: "The first champion to achieve legendary status with an unprecedented 47-tournament winning streak.",
+                icon: "🔥",
+                stats: {
+                    "Winrate": "94.7%",
+                    "Earnings": "1,247 SOL",
+                    "Streak": "47 wins"
+                }
+            }
+        ];
+
+        // Initialize Hall of Fame
+        function initializeHallOfFame() {
+            if (!document.getElementById('hall-of-fame').classList.contains('active')) return;
+            renderHallOfFame();
+        }
+
+        // Switch Hall of Fame category
+        function switchHallCategory(category) {
+            currentHallCategory = category;
+            
+            document.querySelectorAll('.hall-nav-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            
+            // Find the clicked button and make it active
+            const buttons = document.querySelectorAll('.hall-nav-btn');
+            for (let i = 0; i < buttons.length; i++) {
+                if (buttons[i].onclick && buttons[i].onclick.toString().includes(category)) {
+                    buttons[i].classList.add('active');
+                    break;
+                }
+            }
+            
+            document.querySelectorAll('.hall-section').forEach(function(section) {
+                section.classList.remove('active');
+            });
+            
+            // Show the legends section for now (we'll expand this)
+            document.querySelector('.hall-section').classList.add('active');
+            
+            renderHallOfFame();
+        }
+
+        // Render Hall of Fame content
+        function renderHallOfFame() {
+            switch (currentHallCategory) {
+                case 'legends':
+                    renderLegends();
+                    break;
+                case 'records':
+                    renderRecords();
+                    break;
+                case 'achievements':
+                    renderAchievements();
+                    break;
+                case 'moments':
+                    renderEpicMoments();
+                    break;
+                default:
+                    renderLegends();
+            }
+        }
+
+        // Render legendary champions
+        function renderLegends() {
+            const legendsGrid = document.querySelector('.legends-grid');
+            if (!legendsGrid) return;
+            
+            legendsGrid.innerHTML = legendaryChampions.map(function(legend) {
+                return '<div class="legend-card" onclick="openLegendProfile(' + legend.id + ')">' +
+                    '<div class="legend-rank">' + legend.rank + '</div>' +
+                    '<div class="legend-avatar">' + legend.avatar + '</div>' +
+                    '<div class="legend-name">' + legend.name + '</div>' +
+                    '<div class="legend-title">' + legend.title + '</div>' +
+                    '<div class="legend-stats">' +
+                        '<div class="legend-stat">' +
+                            '<span class="legend-stat-value">' + legend.winrate + '%</span>' +
+                            '<div class="legend-stat-label">Winrate</div>' +
+                        '</div>' +
+                        '<div class="legend-stat">' +
+                            '<span class="legend-stat-value">' + legend.totalEarnings + '</span>' +
+                            '<div class="legend-stat-label">SOL Earned</div>' +
+                        '</div>' +
+                        '<div class="legend-stat">' +
+                            '<span class="legend-stat-value">' + legend.tournamentsWon + '</span>' +
+                            '<div class="legend-stat-label">Tournaments Won</div>' +
+                        '</div>' +
+                        '<div class="legend-stat">' +
+                            '<span class="legend-stat-value">' + legend.perfectStreaks + '</span>' +
+                            '<div class="legend-stat-label">Perfect Streaks</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="legend-achievements">' +
+                        legend.achievements.slice(0, 3).map(function(achievement) {
+                            return '<span class="legend-badge">' + achievement + '</span>';
+                        }).join('') +
+                    '</div>' +
+                    '<div class="legend-actions">' +
+                        '<button class="legend-btn" onclick="event.stopPropagation(); openLegendProfile(' + legend.id + ')">View Profile</button>' +
+                        '<button class="legend-btn" onclick="event.stopPropagation(); challengeLegend(' + legend.id + ')">Challenge</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        // Render records (placeholder)
+        function renderRecords() {
+            console.log('Rendering records section');
+        }
+
+        // Render achievements (placeholder)
+        function renderAchievements() {
+            console.log('Rendering achievements section');
+        }
+
+        // Render epic moments (placeholder)
+        function renderEpicMoments() {
+            console.log('Rendering epic moments section');
+        }
+
+        // Open legend profile modal
+        function openLegendProfile(legendId) {
+            const legend = legendaryChampions.find(function(l) { return l.id === legendId; });
+            if (!legend) return;
+            
+            // Simple alert for now - we'll add full modal later
+            alert('Legend Profile: ' + legend.name + 
+                  '\nTitle: ' + legend.title + 
+                  '\nWinrate: ' + legend.winrate + '%' +
+                  '\nBio: ' + legend.bio);
+        }
+
+        // Challenge legend
+        function challengeLegend(legendId) {
+            const legend = legendaryChampions.find(function(l) { return l.id === legendId; });
+            if (!legend) return;
+            
+            alert('Challenge feature coming soon! You want to challenge ' + legend.name + '.');
+        }
+
+        // Enhanced navigation with Hall of Fame initialization
+        function navigateToPage(page) {
+            document.querySelectorAll('.page-section').forEach(function(section) {
+                section.classList.remove('active');
+            });
+            document.getElementById(page).classList.add('active');
+            document.querySelectorAll('.nav-links a').forEach(function(link) {
+                link.classList.remove('active');
+            });
+            document.getElementById('nav-' + page).classList.add('active');
+            
+            if (page === 'tournaments') {
+                setTimeout(initializeTournaments, 100);
+            } else if (page === 'leaderboards') {
+                setTimeout(initializeLeaderboards, 100);
+            } else if (page === 'hall-of-fame') {
+                setTimeout(initializeHallOfFame, 100);
+            }
+        }
+    </script>
+</body>
+</html>
