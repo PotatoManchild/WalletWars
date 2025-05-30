@@ -1049,9 +1049,69 @@
             font-weight: 500;
         }
 
-        .legend-btn:hover {
-            background: rgba(251, 191, 36, 0.3);
-            border-color: #fbbf24;
+        /* Sub-tabs styling */
+        .sub-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            overflow-x: auto;
+        }
+
+        .sub-tab-btn {
+            background: rgba(31, 41, 55, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            color: #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            white-space: nowrap;
+            font-size: 0.85rem;
+        }
+
+        .sub-tab-btn:hover,
+        .sub-tab-btn.active {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: #8b5cf6;
+            color: #a855f7;
+            transform: translateY(-1px);
+        }
+
+        .bracket-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1rem;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .bracket-beginner { color: #10b981; border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.1); }
+        .bracket-intermediate { color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.1); }
+        .bracket-advanced { color: #ef4444; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1); }
+        .bracket-legendary { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.1); }
+
+        .time-period-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 1rem;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #06b6d4;
+            margin-left: 0.5rem;
         }
 
         /* Responsive Design */
@@ -1231,9 +1291,28 @@
 
             <!-- Category Tabs -->
             <div class="category-tabs">
-                <button class="tab-btn active">🌍 Global Rankings</button>
-                <button class="tab-btn">🎯 By Brackets</button>
-                <button class="tab-btn">⏰ Time-Based</button>
+                <button class="tab-btn active" onclick="switchLeaderboardCategory('global')">🌍 Global Rankings</button>
+                <button class="tab-btn" onclick="switchLeaderboardCategory('brackets')">🎯 By Brackets</button>
+                <button class="tab-btn" onclick="switchLeaderboardCategory('time-based')">⏰ Time-Based</button>
+            </div>
+
+            <!-- Sub-tabs for filtered categories -->
+            <div id="sub-tabs-container" style="display: none;">
+                <div class="sub-tabs" id="brackets-subtabs" style="display: none;">
+                    <button class="sub-tab-btn active" onclick="switchBracketFilter('all')">All Brackets</button>
+                    <button class="sub-tab-btn" onclick="switchBracketFilter('beginner')">🟢 Beginner</button>
+                    <button class="sub-tab-btn" onclick="switchBracketFilter('intermediate')">🟡 Intermediate</button>
+                    <button class="sub-tab-btn" onclick="switchBracketFilter('advanced')">🔴 Advanced</button>
+                    <button class="sub-tab-btn" onclick="switchBracketFilter('legendary')">👑 Legendary</button>
+                </div>
+                
+                <div class="sub-tabs" id="time-subtabs" style="display: none;">
+                    <button class="sub-tab-btn active" onclick="switchTimeFilter('all-time')">All-Time</button>
+                    <button class="sub-tab-btn" onclick="switchTimeFilter('weekly')">📅 Weekly</button>
+                    <button class="sub-tab-btn" onclick="switchTimeFilter('monthly')">📊 Monthly</button>
+                    <button class="sub-tab-btn" onclick="switchTimeFilter('quarterly')">📈 Quarterly</button>
+                    <button class="sub-tab-btn" onclick="switchTimeFilter('yearly')">📅 Yearly</button>
+                </div>
             </div>
 
             <!-- Leaderboard Table -->
@@ -1623,9 +1702,363 @@
             }
         }
 
-        // Leaderboards functionality (simplified)
+        // Enhanced Leaderboards System
+        let currentLeaderboardCategory = 'global';
+        let currentBracketFilter = 'all';
+        let currentTimeFilter = 'all-time';
+        let searchQuery = '';
+
+        // Enhanced champion data with brackets and time-based performance
+        const enhancedChampions = [
+            {
+                id: 1,
+                name: "SolanaKing",
+                walletAddress: "4x7kNm2vX9pTq3uL8jYz5mPtR6wE",
+                winrate: 87.5,
+                totalEarnings: 45.67,
+                tournamentsAttended: 24,
+                totalWins: 21,
+                totalLosses: 3,
+                currentStreak: 8,
+                bracket: "advanced",
+                avatar: "👑",
+                badges: ["legend", "hot-streak"],
+                consistencyScore: 92,
+                lastActive: Date.now() - 2 * 60 * 60 * 1000,
+                weeklyStats: { winrate: 92.3, earnings: 12.5, tournaments: 6 },
+                monthlyStats: { winrate: 89.1, earnings: 23.8, tournaments: 15 },
+                quarterlyStats: { winrate: 88.2, earnings: 41.2, tournaments: 22 },
+                yearlyStats: { winrate: 86.8, earnings: 44.1, tournaments: 24 }
+            },
+            {
+                id: 2,
+                name: "CryptoChampion",
+                walletAddress: "8mRt5Px4sQ9vH2uK7jLz3nYc1wF",
+                winrate: 82.1,
+                totalEarnings: 38.92,
+                tournamentsAttended: 19,
+                totalWins: 15,
+                totalLosses: 4,
+                currentStreak: 5,
+                bracket: "advanced",
+                avatar: "🏆",
+                badges: ["rising-star"],
+                consistencyScore: 88,
+                lastActive: Date.now() - 30 * 60 * 1000,
+                weeklyStats: { winrate: 85.7, earnings: 8.2, tournaments: 4 },
+                monthlyStats: { winrate: 83.3, earnings: 18.5, tournaments: 12 },
+                quarterlyStats: { winrate: 81.8, earnings: 35.1, tournaments: 18 },
+                yearlyStats: { winrate: 81.9, earnings: 38.2, tournaments: 19 }
+            },
+            {
+                id: 3,
+                name: "WalletWarrior",
+                walletAddress: "9dQt6Ry7tW0vN3uM8kMz4oZd2xG",
+                winrate: 76.9,
+                totalEarnings: 29.45,
+                tournamentsAttended: 13,
+                totalWins: 10,
+                totalLosses: 3,
+                currentStreak: 3,
+                bracket: "intermediate",
+                avatar: "⚔️",
+                badges: [],
+                consistencyScore: 79,
+                lastActive: Date.now() - 1 * 60 * 60 * 1000,
+                weeklyStats: { winrate: 80.0, earnings: 5.8, tournaments: 3 },
+                monthlyStats: { winrate: 78.5, earnings: 12.3, tournaments: 8 },
+                quarterlyStats: { winrate: 77.2, earnings: 26.1, tournaments: 12 },
+                yearlyStats: { winrate: 76.5, earnings: 28.9, tournaments: 13 }
+            },
+            {
+                id: 4,
+                name: "RookieRocker",
+                walletAddress: "2fHt8Kx3qP5mN9uJ6vMz7oXc4yB",
+                winrate: 65.4,
+                totalEarnings: 12.34,
+                tournamentsAttended: 8,
+                totalWins: 5,
+                totalLosses: 3,
+                currentStreak: 2,
+                bracket: "beginner",
+                avatar: "🌟",
+                badges: ["newcomer"],
+                consistencyScore: 68,
+                lastActive: Date.now() - 3 * 60 * 60 * 1000,
+                weeklyStats: { winrate: 75.0, earnings: 3.2, tournaments: 2 },
+                monthlyStats: { winrate: 70.0, earnings: 8.1, tournaments: 5 },
+                quarterlyStats: { winrate: 66.7, earnings: 11.9, tournaments: 7 },
+                yearlyStats: { winrate: 65.0, earnings: 12.1, tournaments: 8 }
+            },
+            {
+                id: 5,
+                name: "LegendaryPhoenix",
+                walletAddress: "7xRt3Mq9pL2vN5uK8jHz6nPc1wD",
+                winrate: 94.2,
+                totalEarnings: 127.89,
+                tournamentsAttended: 45,
+                totalWins: 42,
+                totalLosses: 3,
+                currentStreak: 15,
+                bracket: "legendary",
+                avatar: "🔥",
+                badges: ["legend", "unstoppable", "hall-of-fame"],
+                consistencyScore: 97,
+                lastActive: Date.now() - 45 * 60 * 1000,
+                weeklyStats: { winrate: 100.0, earnings: 18.7, tournaments: 3 },
+                monthlyStats: { winrate: 96.2, earnings: 45.3, tournaments: 11 },
+                quarterlyStats: { winrate: 95.1, earnings: 89.2, tournaments: 28 },
+                yearlyStats: { winrate: 94.0, earnings: 125.4, tournaments: 44 }
+            },
+            {
+                id: 6,
+                name: "ProTrader",
+                walletAddress: "5kQt9Nx4tW8vM2uL7jKz3oYd6xF",
+                winrate: 73.3,
+                totalEarnings: 22.67,
+                tournamentsAttended: 15,
+                totalWins: 11,
+                totalLosses: 4,
+                currentStreak: 1,
+                bracket: "intermediate",
+                avatar: "📈",
+                badges: ["consistent"],
+                consistencyScore: 75,
+                lastActive: Date.now() - 4 * 60 * 60 * 1000,
+                weeklyStats: { winrate: 66.7, earnings: 4.5, tournaments: 3 },
+                monthlyStats: { winrate: 71.4, earnings: 11.2, tournaments: 7 },
+                quarterlyStats: { winrate: 72.7, earnings: 20.1, tournaments: 13 },
+                yearlyStats: { winrate: 73.1, earnings: 22.3, tournaments: 15 }
+            }
+        ];
+
+        // Switch main leaderboard category
+        function switchLeaderboardCategory(category) {
+            currentLeaderboardCategory = category;
+            
+            // Update main tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if ((category === 'global' && btn.textContent.includes('Global')) ||
+                    (category === 'brackets' && btn.textContent.includes('Brackets')) ||
+                    (category === 'time-based' && btn.textContent.includes('Time-Based'))) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Show/hide sub-tabs
+            const subTabsContainer = document.getElementById('sub-tabs-container');
+            const bracketsSubtabs = document.getElementById('brackets-subtabs');
+            const timeSubtabs = document.getElementById('time-subtabs');
+            
+            if (category === 'global') {
+                subTabsContainer.style.display = 'none';
+            } else if (category === 'brackets') {
+                subTabsContainer.style.display = 'block';
+                bracketsSubtabs.style.display = 'flex';
+                timeSubtabs.style.display = 'none';
+            } else if (category === 'time-based') {
+                subTabsContainer.style.display = 'block';
+                bracketsSubtabs.style.display = 'none';
+                timeSubtabs.style.display = 'flex';
+            }
+            
+            renderLeaderboardTable();
+        }
+
+        // Switch bracket filter
+        function switchBracketFilter(bracket) {
+            currentBracketFilter = bracket;
+            
+            document.querySelectorAll('#brackets-subtabs .sub-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.querySelectorAll('#brackets-subtabs .sub-tab-btn').forEach(btn => {
+                if ((bracket === 'all' && btn.textContent.includes('All')) ||
+                    btn.textContent.toLowerCase().includes(bracket)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            renderLeaderboardTable();
+        }
+
+        // Switch time filter
+        function switchTimeFilter(period) {
+            currentTimeFilter = period;
+            
+            document.querySelectorAll('#time-subtabs .sub-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.querySelectorAll('#time-subtabs .sub-tab-btn').forEach(btn => {
+                if ((period === 'all-time' && btn.textContent.includes('All-Time')) ||
+                    btn.textContent.toLowerCase().includes(period)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            renderLeaderboardTable();
+        }
+
+        // Enhanced render function for leaderboard table
+        function renderLeaderboardTable() {
+            const tableBody = document.querySelector('.table-body');
+            if (!tableBody) return;
+            
+            let filteredChampions = [...enhancedChampions];
+            
+            // Apply search filter
+            if (searchQuery) {
+                filteredChampions = filteredChampions.filter(champion => 
+                    champion.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    champion.walletAddress.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+            }
+            
+            // Apply bracket filter
+            if (currentLeaderboardCategory === 'brackets' && currentBracketFilter !== 'all') {
+                filteredChampions = filteredChampions.filter(champion => 
+                    champion.bracket === currentBracketFilter
+                );
+            }
+            
+            // Sort based on category and time period
+            filteredChampions.sort((a, b) => {
+                if (currentLeaderboardCategory === 'time-based') {
+                    const getStats = (champion) => {
+                        switch (currentTimeFilter) {
+                            case 'weekly': return champion.weeklyStats;
+                            case 'monthly': return champion.monthlyStats;
+                            case 'quarterly': return champion.quarterlyStats;
+                            default: return champion; // all-time
+                        }
+                    };
+                    return getStats(b).winrate - getStats(a).winrate;
+                } else {
+                    return b.winrate - a.winrate; // Default sort by winrate
+                }
+            });
+            
+            if (filteredChampions.length === 0) {
+                tableBody.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #9ca3af;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">🔍</div>
+                        <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">No champions found</div>
+                        <div style="font-size: 0.9rem;">Try adjusting your filters or search terms</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            tableBody.innerHTML = filteredChampions.map((champion, index) => {
+                const rank = index + 1;
+                
+                // Get appropriate stats based on current view
+                let stats = champion;
+                let periodBadge = '';
+                
+                if (currentLeaderboardCategory === 'time-based' && currentTimeFilter !== 'all-time') {
+                    switch (currentTimeFilter) {
+                        case 'weekly':
+                            stats = champion.weeklyStats;
+                            periodBadge = '<span class="time-period-badge">📅 7d</span>';
+                            break;
+                        case 'monthly':
+                            stats = champion.monthlyStats;
+                            periodBadge = '<span class="time-period-badge">📊 30d</span>';
+                            break;
+                        case 'quarterly':
+                            stats = champion.quarterlyStats;
+                            periodBadge = '<span class="time-period-badge">📈 90d</span>';
+                            break;
+                        case 'yearly':
+                            stats = champion.yearlyStats;
+                            periodBadge = '<span class="time-period-badge">📅 365d</span>';
+                            break;
+                    }
+                }
+                
+                // Bracket badge
+                let bracketBadge = '';
+                if (currentLeaderboardCategory === 'brackets' || currentLeaderboardCategory === 'global') {
+                    const bracketIcons = {
+                        'beginner': '🟢',
+                        'intermediate': '🟡', 
+                        'advanced': '🔴',
+                        'legendary': '👑'
+                    };
+                    bracketBadge = `<span class="bracket-indicator bracket-${champion.bracket}">${bracketIcons[champion.bracket]} ${champion.bracket}</span>`;
+                }
+                
+                // Performance badges
+                const badges = champion.badges.map(badge => {
+                    const icons = {
+                        'legend': '👑',
+                        'hot-streak': '🔥',
+                        'rising-star': '⭐',
+                        'newcomer': '🌟',
+                        'unstoppable': '💎',
+                        'hall-of-fame': '🏛️',
+                        'consistent': '📈'
+                    };
+                    return `<span class="performance-badge ${badge}">${icons[badge] || '🏆'}</span>`;
+                }).join('');
+                
+                const trendIcon = stats.winrate > 60 ? '↗️' : stats.winrate < 40 ? '↘️' : '→';
+                
+                return `
+                    <div class="leaderboard-row" onclick="viewChampionProfile(${champion.id})">
+                        <div class="rank-col">${rank}</div>
+                        <div class="champion-col">
+                            <div class="champion-info">
+                                <div class="champion-avatar">${champion.avatar}</div>
+                                <div class="champion-details">
+                                    <div class="champion-name">
+                                        ${champion.name}${badges}${bracketBadge}${periodBadge}
+                                    </div>
+                                    <div class="champion-address">${champion.walletAddress}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="winrate-col">
+                            ${stats.winrate}%<span style="margin-left: 0.5rem; font-size: 0.8rem;">${trendIcon}</span>
+                        </div>
+                        <div class="tournaments-col">
+                            ${currentLeaderboardCategory === 'time-based' && currentTimeFilter !== 'all-time' ? 
+                                stats.tournaments : champion.tournamentsAttended}
+                        </div>
+                        <div class="earnings-col">
+                            ${currentLeaderboardCategory === 'time-based' && currentTimeFilter !== 'all-time' ? 
+                                stats.earnings : champion.totalEarnings} SOL
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Enhanced search functionality
+        function setupLeaderboardSearch() {
+            const searchInput = document.getElementById('championSearch');
+            if (!searchInput) return;
+            
+            searchInput.addEventListener('input', function(e) {
+                searchQuery = e.target.value.trim();
+                setTimeout(() => {
+                    renderLeaderboardTable();
+                }, 300);
+            });
+        }
+
+        // Enhanced leaderboards initialization
         function initializeLeaderboards() {
-            console.log('Leaderboards initialized');
+            if (!document.getElementById('leaderboards').classList.contains('active')) return;
+            setupLeaderboardSearch();
+            renderLeaderboardTable();
         }
 
         // Hall of Fame functionality
