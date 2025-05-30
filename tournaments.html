@@ -20,17 +20,55 @@
             background-clip: text;
         }
 
-        /* Tournament Filters */
+        /* Compact Mobile-First Filter Section */
         .tournament-filters {
             background: rgba(31, 41, 55, 0.3);
             border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .filter-toggle-text {
+            font-weight: 600;
+            color: #8b5cf6;
+            font-size: 0.95rem;
+        }
+
+        .filter-toggle-icon {
+            color: #8b5cf6;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .filter-toggle.active .filter-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .filter-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .filter-content.active {
+            max-height: 300px;
         }
 
         .filter-group {
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem 0;
         }
 
         .filter-group:last-child {
@@ -40,13 +78,14 @@
         .filter-label {
             font-weight: 600;
             color: #8b5cf6;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             display: block;
+            font-size: 0.85rem;
         }
 
         .filter-buttons {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.4rem;
             flex-wrap: wrap;
         }
 
@@ -54,12 +93,16 @@
             background: rgba(31, 41, 55, 0.5);
             border: 1px solid rgba(139, 92, 246, 0.3);
             color: #d1d5db;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 500;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .filter-btn:hover,
@@ -70,11 +113,11 @@
             transform: translateY(-1px);
         }
 
-        /* Tournament Grid */
+        /* Compact Tournament Cards */
         .tournaments-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 2rem;
+            grid-template-columns: 1fr;
+            gap: 1rem;
             margin-bottom: 2rem;
         }
 
@@ -82,10 +125,13 @@
             background: rgba(31, 41, 55, 0.4);
             border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 1rem;
-            padding: 2rem;
+            padding: 1.25rem;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            min-height: 180px;
         }
 
         .tournament-card::before {
@@ -99,33 +145,73 @@
         }
 
         .tournament-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-2px);
             border-color: #8b5cf6;
-            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.2);
         }
 
-        .tournament-header {
+        .tournament-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Card Front (Compact View) */
+        .card-front {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 1.25rem;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 1.25rem;
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .tournament-header-compact {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .tournament-title {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #ffffff;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             font-family: 'Orbitron', monospace;
+            line-height: 1.2;
+        }
+
+        .tournament-subtitle {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-bottom: 0.75rem;
         }
 
         .status-badge {
-            padding: 0.4rem 0.8rem;
+            padding: 0.3rem 0.6rem;
             border-radius: 1rem;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            flex-shrink: 0;
         }
 
         .status-upcoming {
@@ -140,24 +226,62 @@
             border: 1px solid #10b981;
         }
 
+        /* Compact Key Info */
+        .key-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .key-info-item {
+            text-align: center;
+            padding: 0.5rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+        }
+
+        .key-info-label {
+            color: #9ca3af;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .key-info-value {
+            color: #8b5cf6;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .tap-hint {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Detailed Back View */
         .tournament-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .detail-item {
             background: rgba(15, 23, 42, 0.5);
-            padding: 0.75rem;
-            border-radius: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.4rem;
             border: 1px solid rgba(139, 92, 246, 0.1);
         }
 
         .detail-label {
             color: #9ca3af;
             font-weight: 500;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 0.25rem;
@@ -166,7 +290,7 @@
         .detail-value {
             color: #ffffff;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 0.8rem;
         }
 
         .detail-value .highlight {
@@ -177,28 +301,28 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
             background: rgba(139, 92, 246, 0.1);
-            border-radius: 0.75rem;
+            border-radius: 0.5rem;
             border: 1px solid rgba(139, 92, 246, 0.2);
         }
 
         .participants-count {
             font-weight: 700;
             color: #8b5cf6;
-            font-size: 1rem;
+            font-size: 0.8rem;
         }
 
         .tournament-timer {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #06b6d4;
             font-weight: 600;
         }
 
         .tournament-actions {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
         .btn-register {
@@ -206,35 +330,35 @@
             background: linear-gradient(135deg, #8b5cf6, #ec4899);
             border: none;
             color: white;
-            padding: 0.9rem 1.5rem;
-            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.95rem;
+            font-size: 0.8rem;
+            min-height: 40px;
         }
 
         .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
-        }
-
-        .btn-register:disabled {
-            background: #6b7280;
-            cursor: not-allowed;
-            transform: none;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
         }
 
         .btn-view {
             background: rgba(31, 41, 55, 0.5);
             border: 1px solid rgba(139, 92, 246, 0.3);
             color: #d1d5db;
-            padding: 0.9rem 1rem;
-            border-radius: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 500;
+            min-height: 40px;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-view:hover {
@@ -245,9 +369,9 @@
 
         .bracket-badge {
             display: inline-block;
-            padding: 0.2rem 0.5rem;
-            border-radius: 0.4rem;
-            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.65rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -269,6 +393,62 @@
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Tablet and Desktop */
+        @media (min-width: 768px) {
+            .tournaments-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .tournament-card {
+                padding: 1.5rem;
+                min-height: 200px;
+            }
+
+            .card-front,
+            .card-back {
+                padding: 1.5rem;
+            }
+
+            .filter-toggle {
+                display: none;
+            }
+
+            .filter-content {
+                max-height: none;
+                overflow: visible;
+            }
+
+            .tournament-filters {
+                padding: 1.5rem;
+            }
+
+            .filter-group {
+                margin-bottom: 1rem;
+            }
+
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .tournaments-grid {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: 2rem;
+            }
+
+            .tournament-card {
+                padding: 2rem;
+            }
+
+            .card-front,
+            .card-back {
+                padding: 2rem;
+            }
         }
     </style>
 </head>
@@ -302,33 +482,40 @@
 
         <!-- Page Content -->
         <div class="page-content">
-            <!-- Tournament Filters -->
+            <!-- Compact Tournament Filters -->
             <div class="tournament-filters">
-                <div class="filter-group">
-                    <label class="filter-label">Tournament Type</label>
-                    <div class="filter-buttons">
-                        <button class="filter-btn active" onclick="filterTournaments('all')">All</button>
-                        <button class="filter-btn" onclick="filterTournaments('weekly')">Weekly</button>
-                        <button class="filter-btn" onclick="filterTournaments('monthly')">Monthly</button>
-                    </div>
+                <div class="filter-toggle" onclick="toggleFilters()">
+                    <span class="filter-toggle-text">🎯 Filters</span>
+                    <span class="filter-toggle-icon">▼</span>
                 </div>
                 
-                <div class="filter-group">
-                    <label class="filter-label">Entry Fee</label>
-                    <div class="filter-buttons">
-                        <button class="filter-btn active" onclick="filterByFee('all')">All</button>
-                        <button class="filter-btn" onclick="filterByFee('low')">0.01-0.05 SOL</button>
-                        <button class="filter-btn" onclick="filterByFee('high')">0.1+ SOL</button>
+                <div class="filter-content" id="filterContent">
+                    <div class="filter-group">
+                        <label class="filter-label">Type</label>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" onclick="filterTournaments('all')">All</button>
+                            <button class="filter-btn" onclick="filterTournaments('weekly')">Weekly</button>
+                            <button class="filter-btn" onclick="filterTournaments('monthly')">Monthly</button>
+                        </div>
                     </div>
-                </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Entry Fee</label>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" onclick="filterByFee('all')">All</button>
+                            <button class="filter-btn" onclick="filterByFee('low')">Low</button>
+                            <button class="filter-btn" onclick="filterByFee('high')">High</button>
+                        </div>
+                    </div>
 
-                <div class="filter-group">
-                    <label class="filter-label">Skill Level</label>
-                    <div class="filter-buttons">
-                        <button class="filter-btn active" onclick="filterBySkill('all')">All</button>
-                        <button class="filter-btn" onclick="filterBySkill('beginner')">Beginner</button>
-                        <button class="filter-btn" onclick="filterBySkill('intermediate')">Intermediate</button>
-                        <button class="filter-btn" onclick="filterBySkill('advanced')">Advanced</button>
+                    <div class="filter-group">
+                        <label class="filter-label">Skill Level</label>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" onclick="filterBySkill('all')">All</button>
+                            <button class="filter-btn" onclick="filterBySkill('beginner')">Beginner</button>
+                            <button class="filter-btn" onclick="filterBySkill('intermediate')">Intermediate</button>
+                            <button class="filter-btn" onclick="filterBySkill('advanced')">Advanced</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -336,162 +523,280 @@
             <!-- Tournament Grid -->
             <div class="tournaments-grid">
                 <!-- Tournament 1 -->
-                <div class="tournament-card show-all show-weekly show-low show-beginner">
-                    <div class="tournament-header">
-                        <div>
-                            <h3 class="tournament-title">Weekly Warrior Challenge</h3>
-                            <span class="bracket-badge bracket-beginner">Beginner</span>
+                <div class="tournament-card show-all show-weekly show-low show-beginner" onclick="flipCard(this)">
+                    <!-- Front of Card (Compact View) -->
+                    <div class="card-front">
+                        <div class="tournament-header-compact">
+                            <div>
+                                <h3 class="tournament-title">Weekly Warrior Challenge</h3>
+                                <div class="tournament-subtitle">
+                                    <span class="bracket-badge bracket-beginner">Beginner</span>
+                                </div>
+                            </div>
+                            <div class="status-badge status-upcoming">Upcoming</div>
                         </div>
-                        <div class="status-badge status-upcoming">Upcoming</div>
+                        
+                        <div class="key-info">
+                            <div class="key-info-item">
+                                <div class="key-info-label">Entry</div>
+                                <div class="key-info-value">0.01 SOL</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Prize</div>
+                                <div class="key-info-value">0.8 SOL</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tap-hint">👆 Tap for details</div>
                     </div>
-                    
-                    <div class="tournament-details">
-                        <div class="detail-item">
-                            <div class="detail-label">Entry Fee</div>
-                            <div class="detail-value"><span class="highlight">0.01 SOL</span></div>
+
+                    <!-- Back of Card (Detailed View) -->
+                    <div class="card-back">
+                        <div class="tournament-header-compact">
+                            <div>
+                                <h3 class="tournament-title">Weekly Warrior Challenge</h3>
+                                <div class="tournament-subtitle">
+                                    <span class="bracket-badge bracket-beginner">Beginner</span>
+                                </div>
+                            </div>
+                            <div class="status-badge status-upcoming">Upcoming</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Prize Pool</div>
-                            <div class="detail-value"><span class="highlight">0.8 SOL</span></div>
+                        
+                        <div class="tournament-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Entry Fee</div>
+                                <div class="detail-value"><span class="highlight">0.01 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Prize Pool</div>
+                                <div class="detail-value"><span class="highlight">0.8 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Max Players</div>
+                                <div class="detail-value">100 players</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Duration</div>
+                                <div class="detail-value">7 days</div>
+                            </div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Max Players</div>
-                            <div class="detail-value">100 players</div>
+                        
+                        <div class="tournament-meta">
+                            <span class="participants-count">23/100</span>
+                            <span class="tournament-timer">Starts: 2d 5h</span>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Duration</div>
-                            <div class="detail-value">7 days</div>
+                        
+                        <div class="tournament-actions">
+                            <button class="btn-register" onclick="event.stopPropagation(); registerTournament(1)">Register</button>
+                            <button class="btn-view" onclick="event.stopPropagation(); viewTournament(1)">📊</button>
                         </div>
-                    </div>
-                    
-                    <div class="tournament-meta">
-                        <span class="participants-count">23/100 registered</span>
-                        <span class="tournament-timer">Starts in: 2d 5h</span>
-                    </div>
-                    
-                    <div class="tournament-actions">
-                        <button class="btn-register" onclick="registerTournament(1)">Register Now</button>
-                        <button class="btn-view" onclick="viewTournament(1)">Details</button>
                     </div>
                 </div>
 
                 <!-- Tournament 2 -->
-                <div class="tournament-card show-all show-monthly show-high show-advanced">
-                    <div class="tournament-header">
-                        <div>
-                            <h3 class="tournament-title">Monthly Masters Tournament</h3>
-                            <span class="bracket-badge bracket-advanced">Advanced</span>
+                <div class="tournament-card show-all show-monthly show-high show-advanced" onclick="flipCard(this)">
+                    <div class="card-front">
+                        <div class="tournament-header-compact">
+                            <div>
+                                <h3 class="tournament-title">Monthly Masters</h3>
+                                <div class="tournament-subtitle">
+                                    <span class="bracket-badge bracket-advanced">Advanced</span>
+                                </div>
+                            </div>
+                            <div class="status-badge status-live">Live</div>
                         </div>
-                        <div class="status-badge status-live">Live</div>
+                        
+                        <div class="key-info">
+                            <div class="key-info-item">
+                                <div class="key-info-label">Entry</div>
+                                <div class="key-info-value">0.1 SOL</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Prize</div>
+                                <div class="key-info-value">80 SOL</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tap-hint">👆 Tap for details</div>
                     </div>
-                    
-                    <div class="tournament-details">
-                        <div class="detail-item">
-                            <div class="detail-label">Entry Fee</div>
-                            <div class="detail-value"><span class="highlight">0.1 SOL</span></div>
+
+                    <div class="card-back">
+                        <div class="tournament-header-compact">
+                            <div>
+                                <h3 class="tournament-title">Monthly Masters</h3>
+                                <div class="tournament-subtitle">
+                                    <span class="bracket-badge bracket-advanced">Advanced</span>
+                                </div>
+                            </div>
+                            <div class="status-badge status-live">Live</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Prize Pool</div>
-                            <div class="detail-value"><span class="highlight">80 SOL</span></div>
+                        
+                        <div class="tournament-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Entry Fee</div>
+                                <div class="detail-value"><span class="highlight">0.1 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Prize Pool</div>
+                                <div class="detail-value"><span class="highlight">80 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Max Players</div>
+                                <div class="detail-value">1000 players</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Duration</div>
+                                <div class="detail-value">30 days</div>
+                            </div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Max Players</div>
-                            <div class="detail-value">1000 players</div>
+                        
+                        <div class="tournament-meta">
+                            <span class="participants-count">542/1000</span>
+                            <span class="tournament-timer">Ends: 18d 12h</span>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Duration</div>
-                            <div class="detail-value">30 days</div>
+                        
+                        <div class="tournament-actions">
+                            <button class="btn-register" onclick="event.stopPropagation(); registerTournament(2)">Join Live</button>
+                            <button class="btn-view" onclick="event.stopPropagation(); viewTournament(2)">📊</button>
                         </div>
-                    </div>
-                    
-                    <div class="tournament-meta">
-                        <span class="participants-count">542/1000 registered</span>
-                        <span class="tournament-timer">Ends in: 18d 12h</span>
-                    </div>
-                    
-                    <div class="tournament-actions">
-                        <button class="btn-register" onclick="registerTournament(2)">Join Live</button>
-                        <button class="btn-view" onclick="viewTournament(2)">View Live</button>
                     </div>
                 </div>
 
                 <!-- Tournament 3 -->
-                <div class="tournament-card show-all show-weekly show-low show-intermediate">
-                    <div class="tournament-header">
-                        <div>
-                            <h3 class="tournament-title">Intermediate Showdown</h3>
-                            <span class="bracket-badge bracket-intermediate">Intermediate</span>
+                <div class="tournament-card show-all show-weekly show-low show-intermediate" onclick="flipCard(this)">
+                    <div class="card-front">
+                        <div class="tournament-header-compact">
+                            <div>
+                                <h3 class="tournament-title">Intermediate Showdown</h3>
+                                <div class="tournament-subtitle">
+                                    <span class="bracket-badge bracket-intermediate">Intermediate</span>
+                                </div>
+                            </div>
+                            <div class="status-badge status-upcoming">Upcoming</div>
                         </div>
-                        <div class="status-badge status-upcoming">Upcoming</div>
+                        
+                        <div class="key-info">
+                            <div class="key-info-item">
+                                <div class="key-info-label">Entry</div>
+                                <div class="key-info-value">0.05 SOL</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Prize</div>
+                                <div class="key-info-value">12.5 SOL</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tap-hint">👆 Tap for details</div>
                     </div>
-                    
-                    <div class="tournament-details">
-                        <div class="detail-item">
-                            <div class="detail-label">Entry Fee</div>
-                            <div class="detail-value"><span class="highlight">0.05 SOL</span></div>
+
+                    <div class="card-back">
+                        <div class="tournament-header-compact">
+                            <div>
+                                <h3 class="tournament-title">Intermediate Showdown</h3>
+                                <div class="tournament-subtitle">
+                                    <span class="bracket-badge bracket-intermediate">Intermediate</span>
+                                </div>
+                            </div>
+                            <div class="status-badge status-upcoming">Upcoming</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Prize Pool</div>
-                            <div class="detail-value"><span class="highlight">12.5 SOL</span></div>
+                        
+                        <div class="tournament-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Entry Fee</div>
+                                <div class="detail-value"><span class="highlight">0.05 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Prize Pool</div>
+                                <div class="detail-value"><span class="highlight">12.5 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Max Players</div>
+                                <div class="detail-value">250 players</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Duration</div>
+                                <div class="detail-value">7 days</div>
+                            </div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Max Players</div>
-                            <div class="detail-value">250 players</div>
+                        
+                        <div class="tournament-meta">
+                            <span class="participants-count">89/250</span>
+                            <span class="tournament-timer">Starts: 5d 8h</span>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Duration</div>
-                            <div class="detail-value">7 days</div>
+                        
+                        <div class="tournament-actions">
+                            <button class="btn-register" onclick="event.stopPropagation(); registerTournament(3)">Register</button>
+                            <button class="btn-view" onclick="event.stopPropagation(); viewTournament(3)">📊</button>
                         </div>
-                    </div>
-                    
-                    <div class="tournament-meta">
-                        <span class="participants-count">89/250 registered</span>
-                        <span class="tournament-timer">Starts in: 5d 8h</span>
-                    </div>
-                    
-                    <div class="tournament-actions">
-                        <button class="btn-register" onclick="registerTournament(3)">Register Now</button>
-                        <button class="btn-view" onclick="viewTournament(3)">Details</button>
                     </div>
                 </div>
 
                 <!-- Tournament 4 -->
-                <div class="tournament-card show-all show-weekly show-high show-advanced">
-                    <div class="tournament-header">
-                        <div>
-                            <h3 class="tournament-title">Elite Championship</h3>
-                            <span class="bracket-badge bracket-advanced">Advanced</span>
+                <div class="tournament-card show-all show-weekly show-high show-advanced" onclick="flipCard(this)">
+                    <div class="card-front">
+                        <div class="tournament-header-compact">
+                            <div>
+                                <h3 class="tournament-title">Elite Championship</h3>
+                                <div class="tournament-subtitle">
+                                    <span class="bracket-badge bracket-advanced">Advanced</span>
+                                </div>
+                            </div>
+                            <div class="status-badge status-upcoming">Upcoming</div>
                         </div>
-                        <div class="status-badge status-upcoming">Upcoming</div>
+                        
+                        <div class="key-info">
+                            <div class="key-info-item">
+                                <div class="key-info-label">Entry</div>
+                                <div class="key-info-value">0.2 SOL</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Prize</div>
+                                <div class="key-info-value">35 SOL</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tap-hint">👆 Tap for details</div>
                     </div>
-                    
-                    <div class="tournament-details">
-                        <div class="detail-item">
-                            <div class="detail-label">Entry Fee</div>
-                            <div class="detail-value"><span class="highlight">0.2 SOL</span></div>
+
+                    <div class="card-back">
+                        <div class="tournament-header-compact">
+                            <div>
+                                <h3 class="tournament-title">Elite Championship</h3>
+                                <div class="tournament-subtitle">
+                                    <span class="bracket-badge bracket-advanced">Advanced</span>
+                                </div>
+                            </div>
+                            <div class="status-badge status-upcoming">Upcoming</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Prize Pool</div>
-                            <div class="detail-value"><span class="highlight">35 SOL</span></div>
+                        
+                        <div class="tournament-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Entry Fee</div>
+                                <div class="detail-value"><span class="highlight">0.2 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Prize Pool</div>
+                                <div class="detail-value"><span class="highlight">35 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Max Players</div>
+                                <div class="detail-value">200 players</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Duration</div>
+                                <div class="detail-value">14 days</div>
+                            </div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Max Players</div>
-                            <div class="detail-value">200 players</div>
+                        
+                        <div class="tournament-meta">
+                            <span class="participants-count">156/200</span>
+                            <span class="tournament-timer">Starts: 1d 14h</span>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Duration</div>
-                            <div class="detail-value">14 days</div>
+                        
+                        <div class="tournament-actions">
+                            <button class="btn-register" onclick="event.stopPropagation(); registerTournament(4)">Register</button>
+                            <button class="btn-view" onclick="event.stopPropagation(); viewTournament(4)">📊</button>
                         </div>
-                    </div>
-                    
-                    <div class="tournament-meta">
-                        <span class="participants-count">156/200 registered</span>
-                        <span class="tournament-timer">Starts in: 1d 14h</span>
-                    </div>
-                    
-                    <div class="tournament-actions">
-                        <button class="btn-register" onclick="registerTournament(4)">Register Now</button>
-                        <button class="btn-view" onclick="viewTournament(4)">Details</button>
                     </div>
                 </div>
             </div>
@@ -503,6 +808,21 @@
             alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!\n\nThis would integrate with Solana wallet adapters like Phantom, Solflare, etc.');
         }
 
+        // Filter Toggle for Mobile
+        function toggleFilters() {
+            const filterContent = document.getElementById('filterContent');
+            const filterToggle = document.querySelector('.filter-toggle');
+            
+            filterContent.classList.toggle('active');
+            filterToggle.classList.toggle('active');
+        }
+
+        // Card Flip Animation
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        // Filter Functions
         function filterTournaments(type) {
             updateFilterButtons('.filter-group:first-child .filter-btn', type);
             showFilteredTournaments();
