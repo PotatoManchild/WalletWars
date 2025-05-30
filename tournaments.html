@@ -126,12 +126,13 @@
             border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 1rem;
             padding: 1.25rem;
-            transition: all 0.3s ease;
+            transition: all 0.5s ease;
             position: relative;
             overflow: hidden;
             cursor: pointer;
             transform-style: preserve-3d;
             min-height: 180px;
+            z-index: 1;
         }
 
         .tournament-card::before {
@@ -151,7 +152,11 @@
         }
 
         .tournament-card.flipped {
-            transform: rotateY(180deg);
+            transform: rotateY(180deg) scale(1.15);
+            z-index: 10;
+            min-height: 320px;
+            box-shadow: 0 25px 50px rgba(139, 92, 246, 0.4);
+            border-color: #8b5cf6;
         }
 
         /* Card Front (Compact View) */
@@ -264,10 +269,44 @@
         }
 
         /* Detailed Back View */
+        .card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 1.25rem;
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 320px;
+        }
+
+        .tournament-header-detailed {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .close-hint {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.7rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 0.5rem;
+        }
+
         .tournament-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+            gap: 0.5rem;
             margin-bottom: 1rem;
         }
 
@@ -311,18 +350,65 @@
         .participants-count {
             font-weight: 700;
             color: #8b5cf6;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
 
         .tournament-timer {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #06b6d4;
             font-weight: 600;
+        }
+
+        .tournament-description {
+            background: rgba(15, 23, 42, 0.3);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .tournament-description-title {
+            color: #8b5cf6;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tournament-description-text {
+            color: #d1d5db;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .tournament-rules {
+            background: rgba(15, 23, 42, 0.3);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .tournament-rules-title {
+            color: #8b5cf6;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rules-list {
+            color: #d1d5db;
+            font-size: 0.75rem;
+            line-height: 1.4;
         }
 
         .tournament-actions {
             display: flex;
             gap: 0.5rem;
+            margin-top: auto;
         }
 
         .btn-register {
@@ -552,7 +638,9 @@
 
                     <!-- Back of Card (Detailed View) -->
                     <div class="card-back">
-                        <div class="tournament-header-compact">
+                        <div class="close-hint">👆 Tap again to close</div>
+                        
+                        <div class="tournament-header-detailed">
                             <div>
                                 <h3 class="tournament-title">Weekly Warrior Challenge</h3>
                                 <div class="tournament-subtitle">
@@ -582,12 +670,22 @@
                         </div>
                         
                         <div class="tournament-meta">
-                            <span class="participants-count">23/100</span>
-                            <span class="tournament-timer">Starts: 2d 5h</span>
+                            <span class="participants-count">23/100 registered</span>
+                            <span class="tournament-timer">Starts in: 2d 5h</span>
+                        </div>
+
+                        <div class="tournament-description">
+                            <div class="tournament-description-title">About This Tournament</div>
+                            <div class="tournament-description-text">Perfect for newcomers! Test your trading skills in a low-risk environment with other beginners. Weekly tournaments focus on consistent performance over quick gains.</div>
+                        </div>
+
+                        <div class="tournament-rules">
+                            <div class="tournament-rules-title">Key Rules</div>
+                            <div class="rules-list">• Portfolio tracking starts at registration<br>• Performance calculated vs. SOL baseline<br>• Top 20% split the prize pool<br>• No leverage restrictions</div>
                         </div>
                         
                         <div class="tournament-actions">
-                            <button class="btn-register" onclick="event.stopPropagation(); registerTournament(1)">Register</button>
+                            <button class="btn-register" onclick="event.stopPropagation(); registerTournament(1)">Register Now</button>
                             <button class="btn-view" onclick="event.stopPropagation(); viewTournament(1)">📊</button>
                         </div>
                     </div>
@@ -621,7 +719,9 @@
                     </div>
 
                     <div class="card-back">
-                        <div class="tournament-header-compact">
+                        <div class="close-hint">👆 Tap again to close</div>
+                        
+                        <div class="tournament-header-detailed">
                             <div>
                                 <h3 class="tournament-title">Monthly Masters</h3>
                                 <div class="tournament-subtitle">
@@ -651,12 +751,22 @@
                         </div>
                         
                         <div class="tournament-meta">
-                            <span class="participants-count">542/1000</span>
-                            <span class="tournament-timer">Ends: 18d 12h</span>
+                            <span class="participants-count">542/1000 registered</span>
+                            <span class="tournament-timer">Ends in: 18d 12h</span>
+                        </div>
+
+                        <div class="tournament-description">
+                            <div class="tournament-description-title">About This Tournament</div>
+                            <div class="tournament-description-text">The ultimate test for experienced traders! Monthly competitions with the largest prize pools and most competitive field. Join live and climb the ranks.</div>
+                        </div>
+
+                        <div class="tournament-rules">
+                            <div class="tournament-rules-title">Key Rules</div>
+                            <div class="rules-list">• Live leaderboard updates every hour<br>• Advanced risk metrics tracked<br>• Top 10% guaranteed payouts<br>• Minimum 0.5 SOL portfolio required</div>
                         </div>
                         
                         <div class="tournament-actions">
-                            <button class="btn-register" onclick="event.stopPropagation(); registerTournament(2)">Join Live</button>
+                            <button class="btn-register" onclick="event.stopPropagation(); registerTournament(2)">Join Live Tournament</button>
                             <button class="btn-view" onclick="event.stopPropagation(); viewTournament(2)">📊</button>
                         </div>
                     </div>
