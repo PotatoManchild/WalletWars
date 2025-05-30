@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboards - WalletWars</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="shared.css">
+    
+    <style>
+        /* Leaderboards Specific Styles */
+        .leaderboards-title {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: rgba(31, 41, 55, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+            min-width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 0.75rem 3rem 0.75rem 1rem;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(31, 41, 55, 0.8);
+        }
+
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #8b5cf6;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: rgba(31, 41, 55, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #d1d5db;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+            transform: translateY(-2px);
+        }
+
+        /* Leaderboard Table */
+        .leaderboard-container {
+            background: rgba(31, 41, 55, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            overflow: hidden;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-header {
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .table-header th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #8b5cf6;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-header th:first-child {
+            text-align: center;
+            width: 60px;
+        }
+
+        .table-body {
+            background: transparent;
+        }
+
+        .leaderboard-row {
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-row:hover {
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .leaderboard-row td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .rank-cell {
+            text-align: center;
+            font-weight: 700;
+            color: #8b5cf6;
+            font-size: 1rem;
+        }
+
+        .champion-cell {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .champion-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .champion-info {
+            flex: 1;
+        }
+
+        .champion-name {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .champion-address {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            font-family: monospace;
+        }
+
+        .winrate-cell {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .tournaments-cell,
+        .earnings-cell {
+            color: #d1d5db;
+            font-size: 0.95rem;
+        }
+
+        .earnings-cell {
+            font-weight: 600;
+        }
+
+        /* Rank Styling */
+        .rank-1 { color: #fbbf24; }
+        .rank-2 { color: #c0c0c0; }
+        .rank-3 { color: #cd7f32; }
+
+        /* Performance Badges */
+        .performance-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .badge-legend {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .badge-hot-streak {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-rising-star {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        /* Bracket Indicators */
+        .bracket-indicator {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .bracket-beginner {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .bracket-intermediate {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .bracket-advanced {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .bracket-legendary {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #9ca3af;
+        }
+
+        .no-results-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .leaderboard-table {
+                font-size: 0.9rem;
+            }
+            
+            .table-header th,
+            .leaderboard-row td {
+                padding: 0.75rem 0.5rem;
+            }
+            
+            .earnings-cell {
+                display: none;
+            }
+            
+            .champion-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background"></div>
+    <div class="geometric-patterns"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">WalletWars</a>
+            
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tournaments.html">Tournaments</a></li>
+                <li><a href="leaderboards.html" class="active">Leaderboards</a></li>
+                <li><a href="hall-of-fame.html">Hall of Fame</a></li>
+                <li><a href="#" class="btn-primary" onclick="connectWallet()">Connect Wallet</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Container -->
+    <div class="page-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title leaderboards-title">Leaderboards</h1>
+            <p class="page-subtitle">Track elite Champions and discover where you rank</p>
+        </div>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <input 
+                            type="text" 
+                            id="championSearch" 
+                            class="search-input" 
+                            placeholder="Search by champion name or wallet address..." 
+                            oninput="searchChampions()"
+                        >
+                        <button class="search-btn" onclick="searchChampions()">🔍</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <button class="tab-btn active" onclick="switchCategory('global')">🌍 Global Rankings</button>
+                <button class="tab-btn" onclick="switchCategory('weekly')">📅 Weekly</button>
+                <button class="tab-btn" onclick="switchCategory('monthly')">📊 Monthly</button>
+                <button class="tab-btn" onclick="switchCategory('brackets')">🎯 By Brackets</button>
+            </div>
+
+            <!-- Leaderboard Table -->
+            <div class="leaderboard-container">
+                <table class="leaderboard-table">
+                    <thead class="table-header">
+                        <tr>
+                            <th>Rank</th>
+                            <th>Champion</th>
+                            <th>Winrate</th>
+                            <th>Tournaments</th>
+                            <th class="earnings-cell">Earnings</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body" id="leaderboardBody">
+                        <!-- Champion rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+                
+                <div class="no-results" id="noResults" style="display: none;">
+                    <div class="no-results-icon">🔍</div>
+                    <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">No champions found</div>
+                    <div style="font-size: 0.9rem;">Try adjusting your search terms</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Champion data
+        var champions = [
+            {
+                rank: 1,
+                name: "The Golden Phoenix",
+                address: "4x7k...R6wE",
+                avatar: "🔥",
+                winrate: 94.7,
+                tournaments: 47,
+                earnings: 1247.83,
+                bracket: "legendary",
+                badges: ["legend"]
+            },
+            {
+                rank: 2,
+                name: "Diamond Samurai",
+                address: "8mRt...1wF2",
+                avatar: "⚔️",
+                winrate: 91.2,
+                tournaments: 34,
+                earnings: 983.45,
+                bracket: "advanced",
+                badges: ["hot-streak"]
+            },
+            {
+                rank: 3,
+                name: "Lightning Bolt",
+                address: "9pQw...7nX3",
+                avatar: "⚡",
+                winrate: 88.9,
+                tournaments: 28,
+                earnings: 756.23,
+                bracket: "advanced",
+                badges: ["rising-star"]
+            },
+            {
+                rank: 4,
+                name: "Crypto Whale",
+                address: "2kLm...5zP4",
+                avatar: "🐋",
+                winrate: 85.3,
+                tournaments: 52,
+                earnings: 1156.78,
+                bracket: "advanced",
+                badges: []
+            },
+            {
+                rank: 5,
+                name: "Solar Storm",
+                address: "7vBn...3cQ5",
+                avatar: "☀️",
+                winrate: 82.6,
+                tournaments: 31,
+                earnings: 634.92,
+                bracket: "intermediate",
+                badges: ["rising-star"]
+            },
+            {
+                rank: 6,
+                name: "Neon Hunter",
+                address: "6uAm...8dR6",
+                avatar: "🎯",
+                winrate: 79.4,
+                tournaments: 25,
+                earnings: 445.67,
+                bracket: "intermediate",
+                badges: []
+            },
+            {
+                rank: 7,
+                name: "Quantum Leap",
+                address: "5tZl...2eS7",
+                avatar: "🌌",
+                winrate: 76.8,
+                tournaments: 29,
+                earnings: 523.89,
+                bracket: "intermediate",
+                badges: ["hot-streak"]
+            },
+            {
+                rank: 8,
+                name: "Pixel Warrior",
+                address: "4sYk...9fT8",
+                avatar: "🎮",
+                winrate: 74.2,
+                tournaments: 22,
+                earnings: 367.45,
+                bracket: "beginner",
+                badges: []
+            }
+        ];
+
+        var currentCategory = 'global';
+        var filteredChampions = champions;
+
+        function connectWallet() {
+            alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!\n\nThis would integrate with Solana wallet adapters like Phantom, Solflare, etc.');
+        }
+
+        function switchCategory(category) {
+            currentCategory = category;
+            
+            // Update tab buttons
+            var tabs = document.querySelectorAll('.tab-btn');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+                if ((category === 'global' && tabs[i].textContent.includes('Global')) ||
+                    (category === 'weekly' && tabs[i].textContent.includes('Weekly')) ||
+                    (category === 'monthly' && tabs[i].textContent.includes('Monthly')) ||
+                    (category === 'brackets' && tabs[i].textContent.includes('Brackets'))) {
+                    tabs[i].classList.add('active');
+                }
+            }
+            
+            renderLeaderboard();
+        }
+
+        function searchChampions() {
+            var searchTerm = document.getElementById('championSearch').value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                filteredChampions = champions;
+            } else {
+                filteredChampions = champions.filter(function(champion) {
+                    return champion.name.toLowerCase().includes(searchTerm) ||
+                           champion.address.toLowerCase().includes(searchTerm);
+                });
+            }
+            
+            renderLeaderboard();
+        }
+
+        function renderLeaderboard() {
+            var tbody = document.getElementById('leaderboardBody');
+            var noResults = document.getElementById('noResults');
+            
+            if (filteredChampions.length === 0) {
+                tbody.innerHTML = '';
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            noResults.style.display = 'none';
+            
+            var html = '';
+            for (var i = 0; i < filteredChampions.length; i++) {
+                var champion = filteredChampions[i];
+                var rankClass = '';
+                if (champion.rank === 1) rankClass = 'rank-1';
+                else if (champion.rank === 2) rankClass = 'rank-2';
+                else if (champion.rank === 3) rankClass = 'rank-3';
+                
+                // Create badges
+                var badgesHtml = '';
+                for (var j = 0; j < champion.badges.length; j++) {
+                    var badge = champion.badges[j];
+                    badgesHtml += '<span class="performance-badge badge-' + badge + '">';
+                    if (badge === 'legend') badgesHtml += '👑';
+                    else if (badge === 'hot-streak') badgesHtml += '🔥';
+                    else if (badge === 'rising-star') badgesHtml += '⭐';
+                    badgesHtml += '</span>';
+                }
+                
+                // Create bracket indicator
+                var bracketHtml = '<span class="bracket-indicator bracket-' + champion.bracket + '">';
+                if (champion.bracket === 'beginner') bracketHtml += '🟢 BGN';
+                else if (champion.bracket === 'intermediate') bracketHtml += '🟡 INT';
+                else if (champion.bracket === 'advanced') bracketHtml += '🔴 ADV';
+                else if (champion.bracket === 'legendary') bracketHtml += '👑 LEG';
+                bracketHtml += '</span>';
+                
+                html += '<tr class="leaderboard-row">' +
+                    '<td class="rank-cell ' + rankClass + '">' + champion.rank + '</td>' +
+                    '<td>' +
+                        '<div class="champion-cell">' +
+                            '<div class="champion-avatar">' + champion.avatar + '</div>' +
+                            '<div class="champion-info">' +
+                                '<div class="champion-name">' + champion.name + badgesHtml + bracketHtml + '</div>' +
+                                '<div class="champion-address">' + champion.address + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</td>' +
+                    '<td class="winrate-cell">' + champion.winrate + '%</td>' +
+                    '<td class="tournaments-cell">' + champion.tournaments + '</td>' +
+                    '<td class="earnings-cell">' + champion.earnings + ' SOL</td>' +
+                '</tr>';
+            }
+            
+            tbody.innerHTML = html;
+        }
+
+        // Initialize the leaderboard
+        document.addEventListener('DOMContentLoaded', function() {
+            renderLeaderboard();
+        });
+    </script>
+</body>
+</html>\nPrepare to climb the ranks! 📈');
+        }
+    </script>
+</body>
+</html>

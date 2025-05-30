@@ -8,148 +8,11 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="shared.css">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #0a0a0a;
-            color: #ffffff;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Animated Background */
-        .animated-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: linear-gradient(45deg, #0a0a0a, #1a1a2e, #16213e, #0f0f23);
-            background-size: 400% 400%;
-            animation: gradientShift 25s ease infinite;
-        }
-
-        .geometric-patterns {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.08;
-            background-image: 
-                radial-gradient(circle at 25% 25%, #8b5cf6 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, #06b6d4 0%, transparent 50%),
-                radial-gradient(circle at 75% 25%, #ec4899 0%, transparent 50%),
-                radial-gradient(circle at 25% 75%, #10b981 0%, transparent 50%);
-            animation: patternFloat 35s ease-in-out infinite;
-        }
-
-        .geometric-patterns::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(139, 92, 246, 0.02) 2px, rgba(139, 92, 246, 0.02) 4px),
-                repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(6, 182, 212, 0.02) 2px, rgba(6, 182, 212, 0.02) 4px);
-            animation: geometricMove 45s linear infinite;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        @keyframes patternFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            33% { transform: translateY(-10px) rotate(60deg); }
-            66% { transform: translateY(5px) rotate(120deg); }
-        }
-
-        @keyframes geometricMove {
-            0% { transform: translateX(0) translateY(0); }
-            100% { transform: translateX(50px) translateY(50px); }
-        }
-
-        /* Navigation */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-            padding: 1rem 0;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #e879f9, #c084fc, #a855f7, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 1px;
-            cursor: pointer;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: #d1d5db;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: #8b5cf6;
-            background: rgba(139, 92, 246, 0.1);
-        }
-
-        /* Page Sections */
-        .page-section {
-            display: none;
-            min-height: 100vh;
-            padding-top: 6rem;
-        }
-
-        .page-section.active {
-            display: block;
-        }
-
-        /* Hero Section */
+        /* Home Page Specific Styles */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -174,16 +37,8 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1.2;
-            letter-spacing: 0;
             text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
             animation: titleGlow 3s ease-in-out infinite alternate;
-            width: 100%;
-            text-align: center;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 0 2rem;
-            box-sizing: border-box;
         }
 
         @keyframes titleGlow {
@@ -198,24 +53,6 @@
             font-weight: 300;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            border: none;
-            color: white;
-            padding: 1.2rem 3rem;
-            border-radius: 0.75rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);
-        }
-
-        /* CTA Buttons */
         .cta-buttons {
             display: flex;
             gap: 1.5rem;
@@ -242,6 +79,25 @@
             background: rgba(139, 92, 246, 0.1);
             transform: translateY(-3px);
             box-shadow: 0 15px 35px rgba(139, 92, 246, 0.2);
+        }
+
+        .btn-hero-primary {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border: none;
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 0.75rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);
         }
 
         /* Learn More Section */
@@ -313,390 +169,6 @@
             color: #d1d5db;
             line-height: 1.6;
         }
-
-        /* HALL OF FAME PAGE STYLES */
-        .hall-of-fame-page {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .hall-of-fame-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .hall-of-fame-title {
-            font-family: 'Orbitron', monospace;
-            font-size: clamp(2rem, 6vw, 4rem);
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hall-of-fame-subtitle {
-            font-size: 1.2rem;
-            color: #d1d5db;
-            opacity: 0.8;
-        }
-
-        .hall-of-fame-nav {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 3rem;
-            overflow-x: auto;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .hall-nav-btn {
-            background: rgba(31, 41, 55, 0.3);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            color: #d1d5db;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            white-space: nowrap;
-            font-size: 0.9rem;
-            min-width: auto;
-            max-width: none;
-            width: auto;
-            height: auto;
-            display: inline-block;
-            box-sizing: border-box;
-            line-height: 1.2;
-            text-align: center;
-            vertical-align: top;
-        }
-
-        .hall-nav-btn:hover,
-        .hall-nav-btn.active {
-            background: rgba(251, 191, 36, 0.2);
-            border-color: #fbbf24;
-            color: #fbbf24;
-            transform: translateY(-2px);
-        }
-
-        .hall-section {
-            display: none;
-        }
-
-        .hall-section.active {
-            display: block;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 2rem;
-            font-weight: 600;
-            color: #fbbf24;
-            margin-bottom: 0.5rem;
-        }
-
-        .section-description {
-            color: #9ca3af;
-            font-size: 1rem;
-        }
-
-        /* Achievement Gallery Styles */
-        .achievement-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 1rem;
-            border: 1px solid rgba(251, 191, 36, 0.2);
-        }
-
-        .achievement-stat-card {
-            text-align: center;
-            padding: 1rem;
-            background: rgba(31, 41, 55, 0.4);
-            border-radius: 0.75rem;
-            border: 1px solid rgba(251, 191, 36, 0.1);
-        }
-
-        .achievement-stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #fbbf24;
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-
-        .achievement-stat-label {
-            font-size: 0.9rem;
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        .achievement-filters {
-            background: rgba(31, 41, 55, 0.3);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .achievement-filter-group {
-            margin-bottom: 1rem;
-        }
-
-        .achievement-filter-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .achievement-filter-label {
-            font-weight: 600;
-            color: #fbbf24;
-            margin-bottom: 0.75rem;
-            display: block;
-        }
-
-        .achievement-filter-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .achievement-filter-btn {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            color: #d1d5db;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .achievement-filter-btn:hover,
-        .achievement-filter-btn.active {
-            background: rgba(251, 191, 36, 0.2);
-            border-color: #fbbf24;
-            color: #fbbf24;
-            transform: translateY(-1px);
-        }
-
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .achievement-card {
-            background: rgba(31, 41, 55, 0.4);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .achievement-card:hover {
-            transform: translateY(-3px);
-            border-color: #fbbf24;
-            box-shadow: 0 15px 30px rgba(251, 191, 36, 0.2);
-        }
-
-        .achievement-card.unlocked {
-            border-color: #fbbf24;
-            background: rgba(31, 41, 55, 0.6);
-        }
-
-        .achievement-card.unlocked::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706);
-        }
-
-        .achievement-card.locked {
-            opacity: 0.6;
-            border-color: rgba(107, 114, 128, 0.3);
-        }
-
-        .achievement-card.locked .achievement-icon {
-            filter: grayscale(100%);
-        }
-
-        .achievement-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .achievement-icon {
-            width: 50px;
-            height: 50px;
-            font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0.75rem;
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-        }
-
-        .achievement-info {
-            flex: 1;
-        }
-
-        .achievement-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 0.25rem;
-        }
-
-        .achievement-rarity {
-            font-size: 0.8rem;
-            font-weight: 500;
-            padding: 0.2rem 0.5rem;
-            border-radius: 0.4rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .rarity-common {
-            background: rgba(107, 114, 128, 0.2);
-            color: #9ca3af;
-            border: 1px solid rgba(107, 114, 128, 0.3);
-        }
-
-        .rarity-rare {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .rarity-epic {
-            background: rgba(139, 92, 246, 0.2);
-            color: #a78bfa;
-            border: 1px solid rgba(139, 92, 246, 0.3);
-        }
-
-        .rarity-legendary {
-            background: rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-
-        .achievement-status {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .achievement-description {
-            color: #d1d5db;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .achievement-progress {
-            margin-bottom: 1rem;
-        }
-
-        .achievement-progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .achievement-progress-label {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        .achievement-progress-text {
-            font-size: 0.8rem;
-            color: #fbbf24;
-            font-weight: 600;
-        }
-
-        .achievement-progress-bar {
-            height: 6px;
-            background: rgba(31, 41, 55, 0.8);
-            border-radius: 3px;
-            overflow: hidden;
-            border: 1px solid rgba(251, 191, 36, 0.2);
-        }
-
-        .achievement-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #fbbf24, #f59e0b);
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
-
-        .achievement-rewards {
-            padding: 0.75rem;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(251, 191, 36, 0.1);
-        }
-
-        .achievement-rewards-title {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .achievement-reward-item {
-            display: inline-block;
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-            padding: 0.2rem 0.5rem;
-            border-radius: 0.4rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-right: 0.5rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .achievement-unlock-date {
-            text-align: center;
-            padding: 0.5rem;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 0.5rem;
-            color: #10b981;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-top: 1rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                gap: 1rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -707,521 +179,79 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo" onclick="navigateToPage('home')">WalletWars</div>
+            <a href="index.html" class="logo">WalletWars</a>
             
             <ul class="nav-links">
-                <li><a onclick="navigateToPage('home')" id="nav-home" class="active">Home</a></li>
-                <li><a onclick="navigateToPage('tournaments')" id="nav-tournaments">Tournaments</a></li>
-                <li><a onclick="navigateToPage('leaderboards')" id="nav-leaderboards">Leaderboards</a></li>
-                <li><a onclick="navigateToPage('hall-of-fame')" id="nav-hall-of-fame">Hall of Fame</a></li>
-                <li><a href="#" class="btn-primary" style="padding: 0.5rem 1rem; margin-left: 1rem;" onclick="connectWallet()">Connect Wallet</a></li>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="tournaments.html">Tournaments</a></li>
+                <li><a href="leaderboards.html">Leaderboards</a></li>
+                <li><a href="hall-of-fame.html">Hall of Fame</a></li>
+                <li><a href="#" class="btn-primary" onclick="connectWallet()">Connect Wallet</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- HOME PAGE -->
-    <section id="home" class="page-section active">
-        <div class="hero">
-            <div class="hero-content">
-                <h1 class="hero-title">WalletWars</h1>
-                <p class="hero-motto">Solana's ultimate winrate battleground</p>
-                <div class="cta-buttons">
-                    <button class="btn-primary" onclick="connectWallet()">Connect Wallet</button>
-                    <a href="#" class="btn-secondary" onclick="scrollToLearnMore()">Learn More</a>
-                </div>
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">WalletWars</h1>
+            <p class="hero-motto">Solana's ultimate winrate battleground</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn-hero-primary" onclick="connectWallet()">Connect Wallet</a>
+                <a href="#learn-more" class="btn-secondary">Learn More</a>
             </div>
         </div>
+    </div>
 
-        <!-- Learn More Section -->
-        <div id="learn-more" class="learn-more-section">
-            <div class="learn-more-container">
-                <h2 class="learn-more-title">How WalletWars Works</h2>
+    <!-- Learn More Section -->
+    <div id="learn-more" class="learn-more-section">
+        <div class="learn-more-container">
+            <h2 class="learn-more-title">How WalletWars Works</h2>
+            
+            <div class="learn-more-content">
+                <div class="concept-card">
+                    <div class="concept-icon">⚔️</div>
+                    <h3 class="concept-title">Skill-Based Competition</h3>
+                    <p class="concept-description">
+                        Compete based on your wallet's performance and trading skills, not luck. Your winrate determines your rank in tournaments.
+                    </p>
+                </div>
                 
-                <div class="learn-more-content">
-                    <div class="concept-card">
-                        <div class="concept-icon">⚔️</div>
-                        <h3 class="concept-title">Skill-Based Competition</h3>
-                        <p class="concept-description">
-                            Compete based on your wallet's performance and trading skills, not luck. Your winrate determines your rank in tournaments.
-                        </p>
-                    </div>
-                    
-                    <div class="concept-card">
-                        <div class="concept-icon">🏆</div>
-                        <h3 class="concept-title">Real SOL Rewards</h3>
-                        <p class="concept-description">
-                            Win real SOL prizes in tournaments. Top performers take home the largest share of the prize pool based on their wallet performance.
-                        </p>
-                    </div>
-                    
-                    <div class="concept-card">
-                        <div class="concept-icon">📊</div>
-                        <h3 class="concept-title">Performance Tracking</h3>
-                        <p class="concept-description">
-                            Advanced analytics track your wallet's value changes over time, calculating your performance percentage for tournament rankings.
-                        </p>
-                    </div>
+                <div class="concept-card">
+                    <div class="concept-icon">🏆</div>
+                    <h3 class="concept-title">Real SOL Rewards</h3>
+                    <p class="concept-description">
+                        Win real SOL prizes in tournaments. Top performers take home the largest share of the prize pool based on their wallet performance.
+                    </p>
+                </div>
+                
+                <div class="concept-card">
+                    <div class="concept-icon">📊</div>
+                    <h3 class="concept-title">Performance Tracking</h3>
+                    <p class="concept-description">
+                        Advanced analytics track your wallet's value changes over time, calculating your performance percentage for tournament rankings.
+                    </p>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- TOURNAMENTS PAGE -->
-    <section id="tournaments" class="page-section">
-        <div style="padding: 2rem; max-width: 1400px; margin: 0 auto; text-align: center; padding-top: 8rem;">
-            <h1 style="font-family: 'Orbitron', monospace; font-size: 3rem; color: #8b5cf6; margin-bottom: 2rem;">Tournaments</h1>
-            <p style="font-size: 1.2rem; color: #d1d5db; margin-bottom: 3rem;">Tournament functionality coming soon!</p>
-            <div style="background: rgba(31, 41, 55, 0.3); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 1rem; padding: 3rem;">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">🎯</div>
-                <div style="font-size: 1.5rem; margin-bottom: 1rem; color: #8b5cf6;">Tournament Arena</div>
-                <div style="font-size: 1rem; color: #9ca3af;">Skill-based tournaments where your wallet performance determines victory</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- LEADERBOARDS PAGE -->
-    <section id="leaderboards" class="page-section">
-        <div style="padding: 2rem; max-width: 1400px; margin: 0 auto; text-align: center; padding-top: 8rem;">
-            <h1 style="font-family: 'Orbitron', monospace; font-size: 3rem; color: #8b5cf6; margin-bottom: 2rem;">Leaderboards</h1>
-            <p style="font-size: 1.2rem; color: #d1d5db; margin-bottom: 3rem;">Leaderboard functionality coming soon!</p>
-            <div style="background: rgba(31, 41, 55, 0.3); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 1rem; padding: 3rem;">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
-                <div style="font-size: 1.5rem; margin-bottom: 1rem; color: #8b5cf6;">Champion Rankings</div>
-                <div style="font-size: 1rem; color: #9ca3af;">Track elite Champions and discover where you rank</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- HALL OF FAME PAGE -->
-    <section id="hall-of-fame" class="page-section">
-        <div class="hall-of-fame-page">
-            <div class="hall-of-fame-header">
-                <h1 class="hall-of-fame-title">Hall of Fame</h1>
-                <p class="hall-of-fame-subtitle">Legendary Champions who have achieved greatness</p>
-            </div>
-
-            <!-- Hall of Fame Navigation -->
-            <div class="hall-of-fame-nav">
-                <button class="hall-nav-btn" onclick="switchHallCategory('legends')">👑 Legendary Champions</button>
-            <!-- Hall of Fame Navigation -->
-            <div class="hall-of-fame-nav">
-                <button class="hall-nav-btn" onclick="switchHallCategory('legends')">👑 Legendary Champions</button>
-                <button class="hall-nav-btn" onclick="switchHallCategory('records')">📊 Record Holders</button>
-                <button class="hall-nav-btn active" onclick="switchHallCategory('achievements')">🏆 Achievement Gallery</button>
-                <button class="hall-nav-btn" onclick="switchHallCategory('moments')">⚡ Epic Moments</button>
-            </div>
-
-            <!-- Legendary Champions Section -->
-            <div class="hall-section" id="legends-section">
-                <div class="section-header">
-                    <h2 class="section-title">Legendary Champions</h2>
-                    <p class="section-description">Coming Soon - Elite performers who have transcended ordinary competition</p>
-                </div>
-                <div style="background: rgba(31, 41, 55, 0.3); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 1rem; padding: 3rem; text-align: center;">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">👑</div>
-                    <div style="font-size: 1.5rem; margin-bottom: 1rem; color: #fbbf24;">Legendary Champions</div>
-                    <div style="font-size: 1rem; color: #9ca3af;">Showcasing the greatest players in WalletWars history</div>
-                </div>
-            </div>
-
-            <!-- Record Holders Section -->
-            <div class="hall-section" id="records-section">
-                <div class="section-header">
-                    <h2 class="section-title">Record Holders</h2>
-                    <p class="section-description">Coming Soon - Champions who have achieved extraordinary milestones</p>
-                </div>
-                <div style="background: rgba(31, 41, 55, 0.3); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 1rem; padding: 3rem; text-align: center;">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
-                    <div style="font-size: 1.5rem; margin-bottom: 1rem; color: #fbbf24;">Record Holders</div>
-                    <div style="font-size: 1rem; color: #9ca3af;">Tracking the most impressive achievements and records</div>
-                </div>
-            </div>
-
-            <!-- Achievement Gallery Section -->
-            <div class="hall-section active" id="achievements-section">
-                <div class="section-header">
-                    <h2 class="section-title">Achievement Gallery</h2>
-                    <p class="section-description">Unlock legendary status through skill and dedication</p>
-                </div>
-
-                <!-- Achievement Stats -->
-                <div class="achievement-overview">
-                    <div class="achievement-stat-card">
-                        <div class="achievement-stat-value">4</div>
-                        <div class="achievement-stat-label">Unlocked</div>
-                    </div>
-                    <div class="achievement-stat-card">
-                        <div class="achievement-stat-value">8</div>
-                        <div class="achievement-stat-label">Total</div>
-                    </div>
-                    <div class="achievement-stat-card">
-                        <div class="achievement-stat-value">50%</div>
-                        <div class="achievement-stat-label">Complete</div>
-                    </div>
-                    <div class="achievement-stat-card">
-                        <div class="achievement-stat-value">1</div>
-                        <div class="achievement-stat-label">Legendary</div>
-                    </div>
-                </div>
-
-                <!-- Achievement Filter -->
-                <div class="achievement-filters">
-                    <div class="achievement-filter-group">
-                        <label class="achievement-filter-label">Show</label>
-                        <div class="achievement-filter-buttons">
-                            <button class="achievement-filter-btn active" onclick="filterAchievements('all')">All</button>
-                            <button class="achievement-filter-btn" onclick="filterAchievements('unlocked')">✅ Unlocked</button>
-                            <button class="achievement-filter-btn" onclick="filterAchievements('locked')">🔒 Locked</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Achievement Grid -->
-                <div class="achievements-grid">
-                    <!-- Achievement 1 - Unlocked -->
-                    <div class="achievement-card unlocked show-all show-unlocked">
-                        <div class="achievement-status">✅</div>
-                        <div class="achievement-header">
-                            <div class="achievement-icon">🩸</div>
-                            <div class="achievement-info">
-                                <div class="achievement-name">First Blood</div>
-                                <div class="achievement-rarity rarity-common">common</div>
-                            </div>
-                        </div>
-                        <div class="achievement-description">Win your first tournament and taste victory.</div>
-                        <div class="achievement-progress">
-                            <div class="achievement-progress-header">
-                                <span class="achievement-progress-label">Progress</span>
-                                <span class="achievement-progress-text">1/1 (100%)</span>
-                            </div>
-                            <div class="achievement-progress-bar">
-                                <div class="achievement-progress-fill" style="width: 100%"></div>
-                            </div>
-                        </div>
-                        <div class="achievement-rewards">
-                            <div class="achievement-rewards-title">Rewards</div>
-                            <span class="achievement-reward-item">Title: First Winner</span>
-                            <span class="achievement-reward-item">Badge: Blood Drop</span>
-                        </div>
-                        <div class="achievement-unlock-date">🎉 Unlocked: March 15, 2024</div>
-                    </div>
-
-                    <!-- Achievement 2 - Unlocked -->
-                    <div class="achievement-card unlocked show-all show-unlocked">
-                        <div class="achievement-status">✅</div>
-                        <div class="achievement-header">
-                            <div class="achievement-icon">💰</div>
-                            <div class="achievement-info">
-                                <div class="achievement-name">First Profit</div>
-                                <div class="achievement-rarity rarity-common">common</div>
-                            </div>
-                        </div>
-                        <div class="achievement-description">Earn your first SOL and start your journey to wealth.</div>
-                        <div class="achievement-progress">
-                            <div class="achievement-progress-header">
-                                <span class="achievement-progress-label">Progress</span>
-                                <span class="achievement-progress-text">1/1 (100%)</span>
-                            </div>
-                            <div class="achievement-progress-bar">
-                                <div class="achievement-progress-fill" style="width: 100%"></div>
-                            </div>
-                        </div>
-                        <div class="achievement-rewards">
-                            <div class="achievement-rewards-title">Rewards</div>
-                            <span class="achievement-reward-item">Title: Profit Maker</span>
-                            <span class="achievement-reward-item">Badge: Golden Coin</span>
-                        </div>
-                        <div class="achievement-unlock-date">🎉 Unlocked: March 12, 2024</div>
-                    </div>
-
-                    <!-- Achievement 3 - Unlocked -->
-                    <div class="achievement-card unlocked show-all show-unlocked">
-                        <div class="achievement-status">✅</div>
-                        <div class="achievement-header">
-                            <div class="achievement-icon">🍀</div>
-                            <div class="achievement-info">
-                                <div class="achievement-name">Lucky Seven</div>
-                                <div class="achievement-rarity rarity-rare">rare</div>
-                            </div>
-                        </div>
-                        <div class="achievement-description">Achieve a 7-tournament winning streak.</div>
-                        <div class="achievement-progress">
-                            <div class="achievement-progress-header">
-                                <span class="achievement-progress-label">Progress</span>
-                                <span class="achievement-progress-text">7/7 (100%)</span>
-                            </div>
-                            <div class="achievement-progress-bar">
-                                <div class="achievement-progress-fill" style="width: 100%"></div>
-                            </div>
-                        </div>
-                        <div class="achievement-rewards">
-                            <div class="achievement-rewards-title">Rewards</div>
-                            <span class="achievement-reward-item">Title: Lucky Champion</span>
-                            <span class="achievement-reward-item">Badge: Four-Leaf Clover</span>
-                        </div>
-                        <div class="achievement-unlock-date">🎉 Unlocked: April 10, 2024</div>
-                    </div>
-
-                    <!-- Achievement 4 - Unlocked Legendary -->
-                    <div class="achievement-card unlocked show-all show-unlocked">
-                        <div class="achievement-status">✅</div>
-                        <div class="achievement-header">
-                            <div class="achievement-icon">🥇</div>
-                            <div class="achievement-info">
-                                <div class="achievement-name">First Champion</div>
-                                <div class="achievement-rarity rarity-legendary">legendary</div>
-                            </div>
-                        </div>
-                        <div class="achievement-description">Be the first to achieve something extraordinary.</div>
-                        <div class="achievement-progress">
-                            <div class="achievement-progress-header">
-                                <span class="achievement-progress-label">Progress</span>
-                                <span class="achievement-progress-text">1/1 (100%)</span>
-                            </div>
-                            <div class="achievement-progress-bar">
-                                <div class="achievement-progress-fill" style="width: 100%"></div>
-                            </div>
-                        </div>
-                        <div class="achievement-rewards">
-                            <div class="achievement-rewards-title">Rewards</div>
-                            <span class="achievement-reward-item">Title: Pioneer</span>
-                            <span class="achievement-reward-item">Badge: First Place Medal</span>
-                        </div>
-                        <div class="achievement-unlock-date">🎉 Unlocked: March 8, 2024</div>
-                    </div>
-
-                    <!-- Achievement 5 - In Progress -->
-                    <div class="achievement-card show-all show-locked">
-                        <div class="achievement-status">📈</div>
-                        <div class="achievement-header">
-                            <div class="achievement-icon">🛡️</div>
-                            <div class="achievement-info">
-                                <div class="achievement-name">Unstoppable</div>
-                                <div class="achievement-rarity rarity-epic">epic</div>
-                            </div>
-                        </div>
-                        <div class="achievement-description">Win 10 tournaments in a row. Your dominance is absolute.</div>
-                        <div class="achievement-progress">
-                            <div class="achievement-progress-header">
-                                <span class="achievement-progress-label">Progress</span>
-                                <span class="achievement-progress-text">7/10 (70%)</span>
-                            </div>
-                            <div class="achievement-progress-bar">
-                                <div class="achievement-progress-fill" style="width: 70%"></div>
-                            </div>
-                        </div>
-                        <div class="achievement-rewards">
-                            <div class="achievement-rewards-title">Rewards</div>
-                            <span class="achievement-reward-item">Title: The Unstoppable</span>
-                            <span class="achievement-reward-item">Badge: Shield of Invincibility</span>
-                        </div>
-                    </div>
-
-                    <!-- Achievement 6 - In Progress -->
-                    <div class="achievement-card show-all show-locked">
-                        <div class="achievement-status">📈</div>
-                        <div class="achievement-header">
-                            <div class="achievement-icon">🐋</div>
-                            <div class="achievement-info">
-                                <div class="achievement-name">Whale Status</div>
-                                <div class="achievement-rarity rarity-epic">epic</div>
-                            </div>
-                        </div>
-                        <div class="achievement-description">Earn 100+ SOL total. You are now a whale in these waters.</div>
-                        <div class="achievement-progress">
-                            <div class="achievement-progress-header">
-                                <span class="achievement-progress-label">Progress</span>
-                                <span class="achievement-progress-text">45.67/100 (46%)</span>
-                            </div>
-                            <div class="achievement-progress-bar">
-                                <div class="achievement-progress-fill" style="width: 46%"></div>
-                            </div>
-                        </div>
-                        <div class="achievement-rewards">
-                            <div class="achievement-rewards-title">Rewards</div>
-                            <span class="achievement-reward-item">Title: Crypto Whale</span>
-                            <span class="achievement-reward-item">Badge: Whale Tail</span>
-                        </div>
-                    </div>
-
-                    <!-- Achievement 7 - Locked -->
-                    <div class="achievement-card locked show-all show-locked">
-                        <div class="achievement-status">🔒</div>
-                        <div class="achievement-header">
-                            <div class="achievement-icon">⚔️</div>
-                            <div class="achievement-info">
-                                <div class="achievement-name">Giant Killer</div>
-                                <div class="achievement-rarity rarity-epic">epic</div>
-                            </div>
-                        </div>
-                        <div class="achievement-description">Defeat a legendary player in direct competition.</div>
-                        <div class="achievement-progress">
-                            <div class="achievement-progress-header">
-                                <span class="achievement-progress-label">Progress</span>
-                                <span class="achievement-progress-text">0/1 (0%)</span>
-                            </div>
-                            <div class="achievement-progress-bar">
-                                <div class="achievement-progress-fill" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="achievement-rewards">
-                            <div class="achievement-rewards-title">Rewards</div>
-                            <span class="achievement-reward-item">Title: Giant Killer</span>
-                            <span class="achievement-reward-item">Badge: Crossed Swords</span>
-                        </div>
-                    </div>
-
-                    <!-- Achievement 8 - Locked -->
-                    <div class="achievement-card locked show-all show-locked">
-                        <div class="achievement-status">🔒</div>
-                        <div class="achievement-header">
-                            <div class="achievement-icon">🔥</div>
-                            <div class="achievement-info">
-                                <div class="achievement-name">Phoenix Rising</div>
-                                <div class="achievement-rarity rarity-legendary">legendary</div>
-                            </div>
-                        </div>
-                        <div class="achievement-description">Come back from 0.01 SOL to win a major tournament.</div>
-                        <div class="achievement-progress">
-                            <div class="achievement-progress-header">
-                                <span class="achievement-progress-label">Progress</span>
-                                <span class="achievement-progress-text">0/1 (0%)</span>
-                            </div>
-                            <div class="achievement-progress-bar">
-                                <div class="achievement-progress-fill" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="achievement-rewards">
-                            <div class="achievement-rewards-title">Rewards</div>
-                            <span class="achievement-reward-item">Title: The Phoenix</span>
-                            <span class="achievement-reward-item">Badge: Rising Flames</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Epic Moments Section -->
-            <div class="hall-section" id="moments-section">
-                <div class="section-header">
-                    <h2 class="section-title">Epic Moments</h2>
-                    <p class="section-description">Coming Soon - Legendary moments that defined WalletWars history</p>
-                </div>
-                <div style="background: rgba(31, 41, 55, 0.3); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 1rem; padding: 3rem; text-align: center;">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">⚡</div>
-                    <div style="font-size: 1.5rem; margin-bottom: 1rem; color: #fbbf24;">Epic Moments</div>
-                    <div style="font-size: 1rem; color: #9ca3af;">Historical moments that shaped the WalletWars universe</div>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
     
     <script>
-        function navigateToPage(page) {
-            // Hide all sections
-            var sections = document.querySelectorAll('.page-section');
-            for (var i = 0; i < sections.length; i++) {
-                sections[i].classList.remove('active');
-            }
-            
-            // Show target section
-            document.getElementById(page).classList.add('active');
-            
-            // Update navigation
-            var navLinks = document.querySelectorAll('.nav-links a');
-            for (var i = 0; i < navLinks.length; i++) {
-                navLinks[i].classList.remove('active');
-            }
-            
-            var targetNav = document.getElementById('nav-' + page);
-            if (targetNav) {
-                targetNav.classList.add('active');
-            }
-        }
-
-        function switchHallCategory(category) {
-            // Hide all hall sections
-            var sections = document.querySelectorAll('.hall-section');
-            for (var i = 0; i < sections.length; i++) {
-                sections[i].classList.remove('active');
-            }
-            
-            // Show target section
-            document.getElementById(category + '-section').classList.add('active');
-            
-            // Update navigation buttons
-            var navButtons = document.querySelectorAll('.hall-nav-btn');
-            for (var i = 0; i < navButtons.length; i++) {
-                navButtons[i].classList.remove('active');
-            }
-            
-            // Find and activate the correct button
-            for (var i = 0; i < navButtons.length; i++) {
-                var btn = navButtons[i];
-                if ((category === 'legends' && btn.textContent.includes('Legendary')) ||
-                    (category === 'records' && btn.textContent.includes('Record')) ||
-                    (category === 'achievements' && btn.textContent.includes('Achievement')) ||
-                    (category === 'moments' && btn.textContent.includes('Epic'))) {
-                    btn.classList.add('active');
-                    break;
-                }
-            }
-        }
-
-        function filterAchievements(filter) {
-            // Update filter buttons
-            var filterButtons = document.querySelectorAll('.achievement-filter-btn');
-            for (var i = 0; i < filterButtons.length; i++) {
-                filterButtons[i].classList.remove('active');
-            }
-            
-            // Activate clicked button
-            for (var i = 0; i < filterButtons.length; i++) {
-                var btn = filterButtons[i];
-                if ((filter === 'all' && btn.textContent === 'All') ||
-                    (filter === 'unlocked' && btn.textContent.includes('Unlocked')) ||
-                    (filter === 'locked' && btn.textContent.includes('Locked'))) {
-                    btn.classList.add('active');
-                    break;
-                }
-            }
-            
-            // Show/hide achievement cards
-            var cards = document.querySelectorAll('.achievement-card');
-            for (var i = 0; i < cards.length; i++) {
-                var card = cards[i];
-                if (filter === 'all') {
-                    card.style.display = 'block';
-                } else if (filter === 'unlocked') {
-                    if (card.classList.contains('show-unlocked')) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                } else if (filter === 'locked') {
-                    if (card.classList.contains('show-locked')) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                }
-            }
-        }
-
         function connectWallet() {
             alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!\n\nThis would integrate with Solana wallet adapters like Phantom, Solflare, etc.');
         }
 
-        function scrollToLearnMore() {
-            var learnMore = document.getElementById('learn-more');
-            if (learnMore) {
-                learnMore.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        // Initialize the application
+        // Smooth scroll for learn more
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 WalletWars loaded successfully!');
-            console.log('🏆 Achievement Gallery with 8 achievements ready!');
+            const learnMoreLink = document.querySelector('a[href="#learn-more"]');
+            if (learnMoreLink) {
+                learnMoreLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('learn-more').scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                });
+            }
         });
     </script>
 </body>
