@@ -1,4 +1,4 @@
-// walletwars-api.js - Your Database Connection
+// walletwars-api.js - Your Database Connection (Updated for Simple Functions)
 console.log('🎮 WalletWars API Loading...');
 
 // ========================================
@@ -24,7 +24,7 @@ class WalletWarsAPI {
         console.log('🏆 WalletWars API Ready!');
     }
 
-    // Create wallet hash for privacy (same as your existing function)
+    // Create wallet hash for privacy
     createWalletHash(walletAddress) {
         let hash = 0;
         const saltedAddress = walletAddress + 'walletwars_salt_2024';
@@ -77,13 +77,12 @@ class WalletWarsAPI {
                 return { success: false, error: error.message };
             }
 
-            const result = data?.[0];
-            if (result?.success) {
-                console.log('✅ Champion created successfully!', result);
-                return { success: true, championId: result.champion_id };
+            if (data?.success) {
+                console.log('✅ Champion created successfully!', data);
+                return { success: true, championId: data.champion_id };
             } else {
-                console.error('❌ Champion creation failed:', result?.message);
-                return { success: false, error: result?.message };
+                console.error('❌ Champion creation failed:', data?.message);
+                return { success: false, error: data?.message };
             }
         } catch (error) {
             console.error('❌ Create champion exception:', error);
@@ -108,10 +107,9 @@ class WalletWarsAPI {
                 return { success: false, error: error.message };
             }
 
-            const profile = data?.[0];
-            if (profile) {
-                console.log('✅ Champion profile loaded:', profile);
-                return { success: true, champion: profile };
+            if (data && !data.error) {
+                console.log('✅ Champion profile loaded:', data);
+                return { success: true, champion: data };
             } else {
                 console.log('ℹ️ No champion found for this wallet');
                 return { success: false, error: 'No champion found' };
@@ -171,8 +169,9 @@ class WalletWarsAPI {
                 return { success: false, error: error.message };
             }
 
-            console.log(`✅ Loaded leaderboard with ${data.length} champions`);
-            return { success: true, leaderboard: data };
+            const leaderboard = Array.isArray(data) ? data : [];
+            console.log(`✅ Loaded leaderboard with ${leaderboard.length} champions`);
+            return { success: true, leaderboard: leaderboard };
         } catch (error) {
             console.error('❌ Get leaderboard exception:', error);
             return { success: false, error: error.message };
@@ -184,7 +183,6 @@ class WalletWarsAPI {
         try {
             console.log('🏆 Loading champion achievements...');
             
-            const walletHash = this.createWalletHash(walletAddress);
             const championProfile = await this.getChampionProfile(walletAddress);
             
             if (!championProfile.success) {
@@ -250,87 +248,6 @@ class WalletWarsAPI {
             };
         } catch (error) {
             console.error('❌ Get champion achievements exception:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    // Update champion stats (for tournament results)
-    async updateChampionStats(walletAddress, tournamentData) {
-        try {
-            console.log('📊 Updating champion stats...');
-            
-            const championProfile = await this.getChampionProfile(walletAddress);
-            
-            if (!championProfile.success) {
-                return { success: false, error: 'Champion not found' };
-            }
-
-            const { data, error } = await this.supabase
-                .rpc('update_champion_stats', {
-                    p_champion_id: championProfile.champion.champion_id,
-                    p_tournament_won: tournamentData.won || false,
-                    p_sol_earned: tournamentData.solEarned || 0,
-                    p_performance_percent: tournamentData.performance || 0,
-                    p_tournament_type: tournamentData.type || 'weekly',
-                    p_tournament_frequency: tournamentData.frequency || 'weekly'
-                });
-
-            if (error) {
-                console.error('❌ Update stats error:', error);
-                return { success: false, error: error.message };
-            }
-
-            console.log('✅ Champion stats updated successfully');
-            
-            // Check for new achievements
-            const achievementCheck = await this.checkAchievements(walletAddress);
-            
-            return { 
-                success: true, 
-                newAchievements: achievementCheck.success ? achievementCheck.newAchievements : []
-            };
-        } catch (error) {
-            console.error('❌ Update champion stats exception:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    // Check and unlock achievements
-    async checkAchievements(walletAddress) {
-        try {
-            console.log('🎯 Checking for new achievements...');
-            
-            const championProfile = await this.getChampionProfile(walletAddress);
-            
-            if (!championProfile.success) {
-                return { success: false, error: 'Champion not found' };
-            }
-
-            const { data, error } = await this.supabase
-                .rpc('check_and_unlock_achievements', {
-                    p_champion_id: championProfile.champion.champion_id
-                });
-
-            if (error) {
-                console.error('❌ Check achievements error:', error);
-                return { success: false, error: error.message };
-            }
-
-            const newlyUnlocked = data?.filter(achievement => achievement.newly_unlocked) || [];
-            
-            if (newlyUnlocked.length > 0) {
-                console.log(`🏆 ${newlyUnlocked.length} new achievements unlocked!`, newlyUnlocked);
-            } else {
-                console.log('ℹ️ No new achievements unlocked');
-            }
-
-            return { 
-                success: true, 
-                newAchievements: newlyUnlocked,
-                allProgress: data || []
-            };
-        } catch (error) {
-            console.error('❌ Check achievements exception:', error);
             return { success: false, error: error.message };
         }
     }
