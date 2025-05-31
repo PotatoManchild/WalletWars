@@ -113,19 +113,29 @@
             transform: translateY(-1px);
         }
 
-        /* Desktop Compact Filters */
+        /* Desktop also uses dropdown style */
         @media (min-width: 768px) {
-            .filter-toggle {
-                display: none;
-            }
-
-            .filter-content {
-                max-height: none;
-                overflow: visible;
-            }
-
             .tournament-filters {
                 padding: 1rem 1.5rem;
+            }
+
+            .filter-toggle {
+                padding: 0.75rem 1rem;
+                background: rgba(139, 92, 246, 0.15);
+                border: 1px solid rgba(139, 92, 246, 0.3);
+            }
+
+            .filter-toggle-text {
+                font-size: 1rem;
+                font-weight: 700;
+            }
+
+            .filter-toggle-icon {
+                font-size: 1.3rem;
+            }
+
+            .filter-content.active {
+                max-height: 500px;
             }
 
             .filter-groups-container {
@@ -133,6 +143,7 @@
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
                 gap: 1.5rem;
                 align-items: start;
+                padding-top: 0.5rem;
             }
 
             .filter-group {
@@ -143,6 +154,7 @@
             .filter-label {
                 font-size: 0.9rem;
                 margin-bottom: 0.75rem;
+                font-weight: 700;
             }
 
             .filter-buttons {
@@ -153,6 +165,13 @@
                 padding: 0.5rem 1rem;
                 font-size: 0.85rem;
                 min-height: 38px;
+                border-radius: 0.5rem;
+            }
+
+            .filter-btn:hover,
+            .filter-btn.active {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
             }
         }
 
