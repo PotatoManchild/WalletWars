@@ -8,6 +8,11 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- WalletWars API -->
+    <script src="walletwars-api.js"></script>
+    
     <!-- Shared Styles -->
     <link rel="stylesheet" href="shared.css">
     
@@ -1508,6 +1513,34 @@
 
         var currentFullscreenTournament = null;
 
+        // Tournament registration function (enhanced for database integration)
+        async function registerTournament(id) {
+            const tournament = tournamentData[id];
+            
+            // Check if API is available and user is connected
+            if (!window.walletWarsAPI) {
+                alert('🚫 Database Connection Required\n\nPlease refresh the page and ensure you have a stable internet connection.');
+                return;
+            }
+            
+            // For now, show registration info (later this will integrate with actual tournament system)
+            const registrationInfo = `🎯 Tournament Registration\n\n${tournament.title}\n\nEntry Fee: ${tournament.entryFee} SOL\nPrize Pool: ${tournament.prizePool} SOL\nMax Players: ${tournament.maxPlayers}\n\nTo register:\n• Connect your Solana wallet\n• Pay entry fee\n• Meet tournament requirements\n• Confirm registration\n\nReady to compete? 🚀`;
+            
+            const confirmed = confirm(registrationInfo + '\n\nNote: This is a demo. Would you like to see how tournament registration would work?');
+            
+            if (confirmed) {
+                // Simulate registration process
+                alert('🎮 Registration Demo\n\n✅ Wallet connected\n✅ Entry fee paid\n✅ Tournament joined\n\nYou would now be registered for the tournament and receive updates on start times and progress!');
+                
+                // In a real implementation, this would:
+                // 1. Check if user has champion profile
+                // 2. Verify wallet balance for entry fee
+                // 3. Process payment transaction
+                // 4. Register user in tournament database
+                // 5. Send confirmation and tournament details
+            }
+        }
+
         function showFullscreenTournament(tournamentId) {
             currentFullscreenTournament = tournamentId;
             var tournament = tournamentData[tournamentId];
@@ -1793,11 +1826,6 @@
             if (currentFullscreenTournament) {
                 updateFullscreenCountdown(currentFullscreenTournament);
             }
-        }
-
-        function registerTournament(id) {
-            var tournament = tournamentData[id];
-            alert('🎯 Tournament Registration\n\n' + tournament.title + '\n\nEntry Fee: ' + tournament.entryFee + ' SOL\nPrize Pool: ' + tournament.prizePool + ' SOL\nMax Players: ' + tournament.maxPlayers + '\n\nTo register:\n• Connect your Solana wallet\n• Pay entry fee\n• Meet tournament requirements\n• Confirm registration\n\nReady to compete? 🚀');
         }
 
         // Initialize
