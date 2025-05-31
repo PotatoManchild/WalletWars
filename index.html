@@ -997,13 +997,13 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="logo">WalletWars</a>
+            <a href="index.html" class="logo">WalletWars</a>
             
             <ul class="nav-links">
-                <li><a href="#" class="active">Home</a></li>
-                <li><a href="#" onclick="showTournaments()">Tournaments</a></li>
-                <li><a href="#" onclick="showLeaderboards()">Leaderboards</a></li>
-                <li><a href="#" onclick="showHallOfFame()">Hall of Fame</a></li>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="tournaments.html">Tournaments</a></li>
+                <li><a href="leaderboards.html">Leaderboards</a></li>
+                <li><a href="hall-of-fame.html">Hall of Fame</a></li>
                 
                 <!-- Disconnected State -->
                 <li id="connectWalletBtn"><a href="#" class="btn-primary" onclick="openWalletModal()">Connect Wallet</a></li>
@@ -1015,6 +1015,15 @@
                     <button class="nav-disconnect" onclick="disconnectWallet()">Disconnect</button>
                 </li>
             </ul>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
         </div>
     </nav>
 
@@ -1297,6 +1306,69 @@
             wallet: '',
             walletType: ''
         };
+
+        // Mobile Navigation Functions
+        function initializeMobileNavigation() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            if (!mobileToggle || !navLinks || !hamburger) return;
+            
+            mobileToggle.addEventListener('click', function() {
+                const isOpen = navLinks.classList.contains('active');
+                if (isOpen) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            });
+            
+            const navLinksItems = navLinks.querySelectorAll('a');
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', function() {
+                    closeMobileMenu();
+                });
+            });
+            
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navLinks.contains(event.target) || 
+                                        mobileToggle.contains(event.target);
+                if (!isClickInsideNav && navLinks.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+            });
+        }
+
+        function openMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.add('active');
+            hamburger.classList.add('active');
+            mobileToggle.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('active');
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        function handleWindowResize() {
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    closeMobileMenu();
+                }
+            });
+        }
 
         // Wallet connection functions
         function openWalletModal() {
@@ -2084,161 +2156,10 @@
             document.getElementById('heroChampionNameText').textContent = championData.name;
         }
 
-        function disconnectWallet() {
-            if (confirm('Are you sure you want to disconnect your wallet?\n\nYou will need to reconnect to participate in tournaments.')) {
-                // Disconnect from actual wallet if connected
-                if (walletConnection && walletConnection.disconnect) {
-                    try {
-                        walletConnection.disconnect();
-                    } catch (error) {
-                        console.log('Wallet disconnect error:', error);
-                    }
-                }
-                
-                isConnected = false;
-                walletConnection = null;
-                
-                // Reset UI to disconnected state
-                document.getElementById('connectWalletBtn').style.display = 'block';
-                document.getElementById('championInfo').style.display = 'none';
-                document.getElementById('heroDisconnected').style.display = 'block';
-                document.getElementById('heroConnected').style.display = 'none';
-                
-                // Reset champion data
-                championData = {
-                    name: '',
-                    avatar: '🔥',
-                    wallet: '',
-                    walletType: ''
-                };
-                
-                // Clear saved data
-                localStorage.removeItem('walletWarsChampion');
-                
-                alert('Wallet disconnected successfully.');
-            }
-        }
-
-        // Mobile Navigation JavaScript
-        function createMobileNavigation() {
-            const navContainer = document.querySelector('.nav-container');
-            if (!navContainer) return;
-            
-            const mobileToggle = document.createElement('button');
-            mobileToggle.className = 'mobile-menu-toggle';
-            mobileToggle.setAttribute('aria-label', 'Toggle mobile menu');
-            mobileToggle.setAttribute('aria-expanded', 'false');
-            
-            const hamburger = document.createElement('div');
-            hamburger.className = 'hamburger';
-            hamburger.innerHTML = '<span></span><span></span><span></span>';
-            
-            mobileToggle.appendChild(hamburger);
-            
-            const navLinks = document.querySelector('.nav-links');
-            if (navLinks) {
-                navContainer.insertBefore(mobileToggle, navLinks);
-            }
-        }
-
-        function initializeMobileMenu() {
-            const mobileToggle = document.querySelector('.mobile-menu-toggle');
-            const navLinks = document.querySelector('.nav-links');
-            const hamburger = document.querySelector('.hamburger');
-            
-            if (!mobileToggle || !navLinks || !hamburger) return;
-            
-            mobileToggle.addEventListener('click', function() {
-                const isOpen = navLinks.classList.contains('active');
-                if (isOpen) {
-                    closeMobileMenu();
-                } else {
-                    openMobileMenu();
-                }
-            });
-            
-            const navLinksItems = navLinks.querySelectorAll('a');
-            navLinksItems.forEach(link => {
-                link.addEventListener('click', function() {
-                    closeMobileMenu();
-                });
-            });
-            
-            document.addEventListener('click', function(event) {
-                const isClickInsideNav = navLinks.contains(event.target) || 
-                                        mobileToggle.contains(event.target);
-                if (!isClickInsideNav && navLinks.classList.contains('active')) {
-                    closeMobileMenu();
-                }
-            });
-        }
-
-        function openMobileMenu() {
-            const mobileToggle = document.querySelector('.mobile-menu-toggle');
-            const navLinks = document.querySelector('.nav-links');
-            const hamburger = document.querySelector('.hamburger');
-            
-            navLinks.classList.add('active');
-            hamburger.classList.add('active');
-            mobileToggle.setAttribute('aria-expanded', 'true');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeMobileMenu() {
-            const mobileToggle = document.querySelector('.mobile-menu-toggle');
-            const navLinks = document.querySelector('.nav-links');
-            const hamburger = document.querySelector('.hamburger');
-            
-            navLinks.classList.remove('active');
-            hamburger.classList.remove('active');
-            mobileToggle.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-        }
-
-        function handleWindowResize() {
-            window.addEventListener('resize', function() {
-                if (window.innerWidth >= 768) {
-                    closeMobileMenu();
-                }
-            });
-        }
-
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            const modal = document.getElementById('walletModal');
-            if (event.target === modal) {
-                closeWalletModal();
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeWalletModal();
-            }
-        });
-
-        // Initialize avatar selection
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set default avatar as selected
-            document.querySelector('[data-avatar="🔥"]').classList.add('selected');
-            
-            // Smooth scroll for learn more
-            const learnMoreLink = document.querySelector('a[href="#learn-more"]');
-            if (learnMoreLink) {
-                learnMoreLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.getElementById('learn-more').scrollIntoView({ 
-                        behavior: 'smooth' 
-                    });
-                });
-            }
-        });
-
         // Champion Storage System (Client-side with basic security)
         const championStorage = {
             // Create a basic hash of wallet address
-            createWalletHash: (walletAddress) => {
+            createWalletHash: function(walletAddress) {
                 // Simple but effective hashing for client-side
                 let hash = 0;
                 const saltedAddress = walletAddress + 'walletwars_salt_2024';
@@ -2251,12 +2172,12 @@
             },
 
             // Basic encoding for champion name
-            encodeName: (name) => {
+            encodeName: function(name) {
                 return btoa(unescape(encodeURIComponent(name)));
             },
 
             // Basic decoding for champion name
-            decodeName: (encodedName) => {
+            decodeName: function(encodedName) {
                 try {
                     return decodeURIComponent(escape(atob(encodedName)));
                 } catch (e) {
@@ -2265,7 +2186,7 @@
             },
 
             // Save champion data securely
-            save: (championData) => {
+            save: function(championData) {
                 const secureData = {
                     wallet_hash: this.createWalletHash(championData.wallet),
                     name_encoded: this.encodeName(championData.name),
@@ -2290,7 +2211,7 @@
             },
 
             // Load champion data
-            load: () => {
+            load: function() {
                 try {
                     const saved = localStorage.getItem('walletWars_champion');
                     if (saved) {
@@ -2311,7 +2232,7 @@
             },
 
             // Check if wallet already has a champion
-            hasChampion: (walletAddress) => {
+            hasChampion: function(walletAddress) {
                 const saved = this.load();
                 if (saved) {
                     const currentHash = this.createWalletHash(walletAddress);
@@ -2321,7 +2242,7 @@
             },
 
             // Delete champion data
-            clear: () => {
+            clear: function() {
                 localStorage.removeItem('walletWars_champion');
                 // Also clear backups
                 const keys = Object.keys(localStorage);
@@ -2334,7 +2255,7 @@
             },
 
             // Clean old backup files
-            cleanOldBackups: () => {
+            cleanOldBackups: function() {
                 const keys = Object.keys(localStorage);
                 const backupKeys = keys
                     .filter(key => key.startsWith('walletWars_backup_'))
@@ -2349,7 +2270,7 @@
             },
 
             // Get storage statistics
-            getStats: () => {
+            getStats: function() {
                 const keys = Object.keys(localStorage);
                 const wwKeys = keys.filter(key => key.startsWith('walletWars'));
                 const totalSize = wwKeys.reduce((size, key) => {
@@ -2367,21 +2288,47 @@
         // Auto-save when champion data changes
         window.addEventListener('beforeunload', saveChampionData);
 
-        // Load saved data on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize mobile navigation first
-            createMobileNavigation();
-            initializeMobileMenu();
-            handleWindowResize();
-            
-            // Then load saved champion data
-            loadSavedChampion();
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('walletModal');
+            if (event.target === modal) {
+                closeWalletModal();
+            }
         });
 
-        // Add keyboard shortcut for storage debug (Ctrl+Shift+D)
+        // Close modal with Escape key
         document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeWalletModal();
+            }
+            
+            // Add keyboard shortcut for storage debug (Ctrl+Shift+D)
             if (event.ctrlKey && event.shiftKey && event.key === 'D') {
                 checkChampionStorage();
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize mobile navigation
+            initializeMobileNavigation();
+            handleWindowResize();
+            
+            // Load saved champion data
+            loadSavedChampion();
+            
+            // Set default avatar as selected
+            document.querySelector('[data-avatar="🔥"]').classList.add('selected');
+            
+            // Smooth scroll for learn more
+            const learnMoreLink = document.querySelector('a[href="#learn-more"]');
+            if (learnMoreLink) {
+                learnMoreLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('learn-more').scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                });
             }
         });
     </script>
