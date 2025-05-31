@@ -8,19 +8,140 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Shared Styles -->
-    <link rel="stylesheet" href="shared.css">
-    
     <style>
-        /* Leaderboards Specific Styles */
-        .leaderboards-title {
-            background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(45deg, #0a0a0a, #1a1a2e, #16213e, #0f0f23);
+            background-size: 400% 400%;
+            animation: gradientShift 25s ease infinite;
+        }
+
+        .geometric-patterns {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.08;
+            background-image: 
+                radial-gradient(circle at 25% 25%, #8b5cf6 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #06b6d4 0%, transparent 50%),
+                radial-gradient(circle at 75% 25%, #ec4899 0%, transparent 50%),
+                radial-gradient(circle at 25% 75%, #10b981 0%, transparent 50%);
+            animation: patternFloat 35s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes patternFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-10px) rotate(60deg); }
+            66% { transform: translateY(5px) rotate(120deg); }
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #e879f9, #c084fc, #a855f7, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: 1px;
+            text-decoration: none;
         }
 
-        /* Mobile Menu Toggle */
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Mobile Navigation */
         .mobile-menu-toggle {
             display: none;
             background: none;
@@ -114,7 +235,41 @@
             }
         }
 
-        /* Enhanced Search & Filter Section */
+        /* Page Layout */
+        .page-container {
+            min-height: 100vh;
+            padding-top: 6rem;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .page-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #d1d5db;
+            opacity: 0.8;
+        }
+
+        .page-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Enhanced Search & Filters Section */
         .search-and-filters {
             background: rgba(31, 41, 55, 0.3);
             border: 1px solid rgba(139, 92, 246, 0.2);
@@ -160,13 +315,6 @@
 
         .search-input::placeholder {
             color: #9ca3af;
-        }
-
-        /* Mobile-specific placeholder */
-        @media (max-width: 767px) {
-            .search-input::placeholder {
-                content: "Search...";
-            }
         }
 
         .search-btn {
@@ -347,20 +495,13 @@
             border-radius: 0.75rem;
         }
 
-        /* Force hide any remaining view toggle elements */
-        .view-toggle,
-        .view-btn {
-            display: none !important;
-            visibility: hidden !important;
-        }
-
         .results-count {
             color: #8b5cf6;
             font-weight: 600;
             font-size: 0.9rem;
         }
 
-        /* Leaderboard Table */
+        /* Enhanced Leaderboard Container */
         .leaderboard-container {
             background: rgba(31, 41, 55, 0.3);
             border: 1px solid rgba(139, 92, 246, 0.2);
@@ -369,9 +510,11 @@
             overflow: hidden;
         }
 
+        /* Desktop Table View */
         .leaderboard-table {
             width: 100%;
             border-collapse: collapse;
+            display: table;
         }
 
         .table-header {
@@ -400,10 +543,6 @@
             text-align: center;
             width: 60px;
             padding: 1rem 1.5rem 1rem 1rem;
-        }
-
-        .table-header th.sortable {
-            /* Default state - show descending arrow */
         }
 
         .table-header th.sortable::after {
@@ -521,6 +660,129 @@
             font-weight: 600;
         }
 
+        /* Mobile Card View */
+        .leaderboard-cards {
+            display: none;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .champion-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .champion-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #ec4899, #06b6d4);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .champion-card:hover {
+            background: rgba(139, 92, 246, 0.08);
+            border-color: #8b5cf6;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
+        }
+
+        .champion-card:hover::before {
+            opacity: 1;
+        }
+
+        .champion-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .champion-card-rank {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #8b5cf6;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .champion-card-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            position: relative;
+        }
+
+        .champion-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .champion-card-name {
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .champion-card-address {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            font-family: monospace;
+        }
+
+        .champion-card-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .champion-stat {
+            text-align: center;
+            padding: 0.75rem;
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+        }
+
+        .champion-stat-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 0.2rem;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .champion-stat-label {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         /* Rank Styling */
         .rank-1 { 
             color: #fbbf24; 
@@ -535,14 +797,32 @@
             text-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
         }
 
+        /* Avatar Styling for Top 3 */
+        .champion-card-avatar.rank-1 {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-color: rgba(251, 191, 36, 0.5);
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+        }
+
+        .champion-card-avatar.rank-2 {
+            background: linear-gradient(135deg, #c0c0c0, #9ca3af);
+            border-color: rgba(192, 192, 192, 0.5);
+            box-shadow: 0 0 15px rgba(192, 192, 192, 0.3);
+        }
+
+        .champion-card-avatar.rank-3 {
+            background: linear-gradient(135deg, #cd7f32, #a16207);
+            border-color: rgba(205, 127, 50, 0.5);
+            box-shadow: 0 0 15px rgba(205, 127, 50, 0.3);
+        }
+
         /* Performance Badges */
         .performance-badge {
             display: inline-block;
-            padding: 0.2rem 0.5rem;
-            border-radius: 0.4rem;
-            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.65rem;
             font-weight: 600;
-            margin-left: 0.5rem;
         }
 
         .badge-legend {
@@ -566,11 +846,10 @@
         /* Bracket Indicators */
         .bracket-indicator {
             display: inline-block;
-            padding: 0.2rem 0.5rem;
-            border-radius: 0.4rem;
-            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.65rem;
             font-weight: 600;
-            margin-left: 0.5rem;
         }
 
         .bracket-beginner {
@@ -610,86 +889,7 @@
             opacity: 0.5;
         }
 
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-        }
-
-        .page-btn {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #d1d5db;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            min-width: 40px;
-            text-align: center;
-        }
-
-        .page-btn:hover,
-        .page-btn.active {
-            background: rgba(139, 92, 246, 0.2);
-            border-color: #8b5cf6;
-            color: #8b5cf6;
-        }
-
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Desktop Layout */
-        @media (min-width: 768px) {
-            .filters-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                padding-top: 1rem;
-            }
-
-            .search-container {
-                flex-direction: row;
-            }
-
-            .search-input-wrapper {
-                width: 100%;
-            }
-
-            .earnings-cell {
-                display: table-cell;
-            }
-
-            .champion-avatar {
-                width: 45px;
-                height: 45px;
-                font-size: 1.1rem;
-            }
-
-            .filters-toggle {
-                padding: 1rem 1.25rem;
-                background: rgba(139, 92, 246, 0.12);
-                border: 1px solid rgba(139, 92, 246, 0.3);
-                margin-bottom: 0.75rem;
-            }
-
-            .filters-toggle-text {
-                font-size: 1.1rem;
-                font-weight: 700;
-            }
-
-            .filters-toggle-icon {
-                font-size: 1.4rem;
-            }
-
-            .filters-content.active {
-                max-height: 600px;
-            }
-        }
-
-        /* Champion Detail Card Modal */
+        /* Champion Detail Modal */
         .champion-modal {
             position: fixed;
             top: 0;
@@ -712,7 +912,7 @@
             opacity: 1;
         }
 
-        .champion-card {
+        .champion-modal-card {
             background: rgba(31, 41, 55, 0.95);
             backdrop-filter: blur(30px);
             border: 2px solid rgba(139, 92, 246, 0.4);
@@ -727,11 +927,11 @@
             transition: transform 0.4s ease;
         }
 
-        .champion-modal.active .champion-card {
+        .champion-modal.active .champion-modal-card {
             transform: scale(1);
         }
 
-        .champion-card-header {
+        .champion-modal-header {
             text-align: center;
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
@@ -762,7 +962,7 @@
             transform: scale(1.1);
         }
 
-        .champion-large-avatar {
+        .champion-modal-avatar {
             width: 80px;
             height: 80px;
             background: linear-gradient(135deg, #8b5cf6, #ec4899);
@@ -776,19 +976,19 @@
             position: relative;
         }
 
-        .champion-large-avatar.rank-1 {
+        .champion-modal-avatar.rank-1 {
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
             border-color: rgba(251, 191, 36, 0.5);
             box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
         }
 
-        .champion-large-avatar.rank-2 {
+        .champion-modal-avatar.rank-2 {
             background: linear-gradient(135deg, #c0c0c0, #9ca3af);
             border-color: rgba(192, 192, 192, 0.5);
             box-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
         }
 
-        .champion-large-avatar.rank-3 {
+        .champion-modal-avatar.rank-3 {
             background: linear-gradient(135deg, #cd7f32, #a16207);
             border-color: rgba(205, 127, 50, 0.5);
             box-shadow: 0 0 20px rgba(205, 127, 50, 0.3);
@@ -815,7 +1015,7 @@
             background: rgba(251, 191, 36, 0.9);
         }
 
-        .champion-card-name {
+        .champion-modal-name {
             font-family: 'Orbitron', monospace;
             font-size: 1.4rem;
             font-weight: 700;
@@ -823,7 +1023,7 @@
             margin-bottom: 0.5rem;
         }
 
-        .champion-card-address {
+        .champion-modal-address {
             font-family: monospace;
             color: #9ca3af;
             font-size: 0.9rem;
@@ -1062,9 +1262,52 @@
             color: #8b5cf6;
         }
 
-        /* Desktop Layout for Champion Card */
+        /* Desktop Layout */
         @media (min-width: 768px) {
-            .champion-card {
+            .filters-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                padding-top: 1rem;
+            }
+
+            .search-container {
+                flex-direction: row;
+            }
+
+            .search-input-wrapper {
+                width: 100%;
+            }
+
+            .earnings-cell {
+                display: table-cell;
+            }
+
+            .champion-avatar {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+
+            .filters-toggle {
+                padding: 1rem 1.25rem;
+                background: rgba(139, 92, 246, 0.12);
+                border: 1px solid rgba(139, 92, 246, 0.3);
+                margin-bottom: 0.75rem;
+            }
+
+            .filters-toggle-text {
+                font-size: 1.1rem;
+                font-weight: 700;
+            }
+
+            .filters-toggle-icon {
+                font-size: 1.4rem;
+            }
+
+            .filters-content.active {
+                max-height: 600px;
+            }
+
+            .champion-modal-card {
                 max-width: 700px;
                 padding: 2rem;
             }
@@ -1074,13 +1317,13 @@
                 gap: 1.5rem;
             }
 
-            .champion-large-avatar {
+            .champion-modal-avatar {
                 width: 100px;
                 height: 100px;
                 font-size: 3rem;
             }
 
-            .champion-card-name {
+            .champion-modal-name {
                 font-size: 1.8rem;
             }
 
@@ -1093,9 +1336,40 @@
             }
         }
 
-        /* Mobile Responsive for Champion Card */
+        /* Mobile Responsive */
         @media (max-width: 767px) {
-            .champion-card {
+            .search-and-filters {
+                padding: 1rem;
+            }
+
+            .search-container {
+                flex-direction: column;
+                gap: 0.75rem;
+                max-width: 100%;
+            }
+
+            .search-input-wrapper {
+                width: 100%;
+            }
+
+            .search-input::placeholder {
+                content: "Search...";
+            }
+
+            .results-info {
+                text-align: center;
+            }
+
+            /* Hide table, show cards on mobile */
+            .leaderboard-table {
+                display: none;
+            }
+
+            .leaderboard-cards {
+                display: grid;
+            }
+
+            .champion-modal-card {
                 margin: 0.5rem;
                 padding: 1.25rem;
                 max-height: 95vh;
@@ -1123,63 +1397,8 @@
                 gap: 0.5rem;
             }
 
-            .search-and-filters {
+            .page-content {
                 padding: 1rem;
-            }
-
-            .search-container {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-
-            .search-input-wrapper {
-                width: 100%;
-            }
-
-            .results-info {
-                text-align: center;
-            }
-
-            .leaderboard-table {
-                font-size: 0.9rem;
-            }
-            
-            .table-header th,
-            .leaderboard-row td {
-                padding: 0.75rem 0.5rem;
-            }
-            
-            .earnings-cell {
-                display: none;
-            }
-            
-            .champion-avatar {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-            }
-
-            .champion-info {
-                min-width: 0;
-            }
-
-            .champion-name {
-                font-size: 0.9rem;
-            }
-
-            .champion-address {
-                font-size: 0.75rem;
-            }
-
-            .pagination {
-                flex-wrap: wrap;
-                gap: 0.25rem;
-            }
-
-            .page-btn {
-                padding: 0.4rem 0.6rem;
-                font-size: 0.8rem;
-                min-width: 35px;
             }
         }
     </style>
@@ -1217,7 +1436,7 @@
     <div class="page-container">
         <!-- Page Header -->
         <div class="page-header">
-            <h1 class="page-title leaderboards-title">Leaderboards</h1>
+            <h1 class="page-title">Leaderboards</h1>
             <p class="page-subtitle">Track elite Champions and discover where you rank</p>
         </div>
 
@@ -1314,14 +1533,11 @@
             <!-- Results Info -->
             <div class="results-info">
                 <div class="results-count" id="resultsCount">Showing 8 of 8 champions</div>
-                <div class="view-toggle">
-                    <button class="view-btn active" onclick="setView('table')">📊</button>
-                    <button class="view-btn" onclick="setView('cards')">🃏</button>
-                </div>
             </div>
 
-            <!-- Leaderboard Table -->
+            <!-- Leaderboard Container -->
             <div class="leaderboard-container">
+                <!-- Desktop Table View -->
                 <table class="leaderboard-table">
                     <thead class="table-header">
                         <tr>
@@ -1336,6 +1552,11 @@
                         <!-- Champion rows will be populated by JavaScript -->
                     </tbody>
                 </table>
+
+                <!-- Mobile Card View -->
+                <div class="leaderboard-cards" id="leaderboardCards">
+                    <!-- Champion cards will be populated by JavaScript -->
+                </div>
                 
                 <div class="no-results" id="noResults" style="display: none;">
                     <div class="no-results-icon">🔍</div>
@@ -1343,27 +1564,22 @@
                     <div style="font-size: 0.9rem;">Try adjusting your search terms or filters</div>
                 </div>
             </div>
-
-            <!-- Pagination -->
-            <div class="pagination" id="pagination">
-                <!-- Pagination buttons will be populated by JavaScript -->
-            </div>
         </div>
     </div>
 
     <!-- Champion Detail Modal -->
     <div class="champion-modal" id="championModal">
-        <div class="champion-card">
-            <div class="champion-card-header">
+        <div class="champion-modal-card">
+            <div class="champion-modal-header">
                 <button class="champion-close" onclick="closeChampionCard()">×</button>
                 
-                <div class="champion-large-avatar" id="championAvatar">
+                <div class="champion-modal-avatar" id="championAvatar">
                     <!-- Avatar will be populated by JavaScript -->
                     <div class="champion-rank-badge" id="championRankBadge">#1</div>
                 </div>
                 
-                <div class="champion-card-name" id="championName">Champion Name</div>
-                <div class="champion-card-address" id="championAddress">Wallet Address</div>
+                <div class="champion-modal-name" id="championName">Champion Name</div>
+                <div class="champion-modal-address" id="championAddress">Wallet Address</div>
                 
                 <div class="champion-badges-row" id="championBadges">
                     <!-- Badges will be populated by JavaScript -->
@@ -1918,19 +2134,29 @@
             applyFilters();
         }
 
-        // Render leaderboard
+        // Enhanced render function for both table and cards
         function renderLeaderboard() {
             var tbody = document.getElementById('leaderboardBody');
+            var cardsContainer = document.getElementById('leaderboardCards');
             var noResults = document.getElementById('noResults');
             
             if (filteredChampions.length === 0) {
                 tbody.innerHTML = '';
+                cardsContainer.innerHTML = '';
                 noResults.style.display = 'block';
                 return;
             }
             
             noResults.style.display = 'none';
             
+            // Render Table View (Desktop)
+            renderTableView(tbody);
+            
+            // Render Card View (Mobile)
+            renderCardView(cardsContainer);
+        }
+
+        function renderTableView(tbody) {
             var html = '';
             filteredChampions.forEach(champion => {
                 var rankClass = '';
@@ -1976,16 +2202,79 @@
             tbody.innerHTML = html;
         }
 
+        function renderCardView(cardsContainer) {
+            var html = '';
+            filteredChampions.forEach(champion => {
+                var rankClass = '';
+                var avatarClass = 'champion-card-avatar';
+                if (champion.rank === 1) {
+                    rankClass = 'rank-1';
+                    avatarClass += ' rank-1';
+                } else if (champion.rank === 2) {
+                    rankClass = 'rank-2';
+                    avatarClass += ' rank-2';
+                } else if (champion.rank === 3) {
+                    rankClass = 'rank-3';
+                    avatarClass += ' rank-3';
+                }
+                
+                // Create badges
+                var badgesHtml = '';
+                champion.badges.forEach(badge => {
+                    badgesHtml += `<span class="performance-badge badge-${badge}">`;
+                    if (badge === 'legend') badgesHtml += '👑';
+                    else if (badge === 'hot-streak') badgesHtml += '🔥';
+                    else if (badge === 'rising-star') badgesHtml += '⭐';
+                    badgesHtml += '</span>';
+                });
+                
+                // Create bracket indicator
+                var bracketHtml = `<span class="bracket-indicator bracket-${champion.bracket}">`;
+                if (champion.bracket === 'beginner') bracketHtml += '🟢 BGN';
+                else if (champion.bracket === 'intermediate') bracketHtml += '🟡 INT';
+                else if (champion.bracket === 'advanced') bracketHtml += '🔴 ADV';
+                else if (champion.bracket === 'legendary') bracketHtml += '👑 LEG';
+                bracketHtml += '</span>';
+                
+                html += `
+                <div class="champion-card" data-champion-rank="${champion.rank}">
+                    <div class="champion-card-header">
+                        <div class="champion-card-rank ${rankClass}">#${champion.rank}</div>
+                        <div class="${avatarClass}">${champion.avatar}</div>
+                        <div class="champion-card-info">
+                            <div class="champion-card-name">
+                                ${champion.name}
+                                ${badgesHtml}
+                                ${bracketHtml}
+                            </div>
+                            <div class="champion-card-address">${champion.address}</div>
+                        </div>
+                    </div>
+                    <div class="champion-card-stats">
+                        <div class="champion-stat">
+                            <div class="champion-stat-value">${champion.winrate}%</div>
+                            <div class="champion-stat-label">Winrate</div>
+                        </div>
+                        <div class="champion-stat">
+                            <div class="champion-stat-value">${champion.tournaments}</div>
+                            <div class="champion-stat-label">Tournaments</div>
+                        </div>
+                        <div class="champion-stat">
+                            <div class="champion-stat-value">${champion.earnings}</div>
+                            <div class="champion-stat-label">SOL Earned</div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            
+            cardsContainer.innerHTML = html;
+        }
+
         function updateResultsCount() {
             const total = allChampions.length;
             const filtered = filteredChampions.length;
             document.getElementById('resultsCount').textContent = 
                 `Showing ${filtered} of ${total} champions`;
-        }
-
-        // View toggle removed - list view only
-        function setView(viewType) {
-            // No longer needed - removed view toggle functionality
         }
 
         // Update search placeholder based on screen size
@@ -2013,7 +2302,7 @@
             
             if (avatar) {
                 avatar.textContent = champion.avatar;
-                avatar.className = `champion-large-avatar${champion.rank <= 3 ? ` rank-${champion.rank}` : ''}`;
+                avatar.className = `champion-modal-avatar${champion.rank <= 3 ? ` rank-${champion.rank}` : ''}`;
             }
             
             if (rankBadge) {
@@ -2135,13 +2424,24 @@
             // Set initial search placeholder
             updateSearchPlaceholder();
             
-            // Set up event delegation for champion rows
+            // Set up event delegation for champion rows (table)
             const leaderboardTable = document.getElementById('leaderboardBody');
             leaderboardTable.addEventListener('click', function(event) {
-                // Find the clicked row
                 const clickedRow = event.target.closest('.leaderboard-row');
                 if (clickedRow) {
                     const rank = parseInt(clickedRow.getAttribute('data-champion-rank'));
+                    if (rank) {
+                        openChampionCard(rank);
+                    }
+                }
+            });
+            
+            // Set up event delegation for champion cards (mobile)
+            const leaderboardCards = document.getElementById('leaderboardCards');
+            leaderboardCards.addEventListener('click', function(event) {
+                const clickedCard = event.target.closest('.champion-card');
+                if (clickedCard) {
+                    const rank = parseInt(clickedCard.getAttribute('data-champion-rank'));
                     if (rank) {
                         openChampionCard(rank);
                     }
