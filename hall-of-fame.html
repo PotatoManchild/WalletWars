@@ -247,7 +247,7 @@
             margin-bottom: 0.25rem;
         }
 
-        /* Legend Detail Modal */
+        /* Enhanced Legend Detail Modal */
         .legend-modal {
             position: fixed;
             top: 0;
@@ -276,7 +276,7 @@
             border: 2px solid rgba(251, 191, 36, 0.4);
             border-radius: 1.5rem;
             padding: 1.5rem;
-            max-width: 600px;
+            max-width: 800px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -321,14 +321,14 @@
         }
 
         .legend-large-avatar {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin: 0 auto 1rem;
             border: 3px solid rgba(251, 191, 36, 0.5);
             position: relative;
@@ -354,7 +354,7 @@
 
         .legend-detail-name {
             font-family: 'Orbitron', monospace;
-            font-size: 1.6rem;
+            font-size: 2rem;
             font-weight: 700;
             color: #fbbf24;
             margin-bottom: 0.5rem;
@@ -372,6 +372,7 @@
             justify-content: center;
             gap: 0.5rem;
             flex-wrap: wrap;
+            margin-bottom: 1.5rem;
         }
 
         .legend-detail-badge {
@@ -384,12 +385,18 @@
             border: 1px solid rgba(251, 191, 36, 0.3);
         }
 
+        /* Content Layout */
+        .legend-modal-content {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        /* Winrate Visual */
         .legend-winrate-visual {
             background: rgba(15, 23, 42, 0.5);
             border: 1px solid rgba(251, 191, 36, 0.1);
             border-radius: 0.75rem;
             padding: 1rem;
-            margin-bottom: 1.5rem;
         }
 
         .legend-winrate-title {
@@ -427,11 +434,11 @@
             transition: width 0.8s ease;
         }
 
+        /* Stats Grid */
         .legend-detail-stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 1rem;
-            margin-bottom: 1.5rem;
         }
 
         .legend-stat-card {
@@ -442,12 +449,27 @@
             text-align: center;
         }
 
+        .legend-stat-card-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 0.25rem;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .legend-stat-card-label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Hall of Fame Achievements */
         .legend-hof-achievements {
             background: rgba(15, 23, 42, 0.5);
             border: 1px solid rgba(251, 191, 36, 0.1);
             border-radius: 0.75rem;
             padding: 1rem;
-            margin-bottom: 1.5rem;
         }
 
         .legend-hof-title {
@@ -489,9 +511,90 @@
             font-size: 0.85rem;
         }
 
+        /* Champion Legacy */
+        .legend-legacy {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(251, 191, 36, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+
+        .legend-legacy-title {
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-legacy-text {
+            color: #d1d5db;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        /* Recent Activity */
+        .legend-recent-activity {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(251, 191, 36, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+
+        .legend-activity-title {
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-activity-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .legend-activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(251, 191, 36, 0.1);
+        }
+
+        .legend-activity-tournament {
+            color: #d1d5db;
+            font-size: 0.85rem;
+        }
+
+        .legend-activity-result {
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .result-win {
+            color: #10b981;
+        }
+
+        .result-legend {
+            color: #fbbf24;
+        }
+
+        /* Action Buttons */
         .legend-actions {
             display: flex;
             gap: 0.75rem;
+            margin-top: 1.5rem;
         }
 
         .legend-btn-primary {
@@ -530,26 +633,29 @@
             color: #fbbf24;
         }
 
-        /* Desktop Layout for Legend Modal */
+        /* Desktop Layout */
         @media (min-width: 768px) {
             .legend-detail-card {
-                max-width: 800px;
                 padding: 2rem;
             }
 
-            .legend-detail-stats-grid {
-                grid-template-columns: repeat(4, 1fr);
+            .legend-modal-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
                 gap: 1.5rem;
             }
 
-            .legend-large-avatar {
-                width: 120px;
-                height: 120px;
-                font-size: 3.5rem;
+            .legend-winrate-visual {
+                grid-column: 1 / -1;
+            }
+
+            .legend-detail-stats-grid {
+                grid-column: 1 / -1;
+                grid-template-columns: repeat(4, 1fr);
             }
 
             .legend-detail-name {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
 
             .legend-winrate-display {
@@ -557,7 +663,7 @@
             }
         }
 
-        /* Mobile Responsive for Legend Modal */
+        /* Mobile Responsive */
         @media (max-width: 767px) {
             .legend-detail-card {
                 margin: 0.5rem;
@@ -565,13 +671,14 @@
                 max-height: 95vh;
             }
 
-            .legend-detail-stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.75rem;
+            .legend-large-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 3rem;
             }
 
-            .legend-stat-card {
-                padding: 0.75rem;
+            .legend-detail-name {
+                font-size: 1.6rem;
             }
 
             .legend-winrate-display {
@@ -581,6 +688,15 @@
             .legend-actions {
                 flex-direction: column;
                 gap: 0.5rem;
+            }
+
+            .legend-detail-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            .legend-stat-card {
+                padding: 0.75rem;
             }
         }
 
@@ -769,7 +885,7 @@
                         <div class="legend-stats">
                             <div class="legend-stat">
                                 <div class="legend-stat-value">88.9%</div>
-                                <div class="legend-stat-label">Winrate</div>
+                                <div class="legend-stat-label">Win Streak</div>
                             </div>
                             <div class="legend-stat">
                                 <div class="legend-stat-value">28</div>
@@ -814,7 +930,7 @@
         </div>
     </div>
 
-    <!-- Legend Detail Modal -->
+    <!-- Enhanced Legend Detail Modal -->
     <div class="legend-modal" id="legendModal">
         <div class="legend-detail-card">
             <div class="legend-detail-header">
@@ -830,36 +946,54 @@
                 <div class="legend-detail-badges" id="legendBadges"></div>
             </div>
 
-            <div class="legend-winrate-visual">
-                <div class="legend-winrate-title">🎯 Championship Winrate</div>
-                <div class="legend-winrate-display" id="legendWinrate">94.7%</div>
-                <div class="legend-winrate-bar">
-                    <div class="legend-winrate-fill" id="legendWinrateFill" style="width: 94.7%"></div>
+            <div class="legend-modal-content">
+                <!-- Winrate Visual -->
+                <!-- Winrate Visual -->
+                <div class="legend-winrate-visual">
+                    <div class="legend-winrate-title">🏆 Championship Winrate</div>
+                    <div class="legend-winrate-display" id="legendWinrate">94.7%</div>
+                    <div class="legend-winrate-bar">
+                        <div class="legend-winrate-fill" id="legendWinrateFill" style="width: 94.7%"></div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="legend-detail-stats-grid">
-                <div class="legend-stat-card">
-                    <div class="legend-stat-value" id="legendDetailTournaments">47</div>
-                    <div class="legend-stat-label">Tournaments Won</div>
+                <!-- Stats Grid -->
+                <div class="legend-detail-stats-grid">
+                    <div class="legend-stat-card">
+                        <div class="legend-stat-card-value" id="legendDetailTournaments">47</div>
+                        <div class="legend-stat-card-label">Tournaments Won</div>
+                    </div>
+                    <div class="legend-stat-card">
+                        <div class="legend-stat-card-value" id="legendDetailEarnings">1,247</div>
+                        <div class="legend-stat-card-label">SOL Earned</div>
+                    </div>
+                    <div class="legend-stat-card">
+                        <div class="legend-stat-card-value" id="legendDetailWinStreak">23</div>
+                        <div class="legend-stat-card-label">Win Streak</div>
+                    </div>
+                    <div class="legend-stat-card">
+                        <div class="legend-stat-card-value" id="legendDetailAvgPerf">+347%</div>
+                        <div class="legend-stat-card-label">Avg Performance</div>
+                    </div>
                 </div>
-                <div class="legend-stat-card">
-                    <div class="legend-stat-value" id="legendDetailEarnings">1,247</div>
-                    <div class="legend-stat-label">SOL Earned</div>
-                </div>
-                <div class="legend-stat-card">
-                    <div class="legend-stat-value" id="legendDetailWinStreak">23</div>
-                    <div class="legend-stat-label">Win Streak</div>
-                </div>
-                <div class="legend-stat-card">
-                    <div class="legend-stat-value" id="legendDetailAvgPerf">+347%</div>
-                    <div class="legend-stat-label">Avg Performance</div>
-                </div>
-            </div>
 
-            <div class="legend-hof-achievements">
-                <div class="legend-hof-title">🏆 Hall of Fame Status</div>
-                <div class="legend-hof-list" id="legendHofAchievements"></div>
+                <!-- Hall of Fame Achievements -->
+                <div class="legend-hof-achievements">
+                    <div class="legend-hof-title">🏆 Hall of Fame Status</div>
+                    <div class="legend-hof-list" id="legendHofAchievements"></div>
+                </div>
+
+                <!-- Champion Legacy -->
+                <div class="legend-legacy">
+                    <div class="legend-legacy-title">📜 Champion Legacy</div>
+                    <div class="legend-legacy-text" id="legendLegacyText"></div>
+                </div>
+
+                <!-- Recent Legendary Activity -->
+                <div class="legend-recent-activity">
+                    <div class="legend-activity-title">⚡ Recent Dominance</div>
+                    <div class="legend-activity-list" id="legendActivityList"></div>
+                </div>
             </div>
 
             <div class="legend-actions">
@@ -892,7 +1026,15 @@
                     { icon: "🏆", text: "Most Tournament Wins - 47 Victories" },
                     { icon: "⚡", text: "Hall of Fame Inductee #001" }
                 ],
-                badges: ["👑 First Legend", "🔥 Inferno Master", "💎 Diamond Soul", "🏆 Tournament God"]
+                badges: ["👑 First Legend", "🔥 Inferno Master", "💎 Diamond Soul", "🏆 Tournament God"],
+                legacy: "The pioneer who started it all. The Golden Phoenix was the first champion to achieve legendary status in WalletWars, setting the standard for excellence. Known for an unmatched strategic mind and the ability to read market movements like no other, this legend transformed trading from art to science. With 23 consecutive tournament victories, The Golden Phoenix proved that consistency and skill triumph over luck every time.",
+                recentActivity: [
+                    { tournament: "Masters Championship", result: "legend", performance: "+456%" },
+                    { tournament: "Elite Weekly Finals", result: "win", performance: "+234%" },
+                    { tournament: "Legendary Showdown", result: "legend", performance: "+389%" },
+                    { tournament: "Champion's League", result: "win", performance: "+156%" },
+                    { tournament: "Ultimate Challenge", result: "legend", performance: "+567%" }
+                ]
             },
             2: {
                 name: "Diamond Samurai",
@@ -911,7 +1053,15 @@
                     { icon: "🏆", text: "Most Consistent Player - 0.8% Variance" },
                     { icon: "⭐", text: "Hall of Fame Inductee #002" }
                 ],
-                badges: ["⚔️ Blade Master", "💎 Diamond Soul", "🎯 Precision Expert", "🌟 Rising Legend"]
+                badges: ["⚔️ Blade Master", "💎 Diamond Soul", "🎯 Precision Expert", "🌟 Rising Legend"],
+                legacy: "The master of precision and calculated risks. Diamond Samurai earned legendary status through surgical precision in every trade and tournament decision. Known for the most consistent performance variance in WalletWars history (0.8%), this champion proved that disciplined strategy outperforms emotional trading. The Diamond Samurai's methodical approach has inspired an entire generation of strategic traders.",
+                recentActivity: [
+                    { tournament: "Precision Masters", result: "legend", performance: "+345%" },
+                    { tournament: "Elite Weekly", result: "win", performance: "+145%" },
+                    { tournament: "Strategy Summit", result: "legend", performance: "+289%" },
+                    { tournament: "Diamond League", result: "win", performance: "+167%" },
+                    { tournament: "Samurai Championship", result: "legend", performance: "+423%" }
+                ]
             },
             3: {
                 name: "Lightning Bolt",
@@ -930,7 +1080,15 @@
                     { icon: "🏃", text: "Fastest Victory Record - 2.3 Hours" },
                     { icon: "🎯", text: "Hall of Fame Inductee #003" }
                 ],
-                badges: ["⚡ Lightning Speed", "🌪️ Storm Bringer", "⭐ Rising Star", "🏃 Speed Master"]
+                badges: ["⚡ Lightning Speed", "🌪️ Storm Bringer", "⭐ Rising Star", "🏃 Speed Master"],
+                legacy: "The fastest legend in WalletWars history. Lightning Bolt revolutionized competitive trading by proving that speed and agility could compete with traditional strategies. Holding the record for fastest tournament victory (2.3 hours), this champion showed that quick adaptation and rapid decision-making are legendary skills. Lightning Bolt's meteoric rise from newcomer to Hall of Fame in record time inspired the speed-trading revolution.",
+                recentActivity: [
+                    { tournament: "Speed Championship", result: "legend", performance: "+567%" },
+                    { tournament: "Lightning League", result: "win", performance: "+234%" },
+                    { tournament: "Rapid Fire Finals", result: "legend", performance: "+445%" },
+                    { tournament: "Storm Series", result: "win", performance: "+189%" },
+                    { tournament: "Thunder Tournament", result: "legend", performance: "+378%" }
+                ]
             }
         };
 
@@ -941,36 +1099,89 @@
             var legend = legendData[legendId];
             var modal = document.getElementById('legendModal');
             
-            document.getElementById('legendAvatar').textContent = legend.avatar;
-            document.getElementById('legendRankBadge').textContent = '#' + legend.rank;
-            document.getElementById('legendName').textContent = legend.name;
-            document.getElementById('legendTitle').textContent = legend.title;
+            if (!legend || !modal) {
+                console.error('Legend data or modal not found');
+                return;
+            }
+            
+            // Helper function to safely set element content
+            function safeSetContent(elementId, content) {
+                var element = document.getElementById(elementId);
+                if (element) {
+                    element.textContent = content;
+                } else {
+                    console.warn('Element not found:', elementId);
+                }
+            }
+            
+            function safeSetStyle(elementId, property, value) {
+                var element = document.getElementById(elementId);
+                if (element) {
+                    element.style[property] = value;
+                } else {
+                    console.warn('Element not found:', elementId);
+                }
+            }
+            
+            // Populate header
+            safeSetContent('legendAvatar', legend.avatar);
+            safeSetContent('legendRankBadge', '#' + legend.rank);
+            safeSetContent('legendName', legend.name);
+            safeSetContent('legendTitle', legend.title);
 
+            // Populate badges
             var badgesContainer = document.getElementById('legendBadges');
-            badgesContainer.innerHTML = '';
-            legend.badges.forEach(function(badge) {
-                var badgeEl = document.createElement('div');
-                badgeEl.className = 'legend-detail-badge';
-                badgeEl.textContent = badge;
-                badgesContainer.appendChild(badgeEl);
-            });
+            if (badgesContainer) {
+                badgesContainer.innerHTML = '';
+                legend.badges.forEach(function(badge) {
+                    var badgeEl = document.createElement('div');
+                    badgeEl.className = 'legend-detail-badge';
+                    badgeEl.textContent = badge;
+                    badgesContainer.appendChild(badgeEl);
+                });
+            }
 
-            document.getElementById('legendWinrate').textContent = legend.winrate + '%';
-            document.getElementById('legendWinrateFill').style.width = legend.winrate + '%';
+            // Populate winrate
+            safeSetContent('legendWinrate', legend.winrate + '%');
+            safeSetStyle('legendWinrateFill', 'width', legend.winrate + '%');
 
-            document.getElementById('legendDetailTournaments').textContent = legend.tournaments;
-            document.getElementById('legendDetailEarnings').textContent = legend.earnings.toLocaleString();
-            document.getElementById('legendDetailWinStreak').textContent = legend.winStreak;
-            document.getElementById('legendDetailAvgPerf').textContent = legend.avgPerformance;
+            // Populate stats
+            safeSetContent('legendDetailTournaments', legend.tournaments);
+            safeSetContent('legendDetailEarnings', legend.earnings.toLocaleString());
+            safeSetContent('legendDetailWinStreak', legend.winStreak);
+            safeSetContent('legendDetailAvgPerf', legend.avgPerformance);
 
+            // Populate Hall of Fame achievements
             var hofContainer = document.getElementById('legendHofAchievements');
-            hofContainer.innerHTML = '';
-            legend.hofAchievements.forEach(function(achievement) {
-                var achievementEl = document.createElement('div');
-                achievementEl.className = 'legend-hof-item';
-                achievementEl.innerHTML = '<div class="legend-hof-icon">' + achievement.icon + '</div><div class="legend-hof-text">' + achievement.text + '</div>';
-                hofContainer.appendChild(achievementEl);
-            });
+            if (hofContainer) {
+                hofContainer.innerHTML = '';
+                legend.hofAchievements.forEach(function(achievement) {
+                    var achievementEl = document.createElement('div');
+                    achievementEl.className = 'legend-hof-item';
+                    achievementEl.innerHTML = '<div class="legend-hof-icon">' + achievement.icon + '</div><div class="legend-hof-text">' + achievement.text + '</div>';
+                    hofContainer.appendChild(achievementEl);
+                });
+            }
+
+            // Populate legacy
+            safeSetContent('legendLegacyText', legend.legacy);
+
+            // Populate recent activity
+            var activityContainer = document.getElementById('legendActivityList');
+            if (activityContainer) {
+                activityContainer.innerHTML = '';
+                legend.recentActivity.forEach(function(activity) {
+                    var activityEl = document.createElement('div');
+                    activityEl.className = 'legend-activity-item';
+                    var resultClass = activity.result === 'legend' ? 'result-legend' : 'result-win';
+                    var resultIcon = activity.result === 'legend' ? '👑' : '🏆';
+                    activityEl.innerHTML = `
+                        <div class="legend-activity-tournament">${activity.tournament}</div>
+                        <div class="legend-activity-result ${resultClass}">${resultIcon} ${activity.performance}</div>
+                    `;
+                    activityContainer.appendChild(activityEl);
+                });
+            }
 
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -985,7 +1196,7 @@
         function challengeLegend() {
             if (currentLegend) {
                 var legend = legendData[currentLegend];
-                alert('⚔️ Challenge ' + legend.name + '\n\nComing soon...');
+                alert('⚔️ Challenge ' + legend.name + '\n\nDare to face a Hall of Fame legend?\n\nThis would initiate a special legendary duel with:\n• Higher stakes and rewards\n• Extended tournament format\n• Global audience watching\n• Legacy points on the line\n\nComing soon...');
                 closeLegendCard();
             }
         }
@@ -993,10 +1204,11 @@
         function viewLegendHistory() {
             if (currentLegend) {
                 var legend = legendData[currentLegend];
-                alert('📈 ' + legend.name + ' - Complete History\n\nComing soon...');
+                alert('📈 ' + legend.name + ' - Complete Legend History\n\nView the complete journey to legendary status:\n• All 47 tournament victories\n• Detailed performance analytics\n• Historic moments and achievements\n• Legacy timeline and milestones\n\nComing soon...');
             }
         }
 
+        // Close modal handlers
         document.addEventListener('click', function(event) {
             var modal = document.getElementById('legendModal');
             if (event.target === modal) {
