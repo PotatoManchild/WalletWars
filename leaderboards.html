@@ -292,7 +292,7 @@
         }
 
         .table-header th {
-            padding: 1rem 2rem 1rem 1rem;
+            padding: 1rem 2.5rem 1rem 1rem;
             text-align: left;
             font-weight: 600;
             color: #8b5cf6;
@@ -311,29 +311,34 @@
         .table-header th:first-child {
             text-align: center;
             width: 60px;
+            padding: 1rem 1.5rem 1rem 1rem;
+        }
+
+        .table-header th.sortable {
+            /* Default state - show descending arrow */
         }
 
         .table-header th.sortable::after {
-            content: '↕️';
+            content: '▼';
             position: absolute;
-            right: 0.75rem;
-            opacity: 0.7;
-            font-size: 0.9rem;
-            color: #8b5cf6;
+            right: 0.5rem;
+            opacity: 1;
+            font-size: 1.1rem;
+            color: #ffffff;
             margin-left: 0.5rem;
         }
 
         .table-header th.sort-asc::after {
             content: '▲';
             opacity: 1;
-            color: #8b5cf6;
+            color: #ffffff;
             font-weight: bold;
         }
 
         .table-header th.sort-desc::after {
             content: '▼';
             opacity: 1;
-            color: #8b5cf6;
+            color: #ffffff;
             font-weight: bold;
         }
 
@@ -1735,10 +1740,15 @@
         function updateTableHeaders() {
             document.querySelectorAll('.table-header th').forEach(th => {
                 th.classList.remove('sort-asc', 'sort-desc');
+                // Set default sort states for all sortable columns
+                if (th.classList.contains('sortable')) {
+                    th.classList.add('sort-desc'); // Default to descending
+                }
             });
             
             const currentHeader = document.querySelector(`[onclick="sortTable('${currentSortField}')"]`);
             if (currentHeader) {
+                currentHeader.classList.remove('sort-desc'); // Remove default
                 currentHeader.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
             }
         }
