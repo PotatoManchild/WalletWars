@@ -538,18 +538,9 @@
 
         /* Desktop Layout */
         @media (min-width: 768px) {
-            .filters-toggle {
-                display: none;
-            }
-
-            .filters-content {
-                max-height: none;
-                overflow: visible;
-            }
-
             .filters-grid {
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                padding-top: 0;
+                padding-top: 1rem;
             }
 
             .search-container {
@@ -568,6 +559,26 @@
                 width: 45px;
                 height: 45px;
                 font-size: 1.1rem;
+            }
+
+            .filters-toggle {
+                padding: 1rem 1.25rem;
+                background: rgba(139, 92, 246, 0.12);
+                border: 1px solid rgba(139, 92, 246, 0.3);
+                margin-bottom: 0.75rem;
+            }
+
+            .filters-toggle-text {
+                font-size: 1.1rem;
+                font-weight: 700;
+            }
+
+            .filters-toggle-icon {
+                font-size: 1.4rem;
+            }
+
+            .filters-content.active {
+                max-height: 600px;
             }
         }
 
