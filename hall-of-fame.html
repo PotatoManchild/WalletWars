@@ -936,7 +936,7 @@
             <div class="legend-detail-header">
                 <button class="legend-close" onclick="closeLegendCard()">×</button>
                 
-                <div class="legend-large-avatar" id="legendAvatar">
+                <div class="legend-large-avatar" id="legendAvatar">🔥
                     <div class="legend-rank-badge" id="legendRankBadge">#1</div>
                 </div>
                 
@@ -1123,9 +1123,24 @@
                 }
             }
             
-            // Populate header
-            safeSetContent('legendAvatar', legend.avatar);
-            safeSetContent('legendRankBadge', '#' + legend.rank);
+            // Populate header - handle avatar specially since it contains the rank badge
+            var avatarElement = document.getElementById('legendAvatar');
+            if (avatarElement) {
+                // Set the avatar emoji as the text content of the main avatar div
+                avatarElement.textContent = legend.avatar;
+                
+                // Create and append the rank badge
+                var existingBadge = avatarElement.querySelector('.legend-rank-badge');
+                if (existingBadge) {
+                    existingBadge.remove();
+                }
+                
+                var rankBadge = document.createElement('div');
+                rankBadge.className = 'legend-rank-badge';
+                rankBadge.textContent = '#' + legend.rank;
+                avatarElement.appendChild(rankBadge);
+            }
+            
             safeSetContent('legendName', legend.name);
             safeSetContent('legendTitle', legend.title);
 
