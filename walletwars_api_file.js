@@ -5,9 +5,9 @@ console.log('🎮 WalletWars API Loading...');
 // SUPABASE CONFIGURATION
 // ========================================
 
-// 🔥 REPLACE THESE WITH YOUR ACTUAL VALUES FROM STEP 2.3!
-const SUPABASE_URL = 'https://YOUR-PROJECT-ID.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR-ANON-KEY-HERE';
+// ✅ CONFIGURED WITH YOUR ACTUAL SUPABASE PROJECT
+const SUPABASE_URL = 'https://miwtcvcdpoqtqjbbvnxz.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1pd3RjdmNkcG9xdHFqYmJ2bnh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3Mjk4MTAsImV4cCI6MjA2NDMwNTgxMH0.5FCUjucAu2PxGEVc3X01dwa4wt4tHLewsjBO7s55Zt8';
 
 // Initialize Supabase client
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
