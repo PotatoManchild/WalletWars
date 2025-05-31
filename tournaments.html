@@ -225,47 +225,41 @@
             border: 1px solid #10b981;
         }
 
-        /* Compact Key Info - More Compact Grid */
+        /* Compact Key Info */
         .key-info {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .key-info-item {
             text-align: center;
-            padding: 0.4rem;
+            padding: 0.5rem;
             background: rgba(15, 23, 42, 0.5);
-            border-radius: 0.4rem;
+            border-radius: 0.5rem;
             border: 1px solid rgba(139, 92, 246, 0.1);
-            min-height: 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
 
         .key-info-label {
             color: #9ca3af;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.15rem;
+            margin-bottom: 0.25rem;
         }
 
         .key-info-value {
             color: #8b5cf6;
             font-weight: 700;
-            font-size: 0.8rem;
-            line-height: 1;
+            font-size: 0.85rem;
         }
 
         .tap-hint {
             text-align: center;
             color: #6b7280;
-            font-size: 0.65rem;
-            margin-top: 0.25rem;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
         }
 
         /* Detailed Back View */
@@ -280,7 +274,8 @@
             transform: rotateY(180deg);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
+            min-height: 320px;
             background: rgba(31, 41, 55, 0.8);
             backdrop-filter: blur(20px);
             border: 2px solid rgba(251, 191, 36, 0.4);
@@ -349,7 +344,7 @@
             border: 1px solid rgba(6, 182, 212, 0.2);
             border-radius: 0.5rem;
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .countdown-urgent {
@@ -477,235 +472,6 @@
             font-size: 0.9rem;
         }
 
-        /* Essential Info Layout for Card Back */
-        .essential-info {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .essential-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-        }
-
-        .essential-label {
-            font-size: 0.85rem;
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        .essential-value {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #8b5cf6;
-        }
-
-        .btn-details {
-            background: rgba(6, 182, 212, 0.1);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            color: #06b6d4;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.8rem;
-            font-weight: 600;
-            min-height: 40px;
-            flex: 1;
-        }
-
-        .btn-details:hover {
-            background: rgba(6, 182, 212, 0.2);
-            border-color: #06b6d4;
-            transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
-        }
-
-        /* Tournament Details Modal */
-        .tournament-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .tournament-modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: rgba(31, 41, 55, 0.95);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(139, 92, 246, 0.3);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid rgba(139, 92, 246, 0.2);
-        }
-
-        .modal-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #8b5cf6;
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-close {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #ef4444;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-
-        .modal-close:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: scale(1.1);
-        }
-
-        .modal-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-section-title {
-            color: #8b5cf6;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .modal-detail-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .modal-detail-item {
-            background: rgba(15, 23, 42, 0.5);
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            text-align: center;
-        }
-
-        .modal-detail-label {
-            color: #9ca3af;
-            font-size: 0.75rem;
-            margin-bottom: 0.25rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .modal-detail-value {
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
-        .modal-detail-value.highlight {
-            color: #8b5cf6;
-        }
-
-        .modal-description {
-            background: rgba(15, 23, 42, 0.3);
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            color: #d1d5db;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-        }
-
-        .modal-rules {
-            background: rgba(15, 23, 42, 0.3);
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            color: #d1d5db;
-            line-height: 1.5;
-            font-size: 0.9rem;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .modal-btn-register {
-            flex: 1;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            border: none;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.75rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-
-        .modal-btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
-        }
-
-        .modal-btn-close {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #d1d5db;
-            padding: 1rem 2rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            font-weight: 500;
-        }
-
-        .modal-btn-close:hover {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: #8b5cf6;
-            color: #8b5cf6;
-        }
-
         .tournament-meta {
             display: flex;
             justify-content: space-between;
@@ -779,7 +545,6 @@
             display: flex;
             gap: 0.5rem;
             margin-top: auto;
-            flex-shrink: 0;
         }
 
         .btn-register {
@@ -850,12 +615,6 @@
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .bracket-legendary {
-            background: rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.3);
         }
 
         /* Tablet and Desktop */
@@ -959,7 +718,6 @@
                             <button class="filter-btn active" onclick="filterTournaments('all')">All</button>
                             <button class="filter-btn" onclick="filterTournaments('weekly')">Weekly</button>
                             <button class="filter-btn" onclick="filterTournaments('monthly')">Monthly</button>
-                            <button class="filter-btn" onclick="filterTournaments('special')">Special Events</button>
                         </div>
                     </div>
                     
@@ -1014,7 +772,7 @@
                         <div class="tap-hint">👆 Tap for details</div>
                     </div>
 
-                    <!-- Back of Card (Essential Info Only) -->
+                    <!-- Back of Card (Detailed View) -->
                     <div class="card-back">
                         <div class="close-hint">👆 Tap again to close</div>
                         
@@ -1028,25 +786,30 @@
                             <div class="status-badge status-upcoming">Upcoming</div>
                         </div>
                         
-                        <div class="essential-info">
-                            <div class="essential-item">
-                                <div class="essential-label">Entry</div>
-                                <div class="essential-value">0.01 SOL</div>
+                        <div class="tournament-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Entry Fee</div>
+                                <div class="detail-value"><span class="highlight">0.01 SOL</span></div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Prize</div>
-                                <div class="essential-value"><span id="current-prize-1">0.23</span>/0.8 SOL</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Prize Pool</div>
+                                <div class="detail-value"><span class="highlight">0.8 SOL</span></div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Players</div>
-                                <div class="essential-value"><span id="player-count-1">23</span>/100</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Max Players</div>
+                                <div class="detail-value">100 players</div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Duration</div>
-                                <div class="essential-value">7 days</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Duration</div>
+                                <div class="detail-value">7 days</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Current Prize</div>
+                                <div class="detail-value"><span class="highlight">0.23 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Registration</div>
+                                <div class="detail-value">Open until start</div>
                             </div>
                         </div>
                         
@@ -1054,9 +817,43 @@
                             Loading countdown...
                         </div>
                         
+                        <div class="registration-progress">
+                            <div class="registration-progress-header">
+                                <span class="registration-progress-label">Registration</span>
+                                <span class="registration-progress-text low" id="reg-text-1">23/100 (23%)</span>
+                            </div>
+                            <div class="registration-progress-bar">
+                                <div class="registration-progress-fill low" id="reg-fill-1" style="width: 23%"></div>
+                            </div>
+                        </div>
+
+                        <div class="potential-winnings">
+                            <div class="potential-winnings-title">Your Potential Winnings</div>
+                            <div class="winnings-breakdown">
+                                <div class="winnings-item">
+                                    <div class="winnings-label">1st Place</div>
+                                    <div class="winnings-value highlight" id="first-prize-1">0.32 SOL</div>
+                                </div>
+                                <div class="winnings-item">
+                                    <div class="winnings-label">Top 20%</div>
+                                    <div class="winnings-value" id="top20-prize-1">0.04 SOL</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tournament-description">
+                            <div class="tournament-description-title">About This Tournament</div>
+                            <div class="tournament-description-text">Perfect for newcomers! Test your trading skills in a low-risk environment with other beginners. Weekly tournaments focus on consistent performance over quick gains.</div>
+                        </div>
+
+                        <div class="tournament-rules">
+                            <div class="tournament-rules-title">Key Rules</div>
+                            <div class="rules-list">• Portfolio tracking starts at registration<br>• Performance calculated vs. SOL baseline<br>• Top 20% split the prize pool<br>• No leverage restrictions</div>
+                        </div>
+                        
                         <div class="tournament-actions">
                             <button class="btn-register" onclick="event.stopPropagation(); registerTournament(1)">Register Now</button>
-                            <button class="btn-details" onclick="event.stopPropagation(); showTournamentDetails(1)">See Details</button>
+                            <button class="btn-view" onclick="event.stopPropagation(); viewTournament(1)">📊</button>
                         </div>
                     </div>
                 </div>
@@ -1101,25 +898,30 @@
                             <div class="status-badge status-live">Live</div>
                         </div>
                         
-                        <div class="essential-info">
-                            <div class="essential-item">
-                                <div class="essential-label">Entry</div>
-                                <div class="essential-value">0.1 SOL</div>
+                        <div class="tournament-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Entry Fee</div>
+                                <div class="detail-value"><span class="highlight">0.1 SOL</span></div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Prize</div>
-                                <div class="essential-value"><span id="current-prize-2">54.2</span>/80 SOL</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Total Prize</div>
+                                <div class="detail-value"><span class="highlight">80 SOL</span></div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Players</div>
-                                <div class="essential-value"><span id="player-count-2">542</span>/1000</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Max Players</div>
+                                <div class="detail-value">1000 players</div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Duration</div>
-                                <div class="essential-value">30 days</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Duration</div>
+                                <div class="detail-value">30 days</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Current Prize</div>
+                                <div class="detail-value"><span class="highlight">54.2 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Avg Position</div>
+                                <div class="detail-value">+12.4% gain</div>
                             </div>
                         </div>
                         
@@ -1127,9 +929,43 @@
                             Loading countdown...
                         </div>
                         
+                        <div class="registration-progress">
+                            <div class="registration-progress-header">
+                                <span class="registration-progress-label">Registration</span>
+                                <span class="registration-progress-text medium" id="reg-text-2">542/1000 (54%)</span>
+                            </div>
+                            <div class="registration-progress-bar">
+                                <div class="registration-progress-fill medium" id="reg-fill-2" style="width: 54%"></div>
+                            </div>
+                        </div>
+
+                        <div class="potential-winnings">
+                            <div class="potential-winnings-title">Your Potential Winnings</div>
+                            <div class="winnings-breakdown">
+                                <div class="winnings-item">
+                                    <div class="winnings-label">1st Place</div>
+                                    <div class="winnings-value highlight" id="first-prize-2">32.4 SOL</div>
+                                </div>
+                                <div class="winnings-item">
+                                    <div class="winnings-label">Top 10%</div>
+                                    <div class="winnings-value" id="top10-prize-2">5.4 SOL</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tournament-description">
+                            <div class="tournament-description-title">About This Tournament</div>
+                            <div class="tournament-description-text">The ultimate test for experienced traders! Monthly competitions with the largest prize pools and most competitive field. Join live and climb the ranks.</div>
+                        </div>
+
+                        <div class="tournament-rules">
+                            <div class="tournament-rules-title">Key Rules</div>
+                            <div class="rules-list">• Live leaderboard updates every hour<br>• Advanced risk metrics tracked<br>• Top 10% guaranteed payouts<br>• Minimum 0.5 SOL portfolio required</div>
+                        </div>
+                        
                         <div class="tournament-actions">
                             <button class="btn-register" onclick="event.stopPropagation(); registerTournament(2)">Join Live Tournament</button>
-                            <button class="btn-details" onclick="event.stopPropagation(); showTournamentDetails(2)">See Details</button>
+                            <button class="btn-view" onclick="event.stopPropagation(); viewTournament(2)">📊</button>
                         </div>
                     </div>
                 </div>
@@ -1174,25 +1010,30 @@
                             <div class="status-badge status-upcoming">Upcoming</div>
                         </div>
                         
-                        <div class="essential-info">
-                            <div class="essential-item">
-                                <div class="essential-label">Entry</div>
-                                <div class="essential-value">0.05 SOL</div>
+                        <div class="tournament-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Entry Fee</div>
+                                <div class="detail-value"><span class="highlight">0.05 SOL</span></div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Prize</div>
-                                <div class="essential-value"><span id="current-prize-3">4.45</span>/12.5 SOL</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Prize Pool</div>
+                                <div class="detail-value"><span class="highlight">12.5 SOL</span></div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Players</div>
-                                <div class="essential-value"><span id="player-count-3">89</span>/250</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Max Players</div>
+                                <div class="detail-value">250 players</div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Duration</div>
-                                <div class="essential-value">7 days</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Duration</div>
+                                <div class="detail-value">7 days</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Current Prize</div>
+                                <div class="detail-value"><span class="highlight">4.45 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Skill Req</div>
+                                <div class="detail-value">5+ tournaments</div>
                             </div>
                         </div>
                         
@@ -1200,15 +1041,49 @@
                             Loading countdown...
                         </div>
                         
+                        <div class="registration-progress">
+                            <div class="registration-progress-header">
+                                <span class="registration-progress-label">Registration</span>
+                                <span class="registration-progress-text low" id="reg-text-3">89/250 (36%)</span>
+                            </div>
+                            <div class="registration-progress-bar">
+                                <div class="registration-progress-fill low" id="reg-fill-3" style="width: 36%"></div>
+                            </div>
+                        </div>
+
+                        <div class="potential-winnings">
+                            <div class="potential-winnings-title">Your Potential Winnings</div>
+                            <div class="winnings-breakdown">
+                                <div class="winnings-item">
+                                    <div class="winnings-label">1st Place</div>
+                                    <div class="winnings-value highlight" id="first-prize-3">5.0 SOL</div>
+                                </div>
+                                <div class="winnings-item">
+                                    <div class="winnings-label">Top 20%</div>
+                                    <div class="winnings-value" id="top20-prize-3">0.25 SOL</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tournament-description">
+                            <div class="tournament-description-title">About This Tournament</div>
+                            <div class="tournament-description-text">Step up your game! Designed for traders with some experience who want to compete against skilled opponents without the pressure of advanced tournaments.</div>
+                        </div>
+
+                        <div class="tournament-rules">
+                            <div class="tournament-rules-title">Key Rules</div>
+                            <div class="rules-list">• Minimum 5 completed tournaments<br>• Portfolio tracking starts at registration<br>• Top 20% share the prize pool<br>• Advanced metrics available</div>
+                        </div>
+                        
                         <div class="tournament-actions">
                             <button class="btn-register" onclick="event.stopPropagation(); registerTournament(3)">Register</button>
-                            <button class="btn-details" onclick="event.stopPropagation(); showTournamentDetails(3)">See Details</button>
+                            <button class="btn-view" onclick="event.stopPropagation(); viewTournament(3)">📊</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tournament 4 -->
-                <div class="tournament-card show-all show-special show-high show-advanced" onclick="flipCard(this)">
+                <div class="tournament-card show-all show-weekly show-high show-advanced" onclick="flipCard(this)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
@@ -1247,25 +1122,30 @@
                             <div class="status-badge status-upcoming">Upcoming</div>
                         </div>
                         
-                        <div class="essential-info">
-                            <div class="essential-item">
-                                <div class="essential-label">Entry</div>
-                                <div class="essential-value">0.2 SOL</div>
+                        <div class="tournament-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Entry Fee</div>
+                                <div class="detail-value"><span class="highlight">0.2 SOL</span></div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Prize</div>
-                                <div class="essential-value"><span id="current-prize-4">31.2</span>/35 SOL</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Prize Pool</div>
+                                <div class="detail-value"><span class="highlight">35 SOL</span></div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Players</div>
-                                <div class="essential-value"><span id="player-count-4">156</span>/200</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Max Players</div>
+                                <div class="detail-value">200 players</div>
                             </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Duration</div>
-                                <div class="essential-value">14 days</div>
+                            <div class="detail-item">
+                                <div class="detail-label">Duration</div>
+                                <div class="detail-value">14 days</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Current Prize</div>
+                                <div class="detail-value"><span class="highlight">31.2 SOL</span></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Skill Req</div>
+                                <div class="detail-value">Top 25% history</div>
                             </div>
                         </div>
                         
@@ -1273,51 +1153,47 @@
                             Loading countdown...
                         </div>
                         
+                        <div class="registration-progress">
+                            <div class="registration-progress-header">
+                                <span class="registration-progress-label">Registration</span>
+                                <span class="registration-progress-text high" id="reg-text-4">156/200 (78%)</span>
+                            </div>
+                            <div class="registration-progress-bar">
+                                <div class="registration-progress-fill high" id="reg-fill-4" style="width: 78%"></div>
+                            </div>
+                            <div class="spots-warning">Only 44 spots left!</div>
+                        </div>
+
+                        <div class="potential-winnings">
+                            <div class="potential-winnings-title">Your Potential Winnings</div>
+                            <div class="winnings-breakdown">
+                                <div class="winnings-item">
+                                    <div class="winnings-label">1st Place</div>
+                                    <div class="winnings-value highlight" id="first-prize-4">14.0 SOL</div>
+                                </div>
+                                <div class="winnings-item">
+                                    <div class="winnings-label">Top 25%</div>
+                                    <div class="winnings-value" id="top25-prize-4">0.7 SOL</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tournament-description">
+                            <div class="tournament-description-title">About This Tournament</div>
+                            <div class="tournament-description-text">Elite competition for proven champions only! Battle the best traders on Solana for substantial prizes. Only those with top 25% historical performance can enter.</div>
+                        </div>
+
+                        <div class="tournament-rules">
+                            <div class="tournament-rules-title">Key Rules</div>
+                            <div class="rules-list">• Must have top 25% winrate history<br>• Extended 14-day format<br>• Top 25% share substantial prizes<br>• Advanced risk analysis required</div>
+                        </div>
+                        
                         <div class="tournament-actions">
                             <button class="btn-register" onclick="event.stopPropagation(); registerTournament(4)">Register</button>
-                            <button class="btn-details" onclick="event.stopPropagation(); showTournamentDetails(4)">See Details</button>
+                            <button class="btn-view" onclick="event.stopPropagation(); viewTournament(4)">📊</button>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tournament Details Modal -->
-    <div class="tournament-modal" id="tournamentModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div>
-                    <div class="modal-title" id="modalTitle">Tournament Details</div>
-                    <div id="modalSubtitle"></div>
-                </div>
-                <button class="modal-close" onclick="closeTournamentModal()">×</button>
-            </div>
-            
-            <div class="modal-section">
-                <div class="modal-section-title">📊 Tournament Overview</div>
-                <div class="modal-detail-grid" id="modalDetailGrid">
-                    <!-- Details will be populated by JavaScript -->
-                </div>
-            </div>
-            
-            <div class="modal-section">
-                <div class="modal-section-title">📖 About This Tournament</div>
-                <div class="modal-description" id="modalDescription">
-                    <!-- Description will be populated by JavaScript -->
-                </div>
-            </div>
-            
-            <div class="modal-section">
-                <div class="modal-section-title">📋 Rules & Requirements</div>
-                <div class="modal-rules" id="modalRules">
-                    <!-- Rules will be populated by JavaScript -->
-                </div>
-            </div>
-            
-            <div class="modal-actions">
-                <button class="modal-btn-register" id="modalRegisterBtn" onclick="registerFromModal()">Register Now</button>
-                <button class="modal-btn-close" onclick="closeTournamentModal()">Close</button>
             </div>
         </div>
     </div>
@@ -1329,34 +1205,11 @@
 
         // Tournament countdown and registration management
         var tournamentData = {
-            1: { type: 'weekly', registered: 23, maxPlayers: 100, entryFee: 0.01, prizePool: 0.8, topPercent: 20, duration: '7 days' },
-            2: { type: 'monthly', registered: 542, maxPlayers: 1000, entryFee: 0.1, prizePool: 80, topPercent: 10, duration: '30 days' },
-            3: { type: 'weekly', registered: 89, maxPlayers: 250, entryFee: 0.05, prizePool: 12.5, topPercent: 20, duration: '7 days' },
-            4: { type: 'special', registered: 156, maxPlayers: 200, entryFee: 0.2, prizePool: 35, topPercent: 25, duration: '14 days' }
+            1: { type: 'weekly', registered: 23, maxPlayers: 100, entryFee: 0.01, prizePool: 0.8, topPercent: 20 },
+            2: { type: 'monthly', registered: 542, maxPlayers: 1000, entryFee: 0.1, prizePool: 80, topPercent: 10 },
+            3: { type: 'weekly', registered: 89, maxPlayers: 250, entryFee: 0.05, prizePool: 12.5, topPercent: 20 },
+            4: { type: 'weekly', registered: 156, maxPlayers: 200, entryFee: 0.2, prizePool: 35, topPercent: 25 }
         };
-
-        var tournamentNames = {
-            1: 'Weekly Warrior Challenge',
-            2: 'Monthly Masters',
-            3: 'Intermediate Showdown',
-            4: 'Elite Championship'
-        };
-
-        var tournamentDescriptions = {
-            1: 'Perfect for newcomers! Test your trading skills in a low-risk environment with other beginners. Weekly tournaments focus on consistent performance over quick gains, making them ideal for learning the ropes without high financial pressure.',
-            2: 'The ultimate test for experienced traders! Monthly competitions feature the largest prize pools and most competitive field on the platform. Join live tournaments and climb the ranks against Solana\'s best traders.',
-            3: 'Step up your game! Designed for traders with some experience who want to compete against skilled opponents without the pressure of advanced tournaments. Perfect middle ground for developing your skills.',
-            4: 'Elite competition for proven champions only! Battle the best traders on Solana for substantial prizes. This special championship event requires top 25% historical performance and features extended tournament duration for maximum strategy depth.'
-        };
-
-        var tournamentRules = {
-            1: '• Portfolio tracking starts immediately upon registration\n• Performance calculated against SOL baseline price\n• Top 20% of participants split the prize pool\n• No leverage restrictions or minimum portfolio requirements\n• Registration remains open until tournament starts\n• All skill levels welcome',
-            2: '• Live leaderboard updates every hour during tournament\n• Advanced risk metrics and analytics tracked\n• Top 10% guaranteed payouts with tiered prize structure\n• Minimum 0.5 SOL portfolio value required to participate\n• Tournament runs for full 30 days with no early exit\n• Advanced trader verification required',
-            3: '• Minimum 5 completed tournaments required for entry\n• Portfolio tracking starts at registration confirmation\n• Top 20% of participants share the prize pool\n• Advanced performance metrics and analytics available\n• Intermediate skill level verification required\n• 7-day tournament duration with weekend bonus tracking',
-            4: '• Must have top 25% historical winrate to qualify\n• Extended 14-day tournament format for strategic depth\n• Top 25% share substantial prize distribution\n• Advanced risk analysis and portfolio requirements\n• Elite trader verification and background check required\n• Special championship rules and bonus objectives apply'
-        };
-
-        var currentModalTournament = null;
 
         function getNextMonday() {
             var now = new Date();
@@ -1454,116 +1307,25 @@
             for (var tournamentId in tournamentData) {
                 var tournament = tournamentData[tournamentId];
                 var percentage = Math.round((tournament.registered / tournament.maxPlayers) * 100);
-                var currentPrize = (tournament.registered * tournament.entryFee * 0.8).toFixed(2);
                 
-                // Update player counts
-                var playerCountElement = document.getElementById('player-count-' + tournamentId);
-                if (playerCountElement) {
-                    playerCountElement.textContent = tournament.registered;
+                var regTextElement = document.getElementById('reg-text-' + tournamentId);
+                var regFillElement = document.getElementById('reg-fill-' + tournamentId);
+                
+                if (regTextElement && regFillElement) {
+                    regTextElement.textContent = tournament.registered + '/' + tournament.maxPlayers + ' (' + percentage + '%)';
+                    regFillElement.style.width = percentage + '%';
+                    
+                    // Update urgency classes
+                    var urgencyClass = percentage < 50 ? 'low' : percentage < 80 ? 'medium' : 'high';
+                    
+                    regTextElement.className = 'registration-progress-text ' + urgencyClass;
+                    regFillElement.className = 'registration-progress-fill ' + urgencyClass;
                 }
                 
-                // Update current prize pools
-                var currentPrizeElement = document.getElementById('current-prize-' + tournamentId);
-                if (currentPrizeElement) {
-                    currentPrizeElement.textContent = currentPrize;
-                }
+                // Calculate and update potential winnings
+                calculateWinnings(tournamentId);
             }
         }
-
-        function showTournamentDetails(tournamentId) {
-            currentModalTournament = tournamentId;
-            var tournament = tournamentData[tournamentId];
-            var modal = document.getElementById('tournamentModal');
-            
-            // Update modal content
-            document.getElementById('modalTitle').textContent = tournamentNames[tournamentId];
-            document.getElementById('modalSubtitle').innerHTML = `
-                <span class="bracket-badge bracket-${tournament.type === 'weekly' ? 'beginner' : tournament.type === 'monthly' ? 'advanced' : 'legendary'}">${tournament.type.toUpperCase()}</span>
-            `;
-            
-            // Populate detail grid
-            var currentPrize = (tournament.registered * tournament.entryFee * 0.8).toFixed(2);
-            var detailGrid = document.getElementById('modalDetailGrid');
-            detailGrid.innerHTML = `
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Entry Fee</div>
-                    <div class="modal-detail-value highlight">${tournament.entryFee} SOL</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Prize Pool</div>
-                    <div class="modal-detail-value highlight">${tournament.prizePool} SOL</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Current Prize</div>
-                    <div class="modal-detail-value">${currentPrize} SOL</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Max Players</div>
-                    <div class="modal-detail-value">${tournament.maxPlayers}</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Registered</div>
-                    <div class="modal-detail-value">${tournament.registered}</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Duration</div>
-                    <div class="modal-detail-value">${tournament.duration}</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Prize Share</div>
-                    <div class="modal-detail-value">Top ${tournament.topPercent}%</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Tournament Type</div>
-                    <div class="modal-detail-value">${tournament.type.charAt(0).toUpperCase() + tournament.type.slice(1)}</div>
-                </div>
-            `;
-            
-            // Update description and rules
-            document.getElementById('modalDescription').textContent = tournamentDescriptions[tournamentId];
-            document.getElementById('modalRules').innerHTML = tournamentRules[tournamentId].replace(/\n/g, '<br>');
-            
-            // Update register button
-            var registerBtn = document.getElementById('modalRegisterBtn');
-            if (tournamentId === '2') {
-                registerBtn.textContent = 'Join Live Tournament';
-            } else {
-                registerBtn.textContent = 'Register Now';
-            }
-            
-            // Show modal
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeTournamentModal() {
-            var modal = document.getElementById('tournamentModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-            currentModalTournament = null;
-        }
-
-        function registerFromModal() {
-            if (currentModalTournament) {
-                registerTournament(currentModalTournament);
-                closeTournamentModal();
-            }
-        }
-
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            var modal = document.getElementById('tournamentModal');
-            if (event.target === modal) {
-                closeTournamentModal();
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeTournamentModal();
-            }
-        });
 
         // Initialize and update every second
         document.addEventListener('DOMContentLoaded', function() {
