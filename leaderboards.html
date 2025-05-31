@@ -343,11 +343,19 @@
 
         .leaderboard-row {
             border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .leaderboard-row:hover {
-            background: rgba(139, 92, 246, 0.05);
+            background: rgba(139, 92, 246, 0.08);
+            border-left-color: #8b5cf6;
+            border-right-color: #8b5cf6;
+            border-bottom-color: rgba(139, 92, 246, 0.3);
+            transform: translateX(2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
         }
 
         .leaderboard-row.highlighted {
@@ -2018,6 +2026,7 @@
                 closeChampionCard();
             }
         });
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize mobile navigation
             createMobileNavigation();
