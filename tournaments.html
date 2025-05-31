@@ -119,56 +119,30 @@
             grid-template-columns: 1fr;
             gap: 1rem;
             margin-bottom: 2rem;
+            perspective: 1000px;
         }
 
         .tournament-card {
-            background: rgba(31, 41, 55, 0.4);
-            border: 1px solid rgba(139, 92, 246, 0.2);
+            background: transparent;
+            border: none;
             border-radius: 1rem;
-            padding: 1.25rem;
-            transition: all 0.5s ease;
+            padding: 0;
+            transition: all 0.6s ease;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             cursor: pointer;
             transform-style: preserve-3d;
             min-height: 180px;
             z-index: 1;
         }
 
-        .tournament-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #8b5cf6, #ec4899, #06b6d4);
-        }
-
         .tournament-card:hover {
             transform: translateY(-2px);
-            border-color: #8b5cf6;
-            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.2);
         }
 
         .tournament-card.flipped {
-            transform: scale(1.15);
+            transform: rotateY(180deg) scale(1.15);
             z-index: 10;
-            min-height: 320px;
-            box-shadow: 0 25px 50px rgba(139, 92, 246, 0.4);
-            border-color: #8b5cf6;
-        }
-
-        .tournament-card.flipped .card-front {
-            opacity: 0;
-            pointer-events: none;
-            visibility: hidden;
-        }
-
-        .tournament-card.flipped .card-back {
-            opacity: 1;
-            pointer-events: auto;
-            visibility: visible;
         }
 
         /* Card Front (Compact View) */
