@@ -1821,20 +1821,6 @@
             });
             
             tbody.innerHTML = html;
-            
-            // Re-bind click events after rendering
-            bindChampionClickEvents();
-        }
-
-        // Separate function to bind click events
-        function bindChampionClickEvents() {
-            const championRows = document.querySelectorAll('.leaderboard-row');
-            championRows.forEach(row => {
-                row.addEventListener('click', function() {
-                    const rank = parseInt(this.getAttribute('data-champion-rank'));
-                    openChampionCard(rank);
-                });
-            });
         }
 
         function updateResultsCount() {
@@ -2051,6 +2037,19 @@
             renderLeaderboard();
             updateResultsCount();
             updateSortDirection();
+            
+            // Set up event delegation for champion rows
+            const leaderboardTable = document.getElementById('leaderboardBody');
+            leaderboardTable.addEventListener('click', function(event) {
+                // Find the clicked row
+                const clickedRow = event.target.closest('.leaderboard-row');
+                if (clickedRow) {
+                    const rank = parseInt(clickedRow.getAttribute('data-champion-rank'));
+                    if (rank) {
+                        openChampionCard(rank);
+                    }
+                }
+            });
         });
     </script>
 </body>
