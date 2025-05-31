@@ -273,75 +273,25 @@
             box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);
         }
 
-        /* Connected State Hero */
-        .hero-connected {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 1rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
+        /* Connected State Hero Styling */
+        .champion-welcome-simple {
+            margin-bottom: 3rem;
         }
 
-        .champion-welcome {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .champion-avatar-large {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            border: 3px solid rgba(139, 92, 246, 0.3);
-        }
-
-        .champion-info-large {
-            text-align: left;
-        }
-
-        .champion-name-large {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #10b981;
-            margin-bottom: 0.5rem;
-        }
-
-        .champion-status {
+        .welcome-champion {
+            font-size: clamp(1.4rem, 4vw, 2rem);
             color: #d1d5db;
-            font-size: 1rem;
+            margin: 0;
+            font-weight: 400;
         }
 
-        .quick-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-action {
+        .champion-name-highlight {
             background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            border: none;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
         }
 
         /* Wallet Connection Modal */
@@ -1033,19 +983,15 @@
 
             <!-- Connected State Hero -->
             <div id="heroConnected" style="display: none;">
-                <div class="hero-connected">
-                    <div class="champion-welcome">
-                        <div class="champion-avatar-large" id="heroChampionAvatar">🔥</div>
-                        <div class="champion-info-large">
-                            <div class="champion-name-large" id="heroChampionName">Welcome, Champion!</div>
-                            <div class="champion-status">Ready to dominate the leaderboards</div>
-                        </div>
-                    </div>
-                    <div class="quick-actions">
-                        <a href="#" class="btn-action" onclick="showTournaments()">⚔️ Join Tournament</a>
-                        <a href="#" class="btn-action" onclick="showLeaderboards()">🏆 View Rankings</a>
-                        <a href="#" class="btn-action" onclick="showHallOfFame()">👑 Hall of Fame</a>
-                    </div>
+                <h1 class="hero-title">WalletWars</h1>
+                <p class="hero-motto">Solana's ultimate winrate battleground</p>
+                
+                <div class="champion-welcome-simple">
+                    <p class="welcome-champion">Welcome, <span class="champion-name-highlight" id="heroChampionNameText">Champion</span></p>
+                </div>
+                
+                <div class="cta-buttons">
+                    <a href="#learn-more" class="btn-secondary">Learn More</a>
                 </div>
             </div>
         </div>
@@ -1883,9 +1829,8 @@
             document.getElementById('heroDisconnected').style.display = 'none';
             document.getElementById('heroConnected').style.display = 'block';
             
-            // Update hero champion info
-            document.getElementById('heroChampionAvatar').textContent = championData.avatar;
-            document.getElementById('heroChampionName').textContent = `Welcome, ${championData.name}!`;
+            // Update hero champion name
+            document.getElementById('heroChampionNameText').textContent = championData.name;
         }
 
         function disconnectWallet() {
