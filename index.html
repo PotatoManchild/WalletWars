@@ -1188,6 +1188,9 @@
                             maxlength="20"
                             oninput="updateChampionPreview()"
                         >
+                        <div style="color: #9ca3af; font-size: 0.75rem; margin-top: 0.25rem;">
+                            3-20 characters, family-friendly content only
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -1239,12 +1242,22 @@
                     </div>
                 </div>
 
+                <div class="education-section">
+                    <div class="education-title">🔒 Privacy Protection</div>
+                    <div class="education-content">
+                        Your wallet address is kept completely private and will <strong>never be displayed publicly</strong> on the site. 
+                        Only your champion name and avatar are visible to other players. This protects you from potential griefing 
+                        attacks or unwanted attention while maintaining full transparency for tournament scoring.
+                    </div>
+                </div>
+
                 <div class="agreement-section">
                     <div class="checkbox-wrapper">
                         <div class="checkbox-custom" id="agreementCheckbox" onclick="toggleAgreement()"></div>
                         <label class="checkbox-label" onclick="toggleAgreement()">
                             I understand and agree to the fair play rules. I will not fund my tournament wallet externally during competitions. 
-                            I acknowledge that cheating will result in immediate disqualification and potential account suspension.
+                            I acknowledge that cheating will result in immediate disqualification and potential account suspension. I understand 
+                            that my wallet address will remain private and never be displayed publicly on the platform.
                         </label>
                     </div>
                 </div>
@@ -1360,11 +1373,142 @@
             updateCreateChampionBtn();
         }
 
-        function updateChampionPreview() {
-            const name = document.getElementById('championName').value || 'Champion Name';
-            championData.name = name;
+        // Moderation system
+        const profanityList = [
+            // Common profanity
+            'fuck', 'shit', 'damn', 'bitch', 'ass', 'asshole', 'bastard', 'crap', 'piss',
+            'dick', 'cock', 'pussy', 'tits', 'boobs', 'sex', 'porn', 'nude', 'naked',
+            'slut', 'whore', 'faggot', 'nigger', 'nigga', 'retard', 'gay', 'lesbian',
+            'homo', 'tranny', 'chink', 'spic', 'kike', 'wetback', 'gook', 'raghead',
+            // Crypto scam terms
+            'elon', 'musk', 'tesla', 'bitcoin', 'eth', 'bnb', 'doge', 'shib', 'moon',
+            'lambo', 'hodl', 'diamond', 'hands', 'ape', 'pump', 'dump', 'rugpull',
+            'scam', 'ponzi', 'pyramid', 'mlm', 'doubler', 'giveaway', 'airdrop',
+            // Inappropriate gaming terms
+            'nazi', 'hitler', 'stalin', 'isis', 'terrorist', 'bomb', 'kill', 'murder',
+            'rape', 'molest', 'pedophile', 'child', 'minor', 'underage', 'suicide',
+            // Common substitutions
+            'fck', 'fuk', 'f*ck', 'sh1t', 'b1tch', 'a55', 'd1ck', 'p0rn', 'n1gger',
+            's3x', 'fag', 'h0m0', 'lesb1an', 'gay', 'tr4nny', 'n4zi', 'h1tler'
+        ];
+
+        function moderateChampionName(name) {
+            const cleanName = name.toLowerCase().trim();
             
-            document.getElementById('previewName').textContent = name;
+            // Check length
+            if (cleanName.length < 3) {
+                return { isValid: false, error: 'Champion name must be at least 3 characters long' };
+            }
+            
+            if (cleanName.length > 20) {
+                return { isValid: false, error: 'Champion name must be 20 characters or less' };
+            }
+            
+            // Check for only spaces or special characters
+            if (!/[a-zA-Z0-9]/.test(cleanName)) {
+                return { isValid: false, error: 'Champion name must contain at least one letter or number' };
+            }
+            
+            // Check for excessive special characters
+            const specialCharCount = (cleanName.match(/[^a-zA-Z0-9\s]/g) || []).length;
+            if (specialCharCount > cleanName.length * 0.3) {
+                return { isValid: false, error: 'Too many special characters in name' };
+            }
+            
+            // Profanity check - exact matches
+            for (const word of profanityList) {
+                if (cleanName.includes(word)) {
+                    return { isValid: false, error: 'Champion name contains inappropriate content' };
+                }
+            }
+            
+            // Check for leetspeak and common substitutions
+            const normalizedName = cleanName
+                .replace(/0/g, 'o')
+                .replace(/1/g, 'i')
+                .replace(/3/g, 'e')
+                .replace(/4/g, 'a')
+                .replace(/5/g, 's')
+                .replace(/7/g, 't')
+                .replace(/8/g, 'b')
+                .replace(/\*/g, '')
+                .replace(/@/g, 'a')
+                .replace(/\$/g, 's');
+            
+            for (const word of profanityList) {
+                if (normalizedName.includes(word)) {
+                    return { isValid: false, error: 'Champion name contains inappropriate content' };
+                }
+            }
+            
+            // Check for repeated characters (spam pattern)
+            if (/(.)\1{4,}/.test(cleanName)) {
+                return { isValid: false, error: 'Champion name cannot have more than 4 repeated characters' };
+            }
+            
+            // Check for suspicious patterns
+            const suspiciousPatterns = [
+                /admin/i, /mod/i, /owner/i, /dev/i, /official/i, /staff/i,
+                /support/i, /help/i, /system/i, /null/i, /undefined/i,
+                /test/i, /bot/i, /fake/i, /spam/i
+            ];
+            
+            for (const pattern of suspiciousPatterns) {
+                if (pattern.test(cleanName)) {
+                    return { isValid: false, error: 'Champion name cannot impersonate staff or use reserved terms' };
+                }
+            }
+            
+            return { isValid: true, error: null };
+        }
+
+        function updateChampionPreview() {
+            const nameInput = document.getElementById('championName');
+            const name = nameInput.value || 'Champion Name';
+            const errorDisplay = document.getElementById('nameError');
+            
+            // Clear previous error styling
+            nameInput.style.borderColor = '';
+            if (errorDisplay) {
+                errorDisplay.remove();
+            }
+            
+            // Only validate if user has typed something
+            if (nameInput.value.trim()) {
+                const moderation = moderateChampionName(nameInput.value);
+                
+                if (!moderation.isValid) {
+                    // Show error
+                    nameInput.style.borderColor = '#ef4444';
+                    
+                    const errorElement = document.createElement('div');
+                    errorElement.id = 'nameError';
+                    errorElement.style.cssText = `
+                        color: #ef4444;
+                        font-size: 0.8rem;
+                        margin-top: 0.5rem;
+                        padding: 0.5rem;
+                        background: rgba(239, 68, 68, 0.1);
+                        border: 1px solid rgba(239, 68, 68, 0.2);
+                        border-radius: 0.5rem;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                    `;
+                    errorElement.innerHTML = `⚠️ ${moderation.error}`;
+                    
+                    nameInput.parentNode.appendChild(errorElement);
+                    championData.name = '';
+                } else {
+                    // Valid name
+                    nameInput.style.borderColor = '#10b981';
+                    championData.name = nameInput.value.trim();
+                }
+            } else {
+                championData.name = '';
+            }
+            
+            document.getElementById('previewName').textContent = championData.name || 'Champion Name';
             document.getElementById('previewAvatar').textContent = selectedAvatar;
             
             updateCreateChampionBtn();
@@ -1374,7 +1518,10 @@
             const nameInput = document.getElementById('championName').value.trim();
             const btn = document.getElementById('createChampionBtn');
             
-            if (nameInput.length >= 3 && selectedAvatar) {
+            // Check if name passes moderation
+            const moderation = moderateChampionName(nameInput);
+            
+            if (moderation.isValid && selectedAvatar) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
