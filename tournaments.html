@@ -225,41 +225,47 @@
             border: 1px solid #10b981;
         }
 
-        /* Compact Key Info */
+        /* Compact Key Info - More Compact Grid */
         .key-info {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
+            grid-template-rows: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .key-info-item {
             text-align: center;
-            padding: 0.5rem;
+            padding: 0.4rem;
             background: rgba(15, 23, 42, 0.5);
-            border-radius: 0.5rem;
+            border-radius: 0.4rem;
             border: 1px solid rgba(139, 92, 246, 0.1);
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .key-info-label {
             color: #9ca3af;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.15rem;
         }
 
         .key-info-value {
             color: #8b5cf6;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            line-height: 1;
         }
 
         .tap-hint {
             text-align: center;
             color: #6b7280;
-            font-size: 0.7rem;
-            margin-top: 0.5rem;
+            font-size: 0.65rem;
+            margin-top: 0.25rem;
         }
 
         /* Detailed Back View */
@@ -523,6 +529,184 @@
             box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
         }
 
+        /* Tournament Details Modal */
+        .tournament-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .tournament-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-close {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.1);
+        }
+
+        .modal-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-section-title {
+            color: #8b5cf6;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-detail-item {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            text-align: center;
+        }
+
+        .modal-detail-label {
+            color: #9ca3af;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-detail-value {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .modal-detail-value.highlight {
+            color: #8b5cf6;
+        }
+
+        .modal-description {
+            background: rgba(15, 23, 42, 0.3);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            color: #d1d5db;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .modal-rules {
+            background: rgba(15, 23, 42, 0.3);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            color: #d1d5db;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .modal-btn-register {
+            flex: 1;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .modal-btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .modal-btn-close {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #d1d5db;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .modal-btn-close:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+
         .tournament-meta {
             display: flex;
             justify-content: space-between;
@@ -668,6 +852,12 @@
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
+        .bracket-legendary {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
         /* Tablet and Desktop */
         @media (min-width: 768px) {
             .tournaments-grid {
@@ -769,6 +959,7 @@
                             <button class="filter-btn active" onclick="filterTournaments('all')">All</button>
                             <button class="filter-btn" onclick="filterTournaments('weekly')">Weekly</button>
                             <button class="filter-btn" onclick="filterTournaments('monthly')">Monthly</button>
+                            <button class="filter-btn" onclick="filterTournaments('special')">Special Events</button>
                         </div>
                     </div>
                     
@@ -1017,7 +1208,7 @@
                 </div>
 
                 <!-- Tournament 4 -->
-                <div class="tournament-card show-all show-weekly show-high show-advanced" onclick="flipCard(this)">
+                <div class="tournament-card show-all show-special show-high show-advanced" onclick="flipCard(this)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
@@ -1091,6 +1282,45 @@
             </div>
         </div>
     </div>
+
+    <!-- Tournament Details Modal -->
+    <div class="tournament-modal" id="tournamentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="modalTitle">Tournament Details</div>
+                    <div id="modalSubtitle"></div>
+                </div>
+                <button class="modal-close" onclick="closeTournamentModal()">×</button>
+            </div>
+            
+            <div class="modal-section">
+                <div class="modal-section-title">📊 Tournament Overview</div>
+                <div class="modal-detail-grid" id="modalDetailGrid">
+                    <!-- Details will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <div class="modal-section-title">📖 About This Tournament</div>
+                <div class="modal-description" id="modalDescription">
+                    <!-- Description will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <div class="modal-section-title">📋 Rules & Requirements</div>
+                <div class="modal-rules" id="modalRules">
+                    <!-- Rules will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn-register" id="modalRegisterBtn" onclick="registerFromModal()">Register Now</button>
+                <button class="modal-btn-close" onclick="closeTournamentModal()">Close</button>
+            </div>
+        </div>
+    </div>
     
     <script>
         function connectWallet() {
@@ -1099,11 +1329,34 @@
 
         // Tournament countdown and registration management
         var tournamentData = {
-            1: { type: 'weekly', registered: 23, maxPlayers: 100, entryFee: 0.01, prizePool: 0.8, topPercent: 20 },
-            2: { type: 'monthly', registered: 542, maxPlayers: 1000, entryFee: 0.1, prizePool: 80, topPercent: 10 },
-            3: { type: 'weekly', registered: 89, maxPlayers: 250, entryFee: 0.05, prizePool: 12.5, topPercent: 20 },
-            4: { type: 'weekly', registered: 156, maxPlayers: 200, entryFee: 0.2, prizePool: 35, topPercent: 25 }
+            1: { type: 'weekly', registered: 23, maxPlayers: 100, entryFee: 0.01, prizePool: 0.8, topPercent: 20, duration: '7 days' },
+            2: { type: 'monthly', registered: 542, maxPlayers: 1000, entryFee: 0.1, prizePool: 80, topPercent: 10, duration: '30 days' },
+            3: { type: 'weekly', registered: 89, maxPlayers: 250, entryFee: 0.05, prizePool: 12.5, topPercent: 20, duration: '7 days' },
+            4: { type: 'special', registered: 156, maxPlayers: 200, entryFee: 0.2, prizePool: 35, topPercent: 25, duration: '14 days' }
         };
+
+        var tournamentNames = {
+            1: 'Weekly Warrior Challenge',
+            2: 'Monthly Masters',
+            3: 'Intermediate Showdown',
+            4: 'Elite Championship'
+        };
+
+        var tournamentDescriptions = {
+            1: 'Perfect for newcomers! Test your trading skills in a low-risk environment with other beginners. Weekly tournaments focus on consistent performance over quick gains, making them ideal for learning the ropes without high financial pressure.',
+            2: 'The ultimate test for experienced traders! Monthly competitions feature the largest prize pools and most competitive field on the platform. Join live tournaments and climb the ranks against Solana\'s best traders.',
+            3: 'Step up your game! Designed for traders with some experience who want to compete against skilled opponents without the pressure of advanced tournaments. Perfect middle ground for developing your skills.',
+            4: 'Elite competition for proven champions only! Battle the best traders on Solana for substantial prizes. This special championship event requires top 25% historical performance and features extended tournament duration for maximum strategy depth.'
+        };
+
+        var tournamentRules = {
+            1: '• Portfolio tracking starts immediately upon registration\n• Performance calculated against SOL baseline price\n• Top 20% of participants split the prize pool\n• No leverage restrictions or minimum portfolio requirements\n• Registration remains open until tournament starts\n• All skill levels welcome',
+            2: '• Live leaderboard updates every hour during tournament\n• Advanced risk metrics and analytics tracked\n• Top 10% guaranteed payouts with tiered prize structure\n• Minimum 0.5 SOL portfolio value required to participate\n• Tournament runs for full 30 days with no early exit\n• Advanced trader verification required',
+            3: '• Minimum 5 completed tournaments required for entry\n• Portfolio tracking starts at registration confirmation\n• Top 20% of participants share the prize pool\n• Advanced performance metrics and analytics available\n• Intermediate skill level verification required\n• 7-day tournament duration with weekend bonus tracking',
+            4: '• Must have top 25% historical winrate to qualify\n• Extended 14-day tournament format for strategic depth\n• Top 25% share substantial prize distribution\n• Advanced risk analysis and portfolio requirements\n• Elite trader verification and background check required\n• Special championship rules and bonus objectives apply'
+        };
+
+        var currentModalTournament = null;
 
         function getNextMonday() {
             var now = new Date();
@@ -1218,39 +1471,99 @@
         }
 
         function showTournamentDetails(tournamentId) {
-            // For now, show an alert with detailed info
-            // In a real app, this would open a modal or navigate to a detail page
+            currentModalTournament = tournamentId;
             var tournament = tournamentData[tournamentId];
-            var tournamentNames = {
-                1: 'Weekly Warrior Challenge',
-                2: 'Monthly Masters',
-                3: 'Intermediate Showdown',
-                4: 'Elite Championship'
-            };
+            var modal = document.getElementById('tournamentModal');
             
-            var descriptions = {
-                1: 'Perfect for newcomers! Test your trading skills in a low-risk environment with other beginners. Weekly tournaments focus on consistent performance over quick gains.',
-                2: 'The ultimate test for experienced traders! Monthly competitions with the largest prize pools and most competitive field. Join live and climb the ranks.',
-                3: 'Step up your game! Designed for traders with some experience who want to compete against skilled opponents without the pressure of advanced tournaments.',
-                4: 'Elite competition for proven champions only! Battle the best traders on Solana for substantial prizes. Only those with top 25% historical performance can enter.'
-            };
+            // Update modal content
+            document.getElementById('modalTitle').textContent = tournamentNames[tournamentId];
+            document.getElementById('modalSubtitle').innerHTML = `
+                <span class="bracket-badge bracket-${tournament.type === 'weekly' ? 'beginner' : tournament.type === 'monthly' ? 'advanced' : 'legendary'}">${tournament.type.toUpperCase()}</span>
+            `;
             
-            var rules = {
-                1: '• Portfolio tracking starts at registration\n• Performance calculated vs. SOL baseline\n• Top 20% split the prize pool\n• No leverage restrictions',
-                2: '• Live leaderboard updates every hour\n• Advanced risk metrics tracked\n• Top 10% guaranteed payouts\n• Minimum 0.5 SOL portfolio required',
-                3: '• Minimum 5 completed tournaments\n• Portfolio tracking starts at registration\n• Top 20% share the prize pool\n• Advanced metrics available',
-                4: '• Must have top 25% winrate history\n• Extended 14-day format\n• Top 25% share substantial prizes\n• Advanced risk analysis required'
-            };
+            // Populate detail grid
+            var currentPrize = (tournament.registered * tournament.entryFee * 0.8).toFixed(2);
+            var detailGrid = document.getElementById('modalDetailGrid');
+            detailGrid.innerHTML = `
+                <div class="modal-detail-item">
+                    <div class="modal-detail-label">Entry Fee</div>
+                    <div class="modal-detail-value highlight">${tournament.entryFee} SOL</div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="modal-detail-label">Prize Pool</div>
+                    <div class="modal-detail-value highlight">${tournament.prizePool} SOL</div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="modal-detail-label">Current Prize</div>
+                    <div class="modal-detail-value">${currentPrize} SOL</div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="modal-detail-label">Max Players</div>
+                    <div class="modal-detail-value">${tournament.maxPlayers}</div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="modal-detail-label">Registered</div>
+                    <div class="modal-detail-value">${tournament.registered}</div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="modal-detail-label">Duration</div>
+                    <div class="modal-detail-value">${tournament.duration}</div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="modal-detail-label">Prize Share</div>
+                    <div class="modal-detail-value">Top ${tournament.topPercent}%</div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="modal-detail-label">Tournament Type</div>
+                    <div class="modal-detail-value">${tournament.type.charAt(0).toUpperCase() + tournament.type.slice(1)}</div>
+                </div>
+            `;
             
-            alert('🏆 ' + tournamentNames[tournamentId] + ' - Full Details\n\n' +
-                  '💰 Entry Fee: ' + tournament.entryFee + ' SOL\n' +
-                  '🏆 Max Prize Pool: ' + tournament.prizePool + ' SOL\n' +
-                  '👥 Max Players: ' + tournament.maxPlayers + '\n' +
-                  '⏱️ Duration: ' + (tournament.type === 'monthly' ? '30 days' : '7 days') + '\n\n' +
-                  '📖 About:\n' + descriptions[tournamentId] + '\n\n' +
-                  '📋 Rules:\n' + rules[tournamentId] + '\n\n' +
-                  'Ready to compete? Register now! 🚀');
+            // Update description and rules
+            document.getElementById('modalDescription').textContent = tournamentDescriptions[tournamentId];
+            document.getElementById('modalRules').innerHTML = tournamentRules[tournamentId].replace(/\n/g, '<br>');
+            
+            // Update register button
+            var registerBtn = document.getElementById('modalRegisterBtn');
+            if (tournamentId === '2') {
+                registerBtn.textContent = 'Join Live Tournament';
+            } else {
+                registerBtn.textContent = 'Register Now';
+            }
+            
+            // Show modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
+
+        function closeTournamentModal() {
+            var modal = document.getElementById('tournamentModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            currentModalTournament = null;
+        }
+
+        function registerFromModal() {
+            if (currentModalTournament) {
+                registerTournament(currentModalTournament);
+                closeTournamentModal();
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            var modal = document.getElementById('tournamentModal');
+            if (event.target === modal) {
+                closeTournamentModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeTournamentModal();
+            }
+        });
 
         // Initialize and update every second
         document.addEventListener('DOMContentLoaded', function() {
