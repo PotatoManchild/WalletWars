@@ -249,29 +249,6 @@
             font-size: 0.9rem;
         }
 
-        .view-toggle {
-            display: flex;
-            gap: 0.25rem;
-        }
-
-        .view-btn {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #d1d5db;
-            padding: 0.5rem;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .view-btn.active,
-        .view-btn:hover {
-            background: rgba(139, 92, 246, 0.2);
-            border-color: #8b5cf6;
-            color: #8b5cf6;
-        }
-
         /* Leaderboard Table */
         .leaderboard-container {
             background: rgba(31, 41, 55, 0.3);
@@ -1842,16 +1819,9 @@
                 `Showing ${filtered} of ${total} champions`;
         }
 
-        // View toggle (placeholder for future card view)
+        // View toggle removed - list view only
         function setView(viewType) {
-            document.querySelectorAll('.view-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            if (viewType === 'cards') {
-                alert('🃏 Card View\n\nCard view coming soon! This would display champions in a card-based layout similar to the tournaments section.');
-            }
+            // No longer needed - removed view toggle functionality
         }
 
         // Mobile Navigation
