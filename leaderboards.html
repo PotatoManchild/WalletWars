@@ -1931,71 +1931,92 @@
             const champion = allChampions.find(c => c.rank === rank);
             if (!champion) return;
 
-            // Populate header
+            // Populate header - with null checks
             const avatar = document.getElementById('championAvatar');
             const rankBadge = document.getElementById('championRankBadge');
+            const championName = document.getElementById('championName');
+            const championAddress = document.getElementById('championAddress');
             
-            avatar.textContent = champion.avatar;
-            avatar.className = `champion-large-avatar${champion.rank <= 3 ? ` rank-${champion.rank}` : ''}`;
+            if (avatar) {
+                avatar.textContent = champion.avatar;
+                avatar.className = `champion-large-avatar${champion.rank <= 3 ? ` rank-${champion.rank}` : ''}`;
+            }
             
-            rankBadge.textContent = `#${champion.rank}`;
-            rankBadge.className = `champion-rank-badge${champion.rank <= 3 ? ' top-3' : ''}`;
+            if (rankBadge) {
+                rankBadge.textContent = `#${champion.rank}`;
+                rankBadge.className = `champion-rank-badge${champion.rank <= 3 ? ' top-3' : ''}`;
+            }
             
-            document.getElementById('championName').textContent = champion.name;
-            document.getElementById('championAddress').textContent = champion.address;
+            if (championName) championName.textContent = champion.name;
+            if (championAddress) championAddress.textContent = champion.address;
 
             // Populate badges
             const badgesContainer = document.getElementById('championBadges');
-            badgesContainer.innerHTML = '';
-            champion.badges.forEach(badge => {
-                const badgeEl = document.createElement('div');
-                badgeEl.className = `champion-performance-badge badge-${badge}`;
-                if (badge === 'legend') badgeEl.innerHTML = '👑 Legend';
-                else if (badge === 'hot-streak') badgeEl.innerHTML = '🔥 Hot Streak';
-                else if (badge === 'rising-star') badgeEl.innerHTML = '⭐ Rising Star';
-                badgesContainer.appendChild(badgeEl);
-            });
+            if (badgesContainer) {
+                badgesContainer.innerHTML = '';
+                champion.badges.forEach(badge => {
+                    const badgeEl = document.createElement('div');
+                    badgeEl.className = `champion-performance-badge badge-${badge}`;
+                    if (badge === 'legend') badgeEl.innerHTML = '👑 Legend';
+                    else if (badge === 'hot-streak') badgeEl.innerHTML = '🔥 Hot Streak';
+                    else if (badge === 'rising-star') badgeEl.innerHTML = '⭐ Rising Star';
+                    badgesContainer.appendChild(badgeEl);
+                });
+            }
 
             // Populate winrate
-            document.getElementById('championWinrate').textContent = `${champion.winrate}%`;
-            document.getElementById('championWinrateFill').style.width = `${champion.winrate}%`;
+            const championWinrate = document.getElementById('championWinrate');
+            const championWinrateFill = document.getElementById('championWinrateFill');
+            if (championWinrate) championWinrate.textContent = `${champion.winrate}%`;
+            if (championWinrateFill) championWinrateFill.style.width = `${champion.winrate}%`;
 
             // Populate stats
-            document.getElementById('championTournaments').textContent = champion.tournaments;
-            document.getElementById('championEarnings').textContent = champion.earnings.toLocaleString();
-            document.getElementById('championWinStreak').textContent = champion.winStreak;
-            document.getElementById('championAvgPerf').textContent = champion.avgPerformance;
+            const championTournaments = document.getElementById('championTournaments');
+            const championEarnings = document.getElementById('championEarnings');
+            const championWinStreak = document.getElementById('championWinStreak');
+            const championAvgPerf = document.getElementById('championAvgPerf');
+            
+            if (championTournaments) championTournaments.textContent = champion.tournaments;
+            if (championEarnings) championEarnings.textContent = champion.earnings.toLocaleString();
+            if (championWinStreak) championWinStreak.textContent = champion.winStreak;
+            if (championAvgPerf) championAvgPerf.textContent = champion.avgPerformance;
 
             // Populate achievements
             const achievementsContainer = document.getElementById('championAchievements');
-            achievementsContainer.innerHTML = '';
-            champion.achievements.forEach(achievement => {
-                const achievementEl = document.createElement('div');
-                achievementEl.className = 'achievement-item';
-                achievementEl.innerHTML = `
-                    <div class="achievement-icon">${achievement.icon}</div>
-                    <div class="achievement-text">${achievement.text}</div>
-                `;
-                achievementsContainer.appendChild(achievementEl);
-            });
+            if (achievementsContainer) {
+                achievementsContainer.innerHTML = '';
+                champion.achievements.forEach(achievement => {
+                    const achievementEl = document.createElement('div');
+                    achievementEl.className = 'achievement-item';
+                    achievementEl.innerHTML = `
+                        <div class="achievement-icon">${achievement.icon}</div>
+                        <div class="achievement-text">${achievement.text}</div>
+                    `;
+                    achievementsContainer.appendChild(achievementEl);
+                });
+            }
 
             // Populate recent activity
             const activityContainer = document.getElementById('championActivity');
-            activityContainer.innerHTML = '';
-            champion.recentActivity.forEach(activity => {
-                const activityEl = document.createElement('div');
-                activityEl.className = 'activity-item';
-                activityEl.innerHTML = `
-                    <div class="activity-tournament">${activity.tournament}</div>
-                    <div class="activity-result result-${activity.result}">${activity.result === 'win' ? '🏆' : '📉'} ${activity.performance}</div>
-                `;
-                activityContainer.appendChild(activityEl);
-            });
+            if (activityContainer) {
+                activityContainer.innerHTML = '';
+                champion.recentActivity.forEach(activity => {
+                    const activityEl = document.createElement('div');
+                    activityEl.className = 'activity-item';
+                    activityEl.innerHTML = `
+                        <div class="activity-tournament">${activity.tournament}</div>
+                        <div class="activity-result result-${activity.result}">${activity.result === 'win' ? '🏆' : '📉'} ${activity.performance}</div>
+                    `;
+                    activityContainer.appendChild(activityEl);
+                });
+            }
 
             // Show modal
             const modal = document.getElementById('championModal');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
         }
 
         function closeChampionCard() {
