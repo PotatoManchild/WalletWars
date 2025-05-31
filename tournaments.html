@@ -897,61 +897,98 @@
             filterToggle.classList.toggle('active');
         }
 
-        // Card Flip Animation - Dynamic content insertion
+        // Working card flip with proper styling
         function flipCard(card) {
-            const front = card.querySelector('.card-front');
-            const back = card.querySelector('.card-back');
-            
-            console.log('Front element:', front);
-            console.log('Back element:', back);
-            
             if (card.classList.contains('flipped')) {
-                // Switch back to front
+                // Switch back to front (compact view)
                 card.classList.remove('flipped');
-                front.style.cssText = 'display: block !important;';
-                back.style.cssText = 'display: none !important;';
-                console.log('Showing front');
-            } else {
-                // Switch to back and inject content
-                card.classList.add('flipped');
-                front.style.cssText = 'display: none !important;';
-                back.style.cssText = 'display: block !important; background: #1f2937 !important; color: white !important; padding: 1rem !important; border: 2px solid #fbbf24 !important; border-radius: 1rem !important;';
-                
-                // Inject detailed content dynamically
-                back.innerHTML = `
-                    <h2 style="color: white; margin-bottom: 1rem;">DETAILED VIEW</h2>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
-                        <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.5rem;">
-                            <div style="color: #9ca3af; font-size: 0.8rem;">ENTRY FEE</div>
-                            <div style="color: #8b5cf6; font-weight: bold;">0.01 SOL</div>
+                card.innerHTML = `
+                    <div style="color: white; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            <div>
+                                <h3 style="margin: 0 0 0.5rem 0; font-family: 'Orbitron', monospace; font-size: 1.1rem;">Weekly Warrior Challenge</h3>
+                                <span style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 0.2rem 0.4rem; border-radius: 0.3rem; font-size: 0.65rem; font-weight: 600; text-transform: uppercase;">BEGINNER</span>
+                            </div>
+                            <div style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 0.3rem 0.6rem; border-radius: 1rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">UPCOMING</div>
                         </div>
-                        <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.5rem;">
-                            <div style="color: #9ca3af; font-size: 0.8rem;">PRIZE POOL</div>
-                            <div style="color: #8b5cf6; font-weight: bold;">0.8 SOL</div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                            <div style="text-align: center; padding: 0.5rem; background: rgba(15, 23, 42, 0.5); border-radius: 0.5rem;">
+                                <div style="color: #9ca3af; font-size: 0.7rem; margin-bottom: 0.25rem;">ENTRY</div>
+                                <div style="color: #8b5cf6; font-weight: 700;">0.01 SOL</div>
+                            </div>
+                            <div style="text-align: center; padding: 0.5rem; background: rgba(15, 23, 42, 0.5); border-radius: 0.5rem;">
+                                <div style="color: #9ca3af; font-size: 0.7rem; margin-bottom: 0.25rem;">PRIZE</div>
+                                <div style="color: #8b5cf6; font-weight: 700;">0.8 SOL</div>
+                            </div>
                         </div>
-                        <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.5rem;">
-                            <div style="color: #9ca3af; font-size: 0.8rem;">MAX PLAYERS</div>
-                            <div style="color: white; font-weight: bold;">100 players</div>
-                        </div>
-                        <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.5rem;">
-                            <div style="color: #9ca3af; font-size: 0.8rem;">DURATION</div>
-                            <div style="color: white; font-weight: bold;">7 days</div>
-                        </div>
-                    </div>
-                    <div style="background: rgba(139, 92, 246, 0.1); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-                        <div style="color: #8b5cf6; font-weight: bold;">23/100 registered • Starts in: 2d 5h</div>
-                    </div>
-                    <div style="background: rgba(15, 23, 42, 0.3); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-                        <div style="color: #8b5cf6; font-size: 0.9rem; font-weight: bold; margin-bottom: 0.5rem;">ABOUT THIS TOURNAMENT</div>
-                        <div style="color: #d1d5db; font-size: 0.85rem;">Perfect for newcomers! Test your trading skills in a low-risk environment with other beginners.</div>
-                    </div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button style="flex: 1; background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none; color: white; padding: 0.75rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer;" onclick="event.stopPropagation(); registerTournament(1)">Register Now</button>
-                        <button style="background: rgba(31, 41, 55, 0.5); border: 1px solid #8b5cf6; color: #8b5cf6; padding: 0.75rem; border-radius: 0.5rem; cursor: pointer;" onclick="event.stopPropagation(); viewTournament(1)">📊</button>
+                        
+                        <div style="text-align: center; color: #6b7280; font-size: 0.7rem;">👆 Tap for details</div>
                     </div>
                 `;
-                
-                console.log('Showing back with injected content');
+            } else {
+                // Switch to back (detailed view)
+                card.classList.add('flipped');
+                card.innerHTML = `
+                    <div style="color: white; padding: 1rem;">
+                        <div style="text-align: center; color: #6b7280; font-size: 0.7rem; margin-bottom: 1rem; padding: 0.5rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem;">👆 Tap again to close</div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(139, 92, 246, 0.2);">
+                            <div>
+                                <h3 style="margin: 0 0 0.5rem 0; font-family: 'Orbitron', monospace; font-size: 1.1rem;">Weekly Warrior Challenge</h3>
+                                <span style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 0.2rem 0.4rem; border-radius: 0.3rem; font-size: 0.65rem; font-weight: 600; text-transform: uppercase;">BEGINNER</span>
+                            </div>
+                            <div style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 0.3rem 0.6rem; border-radius: 1rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">UPCOMING</div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                            <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.4rem;">
+                                <div style="color: #9ca3af; font-size: 0.7rem; margin-bottom: 0.25rem;">ENTRY FEE</div>
+                                <div style="color: #8b5cf6; font-weight: 700; font-size: 0.8rem;">0.01 SOL</div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.4rem;">
+                                <div style="color: #9ca3af; font-size: 0.7rem; margin-bottom: 0.25rem;">PRIZE POOL</div>
+                                <div style="color: #8b5cf6; font-weight: 700; font-size: 0.8rem;">0.8 SOL</div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.4rem;">
+                                <div style="color: #9ca3af; font-size: 0.7rem; margin-bottom: 0.25rem;">MAX PLAYERS</div>
+                                <div style="color: white; font-weight: 700; font-size: 0.8rem;">100 players</div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.4rem;">
+                                <div style="color: #9ca3af; font-size: 0.7rem; margin-bottom: 0.25rem;">DURATION</div>
+                                <div style="color: white; font-weight: 700; font-size: 0.8rem;">7 days</div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.4rem;">
+                                <div style="color: #9ca3af; font-size: 0.7rem; margin-bottom: 0.25rem;">CURRENT PRIZE</div>
+                                <div style="color: #8b5cf6; font-weight: 700; font-size: 0.8rem;">0.23 SOL</div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.4rem;">
+                                <div style="color: #9ca3af; font-size: 0.7rem; margin-bottom: 0.25rem;">REGISTRATION</div>
+                                <div style="color: white; font-weight: 700; font-size: 0.8rem;">Open until start</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem;">
+                            <span style="font-weight: 700; color: #8b5cf6; font-size: 0.85rem;">23/100 registered</span>
+                            <span style="font-size: 0.85rem; color: #06b6d4; font-weight: 600;">Starts in: 2d 5h</span>
+                        </div>
+
+                        <div style="background: rgba(15, 23, 42, 0.3); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                            <div style="color: #8b5cf6; font-weight: 600; font-size: 0.8rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">ABOUT THIS TOURNAMENT</div>
+                            <div style="color: #d1d5db; font-size: 0.8rem; line-height: 1.4;">Perfect for newcomers! Test your trading skills in a low-risk environment with other beginners. Weekly tournaments focus on consistent performance over quick gains.</div>
+                        </div>
+
+                        <div style="background: rgba(15, 23, 42, 0.3); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                            <div style="color: #8b5cf6; font-weight: 600; font-size: 0.8rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">KEY RULES</div>
+                            <div style="color: #d1d5db; font-size: 0.75rem; line-height: 1.4;">• Portfolio tracking starts at registration<br>• Performance calculated vs. SOL baseline<br>• Top 20% split the prize pool<br>• No leverage restrictions</div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button style="flex: 1; background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none; color: white; padding: 0.75rem; border-radius: 0.5rem; font-weight: 700; cursor: pointer; font-size: 0.8rem;" onclick="event.stopPropagation(); registerTournament(1)">Register Now</button>
+                            <button style="background: rgba(31, 41, 55, 0.5); border: 1px solid #8b5cf6; color: #8b5cf6; padding: 0.75rem; border-radius: 0.5rem; cursor: pointer; min-width: 40px;" onclick="event.stopPropagation(); viewTournament(1)">📊</button>
+                        </div>
+                    </div>
+                `;
             }
         }
 
