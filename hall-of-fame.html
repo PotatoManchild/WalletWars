@@ -780,23 +780,23 @@
                 <!-- Achievement Overview Stats -->
                 <div class="achievement-overview">
                     <div class="achievement-stat-card">
-                        <div class="achievement-stat-value" id="unlockedCount">8</div>
+                        <div class="achievement-stat-value" id="unlockedCount">4</div>
                         <div class="achievement-stat-label">Unlocked</div>
                     </div>
                     <div class="achievement-stat-card">
-                        <div class="achievement-stat-value" id="totalCount">24</div>
+                        <div class="achievement-stat-value" id="totalCount">16</div>
                         <div class="achievement-stat-label">Total</div>
                     </div>
                     <div class="achievement-stat-card">
-                        <div class="achievement-stat-value" id="completionRate">33%</div>
+                        <div class="achievement-stat-value" id="completionRate">25%</div>
                         <div class="achievement-stat-label">Complete</div>
                     </div>
                     <div class="achievement-stat-card">
-                        <div class="achievement-stat-value" id="legendaryCount">2</div>
+                        <div class="achievement-stat-value" id="legendaryCount">0</div>
                         <div class="achievement-stat-label">Legendary</div>
                     </div>
                     <div class="achievement-stat-card">
-                        <div class="achievement-stat-value" id="totalPoints">1,250</div>
+                        <div class="achievement-stat-value" id="totalPoints">225</div>
                         <div class="achievement-stat-label">Points</div>
                     </div>
                 </div>
@@ -804,11 +804,11 @@
                 <!-- Achievement Filters -->
                 <div class="achievement-filters">
                     <button class="filter-btn active" onclick="filterAchievements('all')">All</button>
-                    <button class="filter-btn" onclick="filterAchievements('combat')">🔥 Combat</button>
-                    <button class="filter-btn" onclick="filterAchievements('economic')">💎 Economic</button>
-                    <button class="filter-btn" onclick="filterAchievements('speed')">⚡ Speed</button>
-                    <button class="filter-btn" onclick="filterAchievements('social')">🌟 Social</button>
-                    <button class="filter-btn" onclick="filterAchievements('platform')">🎮 Platform</button>
+                    <button class="filter-btn" onclick="filterAchievements('tournament')">🎮 Tournament</button>
+                    <button class="filter-btn" onclick="filterAchievements('victory')">🏆 Victory</button>
+                    <button class="filter-btn" onclick="filterAchievements('earnings')">💰 Earnings</button>
+                    <button class="filter-btn" onclick="filterAchievements('wallet')">💎 Wallet</button>
+                    <button class="filter-btn" onclick="filterAchievements('consistency')">📅 Consistency</button>
                     <button class="filter-btn" onclick="filterAchievements('unlocked')">Unlocked</button>
                     <button class="filter-btn" onclick="filterAchievements('locked')">Locked</button>
                 </div>
@@ -912,80 +912,171 @@
             alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!');
         }
 
-        // Achievement Data System
+        // Simplified Achievement Data System (MVP - API Friendly)
         const achievementData = [
-            // Combat Achievements
+            // Tournament Participation Achievements
             {
-                id: 'first_blood',
+                id: 'tournament_debut',
+                name: 'Tournament Debut',
+                description: 'Participate in your first tournament and begin your champion journey.',
+                category: 'tournament',
+                rarity: 'common',
+                icon: '🎯',
+                requirements: 'Participate in 1 tournament',
+                progress: { current: 1, required: 1 },
+                unlocked: true,
+                points: 25,
+                rewards: '+25 AP, "Debuting" Title',
+                unlockRate: 89.3,
+                rarityRank: 16,
+                firstUnlocker: 'Tournament Pioneer',
+                tracking: 'tournament_count >= 1'
+            },
+            {
+                id: 'regular_competitor',
+                name: 'Regular Competitor',
+                description: 'Show your dedication by participating in 10 tournaments.',
+                category: 'tournament',
+                rarity: 'common',
+                icon: '🎮',
+                requirements: 'Participate in 10 tournaments',
+                progress: { current: 8, required: 10 },
+                unlocked: false,
+                points: 50,
+                rewards: '+50 AP, "Regular" Title',
+                unlockRate: 56.7,
+                rarityRank: 15,
+                firstUnlocker: 'Consistent Player',
+                tracking: 'tournament_count >= 10'
+            },
+            {
+                id: 'weekly_warrior',
+                name: 'Weekly Warrior',
+                description: 'Master the weekly tournaments by participating in 10 of them.',
+                category: 'tournament',
+                rarity: 'rare',
+                icon: '⚔️',
+                requirements: 'Participate in 10 weekly tournaments',
+                progress: { current: 6, required: 10 },
+                unlocked: false,
+                points: 100,
+                rewards: '+100 AP, "Warrior" Title',
+                unlockRate: 34.2,
+                rarityRank: 12,
+                firstUnlocker: 'Weekly Champion',
+                tracking: 'weekly_tournaments >= 10'
+            },
+            {
+                id: 'tournament_veteran',
+                name: 'Tournament Veteran',
+                description: 'Achieve veteran status by participating in 50 tournaments.',
+                category: 'tournament',
+                rarity: 'epic',
+                icon: '🏛️',
+                requirements: 'Participate in 50 tournaments',
+                progress: { current: 8, required: 50 },
+                unlocked: false,
+                points: 300,
+                rewards: '+300 AP, "Veteran" Title, Special Badge',
+                unlockRate: 8.4,
+                rarityRank: 7,
+                firstUnlocker: 'Tournament Grinder',
+                tracking: 'tournament_count >= 50'
+            },
+            {
+                id: 'all_rounder',
+                name: 'All-Rounder',
+                description: 'Experience all tournament types by trying rookie, warrior, elite, and master levels.',
+                category: 'tournament',
+                rarity: 'epic',
+                icon: '🌟',
+                requirements: 'Participate in all 4 tournament types',
+                progress: { current: 2, required: 4 },
+                unlocked: false,
+                points: 250,
+                rewards: '+250 AP, "All-Rounder" Title',
+                unlockRate: 12.1,
+                rarityRank: 9,
+                firstUnlocker: 'Variety Seeker',
+                tracking: 'unique_tournament_types >= 4'
+            },
+
+            // Victory Achievements
+            {
+                id: 'first_victory',
                 name: 'First Blood',
-                description: 'Win your first tournament and taste victory for the first time.',
-                category: 'combat',
+                description: 'Win your first tournament and taste the sweetness of victory.',
+                category: 'victory',
                 rarity: 'common',
                 icon: '🎯',
                 requirements: 'Win 1 tournament',
                 progress: { current: 1, required: 1 },
                 unlocked: true,
-                points: 50,
-                rewards: '+50 AP, "Rookie" Title',
-                unlockRate: 87.2,
-                rarityRank: 24,
-                firstUnlocker: 'Beta Tester Alpha'
+                points: 75,
+                rewards: '+75 AP, "Victor" Title',
+                unlockRate: 67.8,
+                rarityRank: 14,
+                firstUnlocker: 'First Winner',
+                tracking: 'tournaments_won >= 1'
             },
             {
-                id: 'hat_trick',
-                name: 'Hat Trick',
-                description: 'Achieve three consecutive tournament victories, proving your consistency.',
-                category: 'combat',
+                id: 'champion_rising',
+                name: 'Champion Rising',
+                description: 'Prove your skill by winning 5 tournaments.',
+                category: 'victory',
                 rarity: 'rare',
-                icon: '🎩',
-                requirements: 'Win 3 tournaments in a row',
-                progress: { current: 2, required: 3 },
+                icon: '⭐',
+                requirements: 'Win 5 tournaments',
+                progress: { current: 1, required: 5 },
                 unlocked: false,
                 points: 150,
-                rewards: '+150 AP, "Consistent" Title',
-                unlockRate: 23.1,
-                rarityRank: 12,
-                firstUnlocker: 'The Golden Phoenix'
+                rewards: '+150 AP, "Rising" Title',
+                unlockRate: 23.5,
+                rarityRank: 11,
+                firstUnlocker: 'Lightning Bolt',
+                tracking: 'tournaments_won >= 5'
             },
             {
-                id: 'untouchable',
-                name: 'Untouchable',
-                description: 'Win 10 tournaments without a single loss - a feat of pure dominance.',
-                category: 'combat',
-                rarity: 'epic',
-                icon: '🛡️',
-                requirements: 'Win 10 tournaments without a loss',
-                progress: { current: 5, required: 10 },
+                id: 'hot_streak',
+                name: 'Hot Streak',
+                description: 'Dominate the competition by winning 3 tournaments in a row.',
+                category: 'victory',
+                rarity: 'rare',
+                icon: '🔥',
+                requirements: 'Win 3 consecutive tournaments',
+                progress: { current: 1, required: 3 },
                 unlocked: false,
-                points: 300,
-                rewards: '+300 AP, "Untouchable" Title, SOL Bonus',
-                unlockRate: 5.7,
-                rarityRank: 6,
-                firstUnlocker: 'Diamond Samurai'
+                points: 200,
+                rewards: '+200 AP, "Streak" Title, Fire Badge',
+                unlockRate: 15.3,
+                rarityRank: 10,
+                firstUnlocker: 'The Golden Phoenix',
+                tracking: 'current_win_streak >= 3'
             },
             {
-                id: 'apex_predator',
-                name: 'Apex Predator',
-                description: 'Reach the #1 position on the global leaderboards.',
-                category: 'combat',
+                id: 'tournament_master',
+                name: 'Tournament Master',
+                description: 'Achieve mastery by winning 25 tournaments total.',
+                category: 'victory',
                 rarity: 'legendary',
                 icon: '👑',
-                requirements: 'Reach #1 on global leaderboards',
-                progress: { current: 0, required: 1 },
+                requirements: 'Win 25 tournaments',
+                progress: { current: 1, required: 25 },
                 unlocked: false,
                 points: 500,
-                rewards: '+500 AP, "Apex" Title, Hall of Fame Entry',
-                unlockRate: 0.8,
-                rarityRank: 2,
-                firstUnlocker: 'The Golden Phoenix'
+                rewards: '+500 AP, "Master" Title, Crown Badge',
+                unlockRate: 2.1,
+                rarityRank: 4,
+                firstUnlocker: 'The Golden Phoenix',
+                tracking: 'tournaments_won >= 25'
             },
 
-            // Economic Achievements
+            // SOL Earnings Achievements
             {
-                id: 'profit_maker',
-                name: 'Profit Maker',
+                id: 'first_profit',
+                name: 'First Profit',
                 description: 'Earn your first SOL from tournament prizes.',
-                category: 'economic',
+                category: 'earnings',
                 rarity: 'common',
                 icon: '💰',
                 requirements: 'Earn 0.1 SOL from tournaments',
@@ -993,289 +1084,116 @@
                 unlocked: true,
                 points: 50,
                 rewards: '+50 AP, "Earner" Title',
-                unlockRate: 76.4,
-                rarityRank: 23,
-                firstUnlocker: 'Early Bird'
+                unlockRate: 72.4,
+                rarityRank: 13,
+                firstUnlocker: 'Early Earner',
+                tracking: 'total_sol_earned >= 0.1'
             },
             {
-                id: 'diamond_hands',
-                name: 'Diamond Hands',
-                description: 'Hold your positions for 7 consecutive days without panic selling.',
-                category: 'economic',
+                id: 'sol_collector',
+                name: 'SOL Collector',
+                description: 'Build your fortune by earning 10 SOL from tournament prizes.',
+                category: 'earnings',
                 rarity: 'rare',
-                icon: '💎',
-                requirements: 'Hold positions for 7 days straight',
-                progress: { current: 4, required: 7 },
+                icon: '☀️',
+                requirements: 'Earn 10 SOL from tournaments',
+                progress: { current: 3.4, required: 10 },
                 unlocked: false,
                 points: 200,
-                rewards: '+200 AP, "Diamond" Title',
-                unlockRate: 18.9,
-                rarityRank: 15,
-                firstUnlocker: 'Crypto Whale'
+                rewards: '+200 AP, "Collector" Title, SOL Badge',
+                unlockRate: 18.7,
+                rarityRank: 8,
+                firstUnlocker: 'SOL Accumulator',
+                tracking: 'total_sol_earned >= 10'
             },
             {
-                id: 'whale_watcher',
-                name: 'Whale Watcher',
-                description: 'Achieve 500%+ performance in a single tournament.',
-                category: 'economic',
-                rarity: 'epic',
-                icon: '🐋',
-                requirements: 'Achieve 500%+ performance in one tournament',
-                progress: { current: 347, required: 500 },
-                unlocked: false,
-                points: 350,
-                rewards: '+350 AP, "Whale" Title, SOL Bonus',
-                unlockRate: 8.2,
-                rarityRank: 7,
-                firstUnlocker: 'The Golden Phoenix'
-            },
-            {
-                id: 'sol_sovereign',
-                name: 'SOL Sovereign',
-                description: 'Earn 100 SOL total from tournament victories.',
-                category: 'economic',
+                id: 'sol_whale',
+                name: 'SOL Whale',
+                description: 'Reach whale status by earning 100 SOL from tournament prizes.',
+                category: 'earnings',
                 rarity: 'legendary',
-                icon: '☀️',
-                requirements: 'Earn 100 SOL total from tournaments',
-                progress: { current: 23.7, required: 100 },
+                icon: '🐋',
+                requirements: 'Earn 100 SOL from tournaments',
+                progress: { current: 3.4, required: 100 },
                 unlocked: false,
                 points: 750,
-                rewards: '+750 AP, "Sovereign" Title, NFT Badge',
-                unlockRate: 1.2,
-                rarityRank: 3,
-                firstUnlocker: 'Crypto Whale'
+                rewards: '+750 AP, "Whale" Title, Whale NFT',
+                unlockRate: 0.8,
+                rarityRank: 2,
+                firstUnlocker: 'Crypto Whale',
+                tracking: 'total_sol_earned >= 100'
             },
 
-            // Speed Achievements
+            // Wallet Achievements
             {
-                id: 'quick_draw',
-                name: 'Quick Draw',
-                description: 'Make your first trade within 60 seconds of tournament start.',
-                category: 'speed',
+                id: 'wallet_holder',
+                name: 'Wallet Holder',
+                description: 'Show commitment by holding at least 1 SOL in your wallet.',
+                category: 'wallet',
                 rarity: 'common',
+                icon: '💎',
+                requirements: 'Hold 1+ SOL in wallet',
+                progress: { current: 1, required: 1 },
+                unlocked: true,
+                points: 25,
+                rewards: '+25 AP, "Holder" Title',
+                unlockRate: 45.6,
+                rarityRank: 12,
+                firstUnlocker: 'Diamond Hands',
+                tracking: 'current_sol_balance >= 1'
+            },
+            {
+                id: 'active_trader',
+                name: 'Active Trader',
+                description: 'Demonstrate trading activity with 100+ total transactions.',
+                category: 'wallet',
+                rarity: 'rare',
                 icon: '⚡',
-                requirements: 'Make first trade within 1 minute',
-                progress: { current: 1, required: 1 },
-                unlocked: true,
-                points: 25,
-                rewards: '+25 AP, "Quick" Title',
-                unlockRate: 62.8,
-                rarityRank: 22,
-                firstUnlocker: 'Lightning Bolt'
-            },
-            {
-                id: 'speed_demon',
-                name: 'Speed Demon',
-                description: 'Complete all tournament objectives in record time.',
-                category: 'speed',
-                rarity: 'rare',
-                icon: '🌪️',
-                requirements: 'Complete tournament in under 2 hours',
-                progress: { current: 2, required: 3 },
+                requirements: 'Complete 100+ transactions',
+                progress: { current: 67, required: 100 },
                 unlocked: false,
-                points: 175,
-                rewards: '+175 AP, "Speed Demon" Title',
-                unlockRate: 12.4,
-                rarityRank: 17,
-                firstUnlocker: 'Lightning Bolt'
-            },
-            {
-                id: 'bullet_time',
-                name: 'Bullet Time',
-                description: 'Execute 10 trades in a single minute during active trading.',
-                category: 'speed',
-                rarity: 'epic',
-                icon: '⏱️',
-                requirements: 'Execute 10 trades in 1 minute',
-                progress: { current: 6, required: 10 },
-                unlocked: false,
-                points: 300,
-                rewards: '+300 AP, "Bullet" Title, Speed Badge',
-                unlockRate: 4.1,
-                rarityRank: 9,
-                firstUnlocker: 'Lightning Bolt'
+                points: 150,
+                rewards: '+150 AP, "Trader" Title, Lightning Badge',
+                unlockRate: 28.9,
+                rarityRank: 6,
+                firstUnlocker: 'Transaction King',
+                tracking: 'total_transactions >= 100'
             },
 
-            // Social Achievements
+            // Consistency Achievements
             {
-                id: 'first_friend',
-                name: 'First Friend',
-                description: 'Connect with your first fellow champion in the community.',
-                category: 'social',
-                rarity: 'common',
-                icon: '🤝',
-                requirements: 'Add 1 friend',
-                progress: { current: 1, required: 1 },
-                unlocked: true,
-                points: 25,
-                rewards: '+25 AP, "Friendly" Title',
-                unlockRate: 54.3,
-                rarityRank: 21,
-                firstUnlocker: 'Social Butterfly'
-            },
-            {
-                id: 'mentor',
-                name: 'Mentor',
-                description: 'Help 5 new players achieve their first tournament victory.',
-                category: 'social',
-                rarity: 'rare',
-                icon: '🎓',
-                requirements: 'Help 5 new players win their first tournament',
-                progress: { current: 2, required: 5 },
-                unlocked: false,
-                points: 250,
-                rewards: '+250 AP, "Mentor" Title, Community Badge',
-                unlockRate: 7.8,
-                rarityRank: 14,
-                firstUnlocker: 'The Golden Phoenix'
-            },
-            {
-                id: 'community_legend',
-                name: 'Community Legend',
-                description: 'Become a pillar of the WalletWars community.',
-                category: 'social',
-                rarity: 'legendary',
-                icon: '🌟',
-                requirements: 'Achieve maximum community reputation',
-                progress: { current: 0, required: 1 },
-                unlocked: false,
-                points: 500,
-                rewards: '+500 AP, "Legend" Title, Special Avatar',
-                unlockRate: 0.3,
-                rarityRank: 1,
-                firstUnlocker: 'Community King'
-            },
-
-            // Platform Achievements
-            {
-                id: 'welcome_warrior',
-                name: 'Welcome Warrior',
-                description: 'Complete your first day on WalletWars.',
-                category: 'platform',
-                rarity: 'common',
-                icon: '🎮',
-                requirements: 'Complete first day on platform',
-                progress: { current: 1, required: 1 },
-                unlocked: true,
-                points: 10,
-                rewards: '+10 AP, "Newcomer" Title',
-                unlockRate: 95.7,
-                rarityRank: 25,
-                firstUnlocker: 'First User'
-            },
-            {
-                id: 'dedication',
-                name: 'Dedication',
-                description: 'Participate in tournaments for 30 consecutive days.',
-                category: 'platform',
+                id: 'daily_player',
+                name: 'Daily Player',
+                description: 'Show dedication by participating in tournaments 7 days in a row.',
+                category: 'consistency',
                 rarity: 'rare',
                 icon: '📅',
-                requirements: 'Participate for 30 consecutive days',
-                progress: { current: 12, required: 30 },
+                requirements: 'Participate 7 consecutive days',
+                progress: { current: 3, required: 7 },
                 unlocked: false,
-                points: 200,
-                rewards: '+200 AP, "Dedicated" Title',
-                unlockRate: 15.6,
-                rarityRank: 16,
-                firstUnlocker: 'Consistent Player'
-            },
-            {
-                id: 'veteran_trader',
-                name: 'Veteran Trader',
-                description: 'Participate in WalletWars for a full year.',
-                category: 'platform',
-                rarity: 'epic',
-                icon: '🏛️',
-                requirements: 'Participate for 365 days',
-                progress: { current: 87, required: 365 },
-                unlocked: false,
-                points: 400,
-                rewards: '+400 AP, "Veteran" Title, Exclusive Avatar',
-                unlockRate: 3.2,
-                rarityRank: 10,
-                firstUnlocker: 'Beta Veteran'
-            },
-            {
-                id: 'platform_legend',
-                name: 'Platform Legend',
-                description: 'Achieve legendary status across all aspects of WalletWars.',
-                category: 'platform',
-                rarity: 'legendary',
-                icon: '🏆',
-                requirements: 'Complete all major achievement chains',
-                progress: { current: 0, required: 1 },
-                unlocked: false,
-                points: 1000,
-                rewards: '+1000 AP, "Platform Legend" Title, NFT Trophy',
-                unlockRate: 0.1,
-                rarityRank: 4,
-                firstUnlocker: 'Not yet achieved'
-            },
-
-            // Special Unlocked Achievements
-            {
-                id: 'tournament_debut',
-                name: 'Tournament Debut',
-                description: 'Participate in your first tournament.',
-                category: 'platform',
-                rarity: 'common',
-                icon: '🚀',
-                requirements: 'Participate in 1 tournament',
-                progress: { current: 1, required: 1 },
-                unlocked: true,
-                points: 25,
-                rewards: '+25 AP, "Debuting" Title',
-                unlockRate: 89.3,
-                rarityRank: 26,
-                firstUnlocker: 'Tournament Pioneer'
-            },
-            {
-                id: 'rising_star',
-                name: 'Rising Star',
-                description: 'Climb 10 positions on the leaderboard in a single week.',
-                category: 'combat',
-                rarity: 'rare',
-                icon: '⭐',
-                requirements: 'Climb 10 leaderboard positions in 1 week',
-                progress: { current: 1, required: 1 },
-                unlocked: true,
-                points: 150,
-                rewards: '+150 AP, "Rising" Title',
-                unlockRate: 28.7,
-                rarityRank: 13,
-                firstUnlocker: 'Lightning Bolt'
-            },
-            {
-                id: 'perfect_storm',
-                name: 'Perfect Storm',
-                description: 'Achieve perfect 100%+ performance in three different tournaments.',
-                category: 'combat',
-                rarity: 'epic',
-                icon: '🌪️',
-                requirements: 'Achieve 100%+ performance in 3 tournaments',
-                progress: { current: 1, required: 1 },
-                unlocked: true,
-                points: 400,
-                rewards: '+400 AP, "Perfect" Title, Storm Badge',
-                unlockRate: 6.4,
-                rarityRank: 8,
-                firstUnlocker: 'Diamond Samurai'
-            },
-            {
-                id: 'eternal_champion',
-                name: 'Eternal Champion',
-                description: 'Maintain champion status for 100 consecutive days.',
-                category: 'combat',
-                rarity: 'legendary',
-                icon: '👑',
-                requirements: 'Maintain champion status for 100 days',
-                progress: { current: 1, required: 1 },
-                unlocked: true,
-                points: 1000,
-                rewards: '+1000 AP, "Eternal" Title, Crown NFT',
-                unlockRate: 0.2,
+                points: 175,
+                rewards: '+175 AP, "Daily" Title, Calendar Badge',
+                unlockRate: 16.4,
                 rarityRank: 5,
-                firstUnlocker: 'The Golden Phoenix'
+                firstUnlocker: 'Consistent Champion',
+                tracking: 'consecutive_active_days >= 7'
+            },
+            {
+                id: 'platform_loyal',
+                name: 'Platform Loyal',
+                description: 'Demonstrate loyalty by using WalletWars for 100 days.',
+                category: 'consistency',
+                rarity: 'epic',
+                icon: '💝',
+                requirements: 'Active for 100 days',
+                progress: { current: 23, required: 100 },
+                unlocked: false,
+                points: 300,
+                rewards: '+300 AP, "Loyal" Title, Heart Badge',
+                unlockRate: 5.2,
+                rarityRank: 3,
+                firstUnlocker: 'Beta Loyalist',
+                tracking: 'platform_days_active >= 100'
             }
         ];
 
