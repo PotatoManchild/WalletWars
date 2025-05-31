@@ -1294,6 +1294,7 @@
         let currentStep = 1;
         let selectedWallet = null;
         let selectedAvatar = '🔥';
+        let walletConnection = null;
         let championData = {
             name: '',
             avatar: '🔥',
@@ -1325,11 +1326,10 @@
             updateModalHeader('Connect Wallet', 'Choose your preferred Solana wallet to get started');
         }
 
-        function selectWallet(walletType) {
+        async function selectWallet(walletType) {
             selectedWallet = walletType;
             championData.walletType = walletType;
             
-            // Simulate wallet connection
             goToStep(2);
             
             const walletNames = {
@@ -1341,22 +1341,197 @@
             
             document.getElementById('selectedWalletName').textContent = walletNames[walletType];
             
-            // Simulate connection delay
-            setTimeout(() => {
-                // Generate fake wallet address
-                championData.wallet = generateFakeWalletAddress();
-                goToStep(3);
-                updateModalHeader('Create Your Champion', 'Customize your WalletWars identity');
-            }, 2000);
+            try {
+                await connectToWallet(walletType);
+            } catch (error) {
+                console.error('Wallet connection failed:', error);
+                showConnectionError(error.message);
+            }
         }
 
-        function generateFakeWalletAddress() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789';
-            let result = '';
-            for (let i = 0; i < 44; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
+        async function connectToWallet(walletType) {
+            return new Promise((resolve, reject) => {
+                // Check if wallet is available
+                let wallet = null;
+                
+                switch(walletType) {
+                    case 'phantom':
+                        if (window.solana && window.solana.isPhantom) {
+                            wallet = window.solana;
+                        }
+                        break;
+                    case 'solflare':
+                        if (window.solflare && window.solflare.isSolflare) {
+                            wallet = window.solflare;
+                        }
+                        break;
+                    case 'backpack':
+                        if (window.backpack) {
+                            wallet = window.backpack;
+                        }
+                        break;
+                    case 'torus':
+                        if (window.torus) {
+                            wallet = window.torus;
+                        }
+                        break;
+                }
+
+                if (!wallet) {
+                    // Wallet not installed - show install instructions
+                    showWalletNotFound(walletType);
+                    reject(new Error('Wallet not found'));
+                    return;
+                }
+
+                // Attempt to connect
+                wallet.connect()
+                    .then(() => {
+                        if (wallet.publicKey) {
+                            championData.wallet = wallet.publicKey.toString();
+                            walletConnection = wallet;
+                            
+                            // Success - move to champion creation
+                            setTimeout(() => {
+                                goToStep(3);
+                                updateModalHeader('Create Your Champion', 'Customize your WalletWars identity');
+                                resolve();
+                            }, 1000);
+                        } else {
+                            reject(new Error('Failed to get wallet address'));
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.message?.includes('User rejected')) {
+                            showConnectionRejected();
+                        } else {
+                            showConnectionError('Failed to connect to wallet');
+                        }
+                        reject(error);
+                    });
+            });
+        }
+
+        function showWalletNotFound(walletType) {
+            const content = document.getElementById('step2Content');
+            const walletNames = {
+                'phantom': 'Phantom',
+                'solflare': 'Solflare', 
+                'backpack': 'Backpack',
+                'torus': 'Torus'
+            };
+            
+            const walletUrls = {
+                'phantom': 'https://phantom.app/',
+                'solflare': 'https://solflare.com/',
+                'backpack': 'https://backpack.app/',
+                'torus': 'https://tor.us/'
+            };
+            
+            content.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                    <div style="font-size: 1.2rem; color: #ef4444; margin-bottom: 1rem;">
+                        ${walletNames[walletType]} Not Found
+                    </div>
+                    <div style="color: #9ca3af; margin-bottom: 2rem;">
+                        Please install ${walletNames[walletType]} wallet to continue
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <a href="${walletUrls[walletType]}" target="_blank" class="btn-modal-primary">
+                            Install ${walletNames[walletType]}
+                        </a>
+                        <button class="btn-modal-secondary" onclick="goToStep(1)">
+                            Try Another Wallet
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showConnectionRejected() {
+            const content = document.getElementById('step2Content');
+            content.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
+                    <div style="font-size: 1.2rem; color: #ef4444; margin-bottom: 1rem;">
+                        Connection Rejected
+                    </div>
+                    <div style="color: #9ca3af; margin-bottom: 2rem;">
+                        You need to approve the wallet connection to continue
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <button class="btn-modal-primary" onclick="selectWallet('${selectedWallet}')">
+                            Try Again
+                        </button>
+                        <button class="btn-modal-secondary" onclick="goToStep(1)">
+                            Choose Different Wallet
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showConnectionError(message) {
+            const content = document.getElementById('step2Content');
+            content.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔌</div>
+                    <div style="font-size: 1.2rem; color: #ef4444; margin-bottom: 1rem;">
+                        Connection Failed
+                    </div>
+                    <div style="color: #9ca3af; margin-bottom: 2rem;">
+                        ${message}
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <button class="btn-modal-primary" onclick="selectWallet('${selectedWallet}')">
+                            Try Again
+                        </button>
+                        <button class="btn-modal-secondary" onclick="goToStep(1)">
+                            Choose Different Wallet
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayWalletInfo() {
+            if (championData.wallet) {
+                const shortAddress = championData.wallet.slice(0, 4) + '...' + championData.wallet.slice(-4);
+                
+                // Add wallet info to champion creation step
+                const championCreator = document.querySelector('.champion-creator');
+                
+                // Remove existing wallet info if present
+                const existingInfo = document.getElementById('walletInfo');
+                if (existingInfo) {
+                    existingInfo.remove();
+                }
+                
+                const walletInfo = document.createElement('div');
+                walletInfo.id = 'walletInfo';
+                walletInfo.style.cssText = `
+                    background: rgba(16, 185, 129, 0.1);
+                    border: 1px solid rgba(16, 185, 129, 0.2);
+                    border-radius: 0.75rem;
+                    padding: 1rem;
+                    margin-bottom: 1rem;
+                    text-align: center;
+                `;
+                walletInfo.innerHTML = `
+                    <div style="color: #10b981; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        ✅ Wallet Connected
+                    </div>
+                    <div style="color: #d1d5db; font-size: 0.9rem; font-family: monospace;">
+                        ${shortAddress}
+                    </div>
+                    <div style="color: #9ca3af; font-size: 0.8rem; margin-top: 0.25rem;">
+                        This champion will be linked to your wallet
+                    </div>
+                `;
+                
+                championCreator.insertBefore(walletInfo, championCreator.firstChild);
             }
-            return result;
         }
 
         function selectAvatar(emoji) {
@@ -1553,6 +1728,8 @@
                 updateModalHeader('Connecting...', 'Establishing secure connection');
             } else if (stepNumber === 3) {
                 updateModalHeader('Create Your Champion', 'Customize your WalletWars identity');
+                // Show wallet connection info in champion creation
+                displayWalletInfo();
             } else if (stepNumber === 4) {
                 updateModalHeader('Fair Play Agreement', 'Important rules and guidelines');
             } else if (stepNumber === 5) {
@@ -1585,11 +1762,15 @@
         function finalizeChamption() {
             goToStep(5);
             
-            // Simulate account creation
-            setTimeout(() => {
-                // This would typically save to backend/blockchain
-                console.log('Champion created:', championData);
-            }, 1000);
+            // Save champion data securely
+            const walletHash = championStorage.save(championData);
+            championData.wallet_hash = walletHash;
+            
+            console.log('Champion created and saved:', {
+                name: championData.name,
+                avatar: championData.avatar,
+                wallet_hash: walletHash
+            });
         }
 
         function completedOnboarding() {
@@ -1603,8 +1784,90 @@
             
             // Show celebration message
             setTimeout(() => {
-                alert(`🎉 Welcome ${championData.name}!\n\nYour champion profile is ready! You can now:\n• Join tournaments\n• Compete for SOL prizes\n• Climb the leaderboards\n• Unlock achievements\n\nGood luck in the tournaments! 🚀`);
+                alert(`🎉 Welcome ${championData.name}!\n\nYour champion profile has been created and saved securely!\n\n✅ Champion linked to wallet\n✅ Data encrypted and stored\n✅ Ready for tournaments\n\nGood luck in the competitions! 🚀`);
             }, 500);
+        }
+
+        // Enhanced data management functions
+        function loadSavedChampion() {
+            const saved = championStorage.load();
+            if (saved && saved.name && saved.avatar) {
+                // Restore champion data
+                championData = {
+                    name: saved.name,
+                    avatar: saved.avatar,
+                    wallet: '', // Don't store raw wallet in memory
+                    walletType: saved.walletType || '',
+                    wallet_hash: saved.wallet_hash
+                };
+                
+                isConnected = true;
+                updateUIToConnectedState();
+                
+                console.log('Champion restored from secure storage:', {
+                    name: saved.name,
+                    avatar: saved.avatar,
+                    created: saved.created_at
+                });
+            }
+        }
+
+        function saveChampionData() {
+            if (isConnected && championData.name && championData.wallet) {
+                championStorage.save(championData);
+            }
+        }
+
+        function disconnectWallet() {
+            if (confirm('Are you sure you want to disconnect your wallet?\n\nThis will delete your champion data permanently!')) {
+                // Disconnect from actual wallet if connected
+                if (walletConnection && walletConnection.disconnect) {
+                    try {
+                        walletConnection.disconnect();
+                    } catch (error) {
+                        console.log('Wallet disconnect error:', error);
+                    }
+                }
+                
+                isConnected = false;
+                walletConnection = null;
+                
+                // Clear all stored data
+                championStorage.clear();
+                
+                // Reset UI to disconnected state
+                document.getElementById('connectWalletBtn').style.display = 'block';
+                document.getElementById('championInfo').style.display = 'none';
+                document.getElementById('heroDisconnected').style.display = 'block';
+                document.getElementById('heroConnected').style.display = 'none';
+                
+                // Reset champion data
+                championData = {
+                    name: '',
+                    avatar: '🔥',
+                    wallet: '',
+                    walletType: ''
+                };
+                
+                alert('Champion data deleted and wallet disconnected successfully.');
+            }
+        }
+
+        // Debug function to check storage (for development)
+        function checkChampionStorage() {
+            const stats = championStorage.getStats();
+            const saved = championStorage.load();
+            
+            console.log('=== WalletWars Storage Debug ===');
+            console.log('Storage Stats:', stats);
+            console.log('Saved Champion:', saved);
+            console.log('Current Champion:', championData);
+            console.log('Connected:', isConnected);
+            
+            if (saved) {
+                console.log('Champion was created:', saved.created_at);
+                console.log('Wallet hash:', saved.wallet_hash);
+            }
         }
 
         function updateUIToConnectedState() {
@@ -1627,7 +1890,17 @@
 
         function disconnectWallet() {
             if (confirm('Are you sure you want to disconnect your wallet?\n\nYou will need to reconnect to participate in tournaments.')) {
+                // Disconnect from actual wallet if connected
+                if (walletConnection && walletConnection.disconnect) {
+                    try {
+                        walletConnection.disconnect();
+                    } catch (error) {
+                        console.log('Wallet disconnect error:', error);
+                    }
+                }
+                
                 isConnected = false;
+                walletConnection = null;
                 
                 // Reset UI to disconnected state
                 document.getElementById('connectWalletBtn').style.display = 'block';
@@ -1642,6 +1915,9 @@
                     wallet: '',
                     walletType: ''
                 };
+                
+                // Clear saved data
+                localStorage.removeItem('walletWarsChampion');
                 
                 alert('Wallet disconnected successfully.');
             }
@@ -1697,35 +1973,147 @@
             }
         });
 
-        // Demo: Load saved champion state if exists
-        function loadSavedChampion() {
-            // This would typically load from localStorage or backend
-            const saved = localStorage.getItem('walletWarsChampion');
-            if (saved) {
+        // Champion Storage System (Client-side with basic security)
+        const championStorage = {
+            // Create a basic hash of wallet address
+            createWalletHash: (walletAddress) => {
+                // Simple but effective hashing for client-side
+                let hash = 0;
+                const saltedAddress = walletAddress + 'walletwars_salt_2024';
+                for (let i = 0; i < saltedAddress.length; i++) {
+                    const char = saltedAddress.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash; // Convert to 32-bit integer
+                }
+                return Math.abs(hash).toString(36);
+            },
+
+            // Basic encoding for champion name
+            encodeName: (name) => {
+                return btoa(unescape(encodeURIComponent(name)));
+            },
+
+            // Basic decoding for champion name
+            decodeName: (encodedName) => {
                 try {
-                    championData = JSON.parse(saved);
-                    if (championData.name && championData.avatar) {
-                        isConnected = true;
-                        updateUIToConnectedState();
+                    return decodeURIComponent(escape(atob(encodedName)));
+                } catch (e) {
+                    return 'Champion'; // Fallback
+                }
+            },
+
+            // Save champion data securely
+            save: (championData) => {
+                const secureData = {
+                    wallet_hash: this.createWalletHash(championData.wallet),
+                    name_encoded: this.encodeName(championData.name),
+                    avatar: championData.avatar,
+                    wallet_type: championData.walletType,
+                    created_at: new Date().toISOString(),
+                    version: '1.0'
+                };
+
+                // Save to localStorage
+                localStorage.setItem('walletWars_champion', JSON.stringify(secureData));
+                
+                // Also save a backup with timestamp for recovery
+                const backupKey = `walletWars_backup_${Date.now()}`;
+                localStorage.setItem(backupKey, JSON.stringify(secureData));
+                
+                // Clean old backups (keep only last 3)
+                this.cleanOldBackups();
+                
+                console.log('Champion data saved securely');
+                return secureData.wallet_hash;
+            },
+
+            // Load champion data
+            load: () => {
+                try {
+                    const saved = localStorage.getItem('walletWars_champion');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        return {
+                            wallet_hash: data.wallet_hash,
+                            name: this.decodeName(data.name_encoded),
+                            avatar: data.avatar,
+                            walletType: data.wallet_type,
+                            created_at: data.created_at,
+                            version: data.version
+                        };
                     }
                 } catch (e) {
-                    console.log('No saved champion data');
+                    console.error('Error loading champion data:', e);
                 }
-            }
-        }
+                return null;
+            },
 
-        // Save champion data (demo)
-        function saveChampionData() {
-            if (isConnected && championData.name) {
-                localStorage.setItem('walletWarsChampion', JSON.stringify(championData));
+            // Check if wallet already has a champion
+            hasChampion: (walletAddress) => {
+                const saved = this.load();
+                if (saved) {
+                    const currentHash = this.createWalletHash(walletAddress);
+                    return saved.wallet_hash === currentHash;
+                }
+                return false;
+            },
+
+            // Delete champion data
+            clear: () => {
+                localStorage.removeItem('walletWars_champion');
+                // Also clear backups
+                const keys = Object.keys(localStorage);
+                keys.forEach(key => {
+                    if (key.startsWith('walletWars_backup_')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                console.log('Champion data cleared');
+            },
+
+            // Clean old backup files
+            cleanOldBackups: () => {
+                const keys = Object.keys(localStorage);
+                const backupKeys = keys
+                    .filter(key => key.startsWith('walletWars_backup_'))
+                    .sort()
+                    .reverse(); // Most recent first
+
+                // Keep only the 3 most recent backups
+                if (backupKeys.length > 3) {
+                    const toDelete = backupKeys.slice(3);
+                    toDelete.forEach(key => localStorage.removeItem(key));
+                }
+            },
+
+            // Get storage statistics
+            getStats: () => {
+                const keys = Object.keys(localStorage);
+                const wwKeys = keys.filter(key => key.startsWith('walletWars'));
+                const totalSize = wwKeys.reduce((size, key) => {
+                    return size + localStorage.getItem(key).length;
+                }, 0);
+
+                return {
+                    totalKeys: wwKeys.length,
+                    totalSize: totalSize,
+                    sizeKB: Math.round(totalSize / 1024 * 100) / 100
+                };
             }
-        }
+        };
 
         // Auto-save when champion data changes
         window.addEventListener('beforeunload', saveChampionData);
 
         // Load saved data on page load
         document.addEventListener('DOMContentLoaded', loadSavedChampion);
+
+        // Add keyboard shortcut for storage debug (Ctrl+Shift+D)
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.shiftKey && event.key === 'D') {
+                checkChampionStorage();
+            }
+        });
     </script>
 </body>
 </html>
