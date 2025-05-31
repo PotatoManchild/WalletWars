@@ -123,26 +123,29 @@
         }
 
         .tournament-card {
-            background: transparent;
-            border: none;
+            background: #1f2937;
+            border: 2px solid #8b5cf6;
             border-radius: 1rem;
-            padding: 0;
-            transition: all 0.6s ease;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
             position: relative;
-            overflow: visible;
             cursor: pointer;
-            transform-style: preserve-3d;
             min-height: 180px;
             z-index: 1;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
         }
 
         .tournament-card:hover {
             transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.3);
         }
 
         .tournament-card.flipped {
-            transform: rotateY(180deg) scale(1.15);
+            transform: scale(1.15);
             z-index: 10;
+            min-height: 350px;
+            border-color: #fbbf24;
+            box-shadow: 0 20px 50px rgba(251, 191, 36, 0.4);
         }
 
         /* Card Front (Compact View) */
@@ -948,6 +951,7 @@
         // Card Flip Animation
         function flipCard(card) {
             card.classList.toggle('flipped');
+            console.log('Card flipped:', card.classList.contains('flipped'));
         }
 
         // Filter Functions
