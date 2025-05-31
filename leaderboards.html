@@ -8,7 +8,13 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- WalletWars API -->
+    <script src="walletwars-api.js"></script>
+    
     <style>
+        /* Add the complete styles from the original leaderboards.html file here */
         /* Base Styles */
         * {
             margin: 0;
@@ -269,235 +275,40 @@
             margin: 0 auto;
         }
 
-        /* Enhanced Search & Filters Section */
-        .search-and-filters {
-            background: rgba(31, 41, 55, 0.3);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        /* Search Bar */
-        .search-container {
+        /* Loading State */
+        .loading-container {
             display: flex;
-            gap: 1rem;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1.5rem;
-            max-width: 66%;
-            margin-left: auto;
-            margin-right: auto;
+            padding: 4rem 2rem;
+            text-align: center;
         }
 
-        .search-input-wrapper {
-            flex: 1;
-            position: relative;
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(139, 92, 246, 0.2);
+            border-top: 4px solid #8b5cf6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
         }
 
-        .search-input {
-            width: 100%;
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 0.75rem;
-            padding: 0.75rem 3rem 0.75rem 1rem;
-            color: #ffffff;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .search-input:focus {
-            outline: none;
-            border-color: #8b5cf6;
-            background: rgba(31, 41, 55, 0.8);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-        }
-
-        .search-input::placeholder {
-            color: #9ca3af;
-        }
-
-        .search-btn {
-            position: absolute;
-            right: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
+        .loading-text {
             color: #8b5cf6;
             font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0.25rem;
-            border-radius: 0.25rem;
-            transition: all 0.3s ease;
-        }
-
-        .search-btn:hover {
-            background: rgba(139, 92, 246, 0.1);
-        }
-
-        .clear-search {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #ef4444;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .clear-search:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: translateY(-1px);
-        }
-
-        /* Mobile Filters Toggle */
-        .filters-toggle {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            padding: 0.75rem 1rem;
-            background: rgba(139, 92, 246, 0.15);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 0.75rem;
+            font-weight: 600;
             margin-bottom: 0.5rem;
         }
 
-        .filters-toggle-text {
-            font-weight: 600;
-            color: #8b5cf6;
-            font-size: 1rem;
-        }
-
-        .filters-toggle-icon {
-            color: #8b5cf6;
-            font-size: 1.3rem;
-            transition: transform 0.3s ease;
-        }
-
-        .filters-toggle.active .filters-toggle-icon {
-            transform: rotate(180deg);
-        }
-
-        .filters-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .filters-content.active {
-            max-height: 500px;
-        }
-
-        /* Filters Grid */
-        .filters-grid {
-            display: grid;
-            gap: 1.5rem;
-            padding-top: 1rem;
-        }
-
-        .filter-group {
-            background: rgba(15, 23, 42, 0.3);
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            border-radius: 0.75rem;
-            padding: 1rem;
-        }
-
-        .filter-label {
-            font-weight: 600;
-            color: #8b5cf6;
-            margin-bottom: 0.75rem;
-            display: block;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .filter-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #d1d5db;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.85rem;
-            font-weight: 500;
-            min-height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: rgba(139, 92, 246, 0.2);
-            border-color: #8b5cf6;
-            color: #8b5cf6;
-            transform: translateY(-1px);
-        }
-
-        /* Sort Controls */
-        .sort-controls {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .sort-select {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #ffffff;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .sort-select:focus {
-            outline: none;
-            border-color: #8b5cf6;
-        }
-
-        .sort-direction {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #8b5cf6;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-
-        .sort-direction:hover {
-            background: rgba(139, 92, 246, 0.2);
-        }
-
-        /* Results Info */
-        .results-info {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding: 0.75rem 1rem;
-            background: rgba(15, 23, 42, 0.3);
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            border-radius: 0.75rem;
-        }
-
-        .results-count {
-            color: #8b5cf6;
-            font-weight: 600;
+        .loading-subtext {
+            color: #9ca3af;
             font-size: 0.9rem;
         }
 
@@ -828,66 +639,6 @@
             background: rgba(205, 127, 50, 0.05);
         }
 
-        /* Performance Badges */
-        .performance-badge {
-            display: inline-block;
-            padding: 0.2rem 0.4rem;
-            border-radius: 0.3rem;
-            font-size: 0.65rem;
-            font-weight: 600;
-        }
-
-        .badge-legend {
-            background: rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-
-        .badge-hot-streak {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .badge-rising-star {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        /* Bracket Indicators */
-        .bracket-indicator {
-            display: inline-block;
-            padding: 0.2rem 0.4rem;
-            border-radius: 0.3rem;
-            font-size: 0.65rem;
-            font-weight: 600;
-        }
-
-        .bracket-beginner {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .bracket-intermediate {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        .bracket-advanced {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .bracket-legendary {
-            background: rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-
         /* No Results */
         .no-results {
             text-align: center;
@@ -901,477 +652,62 @@
             opacity: 0.5;
         }
 
-        /* Champion Detail Modal */
-        .champion-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            display: none;
+        /* Error State */
+        .error-container {
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .champion-modal.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .champion-modal-card {
-            background: rgba(31, 41, 55, 0.95);
-            backdrop-filter: blur(30px);
-            border: 2px solid rgba(139, 92, 246, 0.4);
-            border-radius: 1.5rem;
-            padding: 1.5rem;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            transform: scale(0.8);
-            transition: transform 0.4s ease;
-        }
-
-        .champion-modal.active .champion-modal-card {
-            transform: scale(1);
-        }
-
-        .champion-modal-header {
+            padding: 4rem 2rem;
             text-align: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid rgba(139, 92, 246, 0.2);
-            position: relative;
         }
 
-        .champion-close {
-            position: absolute;
-            top: -0.5rem;
-            right: -0.5rem;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
             color: #ef4444;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
         }
 
-        .champion-close:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: scale(1.1);
-        }
-
-        .champion-modal-avatar {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            margin: 0 auto 1rem;
-            border: 3px solid rgba(139, 92, 246, 0.3);
-            position: relative;
-        }
-
-        .champion-modal-avatar.rank-1 {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            border-color: rgba(251, 191, 36, 0.5);
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
-        }
-
-        .champion-modal-avatar.rank-2 {
-            background: linear-gradient(135deg, #c0c0c0, #9ca3af);
-            border-color: rgba(192, 192, 192, 0.5);
-            box-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
-        }
-
-        .champion-modal-avatar.rank-3 {
-            background: linear-gradient(135deg, #cd7f32, #a16207);
-            border-color: rgba(205, 127, 50, 0.5);
-            box-shadow: 0 0 20px rgba(205, 127, 50, 0.3);
-        }
-
-        .champion-rank-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: rgba(139, 92, 246, 0.9);
-            color: white;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
+        .error-title {
+            font-size: 1.5rem;
             font-weight: 700;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .champion-rank-badge.top-3 {
-            background: rgba(251, 191, 36, 0.9);
-        }
-
-        .champion-modal-name {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #ffffff;
+            color: #ef4444;
             margin-bottom: 0.5rem;
         }
 
-        .champion-modal-address {
-            font-family: monospace;
+        .error-message {
             color: #9ca3af;
-            font-size: 0.9rem;
-            margin-bottom: 0.75rem;
+            margin-bottom: 2rem;
+            max-width: 400px;
         }
 
-        .champion-badges-row {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .champion-performance-badge {
-            padding: 0.3rem 0.6rem;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .champion-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #8b5cf6;
-            margin-bottom: 0.25rem;
-            font-family: 'Orbitron', monospace;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .winrate-visual {
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .winrate-title {
-            text-align: center;
-            color: #8b5cf6;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .winrate-display {
-            text-align: center;
-            font-size: 2rem;
-            font-weight: 700;
-            color: #10b981;
-            margin-bottom: 0.75rem;
-            font-family: 'Orbitron', monospace;
-        }
-
-        .winrate-bar {
-            width: 100%;
-            height: 12px;
-            background: rgba(31, 41, 55, 0.8);
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid rgba(139, 92, 246, 0.2);
-        }
-
-        .winrate-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981, #34d399);
-            border-radius: 6px;
-            transition: width 0.8s ease;
-        }
-
-        .achievements-section {
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .achievements-title {
-            color: #8b5cf6;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .achievements-list {
-            display: grid;
-            gap: 0.5rem;
-        }
-
-        .achievement-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem;
-            background: rgba(31, 41, 55, 0.5);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-        }
-
-        .achievement-icon {
-            font-size: 1.2rem;
-            width: 30px;
-            text-align: center;
-        }
-
-        .achievement-text {
-            flex: 1;
-            color: #d1d5db;
-            font-size: 0.85rem;
-        }
-
-        .recent-activity {
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .recent-activity-title {
-            color: #8b5cf6;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .activity-list {
-            display: grid;
-            gap: 0.5rem;
-        }
-
-        .activity-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            background: rgba(31, 41, 55, 0.5);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-        }
-
-        .activity-tournament {
-            color: #d1d5db;
-            font-size: 0.85rem;
-        }
-
-        .activity-result {
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-
-        .result-win {
-            color: #10b981;
-        }
-
-        .result-loss {
-            color: #ef4444;
-        }
-
-        .champion-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-        }
-
-        .champion-btn-primary {
-            flex: 1;
+        .retry-btn {
             background: linear-gradient(135deg, #8b5cf6, #ec4899);
             border: none;
             color: white;
-            padding: 0.75rem 1rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
         }
 
-        .champion-btn-primary:hover {
+        .retry-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
         }
 
-        .champion-btn-secondary {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #d1d5db;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .champion-btn-secondary:hover {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: #8b5cf6;
-            color: #8b5cf6;
-        }
-
         /* Desktop Layout */
         @media (min-width: 768px) {
-            .filters-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                padding-top: 1rem;
-            }
-
-            .search-container {
-                flex-direction: row;
-            }
-
-            .search-input-wrapper {
-                width: 100%;
-            }
-
-            .earnings-cell {
-                display: table-cell;
-            }
-
             .champion-avatar {
                 width: 45px;
                 height: 45px;
                 font-size: 1.1rem;
             }
-
-            .filters-toggle {
-                padding: 1rem 1.25rem;
-                background: rgba(139, 92, 246, 0.12);
-                border: 1px solid rgba(139, 92, 246, 0.3);
-                margin-bottom: 0.75rem;
-            }
-
-            .filters-toggle-text {
-                font-size: 1.1rem;
-                font-weight: 700;
-            }
-
-            .filters-toggle-icon {
-                font-size: 1.4rem;
-            }
-
-            .filters-content.active {
-                max-height: 600px;
-            }
-
-            .champion-modal-card {
-                max-width: 700px;
-                padding: 2rem;
-            }
-
-            .champion-stats-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 1.5rem;
-            }
-
-            .champion-modal-avatar {
-                width: 100px;
-                height: 100px;
-                font-size: 3rem;
-            }
-
-            .champion-modal-name {
-                font-size: 1.8rem;
-            }
-
-            .winrate-display {
-                font-size: 2.5rem;
-            }
-
-            .stat-value {
-                font-size: 1.8rem;
-            }
         }
 
         /* Mobile Responsive */
         @media (max-width: 767px) {
-            .search-and-filters {
-                padding: 1rem;
-            }
-
-            .search-container {
-                flex-direction: column;
-                gap: 0.75rem;
-                max-width: 100%;
-            }
-
-            .search-input-wrapper {
-                width: 100%;
-            }
-
-            .search-input::placeholder {
-                content: "Search...";
-            }
-
-            .results-info {
-                text-align: center;
-            }
-
             /* Hide table, show cards on mobile */
             .leaderboard-table {
                 display: none;
@@ -1379,34 +715,6 @@
 
             .leaderboard-cards {
                 display: grid;
-            }
-
-            .champion-modal-card {
-                margin: 0.5rem;
-                padding: 1.25rem;
-                max-height: 95vh;
-            }
-
-            .champion-stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.75rem;
-            }
-
-            .stat-card {
-                padding: 0.75rem;
-            }
-
-            .stat-value {
-                font-size: 1.2rem;
-            }
-
-            .winrate-display {
-                font-size: 1.6rem;
-            }
-
-            .champion-actions {
-                flex-direction: column;
-                gap: 0.5rem;
             }
 
             .page-content {
@@ -1454,101 +762,25 @@
 
         <!-- Page Content -->
         <div class="page-content">
-            <!-- Enhanced Search & Filters Section -->
-            <div class="search-and-filters">
-                <!-- Search Bar -->
-                <div class="search-container">
-                    <div class="search-input-wrapper">
-                        <input 
-                            type="text" 
-                            id="championSearch" 
-                            class="search-input" 
-                            placeholder="Search by champion name, wallet address, or rank..." 
-                            oninput="performSearch()"
-                        >
-                        <button class="search-btn" onclick="performSearch()">🔍</button>
-                    </div>
-                    <button class="clear-search" onclick="clearSearch()">Clear All</button>
-                </div>
-
-                <!-- Mobile Filters Toggle -->
-                <div class="filters-toggle" onclick="toggleFilters()">
-                    <span class="filters-toggle-text">🎯 Advanced Filters</span>
-                    <span class="filters-toggle-icon">▼</span>
-                </div>
-
-                <!-- Filters Content -->
-                <div class="filters-content" id="filtersContent">
-                    <div class="filters-grid">
-                        <!-- Ranking Range Filter -->
-                        <div class="filter-group">
-                            <label class="filter-label">Ranking Range</label>
-                            <div class="filter-buttons">
-                                <button class="filter-btn active" onclick="filterByRank('all')">All Ranks</button>
-                                <button class="filter-btn" onclick="filterByRank('top10')">Top 10</button>
-                                <button class="filter-btn" onclick="filterByRank('top50')">Top 50</button>
-                                <button class="filter-btn" onclick="filterByRank('top100')">Top 100</button>
-                            </div>
-                        </div>
-
-                        <!-- Winrate Filter -->
-                        <div class="filter-group">
-                            <label class="filter-label">Winrate</label>
-                            <div class="filter-buttons">
-                                <button class="filter-btn active" onclick="filterByWinrate('all')">All</button>
-                                <button class="filter-btn" onclick="filterByWinrate('high')">90%+</button>
-                                <button class="filter-btn" onclick="filterByWinrate('good')">75%+</button>
-                                <button class="filter-btn" onclick="filterByWinrate('average')">50%+</button>
-                            </div>
-                        </div>
-
-                        <!-- Activity Level Filter -->
-                        <div class="filter-group">
-                            <label class="filter-label">Activity Level</label>
-                            <div class="filter-buttons">
-                                <button class="filter-btn active" onclick="filterByActivity('all')">All</button>
-                                <button class="filter-btn" onclick="filterByActivity('very-active')">50+ Tournaments</button>
-                                <button class="filter-btn" onclick="filterByActivity('active')">20+ Tournaments</button>
-                                <button class="filter-btn" onclick="filterByActivity('casual')">< 20 Tournaments</button>
-                            </div>
-                        </div>
-
-                        <!-- Performance Badges Filter -->
-                        <div class="filter-group">
-                            <label class="filter-label">Performance</label>
-                            <div class="filter-buttons">
-                                <button class="filter-btn active" onclick="filterByBadge('all')">All</button>
-                                <button class="filter-btn" onclick="filterByBadge('legend')">Legends</button>
-                                <button class="filter-btn" onclick="filterByBadge('hot-streak')">Hot Streak</button>
-                                <button class="filter-btn" onclick="filterByBadge('rising-star')">Rising Stars</button>
-                            </div>
-                        </div>
-
-                        <!-- Sort Controls -->
-                        <div class="filter-group">
-                            <label class="filter-label">Sort By</label>
-                            <div class="sort-controls">
-                                <select class="sort-select" id="sortBy" onchange="applySorting()">
-                                    <option value="rank">Rank</option>
-                                    <option value="winrate">Winrate</option>
-                                    <option value="tournaments">Tournaments</option>
-                                    <option value="earnings">Earnings</option>
-                                    <option value="name">Name</option>
-                                </select>
-                                <button class="sort-direction" id="sortDirection" onclick="toggleSortDirection()">↑</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Loading State -->
+            <div class="loading-container" id="loadingState">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading Leaderboards...</div>
+                <div class="loading-subtext">Fetching champion data from the blockchain</div>
             </div>
 
-            <!-- Results Info -->
-            <div class="results-info">
-                <div class="results-count" id="resultsCount">Showing 8 of 8 champions</div>
+            <!-- Error State -->
+            <div class="error-container" id="errorState" style="display: none;">
+                <div class="error-icon">🚫</div>
+                <div class="error-title">Unable to Load Leaderboards</div>
+                <div class="error-message" id="errorMessage">
+                    Failed to connect to the database. Please check your internet connection and try again.
+                </div>
+                <button class="retry-btn" onclick="loadLeaderboard()">Retry</button>
             </div>
 
             <!-- Leaderboard Container -->
-            <div class="leaderboard-container">
+            <div class="leaderboard-container" id="leaderboardContainer" style="display: none;">
                 <!-- Desktop Table View -->
                 <table class="leaderboard-table">
                     <thead class="table-header">
@@ -1573,84 +805,12 @@
                 <div class="no-results" id="noResults" style="display: none;">
                     <div class="no-results-icon">🔍</div>
                     <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">No champions found</div>
-                    <div style="font-size: 0.9rem;">Try adjusting your search terms or filters</div>
+                    <div style="font-size: 0.9rem;">The leaderboard is empty. Be the first to compete!</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Champion Detail Modal -->
-    <div class="champion-modal" id="championModal">
-        <div class="champion-modal-card">
-            <div class="champion-modal-header">
-                <button class="champion-close" onclick="closeChampionCard()">×</button>
-                
-                <div class="champion-modal-avatar" id="championAvatar">
-                    <!-- Avatar will be populated by JavaScript -->
-                    <div class="champion-rank-badge" id="championRankBadge">#1</div>
-                </div>
-                
-                <div class="champion-modal-name" id="championName">Champion Name</div>
-                <div class="champion-modal-address" id="championAddress">Wallet Address</div>
-                
-                <div class="champion-badges-row" id="championBadges">
-                    <!-- Badges will be populated by JavaScript -->
-                </div>
-            </div>
-
-            <!-- Winrate Visual -->
-            <div class="winrate-visual">
-                <div class="winrate-title">🎯 Current Winrate</div>
-                <div class="winrate-display" id="championWinrate">94.7%</div>
-                <div class="winrate-bar">
-                    <div class="winrate-fill" id="championWinrateFill" style="width: 94.7%"></div>
-                </div>
-            </div>
-
-            <!-- Stats Grid -->
-            <div class="champion-stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="championTournaments">47</div>
-                    <div class="stat-label">Tournaments</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="championEarnings">1,247</div>
-                    <div class="stat-label">SOL Earned</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="championWinStreak">23</div>
-                    <div class="stat-label">Win Streak</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="championAvgPerf">+347%</div>
-                    <div class="stat-label">Avg Performance</div>
-                </div>
-            </div>
-
-            <!-- Achievements -->
-            <div class="achievements-section">
-                <div class="achievements-title">🏆 Achievements</div>
-                <div class="achievements-list" id="championAchievements">
-                    <!-- Achievements will be populated by JavaScript -->
-                </div>
-            </div>
-
-            <!-- Recent Activity -->
-            <div class="recent-activity">
-                <div class="recent-activity-title">📊 Recent Activity</div>
-                <div class="activity-list" id="championActivity">
-                    <!-- Recent activity will be populated by JavaScript -->
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="champion-actions">
-                <button class="champion-btn-primary" onclick="challengeChampion()">⚔️ Challenge</button>
-                <button class="champion-btn-secondary" onclick="viewHistory()">📈 View History</button>
-            </div>
-        </div>
-    </div>
-    
     <script>
         function connectWallet() {
             alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!\n\nThis would integrate with Solana wallet adapters like Phantom, Solflare, etc.');
@@ -1716,535 +876,167 @@
                 if (window.innerWidth >= 768) {
                     closeMobileMenu();
                 }
-                updateSearchPlaceholder();
             });
         }
 
-        // Enhanced Champion data with detailed information for cards
-        var allChampions = [
-            {
-                rank: 1,
-                name: "The Golden Phoenix",
-                address: "4x7k...R6wE",
-                avatar: "🔥",
-                winrate: 94.7,
-                tournaments: 47,
-                earnings: 1247.83,
-                bracket: "legendary",
-                badges: ["legend"],
-                highlighted: false,
-                winStreak: 23,
-                avgPerformance: "+347%",
-                achievements: [
-                    { icon: "👑", text: "First Tournament Winner" },
-                    { icon: "🔥", text: "20+ Win Streak" },
-                    { icon: "💎", text: "Legendary Status Achieved" },
-                    { icon: "🏆", text: "Most Tournament Wins" }
-                ],
-                recentActivity: [
-                    { tournament: "Elite Weekly", result: "win", performance: "+89%" },
-                    { tournament: "Monthly Masters", result: "win", performance: "+156%" },
-                    { tournament: "Warrior's Challenge", result: "win", performance: "+234%" },
-                    { tournament: "Elite Weekly", result: "win", performance: "+67%" },
-                    { tournament: "Champion's League", result: "win", performance: "+123%" }
-                ]
-            },
-            {
-                rank: 2,
-                name: "Diamond Samurai",
-                address: "8mRt...1wF2",
-                avatar: "⚔️",
-                winrate: 91.2,
-                tournaments: 34,
-                earnings: 983.45,
-                bracket: "advanced",
-                badges: ["hot-streak"],
-                highlighted: false,
-                winStreak: 12,
-                avgPerformance: "+289%",
-                achievements: [
-                    { icon: "⚔️", text: "Precision Master" },
-                    { icon: "🔥", text: "Hot Streak Active" },
-                    { icon: "💎", text: "Diamond Tier Reached" },
-                    { icon: "🎯", text: "Perfect Strategy Award" }
-                ],
-                recentActivity: [
-                    { tournament: "Champion's League", result: "win", performance: "+78%" },
-                    { tournament: "Elite Weekly", result: "win", performance: "+145%" },
-                    { tournament: "Warrior's Challenge", result: "win", performance: "+92%" },
-                    { tournament: "Monthly Grind", result: "win", performance: "+156%" },
-                    { tournament: "Elite Weekly", result: "loss", performance: "-23%" }
-                ]
-            },
-            {
-                rank: 3,
-                name: "Lightning Bolt",
-                address: "9pQw...7nX3",
-                avatar: "⚡",
-                winrate: 88.9,
-                tournaments: 28,
-                earnings: 756.23,
-                bracket: "advanced",
-                badges: ["rising-star"],
-                highlighted: false,
-                winStreak: 8,
-                avgPerformance: "+234%",
-                achievements: [
-                    { icon: "⚡", text: "Speed Demon" },
-                    { icon: "⭐", text: "Rising Star" },
-                    { icon: "🚀", text: "Rapid Climber" },
-                    { icon: "⏱️", text: "Fastest Victory" }
-                ],
-                recentActivity: [
-                    { tournament: "Warrior's Challenge", result: "win", performance: "+134%" },
-                    { tournament: "Elite Weekly", result: "win", performance: "+67%" },
-                    { tournament: "Champion's League", result: "win", performance: "+189%" },
-                    { tournament: "Monthly Grind", result: "win", performance: "+98%" },
-                    { tournament: "Warrior's Challenge", result: "win", performance: "+176%" }
-                ]
-            },
-            {
-                rank: 4,
-                name: "Crypto Whale",
-                address: "2kLm...5zP4",
-                avatar: "🐋",
-                winrate: 85.3,
-                tournaments: 52,
-                earnings: 1156.78,
-                bracket: "advanced",
-                badges: [],
-                highlighted: false,
-                winStreak: 5,
-                avgPerformance: "+198%",
-                achievements: [
-                    { icon: "🐋", text: "Whale Status" },
-                    { icon: "💰", text: "High Earner" },
-                    { icon: "🎮", text: "Tournament Veteran" },
-                    { icon: "📈", text: "Consistent Performer" }
-                ],
-                recentActivity: [
-                    { tournament: "Masters Tournament", result: "win", performance: "+123%" },
-                    { tournament: "Champion's League", result: "win", performance: "+89%" },
-                    { tournament: "Elite Weekly", result: "loss", performance: "-12%" },
-                    { tournament: "Monthly Grind", result: "win", performance: "+167%" },
-                    { tournament: "Warrior's Challenge", result: "win", performance: "+145%" }
-                ]
-            },
-            {
-                rank: 5,
-                name: "Solar Storm",
-                address: "7vBn...3cQ5",
-                avatar: "☀️",
-                winrate: 82.6,
-                tournaments: 31,
-                earnings: 634.92,
-                bracket: "intermediate",
-                badges: ["rising-star"],
-                highlighted: false,
-                winStreak: 6,
-                avgPerformance: "+176%",
-                achievements: [
-                    { icon: "☀️", text: "Solar Champion" },
-                    { icon: "⭐", text: "Rising Star" },
-                    { icon: "🌟", text: "Breakthrough Player" },
-                    { icon: "📊", text: "Analytics Expert" }
-                ],
-                recentActivity: [
-                    { tournament: "Warrior's Challenge", result: "win", performance: "+156%" },
-                    { tournament: "Monthly Grind", result: "win", performance: "+78%" },
-                    { tournament: "Rookie Arena", result: "win", performance: "+234%" },
-                    { tournament: "Champion's League", result: "loss", performance: "-34%" },
-                    { tournament: "Warrior's Challenge", result: "win", performance: "+123%" }
-                ]
-            },
-            {
-                rank: 6,
-                name: "Neon Hunter",
-                address: "6uAm...8dR6",
-                avatar: "🎯",
-                winrate: 79.4,
-                tournaments: 25,
-                earnings: 445.67,
-                bracket: "intermediate",
-                badges: [],
-                highlighted: false,
-                winStreak: 4,
-                avgPerformance: "+145%",
-                achievements: [
-                    { icon: "🎯", text: "Precision Hunter" },
-                    { icon: "🎮", text: "Gaming Prodigy" },
-                    { icon: "📊", text: "Data Analyst" },
-                    { icon: "🚀", text: "Quick Learner" }
-                ],
-                recentActivity: [
-                    { tournament: "Rookie Arena", result: "win", performance: "+167%" },
-                    { tournament: "Warrior's Challenge", result: "win", performance: "+89%" },
-                    { tournament: "Monthly Grind", result: "loss", performance: "-23%" },
-                    { tournament: "Rookie Arena", result: "win", performance: "+134%" },
-                    { tournament: "Warrior's Challenge", result: "win", performance: "+98%" }
-                ]
-            },
-            {
-                rank: 7,
-                name: "Quantum Leap",
-                address: "5tZl...2eS7",
-                avatar: "🌌",
-                winrate: 76.8,
-                tournaments: 29,
-                earnings: 523.89,
-                bracket: "intermediate",
-                badges: ["hot-streak"],
-                highlighted: false,
-                winStreak: 7,
-                avgPerformance: "+132%",
-                achievements: [
-                    { icon: "🌌", text: "Quantum Mastery" },
-                    { icon: "🔥", text: "Hot Streak Active" },
-                    { icon: "🧠", text: "Strategic Mind" },
-                    { icon: "⚡", text: "Quick Adapter" }
-                ],
-                recentActivity: [
-                    { tournament: "Champion's League", result: "win", performance: "+145%" },
-                    { tournament: "Warrior's Challenge", result: "win", performance: "+76%" },
-                    { tournament: "Monthly Grind", result: "win", performance: "+189%" },
-                    { tournament: "Rookie Arena", result: "win", performance: "+234%" },
-                    { tournament: "Champion's League", result: "loss", performance: "-45%" }
-                ]
-            },
-            {
-                rank: 8,
-                name: "Pixel Warrior",
-                address: "4sYk...9fT8",
-                avatar: "🎮",
-                winrate: 74.2,
-                tournaments: 22,
-                earnings: 367.45,
-                bracket: "beginner",
-                badges: [],
-                highlighted: false,
-                winStreak: 3,
-                avgPerformance: "+98%",
-                achievements: [
-                    { icon: "🎮", text: "Gaming Enthusiast" },
-                    { icon: "🏁", text: "First Victory" },
-                    { icon: "📈", text: "Improving Rapidly" },
-                    { icon: "🎯", text: "Focused Player" }
-                ],
-                recentActivity: [
-                    { tournament: "Rookie Arena", result: "win", performance: "+123%" },
-                    { tournament: "Warrior's Challenge", result: "loss", performance: "-12%" },
-                    { tournament: "Monthly Grind", result: "win", performance: "+89%" },
-                    { tournament: "Rookie Arena", result: "win", performance: "+156%" },
-                    { tournament: "Warrior's Challenge", result: "loss", performance: "-34%" }
-                ]
-            }
-        ];
+        // Global leaderboard state
+        let leaderboardData = [];
+        let isLoading = false;
 
-        var filteredChampions = [...allChampions];
-        var currentSortField = 'rank';
-        var currentSortDirection = 'asc';
-        var currentPage = 1;
-        var itemsPerPage = 8;
-
-        // Filter states
-        var filters = {
-            search: '',
-            rank: 'all',
-            winrate: 'all',
-            activity: 'all',
-            badge: 'all'
-        };
-
-        // Mobile Filters Toggle
-        function toggleFilters() {
-            const filtersContent = document.getElementById('filtersContent');
-            const filtersToggle = document.querySelector('.filters-toggle');
+        // Load leaderboard from database
+        async function loadLeaderboard() {
+            if (isLoading) return;
             
-            filtersContent.classList.toggle('active');
-            filtersToggle.classList.toggle('active');
-        }
-
-        // Search functionality
-        function performSearch() {
-            filters.search = document.getElementById('championSearch').value.toLowerCase().trim();
-            applyFilters();
-        }
-
-        function clearSearch() {
-            document.getElementById('championSearch').value = '';
-            resetFilters();
-        }
-
-        // Filter functions
-        function filterByRank(rank) {
-            filters.rank = rank;
-            updateFilterButtons('.filter-group:nth-child(1) .filter-btn', rank);
-            applyFilters();
-        }
-
-        function filterByWinrate(winrate) {
-            filters.winrate = winrate;
-            updateFilterButtons('.filter-group:nth-child(2) .filter-btn', winrate);
-            applyFilters();
-        }
-
-        function filterByActivity(activity) {
-            filters.activity = activity;
-            updateFilterButtons('.filter-group:nth-child(3) .filter-btn', activity);
-            applyFilters();
-        }
-
-        function filterByBadge(badge) {
-            filters.badge = badge;
-            updateFilterButtons('.filter-group:nth-child(4) .filter-btn', badge);
-            applyFilters();
-        }
-
-        function updateFilterButtons(selector, value) {
-            var buttons = document.querySelectorAll(selector);
-            buttons.forEach(button => {
-                button.classList.remove('active');
-                var btnText = button.textContent.toLowerCase();
-                if ((value === 'all' && (btnText.includes('all') || btnText.includes('ranks'))) ||
-                    btnText.includes(value.replace('-', ' '))) {
-                    button.classList.add('active');
-                }
-            });
-        }
-
-        // Apply all filters
-        function applyFilters() {
-            filteredChampions = allChampions.filter(champion => {
-                // Search filter
-                if (filters.search && !matchesSearch(champion, filters.search)) {
-                    return false;
-                }
-
-                // Rank filter
-                if (filters.rank !== 'all') {
-                    if (filters.rank === 'top10' && champion.rank > 10) return false;
-                    if (filters.rank === 'top50' && champion.rank > 50) return false;
-                    if (filters.rank === 'top100' && champion.rank > 100) return false;
-                }
-
-                // Winrate filter
-                if (filters.winrate !== 'all') {
-                    if (filters.winrate === 'high' && champion.winrate < 90) return false;
-                    if (filters.winrate === 'good' && champion.winrate < 75) return false;
-                    if (filters.winrate === 'average' && champion.winrate < 50) return false;
-                }
-
-                // Activity filter
-                if (filters.activity !== 'all') {
-                    if (filters.activity === 'very-active' && champion.tournaments < 50) return false;
-                    if (filters.activity === 'active' && champion.tournaments < 20) return false;
-                    if (filters.activity === 'casual' && champion.tournaments >= 20) return false;
-                }
-
-                // Badge filter
-                if (filters.badge !== 'all') {
-                    if (!champion.badges.includes(filters.badge.replace('-', '-'))) return false;
-                }
-
-                return true;
-            });
-
-            applySorting();
-            renderLeaderboard();
-            updateResultsCount();
-        }
-
-        function matchesSearch(champion, searchTerm) {
-            return champion.name.toLowerCase().includes(searchTerm) ||
-                   champion.address.toLowerCase().includes(searchTerm) ||
-                   champion.rank.toString().includes(searchTerm);
-        }
-
-        // Sorting functionality
-        function applySorting() {
-            const sortBy = document.getElementById('sortBy').value;
-            const direction = currentSortDirection;
+            isLoading = true;
+            showLoadingState();
             
-            filteredChampions.sort((a, b) => {
-                let aVal = a[sortBy];
-                let bVal = b[sortBy];
+            try {
+                console.log('🏆 Loading leaderboard from database...');
                 
-                if (typeof aVal === 'string') {
-                    aVal = aVal.toLowerCase();
-                    bVal = bVal.toLowerCase();
+                // Check if API is available
+                if (!window.walletWarsAPI) {
+                    throw new Error('Database connection not available. Please refresh the page.');
                 }
                 
-                if (direction === 'asc') {
-                    return aVal > bVal ? 1 : -1;
+                // Fetch leaderboard data from Supabase
+                const result = await window.walletWarsAPI.getLeaderboard(100, 0);
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to load leaderboard data');
+                }
+                
+                leaderboardData = result.leaderboard || [];
+                
+                if (leaderboardData.length === 0) {
+                    showNoResults();
                 } else {
-                    return aVal < bVal ? 1 : -1;
+                    console.log(`✅ Loaded ${leaderboardData.length} champions`);
+                    showLeaderboard();
+                    renderLeaderboard();
                 }
-            });
-        }
-
-        function sortTable(field) {
-            if (currentSortField === field) {
-                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSortField = field;
-                currentSortDirection = 'asc';
-            }
-            
-            document.getElementById('sortBy').value = field;
-            updateSortDirection();
-            applySorting();
-            renderLeaderboard();
-            updateTableHeaders();
-        }
-
-        function toggleSortDirection() {
-            currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-            updateSortDirection();
-            applySorting();
-            renderLeaderboard();
-        }
-
-        function updateSortDirection() {
-            document.getElementById('sortDirection').textContent = currentSortDirection === 'asc' ? '↑' : '↓';
-        }
-
-        function updateTableHeaders() {
-            document.querySelectorAll('.table-header th').forEach(th => {
-                th.classList.remove('sort-asc', 'sort-desc');
-                // Set default sort states for all sortable columns
-                if (th.classList.contains('sortable')) {
-                    th.classList.add('sort-desc'); // Default to descending
-                }
-            });
-            
-            const currentHeader = document.querySelector(`[onclick="sortTable('${currentSortField}')"]`);
-            if (currentHeader) {
-                currentHeader.classList.remove('sort-desc'); // Remove default
-                currentHeader.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+                
+            } catch (error) {
+                console.error('❌ Failed to load leaderboard:', error);
+                showErrorState(error.message);
+            } finally {
+                isLoading = false;
             }
         }
 
-        // Reset all filters
-        function resetFilters() {
-            filters = {
-                search: '',
-                rank: 'all',
-                winrate: 'all',
-                activity: 'all',
-                badge: 'all'
-            };
-            
-            // Reset all filter buttons
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.toLowerCase().includes('all') || 
-                    btn.textContent.toLowerCase().includes('ranks')) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            applyFilters();
+        // State management functions
+        function showLoadingState() {
+            document.getElementById('loadingState').style.display = 'flex';
+            document.getElementById('errorState').style.display = 'none';
+            document.getElementById('leaderboardContainer').style.display = 'none';
         }
 
-        // Enhanced render function for both table and cards
+        function showErrorState(message) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'flex';
+            document.getElementById('leaderboardContainer').style.display = 'none';
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        function showLeaderboard() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+            document.getElementById('leaderboardContainer').style.display = 'block';
+            document.getElementById('noResults').style.display = 'none';
+        }
+
+        function showNoResults() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+            document.getElementById('leaderboardContainer').style.display = 'block';
+            document.getElementById('noResults').style.display = 'block';
+            
+            // Hide table and cards
+            document.getElementById('leaderboardBody').innerHTML = '';
+            document.getElementById('leaderboardCards').innerHTML = '';
+        }
+
+        // Render leaderboard data
         function renderLeaderboard() {
-            var tbody = document.getElementById('leaderboardBody');
-            var cardsContainer = document.getElementById('leaderboardCards');
-            var noResults = document.getElementById('noResults');
-            
-            if (filteredChampions.length === 0) {
-                tbody.innerHTML = '';
-                cardsContainer.innerHTML = '';
-                noResults.style.display = 'block';
+            if (!leaderboardData || leaderboardData.length === 0) {
+                showNoResults();
                 return;
             }
             
-            noResults.style.display = 'none';
+            // Render table view (desktop)
+            renderTableView();
             
-            // Render Table View (Desktop)
-            renderTableView(tbody);
-            
-            // Render Card View (Mobile)
-            renderCardView(cardsContainer);
+            // Render card view (mobile)
+            renderCardView();
         }
 
-        function renderTableView(tbody) {
-            var html = '';
-            filteredChampions.forEach(champion => {
-                var rankClass = '';
-                if (champion.rank === 1) rankClass = 'rank-1';
-                else if (champion.rank === 2) rankClass = 'rank-2';
-                else if (champion.rank === 3) rankClass = 'rank-3';
+        function renderTableView() {
+            const tbody = document.getElementById('leaderboardBody');
+            let html = '';
+            
+            leaderboardData.forEach((champion, index) => {
+                const rank = champion.rank || (index + 1);
+                let rankClass = '';
+                if (rank === 1) rankClass = 'rank-1';
+                else if (rank === 2) rankClass = 'rank-2';
+                else if (rank === 3) rankClass = 'rank-3';
                 
-                // Create badges
-                var badgesHtml = '';
-                champion.badges.forEach(badge => {
-                    badgesHtml += `<span class="performance-badge badge-${badge}">`;
-                    if (badge === 'legend') badgesHtml += '👑';
-                    else if (badge === 'hot-streak') badgesHtml += '🔥';
-                    else if (badge === 'rising-star') badgesHtml += '⭐';
-                    badgesHtml += '</span>';
-                });
-                
-                // Create bracket indicator
-                var bracketHtml = `<span class="bracket-indicator bracket-${champion.bracket}">`;
-                if (champion.bracket === 'beginner') bracketHtml += '🟢 BGN';
-                else if (champion.bracket === 'intermediate') bracketHtml += '🟡 INT';
-                else if (champion.bracket === 'advanced') bracketHtml += '🔴 ADV';
-                else if (champion.bracket === 'legendary') bracketHtml += '👑 LEG';
-                bracketHtml += '</span>';
-                
-                html += `<tr class="leaderboard-row ${champion.highlighted ? 'highlighted' : ''}" data-champion-rank="${champion.rank}">
-                    <td class="rank-cell ${rankClass}">${champion.rank}</td>
+                html += `
+                <tr class="leaderboard-row" data-champion-rank="${rank}">
+                    <td class="rank-cell ${rankClass}">${rank}</td>
                     <td>
                         <div class="champion-cell">
-                            <div class="champion-avatar">${champion.avatar}</div>
+                            <div class="champion-avatar">${champion.avatar_emoji || '🔥'}</div>
                             <div class="champion-info">
-                                <div class="champion-name">${champion.name}${badgesHtml}${bracketHtml}</div>
-                                <div class="champion-address">${champion.address}</div>
+                                <div class="champion-name">${champion.champion_name || 'Unknown Champion'}</div>
+                                <div class="champion-address">Champion #${rank}</div>
                             </div>
                         </div>
                     </td>
-                    <td class="winrate-cell">${champion.winrate}%</td>
-                    <td class="tournaments-cell">${champion.tournaments}</td>
-                    <td class="earnings-cell">${champion.earnings} SOL</td>
+                    <td class="winrate-cell">${champion.win_rate || '0'}%</td>
+                    <td class="tournaments-cell">${champion.tournaments_played || 0}</td>
+                    <td class="earnings-cell">${(champion.total_sol_earned || 0).toFixed(2)} SOL</td>
                 </tr>`;
             });
             
             tbody.innerHTML = html;
         }
 
-        function renderCardView(cardsContainer) {
-            var html = '';
-            filteredChampions.forEach(champion => {
-                var rankClass = '';
-                var avatarClass = 'champion-card-avatar';
-                var cardClass = 'champion-card';
+        function renderCardView() {
+            const cardsContainer = document.getElementById('leaderboardCards');
+            let html = '';
+            
+            leaderboardData.forEach((champion, index) => {
+                const rank = champion.rank || (index + 1);
+                let rankClass = '';
+                let avatarClass = 'champion-card-avatar';
+                let cardClass = 'champion-card';
                 
-                if (champion.rank === 1) {
+                if (rank === 1) {
                     rankClass = 'rank-1';
                     avatarClass += ' rank-1';
                     cardClass += ' top-3 rank-1';
-                } else if (champion.rank === 2) {
+                } else if (rank === 2) {
                     rankClass = 'rank-2';
                     avatarClass += ' rank-2';
                     cardClass += ' top-3 rank-2';
-                } else if (champion.rank === 3) {
+                } else if (rank === 3) {
                     rankClass = 'rank-3';
                     avatarClass += ' rank-3';
                     cardClass += ' top-3 rank-3';
                 }
                 
+                const earnings = Math.round(champion.total_sol_earned || 0);
+                
                 html += `
-                <div class="${cardClass}" data-champion-rank="${champion.rank}">
-                    <div class="champion-card-rank ${rankClass}">#${champion.rank}</div>
-                    <div class="${avatarClass}">${champion.avatar}</div>
+                <div class="${cardClass}" data-champion-rank="${rank}">
+                    <div class="champion-card-rank ${rankClass}">#${rank}</div>
+                    <div class="${avatarClass}">${champion.avatar_emoji || '🔥'}</div>
                     <div class="champion-card-main">
-                        <div class="champion-card-name">${champion.name}</div>
-                        <div class="champion-card-winrate">${champion.winrate}% winrate</div>
+                        <div class="champion-card-name">${champion.champion_name || 'Unknown Champion'}</div>
+                        <div class="champion-card-winrate">${champion.win_rate || '0'}% winrate</div>
                     </div>
                     <div class="champion-card-earnings">
-                        <div class="champion-earnings-value">${Math.round(champion.earnings)}</div>
+                        <div class="champion-earnings-value">${earnings}</div>
                         <div class="champion-earnings-label">SOL</div>
                     </div>
                 </div>`;
@@ -2253,183 +1045,29 @@
             cardsContainer.innerHTML = html;
         }
 
-        function updateResultsCount() {
-            const total = allChampions.length;
-            const filtered = filteredChampions.length;
-            document.getElementById('resultsCount').textContent = 
-                `Showing ${filtered} of ${total} champions`;
+        // Sorting functionality (for future enhancement)
+        function sortTable(field) {
+            // This would sort the leaderboardData array and re-render
+            console.log(`Sorting by: ${field}`);
+            // For now, we'll keep the database-provided order
         }
 
-        // Update search placeholder based on screen size
-        function updateSearchPlaceholder() {
-            const searchInput = document.getElementById('championSearch');
-            if (searchInput) {
-                if (window.innerWidth <= 767) {
-                    searchInput.placeholder = "Search...";
-                } else {
-                    searchInput.placeholder = "Search by champion name, wallet address, or rank...";
-                }
-            }
-        }
-
-        // Champion Detail Card Functions
-        function openChampionCard(rank) {
-            const champion = allChampions.find(c => c.rank === rank);
-            if (!champion) return;
-
-            // Populate header - with null checks
-            const avatar = document.getElementById('championAvatar');
-            const rankBadge = document.getElementById('championRankBadge');
-            const championName = document.getElementById('championName');
-            const championAddress = document.getElementById('championAddress');
-            
-            if (avatar) {
-                avatar.textContent = champion.avatar;
-                avatar.className = `champion-modal-avatar${champion.rank <= 3 ? ` rank-${champion.rank}` : ''}`;
-            }
-            
-            if (rankBadge) {
-                rankBadge.textContent = `#${champion.rank}`;
-                rankBadge.className = `champion-rank-badge${champion.rank <= 3 ? ' top-3' : ''}`;
-            }
-            
-            if (championName) championName.textContent = champion.name;
-            if (championAddress) championAddress.textContent = champion.address;
-
-            // Populate badges
-            const badgesContainer = document.getElementById('championBadges');
-            if (badgesContainer) {
-                badgesContainer.innerHTML = '';
-                champion.badges.forEach(badge => {
-                    const badgeEl = document.createElement('div');
-                    badgeEl.className = `champion-performance-badge badge-${badge}`;
-                    if (badge === 'legend') badgeEl.innerHTML = '👑 Legend';
-                    else if (badge === 'hot-streak') badgeEl.innerHTML = '🔥 Hot Streak';
-                    else if (badge === 'rising-star') badgeEl.innerHTML = '⭐ Rising Star';
-                    badgesContainer.appendChild(badgeEl);
-                });
-            }
-
-            // Populate winrate
-            const championWinrate = document.getElementById('championWinrate');
-            const championWinrateFill = document.getElementById('championWinrateFill');
-            if (championWinrate) championWinrate.textContent = `${champion.winrate}%`;
-            if (championWinrateFill) championWinrateFill.style.width = `${champion.winrate}%`;
-
-            // Populate stats
-            const championTournaments = document.getElementById('championTournaments');
-            const championEarnings = document.getElementById('championEarnings');
-            const championWinStreak = document.getElementById('championWinStreak');
-            const championAvgPerf = document.getElementById('championAvgPerf');
-            
-            if (championTournaments) championTournaments.textContent = champion.tournaments;
-            if (championEarnings) championEarnings.textContent = champion.earnings.toLocaleString();
-            if (championWinStreak) championWinStreak.textContent = champion.winStreak;
-            if (championAvgPerf) championAvgPerf.textContent = champion.avgPerformance;
-
-            // Populate achievements
-            const achievementsContainer = document.getElementById('championAchievements');
-            if (achievementsContainer) {
-                achievementsContainer.innerHTML = '';
-                champion.achievements.forEach(achievement => {
-                    const achievementEl = document.createElement('div');
-                    achievementEl.className = 'achievement-item';
-                    achievementEl.innerHTML = `
-                        <div class="achievement-icon">${achievement.icon}</div>
-                        <div class="achievement-text">${achievement.text}</div>
-                    `;
-                    achievementsContainer.appendChild(achievementEl);
-                });
-            }
-
-            // Populate recent activity
-            const activityContainer = document.getElementById('championActivity');
-            if (activityContainer) {
-                activityContainer.innerHTML = '';
-                champion.recentActivity.forEach(activity => {
-                    const activityEl = document.createElement('div');
-                    activityEl.className = 'activity-item';
-                    activityEl.innerHTML = `
-                        <div class="activity-tournament">${activity.tournament}</div>
-                        <div class="activity-result result-${activity.result}">${activity.result === 'win' ? '🏆' : '📉'} ${activity.performance}</div>
-                    `;
-                    activityContainer.appendChild(activityEl);
-                });
-            }
-
-            // Show modal
-            const modal = document.getElementById('championModal');
-            if (modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-
-        function closeChampionCard() {
-            const modal = document.getElementById('championModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function challengeChampion() {
-            alert('⚔️ Challenge Champion\n\nThis feature would allow you to compete directly against this champion in a head-to-head tournament!\n\nComing soon...');
-        }
-
-        function viewHistory() {
-            alert('📈 Tournament History\n\nThis would show the complete tournament history and detailed performance analytics for this champion.\n\nComing soon...');
-        }
-
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            const modal = document.getElementById('championModal');
-            if (event.target === modal) {
-                closeChampionCard();
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeChampionCard();
-            }
-        });
-
+        // Initialize leaderboard on page load
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize mobile navigation
             initializeMobileNavigation();
             handleWindowResize();
             
-            // Initialize leaderboard
-            renderLeaderboard();
-            updateResultsCount();
-            updateSortDirection();
+            // Load leaderboard data
+            loadLeaderboard();
             
-            // Set initial search placeholder
-            updateSearchPlaceholder();
-            
-            // Set up event delegation for champion rows (table)
-            const leaderboardTable = document.getElementById('leaderboardBody');
-            leaderboardTable.addEventListener('click', function(event) {
-                const clickedRow = event.target.closest('.leaderboard-row');
-                if (clickedRow) {
-                    const rank = parseInt(clickedRow.getAttribute('data-champion-rank'));
-                    if (rank) {
-                        openChampionCard(rank);
-                    }
+            // Set up periodic refresh (every 30 seconds)
+            setInterval(() => {
+                if (!isLoading) {
+                    console.log('🔄 Refreshing leaderboard data...');
+                    loadLeaderboard();
                 }
-            });
-            
-            // Set up event delegation for champion cards (mobile)
-            const leaderboardCards = document.getElementById('leaderboardCards');
-            leaderboardCards.addEventListener('click', function(event) {
-                const clickedCard = event.target.closest('.champion-card');
-                if (clickedCard) {
-                    const rank = parseInt(clickedCard.getAttribute('data-champion-rank'));
-                    if (rank) {
-                        openChampionCard(rank);
-                    }
-                }
-            });
+            }, 30000);
         });
     </script>
 </body>
