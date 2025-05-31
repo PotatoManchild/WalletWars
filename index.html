@@ -824,47 +824,97 @@
             font-weight: 600;
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 767px) {
-            .wallet-modal-content {
-                margin: 0.5rem;
-                padding: 1.5rem;
+        /* Mobile Navigation */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1001;
+        }
+
+        .hamburger {
+            width: 24px;
+            height: 20px;
+            position: relative;
+            transform: rotate(0deg);
+            transition: 0.3s ease-in-out;
+        }
+
+        .hamburger span {
+            display: block;
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            background: #8b5cf6;
+            border-radius: 3px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: 0.25s ease-in-out;
+        }
+
+        .hamburger span:nth-child(1) {
+            top: 0px;
+        }
+
+        .hamburger span:nth-child(2) {
+            top: 8px;
+        }
+
+        .hamburger span:nth-child(3) {
+            top: 16px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            top: 8px;
+            transform: rotate(135deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            top: 8px;
+            transform: rotate(-135deg);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
             }
 
-            .modal-title {
-                font-size: 1.4rem;
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100vh;
+                background: rgba(10, 10, 10, 0.95);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                transition: left 0.3s ease;
+                z-index: 1000;
             }
 
-            .avatar-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 0.5rem;
+            .nav-links.active {
+                left: 0;
             }
 
-            .avatar-option {
+            .nav-links a {
                 font-size: 1.2rem;
+                padding: 1rem 2rem;
             }
 
-            .champion-welcome {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .champion-info-large {
-                text-align: center;
-            }
-
-            .quick-actions {
-                flex-direction: column;
-            }
-
-            .step-indicators {
-                gap: 0.5rem;
-            }
-
-            .step-indicator {
-                width: 32px;
-                height: 32px;
-                font-size: 0.8rem;
+            .nav-champion-info {
+                margin-left: 0;
+                margin-top: 1rem;
             }
         }
 
@@ -1062,7 +1112,7 @@
                         <div class="wallet-info">
                             <div class="wallet-name">Phantom</div>
                             <div class="wallet-description">Most popular Solana wallet</div>
-                            <div class="wallet-status">✓ Detected</div>
+                            <div class="wallet-status" id="phantomStatus">✓ Checking...</div>
                         </div>
                     </div>
 
@@ -1071,7 +1121,7 @@
                         <div class="wallet-info">
                             <div class="wallet-name">Solflare</div>
                             <div class="wallet-description">Secure and feature-rich</div>
-                            <div class="wallet-status">✓ Available</div>
+                            <div class="wallet-status" id="solflareStatus">✓ Checking...</div>
                         </div>
                     </div>
 
@@ -1080,7 +1130,7 @@
                         <div class="wallet-info">
                             <div class="wallet-name">Backpack</div>
                             <div class="wallet-description">Modern crypto wallet</div>
-                            <div class="wallet-status">✓ Available</div>
+                            <div class="wallet-status" id="backpackStatus">✓ Checking...</div>
                         </div>
                     </div>
 
@@ -1089,7 +1139,7 @@
                         <div class="wallet-info">
                             <div class="wallet-name">Torus</div>
                             <div class="wallet-description">Social login wallet</div>
-                            <div class="wallet-status">✓ Available</div>
+                            <div class="wallet-status" id="torusStatus">📱 Mobile Support</div>
                         </div>
                     </div>
                 </div>
@@ -1253,6 +1303,47 @@
             document.getElementById('walletModal').classList.add('active');
             document.body.style.overflow = 'hidden';
             resetModalToStep1();
+            
+            // Check wallet availability when modal opens
+            setTimeout(checkWalletAvailability, 100);
+        }
+
+        function checkWalletAvailability() {
+            // Check Phantom
+            if (window.solana && window.solana.isPhantom) {
+                document.getElementById('phantomStatus').textContent = '✓ Connected';
+                document.getElementById('phantomStatus').style.color = '#10b981';
+            } else if (isMobileDevice()) {
+                document.getElementById('phantomStatus').textContent = '📱 Open in Phantom';
+                document.getElementById('phantomStatus').style.color = '#8b5cf6';
+            } else {
+                document.getElementById('phantomStatus').textContent = '⚠️ Install Extension';
+                document.getElementById('phantomStatus').style.color = '#f59e0b';
+            }
+
+            // Check Solflare
+            if (window.solflare) {
+                document.getElementById('solflareStatus').textContent = '✓ Connected';
+                document.getElementById('solflareStatus').style.color = '#10b981';
+            } else if (isMobileDevice()) {
+                document.getElementById('solflareStatus').textContent = '📱 Open in Solflare';
+                document.getElementById('solflareStatus').style.color = '#8b5cf6';
+            } else {
+                document.getElementById('solflareStatus').textContent = '⚠️ Install Extension';
+                document.getElementById('solflareStatus').style.color = '#f59e0b';
+            }
+
+            // Check Backpack
+            if (window.backpack) {
+                document.getElementById('backpackStatus').textContent = '✓ Connected';
+                document.getElementById('backpackStatus').style.color = '#10b981';
+            } else if (isMobileDevice()) {
+                document.getElementById('backpackStatus').textContent = '📱 Open in Backpack';
+                document.getElementById('backpackStatus').style.color = '#8b5cf6';
+            } else {
+                document.getElementById('backpackStatus').textContent = '⚠️ Install Extension';
+                document.getElementById('backpackStatus').style.color = '#f59e0b';
+            }
         }
 
         function closeWalletModal() {
@@ -1297,7 +1388,13 @@
 
         async function connectToWallet(walletType) {
             return new Promise((resolve, reject) => {
-                // Check if wallet is available
+                // Mobile wallet connection logic
+                if (isMobileDevice()) {
+                    handleMobileWalletConnection(walletType, resolve, reject);
+                    return;
+                }
+
+                // Desktop - try real wallet connection
                 let wallet = null;
                 
                 switch(walletType) {
@@ -1356,6 +1453,160 @@
                         reject(error);
                     });
             });
+        }
+
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        function handleMobileWalletConnection(walletType, resolve, reject) {
+            // Check if we're in a wallet's in-app browser
+            if (window.solana && window.solana.isPhantom) {
+                // We're in Phantom's in-app browser
+                connectToPhantomMobile(resolve, reject);
+                return;
+            }
+
+            if (window.solflare) {
+                // We're in Solflare's in-app browser
+                connectToSolflareMobile(resolve, reject);
+                return;
+            }
+
+            // Not in wallet browser - need to redirect to wallet app
+            showMobileWalletInstructions(walletType, resolve, reject);
+        }
+
+        function connectToPhantomMobile(resolve, reject) {
+            window.solana.connect()
+                .then(() => {
+                    if (window.solana.publicKey) {
+                        championData.wallet = window.solana.publicKey.toString();
+                        walletConnection = window.solana;
+                        
+                        setTimeout(() => {
+                            goToStep(3);
+                            updateModalHeader('Create Your Champion', 'Customize your WalletWars identity');
+                            resolve();
+                        }, 1000);
+                    } else {
+                        reject(new Error('Failed to get wallet address'));
+                    }
+                })
+                .catch((error) => {
+                    showConnectionError('Failed to connect to Phantom wallet');
+                    reject(error);
+                });
+        }
+
+        function connectToSolflareMobile(resolve, reject) {
+            window.solflare.connect()
+                .then(() => {
+                    if (window.solflare.publicKey) {
+                        championData.wallet = window.solflare.publicKey.toString();
+                        walletConnection = window.solflare;
+                        
+                        setTimeout(() => {
+                            goToStep(3);
+                            updateModalHeader('Create Your Champion', 'Customize your WalletWars identity');
+                            resolve();
+                        }, 1000);
+                    } else {
+                        reject(new Error('Failed to get wallet address'));
+                    }
+                })
+                .catch((error) => {
+                    showConnectionError('Failed to connect to Solflare wallet');
+                    reject(error);
+                });
+        }
+
+        function showMobileWalletInstructions(walletType, resolve, reject) {
+            const content = document.getElementById('step2Content');
+            
+            const walletInfo = {
+                'phantom': {
+                    name: 'Phantom',
+                    deepLink: `https://phantom.app/ul/browse/${encodeURIComponent(window.location.href)}?ref=https://phantom.app`,
+                    appStore: 'https://apps.apple.com/app/phantom-solana-wallet/id1598432977',
+                    playStore: 'https://play.google.com/store/apps/details?id=app.phantom'
+                },
+                'solflare': {
+                    name: 'Solflare',
+                    deepLink: `https://solflare.com/access-wallet?url=${encodeURIComponent(window.location.href)}`,
+                    appStore: 'https://apps.apple.com/app/solflare/id1580902717',
+                    playStore: 'https://play.google.com/store/apps/details?id=com.solflare.mobile'
+                },
+                'backpack': {
+                    name: 'Backpack',
+                    deepLink: `https://backpack.app/browse/${encodeURIComponent(window.location.href)}`,
+                    appStore: 'https://apps.apple.com/app/backpack-crypto-wallet/id1615273120',
+                    playStore: 'https://play.google.com/store/apps/details?id=app.backpack.mobile'
+                }
+            };
+
+            const wallet = walletInfo[walletType];
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            content.innerHTML = `
+                <div style="text-align: center; padding: 1.5rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">📱</div>
+                    <div style="font-size: 1.2rem; color: #8b5cf6; margin-bottom: 1rem; font-weight: 600;">
+                        Connect ${wallet.name} Mobile
+                    </div>
+                    <div style="color: #d1d5db; margin-bottom: 2rem; line-height: 1.5;">
+                        To connect your ${wallet.name} wallet on mobile, you need to open this page in the ${wallet.name} app's browser.
+                    </div>
+                    
+                    <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <div style="color: #8b5cf6; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                            📋 Step-by-Step Instructions:
+                        </div>
+                        <div style="color: #d1d5db; font-size: 0.85rem; text-align: left; line-height: 1.4;">
+                            1. Tap "Open ${wallet.name}" below<br>
+                            2. This will switch to your ${wallet.name} app<br>
+                            3. In ${wallet.name}, tap "Browser" or "DApps"<br>
+                            4. Navigate back to WalletWars<br>
+                            5. Try connecting again
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+                        <a href="${wallet.deepLink}" class="btn-modal-primary" style="text-decoration: none; text-align: center;">
+                            📱 Open ${wallet.name}
+                        </a>
+                        
+                        ${!window.solana && !window.solflare ? `
+                        <div style="font-size: 0.8rem; color: #9ca3af; margin: 0.5rem 0;">
+                            Don't have ${wallet.name}? Download it:
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            ${isIOS ? `<a href="${wallet.appStore}" target="_blank" class="btn-modal-secondary" style="flex: 1; text-decoration: none; text-align: center; font-size: 0.8rem;">App Store</a>` : ''}
+                            ${isAndroid ? `<a href="${wallet.playStore}" target="_blank" class="btn-modal-secondary" style="flex: 1; text-decoration: none; text-align: center; font-size: 0.8rem;">Play Store</a>` : ''}
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn-modal-secondary" onclick="goToStep(1)" style="flex: 1;">
+                            Try Different Wallet
+                        </button>
+                        <button class="btn-modal-secondary" onclick="selectWallet('${walletType}')" style="flex: 1;">
+                            I'm in ${wallet.name} Browser
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateFakeWalletAddress() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789';
+            let result = '';
+            for (let i = 0; i < 44; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
         }
 
         function showWalletNotFound(walletType) {
@@ -1868,22 +2119,88 @@
             }
         }
 
-        // Navigation functions (demo)
-        function showTournaments() {
-            if (!isConnected) {
-                alert('🔗 Connect your wallet first to join tournaments!');
-                openWalletModal();
-                return;
+        // Mobile Navigation JavaScript
+        function createMobileNavigation() {
+            const navContainer = document.querySelector('.nav-container');
+            if (!navContainer) return;
+            
+            const mobileToggle = document.createElement('button');
+            mobileToggle.className = 'mobile-menu-toggle';
+            mobileToggle.setAttribute('aria-label', 'Toggle mobile menu');
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            
+            const hamburger = document.createElement('div');
+            hamburger.className = 'hamburger';
+            hamburger.innerHTML = '<span></span><span></span><span></span>';
+            
+            mobileToggle.appendChild(hamburger);
+            
+            const navLinks = document.querySelector('.nav-links');
+            if (navLinks) {
+                navContainer.insertBefore(mobileToggle, navLinks);
             }
-            alert('🏆 Tournaments Page\n\nThis would navigate to the tournaments page where you can join active competitions!');
         }
 
-        function showLeaderboards() {
-            alert('📊 Leaderboards Page\n\nThis would show the current rankings and champion statistics!');
+        function initializeMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            if (!mobileToggle || !navLinks || !hamburger) return;
+            
+            mobileToggle.addEventListener('click', function() {
+                const isOpen = navLinks.classList.contains('active');
+                if (isOpen) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            });
+            
+            const navLinksItems = navLinks.querySelectorAll('a');
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', function() {
+                    closeMobileMenu();
+                });
+            });
+            
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navLinks.contains(event.target) || 
+                                        mobileToggle.contains(event.target);
+                if (!isClickInsideNav && navLinks.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+            });
         }
 
-        function showHallOfFame() {
-            alert('👑 Hall of Fame Page\n\nThis would display legendary champions and epic achievements!');
+        function openMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.add('active');
+            hamburger.classList.add('active');
+            mobileToggle.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('active');
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        function handleWindowResize() {
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    closeMobileMenu();
+                }
+            });
         }
 
         // Close modal when clicking outside
