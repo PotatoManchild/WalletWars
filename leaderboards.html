@@ -1803,7 +1803,7 @@
                 else if (champion.bracket === 'legendary') bracketHtml += '👑 LEG';
                 bracketHtml += '</span>';
                 
-                html += `<tr class="leaderboard-row ${champion.highlighted ? 'highlighted' : ''}" onclick="openChampionCard(${champion.rank})">
+                html += `<tr class="leaderboard-row ${champion.highlighted ? 'highlighted' : ''}" data-champion-rank="${champion.rank}">
                     <td class="rank-cell ${rankClass}">${champion.rank}</td>
                     <td>
                         <div class="champion-cell">
@@ -1821,6 +1821,20 @@
             });
             
             tbody.innerHTML = html;
+            
+            // Re-bind click events after rendering
+            bindChampionClickEvents();
+        }
+
+        // Separate function to bind click events
+        function bindChampionClickEvents() {
+            const championRows = document.querySelectorAll('.leaderboard-row');
+            championRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    const rank = parseInt(this.getAttribute('data-champion-rank'));
+                    openChampionCard(rank);
+                });
+            });
         }
 
         function updateResultsCount() {
