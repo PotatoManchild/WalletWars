@@ -379,6 +379,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .legend-card::before {
@@ -484,6 +485,415 @@
             font-weight: 500;
             margin-right: 0.5rem;
             margin-bottom: 0.25rem;
+        }
+
+        /* Legend Detail Modal */
+        .legend-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .legend-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .legend-detail-card {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(30px);
+            border: 2px solid rgba(251, 191, 36, 0.4);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.4s ease;
+        }
+
+        .legend-modal.active .legend-detail-card {
+            transform: scale(1);
+        }
+
+        .legend-detail-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(251, 191, 36, 0.2);
+            position: relative;
+        }
+
+        .legend-close {
+            position: absolute;
+            top: -0.5rem;
+            right: -0.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .legend-close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.1);
+        }
+
+        .legend-large-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1rem;
+            border: 3px solid rgba(251, 191, 36, 0.5);
+            position: relative;
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.4);
+        }
+
+        .legend-rank-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: rgba(251, 191, 36, 0.9);
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .legend-detail-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 0.5rem;
+        }
+
+        .legend-detail-title {
+            color: #d1d5db;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .legend-detail-badges {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-detail-badge {
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .legend-winrate-visual {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(251, 191, 36, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .legend-winrate-title {
+            text-align: center;
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .legend-winrate-display {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 0.75rem;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .legend-winrate-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(31, 41, 55, 0.8);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .legend-winrate-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            border-radius: 6px;
+            transition: width 0.8s ease;
+        }
+
+        .legend-detail-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .legend-stat-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(251, 191, 36, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .legend-hof-achievements {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(251, 191, 36, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .legend-hof-title {
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-hof-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .legend-hof-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(251, 191, 36, 0.1);
+        }
+
+        .legend-hof-icon {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        .legend-hof-text {
+            flex: 1;
+            color: #d1d5db;
+            font-size: 0.85rem;
+        }
+
+        .legend-recent-moments {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(251, 191, 36, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .legend-recent-title {
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-moments-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .legend-moment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(251, 191, 36, 0.1);
+        }
+
+        .legend-moment-text {
+            color: #d1d5db;
+            font-size: 0.85rem;
+        }
+
+        .legend-moment-result {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #fbbf24;
+        }
+
+        .legend-legacy {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(251, 191, 36, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .legend-legacy-title {
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-legacy-text {
+            color: #d1d5db;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .legend-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .legend-btn-primary {
+            flex: 1;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border: none;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .legend-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
+        }
+
+        .legend-btn-secondary {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            color: #d1d5db;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .legend-btn-secondary:hover {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: #fbbf24;
+            color: #fbbf24;
+        }
+
+        /* Desktop Layout for Legend Modal */
+        @media (min-width: 768px) {
+            .legend-detail-card {
+                max-width: 800px;
+                padding: 2rem;
+            }
+
+            .legend-detail-stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.5rem;
+            }
+
+            .legend-large-avatar {
+                width: 120px;
+                height: 120px;
+                font-size: 3.5rem;
+            }
+
+            .legend-detail-name {
+                font-size: 2rem;
+            }
+
+            .legend-winrate-display {
+                font-size: 3rem;
+            }
+        }
+
+        /* Mobile Responsive for Legend Modal */
+        @media (max-width: 767px) {
+            .legend-detail-card {
+                margin: 0.5rem;
+                padding: 1.25rem;
+                max-height: 95vh;
+            }
+
+            .legend-detail-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            .legend-stat-card {
+                padding: 0.75rem;
+            }
+
+            .legend-winrate-display {
+                font-size: 2rem;
+            }
+
+            .legend-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
         }
 
         /* Records Styles */
@@ -753,7 +1163,535 @@
                         <div class="achievement-header">
                             <div class="achievement-icon">🩸</div>
                             <div class="achievement-info">
-                                <div class="achievement-name">First Blood</div>
+                                <div class="record-holder">Neon Hunter</div>
+                            </div>
+                            <div class="record-item">
+                                <div class="record-label">Most Brackets Conquered</div>
+                                <div class="record-value">All 4 Levels</div>
+                                <div class="record-holder">The Golden Phoenix</div>
+                            </div>
+                            <div class="record-item">
+                                <div class="record-label">First Tournament Winner</div>
+                                <div class="record-value">March 1, 2024</div>
+                                <div class="record-holder">The Golden Phoenix</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Epic Moments Section -->
+            <div id="moments-section" class="hall-section">
+                <div class="section-header text-center mb-2">
+                    <h2 class="section-title">Epic Moments</h2>
+                    <p class="section-subtitle">Legendary moments that defined WalletWars history</p>
+                </div>
+
+                <div class="moments-grid">
+                    <!-- Epic Moment 1 -->
+                    <div class="moment-card">
+                        <div class="moment-header">
+                            <div class="moment-info">
+                                <div class="moment-title">The Great Phoenix Rise</div>
+                                <div class="moment-date">March 8, 2024</div>
+                            </div>
+                            <div class="moment-icon">🔥</div>
+                        </div>
+                        <div class="moment-description">
+                            The Golden Phoenix achieved the impossible - winning the first-ever WalletWars tournament with a stunning 847% portfolio gain in just 6 hours. This legendary performance set the standard for all future champions and marked the birth of competitive wallet gaming on Solana.
+                        </div>
+                        <div class="moment-stats">
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">847%</div>
+                                <div class="moment-stat-label">Portfolio Gain</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">6 Hours</div>
+                                <div class="moment-stat-label">Duration</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">156</div>
+                                <div class="moment-stat-label">Participants</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">89.3 SOL</div>
+                                <div class="moment-stat-label">Prize Won</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Epic Moment 2 -->
+                    <div class="moment-card">
+                        <div class="moment-header">
+                            <div class="moment-info">
+                                <div class="moment-title">The Diamond Duel</div>
+                                <div class="moment-date">April 15, 2024</div>
+                            </div>
+                            <div class="moment-icon">⚔️</div>
+                        </div>
+                        <div class="moment-description">
+                            The most intense head-to-head battle in WalletWars history. Diamond Samurai and Lightning Bolt traded leads 47 times in a single tournament, with the final result decided by a 0.003% margin in the last 30 seconds. The entire Solana community watched in awe.
+                        </div>
+                        <div class="moment-stats">
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">47</div>
+                                <div class="moment-stat-label">Lead Changes</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">0.003%</div>
+                                <div class="moment-stat-label">Final Margin</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">30 Sec</div>
+                                <div class="moment-stat-label">Final Decision</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">2,347</div>
+                                <div class="moment-stat-label">Live Viewers</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Epic Moment 3 -->
+                    <div class="moment-card">
+                        <div class="moment-header">
+                            <div class="moment-info">
+                                <div class="moment-title">The Impossible Comeback</div>
+                                <div class="moment-date">May 3, 2024</div>
+                            </div>
+                            <div class="moment-icon">🚀</div>
+                        </div>
+                        <div class="moment-description">
+                            Quantum Leap was down 98.7% with just 2 hours remaining in the tournament. Through a series of perfectly-timed trades and an incredible market rally, they not only recovered but won with a 156% final gain. This moment redefined what's possible in competitive trading.
+                        </div>
+                        <div class="moment-stats">
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">-98.7%</div>
+                                <div class="moment-stat-label">Lowest Point</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">+156%</div>
+                                <div class="moment-stat-label">Final Result</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">2 Hours</div>
+                                <div class="moment-stat-label">Time Left</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">254.7%</div>
+                                <div class="moment-stat-label">Total Swing</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Epic Moment 4 -->
+                    <div class="moment-card">
+                        <div class="moment-header">
+                            <div class="moment-info">
+                                <div class="moment-title">The Million SOL Tournament</div>
+                                <div class="moment-date">May 20, 2024</div>
+                            </div>
+                            <div class="moment-icon">💎</div>
+                        </div>
+                        <div class="moment-description">
+                            WalletWars' largest tournament ever saw 10,000 participants compete for a 1,000 SOL prize pool. The Golden Phoenix defended their title against the strongest field in platform history, cementing their status as the undisputed champion of the Solana trading arena.
+                        </div>
+                        <div class="moment-stats">
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">10,000</div>
+                                <div class="moment-stat-label">Participants</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">1,000</div>
+                                <div class="moment-stat-label">SOL Prize Pool</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">7 Days</div>
+                                <div class="moment-stat-label">Duration</div>
+                            </div>
+                            <div class="moment-stat">
+                                <div class="moment-stat-value">847 SOL</div>
+                                <div class="moment-stat-label">Winner Prize</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legend Detail Modal -->
+    <div class="legend-modal" id="legendModal">
+        <div class="legend-detail-card">
+            <div class="legend-detail-header">
+                <button class="legend-close" onclick="closeLegendCard()">×</button>
+                
+                <div class="legend-large-avatar" id="legendAvatar">
+                    <div class="legend-rank-badge" id="legendRankBadge">#1</div>
+                </div>
+                
+                <div class="legend-detail-name" id="legendName">Legend Name</div>
+                <div class="legend-detail-title" id="legendTitle">Legend Title</div>
+                
+                <div class="legend-detail-badges" id="legendBadges">
+                    <!-- Badges will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Legend Stats Visual -->
+            <div class="legend-winrate-visual">
+                <div class="legend-winrate-title">🎯 Championship Winrate</div>
+                <div class="legend-winrate-display" id="legendWinrate">94.7%</div>
+                <div class="legend-winrate-bar">
+                    <div class="legend-winrate-fill" id="legendWinrateFill" style="width: 94.7%"></div>
+                </div>
+            </div>
+
+            <!-- Detailed Stats Grid -->
+            <div class="legend-detail-stats-grid">
+                <div class="legend-stat-card">
+                    <div class="legend-stat-value" id="legendDetailTournaments">47</div>
+                    <div class="legend-stat-label">Tournaments Won</div>
+                </div>
+                <div class="legend-stat-card">
+                    <div class="legend-stat-value" id="legendDetailEarnings">1,247</div>
+                    <div class="legend-stat-label">SOL Earned</div>
+                </div>
+                <div class="legend-stat-card">
+                    <div class="legend-stat-value" id="legendDetailWinStreak">23</div>
+                    <div class="legend-stat-label">Win Streak</div>
+                </div>
+                <div class="legend-stat-card">
+                    <div class="legend-stat-value" id="legendDetailAvgPerf">+347%</div>
+                    <div class="legend-stat-label">Avg Performance</div>
+                </div>
+            </div>
+
+            <!-- Hall of Fame Achievements -->
+            <div class="legend-hof-achievements">
+                <div class="legend-hof-title">🏆 Hall of Fame Status</div>
+                <div class="legend-hof-list" id="legendHofAchievements">
+                    <!-- HOF achievements will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Recent Legendary Moments -->
+            <div class="legend-recent-moments">
+                <div class="legend-recent-title">⚡ Recent Legendary Moments</div>
+                <div class="legend-moments-list" id="legendMoments">
+                    <!-- Recent moments will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Legacy Section -->
+            <div class="legend-legacy">
+                <div class="legend-legacy-title">📜 Champion Legacy</div>
+                <div class="legend-legacy-text" id="legendLegacy">
+                    <!-- Legacy description will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="legend-actions">
+                <button class="legend-btn-primary" onclick="challengeLegend()">⚔️ Challenge Legend</button>
+                <button class="legend-btn-secondary" onclick="viewLegendHistory()">📈 View Full History</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function connectWallet() {
+            alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!\n\nThis would integrate with Solana wallet adapters like Phantom, Solflare, etc.');
+        }
+
+        // Legend data for modals
+        var legendData = {
+            1: {
+                name: "The Golden Phoenix",
+                title: "Eternal Champion • First Legend",
+                avatar: "🔥",
+                rank: 1,
+                winrate: 94.7,
+                tournaments: 47,
+                earnings: 1247.83,
+                winStreak: 23,
+                avgPerformance: "+347%",
+                hofAchievements: [
+                    { icon: "👑", text: "First Tournament Winner - March 1, 2024" },
+                    { icon: "🔥", text: "Longest Win Streak - 23 Tournaments" },
+                    { icon: "💎", text: "Legendary Status Achieved - March 8, 2024" },
+                    { icon: "🏆", text: "Most Tournament Wins - 47 Victories" },
+                    { icon: "⚡", text: "Hall of Fame Inductee #001" }
+                ],
+                recentMoments: [
+                    { text: "The Great Phoenix Rise", result: "Epic Victory 847%" },
+                    { text: "Diamond Duel Champion", result: "Close Win 0.3%" },
+                    { text: "Million SOL Tournament", result: "Defended Title" },
+                    { text: "Perfect Week", result: "7/7 Wins" },
+                    { text: "Legendary Milestone", result: "1000 SOL Earned" }
+                ],
+                legacy: "The Golden Phoenix stands as WalletWars' founding legend - the first champion who defined what greatness looks like in competitive wallet gaming. With an unprecedented 94.7% winrate and 23-tournament win streak, they've transcended mere competition to become a symbol of excellence. Their legendary rise from the first tournament victory to becoming the platform's most decorated champion has inspired countless traders to push beyond their limits.",
+                badges: ["👑 First Legend", "🔥 Inferno Master", "💎 Diamond Soul", "🏆 Tournament God"]
+            },
+            2: {
+                name: "Diamond Samurai",
+                title: "Blade Master • Precision Expert",
+                avatar: "⚔️",
+                rank: 2,
+                winrate: 91.2,
+                tournaments: 34,
+                earnings: 983.45,
+                winStreak: 15,
+                avgPerformance: "+289%",
+                hofAchievements: [
+                    { icon: "⚔️", text: "Blade Master Achievement - April 1, 2024" },
+                    { icon: "💎", text: "Diamond Tier Reached - March 25, 2024" },
+                    { icon: "🎯", text: "Perfect Strategy Award - May 10, 2024" },
+                    { icon: "🏆", text: "Most Consistent Player - 0.8% Variance" },
+                    { icon: "⭐", text: "Hall of Fame Inductee #002" }
+                ],
+                recentMoments: [
+                    { text: "Diamond Duel vs Lightning", result: "Legendary Battle" },
+                    { text: "Precision Tournament", result: "Perfect Execution" },
+                    { text: "Samurai Week", result: "5/5 Wins" },
+                    { text: "Strategy Masterclass", result: "Record Performance" },
+                    { text: "Diamond League Champion", result: "Tier Mastery" }
+                ],
+                legacy: "Diamond Samurai embodies the art of precision in competitive trading. Known for surgical accuracy and unwavering discipline, they've carved their path to legend status through methodical excellence. Their rivalry with Lightning Bolt has produced some of the most thrilling moments in WalletWars history, including the legendary Diamond Duel that kept the entire Solana community on edge.",
+                badges: ["⚔️ Blade Master", "💎 Diamond Soul", "🎯 Precision Expert", "🌟 Rising Legend"]
+            },
+            3: {
+                name: "Lightning Bolt",
+                title: "Speed Demon • Lightning Fast",
+                avatar: "⚡",
+                rank: 3,
+                winrate: 88.9,
+                tournaments: 28,
+                earnings: 756.23,
+                winStreak: 12,
+                avgPerformance: "+234%",
+                hofAchievements: [
+                    { icon: "⚡", text: "Speed Demon Title - March 20, 2024" },
+                    { icon: "🌪️", text: "Storm Bringer Achievement - April 5, 2024" },
+                    { icon: "⭐", text: "Rising Star Status - March 15, 2024" },
+                    { icon: "🏃", text: "Fastest Victory Record - 2.3 Hours" },
+                    { icon: "🎯", text: "Hall of Fame Inductee #003" }
+                ],
+                recentMoments: [
+                    { text: "Lightning Speed Victory", result: "Record Time 2.3h" },
+                    { text: "Storm Tournament", result: "Dominant Win" },
+                    { text: "Speed Challenge", result: "New Record" },
+                    { text: "Quick Strike Week", result: "4/4 Wins" },
+                    { text: "Lightning League", result: "Champion Title" }
+                ],
+                legacy: "Lightning Bolt revolutionized competitive trading with unprecedented speed and agility. Their ability to capitalize on market movements faster than anyone else has earned them legendary status and the respect of every competitor. The epic Diamond Duel against Diamond Samurai showcased their incredible resilience and has become the stuff of WalletWars legend.",
+                badges: ["⚡ Lightning Speed", "🌪️ Storm Bringer", "⭐ Rising Star", "🏃 Speed Master"]
+            }
+        };
+
+        var currentLegend = null;
+
+        function openLegendCard(legendId) {
+            currentLegend = legendId;
+            var legend = legendData[legendId];
+            var modal = document.getElementById('legendModal');
+            
+            // Update header
+            const avatar = document.getElementById('legendAvatar');
+            const rankBadge = document.getElementById('legendRankBadge');
+            const legendName = document.getElementById('legendName');
+            const legendTitle = document.getElementById('legendTitle');
+            
+            if (avatar) avatar.textContent = legend.avatar;
+            if (rankBadge) rankBadge.textContent = `#${legend.rank}`;
+            if (legendName) legendName.textContent = legend.name;
+            if (legendTitle) legendTitle.textContent = legend.title;
+
+            // Populate badges
+            const badgesContainer = document.getElementById('legendBadges');
+            if (badgesContainer) {
+                badgesContainer.innerHTML = '';
+                legend.badges.forEach(badge => {
+                    const badgeEl = document.createElement('div');
+                    badgeEl.className = 'legend-detail-badge';
+                    badgeEl.textContent = badge;
+                    badgesContainer.appendChild(badgeEl);
+                });
+            }
+
+            // Populate winrate
+            const legendWinrate = document.getElementById('legendWinrate');
+            const legendWinrateFill = document.getElementById('legendWinrateFill');
+            if (legendWinrate) legendWinrate.textContent = `${legend.winrate}%`;
+            if (legendWinrateFill) legendWinrateFill.style.width = `${legend.winrate}%`;
+
+            // Populate detailed stats
+            const legendDetailTournaments = document.getElementById('legendDetailTournaments');
+            const legendDetailEarnings = document.getElementById('legendDetailEarnings');
+            const legendDetailWinStreak = document.getElementById('legendDetailWinStreak');
+            const legendDetailAvgPerf = document.getElementById('legendDetailAvgPerf');
+            
+            if (legendDetailTournaments) legendDetailTournaments.textContent = legend.tournaments;
+            if (legendDetailEarnings) legendDetailEarnings.textContent = legend.earnings.toLocaleString();
+            if (legendDetailWinStreak) legendDetailWinStreak.textContent = legend.winStreak;
+            if (legendDetailAvgPerf) legendDetailAvgPerf.textContent = legend.avgPerformance;
+
+            // Populate HOF achievements
+            const hofContainer = document.getElementById('legendHofAchievements');
+            if (hofContainer) {
+                hofContainer.innerHTML = '';
+                legend.hofAchievements.forEach(achievement => {
+                    const achievementEl = document.createElement('div');
+                    achievementEl.className = 'legend-hof-item';
+                    achievementEl.innerHTML = `
+                        <div class="legend-hof-icon">${achievement.icon}</div>
+                        <div class="legend-hof-text">${achievement.text}</div>
+                    `;
+                    hofContainer.appendChild(achievementEl);
+                });
+            }
+
+            // Populate recent moments
+            const momentsContainer = document.getElementById('legendMoments');
+            if (momentsContainer) {
+                momentsContainer.innerHTML = '';
+                legend.recentMoments.forEach(moment => {
+                    const momentEl = document.createElement('div');
+                    momentEl.className = 'legend-moment-item';
+                    momentEl.innerHTML = `
+                        <div class="legend-moment-text">${moment.text}</div>
+                        <div class="legend-moment-result">${moment.result}</div>
+                    `;
+                    momentsContainer.appendChild(momentEl);
+                });
+            }
+
+            // Populate legacy
+            const legendLegacy = document.getElementById('legendLegacy');
+            if (legendLegacy) legendLegacy.textContent = legend.legacy;
+
+            // Show modal
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeLegendCard() {
+            const modal = document.getElementById('legendModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            currentLegend = null;
+        }
+
+        function challengeLegend() {
+            if (currentLegend) {
+                const legend = legendData[currentLegend];
+                alert(`⚔️ Challenge ${legend.name}\n\nYou're about to challenge one of the greatest legends in WalletWars history!\n\n${legend.name} - ${legend.title}\nWinrate: ${legend.winrate}%\nWin Streak: ${legend.winStreak}\n\nThis epic battle would be the ultimate test of your skills!\n\nComing soon...`);
+                closeLegendCard();
+            }
+        }
+
+        function viewLegendHistory() {
+            if (currentLegend) {
+                const legend = legendData[currentLegend];
+                alert(`📈 ${legend.name} - Complete History\n\nThis would show:\n• Complete tournament history\n• Detailed performance analytics\n• Win/loss timeline\n• Greatest moments compilation\n• Head-to-head records vs other legends\n• Career progression charts\n\nComing soon...`);
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('legendModal');
+            if (event.target === modal) {
+                closeLegendCard();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeLegendCard();
+            }
+        });
+
+        // Section Navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            var sections = document.querySelectorAll('.hall-section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+            
+            // Show selected section
+            var targetSection = document.getElementById(sectionName + '-section');
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            
+            // Update navigation buttons
+            var navButtons = document.querySelectorAll('.section-nav-btn');
+            for (var i = 0; i < navButtons.length; i++) {
+                navButtons[i].classList.remove('active');
+            }
+            
+            // Activate clicked button
+            for (var i = 0; i < navButtons.length; i++) {
+                var btn = navButtons[i];
+                if ((sectionName === 'achievements' && btn.textContent.includes('Achievements')) ||
+                    (sectionName === 'legends' && btn.textContent.includes('Legendary')) ||
+                    (sectionName === 'records' && btn.textContent.includes('Record')) ||
+                    (sectionName === 'moments' && btn.textContent.includes('Epic'))) {
+                    btn.classList.add('active');
+                    break;
+                }
+            }
+        }
+
+        // Achievement Filtering (for achievements section)
+        function filterAchievements(filter) {
+            // Update filter buttons
+            var filterButtons = document.querySelectorAll('.achievement-filter-btn');
+            for (var i = 0; i < filterButtons.length; i++) {
+                filterButtons[i].classList.remove('active');
+            }
+            
+            // Activate clicked button
+            for (var i = 0; i < filterButtons.length; i++) {
+                var btn = filterButtons[i];
+                if ((filter === 'all' && btn.textContent === 'All') ||
+                    (filter === 'unlocked' && btn.textContent.includes('Unlocked')) ||
+                    (filter === 'locked' && btn.textContent.includes('Locked'))) {
+                    btn.classList.add('active');
+                    break;
+                }
+            }
+            
+            // Show/hide achievement cards
+            var cards = document.querySelectorAll('.achievement-card');
+            for (var i = 0; i < cards.length; i++) {
+                var card = cards[i];
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                } else if (filter === 'unlocked') {
+                    if (card.classList.contains('show-unlocked')) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                } else if (filter === 'locked') {
+                    if (card.classList.contains('show-locked')) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html> class="achievement-name">First Blood</div>
                                 <div class="achievement-rarity rarity-common">common</div>
                             </div>
                         </div>
@@ -978,7 +1916,7 @@
 
                 <div class="legends-grid">
                     <!-- Legend 1 -->
-                    <div class="legend-card">
+                    <div class="legend-card" onclick="openLegendCard(1)">
                         <div class="legend-header">
                             <div class="legend-avatar">🔥</div>
                             <div class="legend-info">
@@ -1016,7 +1954,7 @@
                     </div>
 
                     <!-- Legend 2 -->
-                    <div class="legend-card">
+                    <div class="legend-card" onclick="openLegendCard(2)">
                         <div class="legend-header">
                             <div class="legend-avatar">⚔️</div>
                             <div class="legend-info">
@@ -1054,7 +1992,7 @@
                     </div>
 
                     <!-- Legend 3 -->
-                    <div class="legend-card">
+                    <div class="legend-card" onclick="openLegendCard(3)">
                         <div class="legend-header">
                             <div class="legend-avatar">⚡</div>
                             <div class="legend-info">
@@ -1194,332 +2132,4 @@
                             <div class="record-item">
                                 <div class="record-label">Longest Active Streak</div>
                                 <div class="record-value">89 Days</div>
-                                <div class="record-holder">Neon Hunter</div>
-                            </div>
-                            <div class="record-item">
-                                <div class="record-label">Most Brackets Conquered</div>
-                                <div class="record-value">All 4 Levels</div>
-                                <div class="record-holder">The Golden Phoenix</div>
-                            </div>
-                            <div class="record-item">
-                                <div class="record-label">First Tournament Winner</div>
-                                <div class="record-value">March 1, 2024</div>
-                                <div class="record-holder">The Golden Phoenix</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Epic Moments Section -->
-            <div id="moments-section" class="hall-section">
-                <div class="section-header text-center mb-2">
-                    <h2 class="section-title">Epic Moments</h2>
-                    <p class="section-subtitle">Legendary moments that defined WalletWars history</p>
-                </div>
-
-                <div class="moments-grid">
-                    <!-- Epic Moment 1 -->
-                    <div class="moment-card">
-                        <div class="moment-header">
-                            <div class="moment-info">
-                                <div class="moment-title">The Great Phoenix Rise</div>
-                                <div class="moment-date">March 8, 2024</div>
-                            </div>
-                            <div class="moment-icon">🔥</div>
-                        </div>
-                        <div class="moment-description">
-                            The Golden Phoenix achieved the impossible - winning the first-ever WalletWars tournament with a stunning 847% portfolio gain in just 6 hours. This legendary performance set the standard for all future champions and marked the birth of competitive wallet gaming on Solana.
-                        </div>
-                        <div class="moment-stats">
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">847%</div>
-                                <div class="moment-stat-label">Portfolio Gain</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">6 Hours</div>
-                                <div class="moment-stat-label">Duration</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">156</div>
-                                <div class="moment-stat-label">Participants</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">89.3 SOL</div>
-                                <div class="moment-stat-label">Prize Won</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Epic Moment 2 -->
-                    <div class="moment-card">
-                        <div class="moment-header">
-                            <div class="moment-info">
-                                <div class="moment-title">The Diamond Duel</div>
-                                <div class="moment-date">April 15, 2024</div>
-                            </div>
-                            <div class="moment-icon">⚔️</div>
-                        </div>
-                        <div class="moment-description">
-                            The most intense head-to-head battle in WalletWars history. Diamond Samurai and Lightning Bolt traded leads 47 times in a single tournament, with the final result decided by a 0.003% margin in the last 30 seconds. The entire Solana community watched in awe.
-                        </div>
-                        <div class="moment-stats">
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">47</div>
-                                <div class="moment-stat-label">Lead Changes</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">0.003%</div>
-                                <div class="moment-stat-label">Final Margin</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">30 Sec</div>
-                                <div class="moment-stat-label">Final Decision</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">2,347</div>
-                                <div class="moment-stat-label">Live Viewers</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Epic Moment 3 -->
-                    <div class="moment-card">
-                        <div class="moment-header">
-                            <div class="moment-info">
-                                <div class="moment-title">The Impossible Comeback</div>
-                                <div class="moment-date">May 3, 2024</div>
-                            </div>
-                            <div class="moment-icon">🚀</div>
-                        </div>
-                        <div class="moment-description">
-                            Quantum Leap was down 98.7% with just 2 hours remaining in the tournament. Through a series of perfectly-timed trades and an incredible market rally, they not only recovered but won with a 156% final gain. This moment redefined what's possible in competitive trading.
-                        </div>
-                        <div class="moment-stats">
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">-98.7%</div>
-                                <div class="moment-stat-label">Lowest Point</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">+156%</div>
-                                <div class="moment-stat-label">Final Result</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">2 Hours</div>
-                                <div class="moment-stat-label">Time Left</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">254.7%</div>
-                                <div class="moment-stat-label">Total Swing</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Epic Moment 4 -->
-                    <div class="moment-card">
-                        <div class="moment-header">
-                            <div class="moment-info">
-                                <div class="moment-title">The Million SOL Tournament</div>
-                                <div class="moment-date">May 20, 2024</div>
-                            </div>
-                            <div class="moment-icon">💎</div>
-                        </div>
-                        <div class="moment-description">
-                            WalletWars' largest tournament ever saw 10,000 participants compete for a 1,000 SOL prize pool. The Golden Phoenix defended their title against the strongest field in platform history, cementing their status as the undisputed champion of the Solana trading arena.
-                        </div>
-                        <div class="moment-stats">
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">10,000</div>
-                                <div class="moment-stat-label">Participants</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">1,000</div>
-                                <div class="moment-stat-label">SOL Prize Pool</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">7 Days</div>
-                                <div class="moment-stat-label">Duration</div>
-                            </div>
-                            <div class="moment-stat">
-                                <div class="moment-stat-value">847 SOL</div>
-                                <div class="moment-stat-label">Winner Prize</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        function connectWallet() {
-            alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!\n\nThis would integrate with Solana wallet adapters like Phantom, Solflare, etc.');
-        }
-
-        // Section Navigation
-        function showSection(sectionName) {
-            // Hide all sections
-            var sections = document.querySelectorAll('.hall-section');
-            for (var i = 0; i < sections.length; i++) {
-                sections[i].classList.remove('active');
-            }
-            
-            // Show selected section
-            var targetSection = document.getElementById(sectionName + '-section');
-            if (targetSection) {
-                targetSection.classList.add('active');
-            }
-            
-            // Update navigation buttons
-            var navButtons = document.querySelectorAll('.section-nav-btn');
-            for (var i = 0; i < navButtons.length; i++) {
-                navButtons[i].classList.remove('active');
-            }
-            
-            // Activate clicked button
-            for (var i = 0; i < navButtons.length; i++) {
-                var btn = navButtons[i];
-                if ((sectionName === 'achievements' && btn.textContent.includes('Achievements')) ||
-                    (sectionName === 'legends' && btn.textContent.includes('Legendary')) ||
-                    (sectionName === 'records' && btn.textContent.includes('Record')) ||
-                    (sectionName === 'moments' && btn.textContent.includes('Epic'))) {
-                    btn.classList.add('active');
-                    break;
-                }
-            }
-        }
-
-        // Achievement Filtering (for achievements section)
-        function filterAchievements(filter) {
-            // Update filter buttons
-            var filterButtons = document.querySelectorAll('.achievement-filter-btn');
-            for (var i = 0; i < filterButtons.length; i++) {
-                filterButtons[i].classList.remove('active');
-            }
-            
-            // Activate clicked button
-            for (var i = 0; i < filterButtons.length; i++) {
-                var btn = filterButtons[i];
-                if ((filter === 'all' && btn.textContent === 'All') ||
-                    (filter === 'unlocked' && btn.textContent.includes('Unlocked')) ||
-                    (filter === 'locked' && btn.textContent.includes('Locked'))) {
-                    btn.classList.add('active');
-                    break;
-                }
-            }
-            
-            // Show/hide achievement cards
-            var cards = document.querySelectorAll('.achievement-card');
-            for (var i = 0; i < cards.length; i++) {
-                var card = cards[i];
-                if (filter === 'all') {
-                    card.style.display = 'block';
-                } else if (filter === 'unlocked') {
-                    if (card.classList.contains('show-unlocked')) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                } else if (filter === 'locked') {
-                    if (card.classList.contains('show-locked')) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                }
-            }
-        }
-    </script>
-    <script>
-// Mobile Navigation JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    createMobileNavigation();
-    initializeMobileMenu();
-    handleWindowResize();
-});
-
-function createMobileNavigation() {
-    const navContainer = document.querySelector('.nav-container');
-    if (!navContainer) return;
-    
-    const mobileToggle = document.createElement('button');
-    mobileToggle.className = 'mobile-menu-toggle';
-    mobileToggle.setAttribute('aria-label', 'Toggle mobile menu');
-    mobileToggle.setAttribute('aria-expanded', 'false');
-    
-    const hamburger = document.createElement('div');
-    hamburger.className = 'hamburger';
-    hamburger.innerHTML = '<span></span><span></span><span></span>';
-    
-    mobileToggle.appendChild(hamburger);
-    
-    const navLinks = document.querySelector('.nav-links');
-    if (navLinks) {
-        navContainer.insertBefore(mobileToggle, navLinks);
-    }
-}
-
-function initializeMobileMenu() {
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    const hamburger = document.querySelector('.hamburger');
-    
-    if (!mobileToggle || !navLinks || !hamburger) return;
-    
-    mobileToggle.addEventListener('click', function() {
-        const isOpen = navLinks.classList.contains('active');
-        if (isOpen) {
-            closeMobileMenu();
-        } else {
-            openMobileMenu();
-        }
-    });
-    
-    const navLinksItems = navLinks.querySelectorAll('a');
-    navLinksItems.forEach(link => {
-        link.addEventListener('click', function() {
-            closeMobileMenu();
-        });
-    });
-    
-    document.addEventListener('click', function(event) {
-        const isClickInsideNav = navLinks.contains(event.target) || 
-                                mobileToggle.contains(event.target);
-        if (!isClickInsideNav && navLinks.classList.contains('active')) {
-            closeMobileMenu();
-        }
-    });
-}
-
-function openMobileMenu() {
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    const hamburger = document.querySelector('.hamburger');
-    
-    navLinks.classList.add('active');
-    hamburger.classList.add('active');
-    mobileToggle.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeMobileMenu() {
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    const hamburger = document.querySelector('.hamburger');
-    
-    navLinks.classList.remove('active');
-    hamburger.classList.remove('active');
-    mobileToggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-}
-
-function handleWindowResize() {
-    window.addEventListener('resize', function() {
-        if (window.innerWidth >= 768) {
-            closeMobileMenu();
-        }
-    });
-}
-</script>
-</body>
-</html>
+                                <div
