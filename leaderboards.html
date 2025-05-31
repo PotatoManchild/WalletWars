@@ -20,8 +20,8 @@
             background-clip: text;
         }
 
-        /* Search Section */
-        .search-section {
+        /* Enhanced Search & Filter Section */
+        .search-and-filters {
             background: rgba(31, 41, 55, 0.3);
             border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 1rem;
@@ -29,10 +29,12 @@
             margin-bottom: 2rem;
         }
 
+        /* Search Bar */
         .search-container {
             display: flex;
             gap: 1rem;
             align-items: center;
+            margin-bottom: 1.5rem;
         }
 
         .search-input-wrapper {
@@ -56,6 +58,7 @@
             outline: none;
             border-color: #8b5cf6;
             background: rgba(31, 41, 55, 0.8);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
         }
 
         .search-input::placeholder {
@@ -81,33 +84,192 @@
             background: rgba(139, 92, 246, 0.1);
         }
 
-        /* Category Tabs */
-        .category-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            background: rgba(31, 41, 55, 0.3);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #d1d5db;
-            padding: 0.75rem 1.5rem;
+        .clear-search {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 0.75rem 1rem;
             border-radius: 0.75rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 500;
-            white-space: nowrap;
             font-size: 0.9rem;
+            font-weight: 500;
         }
 
-        .tab-btn:hover,
-        .tab-btn.active {
+        .clear-search:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Mobile Filters Toggle */
+        .filters-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .filters-toggle-text {
+            font-weight: 600;
+            color: #8b5cf6;
+            font-size: 1rem;
+        }
+
+        .filters-toggle-icon {
+            color: #8b5cf6;
+            font-size: 1.3rem;
+            transition: transform 0.3s ease;
+        }
+
+        .filters-toggle.active .filters-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .filters-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .filters-content.active {
+            max-height: 500px;
+        }
+
+        /* Filters Grid */
+        .filters-grid {
+            display: grid;
+            gap: 1.5rem;
+            padding-top: 1rem;
+        }
+
+        .filter-group {
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #8b5cf6;
+            margin-bottom: 0.75rem;
+            display: block;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
             background: rgba(139, 92, 246, 0.2);
             border-color: #8b5cf6;
             color: #8b5cf6;
-            transform: translateY(-2px);
+            transform: translateY(-1px);
+        }
+
+        /* Sort Controls */
+        .sort-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .sort-select {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        .sort-direction {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #8b5cf6;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .sort-direction:hover {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        /* Results Info */
+        .results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            border-radius: 0.75rem;
+        }
+
+        .results-count {
+            color: #8b5cf6;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .view-btn {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #d1d5db;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .view-btn.active,
+        .view-btn:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            color: #8b5cf6;
         }
 
         /* Leaderboard Table */
@@ -137,11 +299,38 @@
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .table-header th:hover {
+            background: rgba(139, 92, 246, 0.15);
         }
 
         .table-header th:first-child {
             text-align: center;
             width: 60px;
+        }
+
+        .table-header th.sortable::after {
+            content: '↕️';
+            position: absolute;
+            right: 0.5rem;
+            opacity: 0.5;
+            font-size: 0.8rem;
+        }
+
+        .table-header th.sort-asc::after {
+            content: '↑';
+            opacity: 1;
+            color: #8b5cf6;
+        }
+
+        .table-header th.sort-desc::after {
+            content: '↓';
+            opacity: 1;
+            color: #8b5cf6;
         }
 
         .table-body {
@@ -155,6 +344,11 @@
 
         .leaderboard-row:hover {
             background: rgba(139, 92, 246, 0.05);
+        }
+
+        .leaderboard-row.highlighted {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.3);
         }
 
         .leaderboard-row td {
@@ -221,9 +415,18 @@
         }
 
         /* Rank Styling */
-        .rank-1 { color: #fbbf24; }
-        .rank-2 { color: #c0c0c0; }
-        .rank-3 { color: #cd7f32; }
+        .rank-1 { 
+            color: #fbbf24; 
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+        .rank-2 { 
+            color: #c0c0c0; 
+            text-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+        }
+        .rank-3 { 
+            color: #cd7f32; 
+            text-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
+        }
 
         /* Performance Badges */
         .performance-badge {
@@ -300,8 +503,95 @@
             opacity: 0.5;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #d1d5db;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Desktop Layout */
+        @media (min-width: 768px) {
+            .filters-toggle {
+                display: none;
+            }
+
+            .filters-content {
+                max-height: none;
+                overflow: visible;
+            }
+
+            .filters-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                padding-top: 0;
+            }
+
+            .search-container {
+                flex-direction: row;
+            }
+
+            .search-input-wrapper {
+                min-width: 400px;
+            }
+
+            .earnings-cell {
+                display: table-cell;
+            }
+
+            .champion-avatar {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 767px) {
+            .search-and-filters {
+                padding: 1rem;
+            }
+
+            .search-container {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .search-input-wrapper {
+                min-width: auto;
+            }
+
+            .results-info {
+                flex-direction: column;
+                gap: 0.75rem;
+                text-align: center;
+            }
+
             .leaderboard-table {
                 font-size: 0.9rem;
             }
@@ -319,6 +609,29 @@
                 width: 32px;
                 height: 32px;
                 font-size: 0.9rem;
+            }
+
+            .champion-info {
+                min-width: 0;
+            }
+
+            .champion-name {
+                font-size: 0.9rem;
+            }
+
+            .champion-address {
+                font-size: 0.75rem;
+            }
+
+            .pagination {
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
+
+            .page-btn {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.8rem;
+                min-width: 35px;
             }
         }
     </style>
@@ -353,28 +666,101 @@
 
         <!-- Page Content -->
         <div class="page-content">
-            <!-- Search Section -->
-            <div class="search-section">
+            <!-- Enhanced Search & Filters Section -->
+            <div class="search-and-filters">
+                <!-- Search Bar -->
                 <div class="search-container">
                     <div class="search-input-wrapper">
                         <input 
                             type="text" 
                             id="championSearch" 
                             class="search-input" 
-                            placeholder="Search by champion name or wallet address..." 
-                            oninput="searchChampions()"
+                            placeholder="Search by champion name, wallet address, or rank..." 
+                            oninput="performSearch()"
                         >
-                        <button class="search-btn" onclick="searchChampions()">🔍</button>
+                        <button class="search-btn" onclick="performSearch()">🔍</button>
+                    </div>
+                    <button class="clear-search" onclick="clearSearch()">Clear All</button>
+                </div>
+
+                <!-- Mobile Filters Toggle -->
+                <div class="filters-toggle" onclick="toggleFilters()">
+                    <span class="filters-toggle-text">🎯 Advanced Filters</span>
+                    <span class="filters-toggle-icon">▼</span>
+                </div>
+
+                <!-- Filters Content -->
+                <div class="filters-content" id="filtersContent">
+                    <div class="filters-grid">
+                        <!-- Ranking Range Filter -->
+                        <div class="filter-group">
+                            <label class="filter-label">Ranking Range</label>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" onclick="filterByRank('all')">All Ranks</button>
+                                <button class="filter-btn" onclick="filterByRank('top10')">Top 10</button>
+                                <button class="filter-btn" onclick="filterByRank('top50')">Top 50</button>
+                                <button class="filter-btn" onclick="filterByRank('top100')">Top 100</button>
+                            </div>
+                        </div>
+
+                        <!-- Winrate Filter -->
+                        <div class="filter-group">
+                            <label class="filter-label">Winrate</label>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" onclick="filterByWinrate('all')">All</button>
+                                <button class="filter-btn" onclick="filterByWinrate('high')">90%+</button>
+                                <button class="filter-btn" onclick="filterByWinrate('good')">75%+</button>
+                                <button class="filter-btn" onclick="filterByWinrate('average')">50%+</button>
+                            </div>
+                        </div>
+
+                        <!-- Activity Level Filter -->
+                        <div class="filter-group">
+                            <label class="filter-label">Activity Level</label>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" onclick="filterByActivity('all')">All</button>
+                                <button class="filter-btn" onclick="filterByActivity('very-active')">50+ Tournaments</button>
+                                <button class="filter-btn" onclick="filterByActivity('active')">20+ Tournaments</button>
+                                <button class="filter-btn" onclick="filterByActivity('casual')">< 20 Tournaments</button>
+                            </div>
+                        </div>
+
+                        <!-- Performance Badges Filter -->
+                        <div class="filter-group">
+                            <label class="filter-label">Performance</label>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" onclick="filterByBadge('all')">All</button>
+                                <button class="filter-btn" onclick="filterByBadge('legend')">Legends</button>
+                                <button class="filter-btn" onclick="filterByBadge('hot-streak')">Hot Streak</button>
+                                <button class="filter-btn" onclick="filterByBadge('rising-star')">Rising Stars</button>
+                            </div>
+                        </div>
+
+                        <!-- Sort Controls -->
+                        <div class="filter-group">
+                            <label class="filter-label">Sort By</label>
+                            <div class="sort-controls">
+                                <select class="sort-select" id="sortBy" onchange="applySorting()">
+                                    <option value="rank">Rank</option>
+                                    <option value="winrate">Winrate</option>
+                                    <option value="tournaments">Tournaments</option>
+                                    <option value="earnings">Earnings</option>
+                                    <option value="name">Name</option>
+                                </select>
+                                <button class="sort-direction" id="sortDirection" onclick="toggleSortDirection()">↑</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Category Tabs -->
-            <div class="category-tabs">
-                <button class="tab-btn active" onclick="switchCategory('global')">🌍 Global Rankings</button>
-                <button class="tab-btn" onclick="switchCategory('weekly')">📅 Weekly</button>
-                <button class="tab-btn" onclick="switchCategory('monthly')">📊 Monthly</button>
-                <button class="tab-btn" onclick="switchCategory('brackets')">🎯 By Brackets</button>
+            <!-- Results Info -->
+            <div class="results-info">
+                <div class="results-count" id="resultsCount">Showing 8 of 8 champions</div>
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="setView('table')">📊</button>
+                    <button class="view-btn" onclick="setView('cards')">🃏</button>
+                </div>
             </div>
 
             <!-- Leaderboard Table -->
@@ -382,11 +768,11 @@
                 <table class="leaderboard-table">
                     <thead class="table-header">
                         <tr>
-                            <th>Rank</th>
-                            <th>Champion</th>
-                            <th>Winrate</th>
-                            <th>Tournaments</th>
-                            <th class="earnings-cell">Earnings</th>
+                            <th onclick="sortTable('rank')" class="sortable">Rank</th>
+                            <th onclick="sortTable('name')" class="sortable">Champion</th>
+                            <th onclick="sortTable('winrate')" class="sortable">Winrate</th>
+                            <th onclick="sortTable('tournaments')" class="sortable">Tournaments</th>
+                            <th onclick="sortTable('earnings')" class="sortable earnings-cell">Earnings</th>
                         </tr>
                     </thead>
                     <tbody class="table-body" id="leaderboardBody">
@@ -397,15 +783,24 @@
                 <div class="no-results" id="noResults" style="display: none;">
                     <div class="no-results-icon">🔍</div>
                     <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">No champions found</div>
-                    <div style="font-size: 0.9rem;">Try adjusting your search terms</div>
+                    <div style="font-size: 0.9rem;">Try adjusting your search terms or filters</div>
                 </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <!-- Pagination buttons will be populated by JavaScript -->
             </div>
         </div>
     </div>
     
     <script>
-        // Champion data
-        var champions = [
+        function connectWallet() {
+            alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!\n\nThis would integrate with Solana wallet adapters like Phantom, Solflare, etc.');
+        }
+
+        // Enhanced Champion data with more detailed information
+        var allChampions = [
             {
                 rank: 1,
                 name: "The Golden Phoenix",
@@ -415,7 +810,8 @@
                 tournaments: 47,
                 earnings: 1247.83,
                 bracket: "legendary",
-                badges: ["legend"]
+                badges: ["legend"],
+                highlighted: false
             },
             {
                 rank: 2,
@@ -426,7 +822,8 @@
                 tournaments: 34,
                 earnings: 983.45,
                 bracket: "advanced",
-                badges: ["hot-streak"]
+                badges: ["hot-streak"],
+                highlighted: false
             },
             {
                 rank: 3,
@@ -437,7 +834,8 @@
                 tournaments: 28,
                 earnings: 756.23,
                 bracket: "advanced",
-                badges: ["rising-star"]
+                badges: ["rising-star"],
+                highlighted: false
             },
             {
                 rank: 4,
@@ -448,7 +846,8 @@
                 tournaments: 52,
                 earnings: 1156.78,
                 bracket: "advanced",
-                badges: []
+                badges: [],
+                highlighted: false
             },
             {
                 rank: 5,
@@ -459,7 +858,8 @@
                 tournaments: 31,
                 earnings: 634.92,
                 bracket: "intermediate",
-                badges: ["rising-star"]
+                badges: ["rising-star"],
+                highlighted: false
             },
             {
                 rank: 6,
@@ -470,7 +870,8 @@
                 tournaments: 25,
                 earnings: 445.67,
                 bracket: "intermediate",
-                badges: []
+                badges: [],
+                highlighted: false
             },
             {
                 rank: 7,
@@ -481,7 +882,8 @@
                 tournaments: 29,
                 earnings: 523.89,
                 bracket: "intermediate",
-                badges: ["hot-streak"]
+                badges: ["hot-streak"],
+                highlighted: false
             },
             {
                 rank: 8,
@@ -492,50 +894,213 @@
                 tournaments: 22,
                 earnings: 367.45,
                 bracket: "beginner",
-                badges: []
+                badges: [],
+                highlighted: false
             }
         ];
 
-        var currentCategory = 'global';
-        var filteredChampions = champions;
+        var filteredChampions = [...allChampions];
+        var currentSortField = 'rank';
+        var currentSortDirection = 'asc';
+        var currentPage = 1;
+        var itemsPerPage = 8;
 
-        function connectWallet() {
-            alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!\n\nThis would integrate with Solana wallet adapters like Phantom, Solflare, etc.');
+        // Filter states
+        var filters = {
+            search: '',
+            rank: 'all',
+            winrate: 'all',
+            activity: 'all',
+            badge: 'all'
+        };
+
+        // Mobile Filters Toggle
+        function toggleFilters() {
+            const filtersContent = document.getElementById('filtersContent');
+            const filtersToggle = document.querySelector('.filters-toggle');
+            
+            filtersContent.classList.toggle('active');
+            filtersToggle.classList.toggle('active');
         }
 
-        function switchCategory(category) {
-            currentCategory = category;
-            
-            // Update tab buttons
-            var tabs = document.querySelectorAll('.tab-btn');
-            for (var i = 0; i < tabs.length; i++) {
-                tabs[i].classList.remove('active');
-                if ((category === 'global' && tabs[i].textContent.includes('Global')) ||
-                    (category === 'weekly' && tabs[i].textContent.includes('Weekly')) ||
-                    (category === 'monthly' && tabs[i].textContent.includes('Monthly')) ||
-                    (category === 'brackets' && tabs[i].textContent.includes('Brackets'))) {
-                    tabs[i].classList.add('active');
+        // Search functionality
+        function performSearch() {
+            filters.search = document.getElementById('championSearch').value.toLowerCase().trim();
+            applyFilters();
+        }
+
+        function clearSearch() {
+            document.getElementById('championSearch').value = '';
+            resetFilters();
+        }
+
+        // Filter functions
+        function filterByRank(rank) {
+            filters.rank = rank;
+            updateFilterButtons('.filter-group:nth-child(1) .filter-btn', rank);
+            applyFilters();
+        }
+
+        function filterByWinrate(winrate) {
+            filters.winrate = winrate;
+            updateFilterButtons('.filter-group:nth-child(2) .filter-btn', winrate);
+            applyFilters();
+        }
+
+        function filterByActivity(activity) {
+            filters.activity = activity;
+            updateFilterButtons('.filter-group:nth-child(3) .filter-btn', activity);
+            applyFilters();
+        }
+
+        function filterByBadge(badge) {
+            filters.badge = badge;
+            updateFilterButtons('.filter-group:nth-child(4) .filter-btn', badge);
+            applyFilters();
+        }
+
+        function updateFilterButtons(selector, value) {
+            var buttons = document.querySelectorAll(selector);
+            buttons.forEach(button => {
+                button.classList.remove('active');
+                var btnText = button.textContent.toLowerCase();
+                if ((value === 'all' && (btnText.includes('all') || btnText.includes('ranks'))) ||
+                    btnText.includes(value.replace('-', ' '))) {
+                    button.classList.add('active');
                 }
-            }
-            
-            renderLeaderboard();
+            });
         }
 
-        function searchChampions() {
-            var searchTerm = document.getElementById('championSearch').value.toLowerCase().trim();
+        // Apply all filters
+        function applyFilters() {
+            filteredChampions = allChampions.filter(champion => {
+                // Search filter
+                if (filters.search && !matchesSearch(champion, filters.search)) {
+                    return false;
+                }
+
+                // Rank filter
+                if (filters.rank !== 'all') {
+                    if (filters.rank === 'top10' && champion.rank > 10) return false;
+                    if (filters.rank === 'top50' && champion.rank > 50) return false;
+                    if (filters.rank === 'top100' && champion.rank > 100) return false;
+                }
+
+                // Winrate filter
+                if (filters.winrate !== 'all') {
+                    if (filters.winrate === 'high' && champion.winrate < 90) return false;
+                    if (filters.winrate === 'good' && champion.winrate < 75) return false;
+                    if (filters.winrate === 'average' && champion.winrate < 50) return false;
+                }
+
+                // Activity filter
+                if (filters.activity !== 'all') {
+                    if (filters.activity === 'very-active' && champion.tournaments < 50) return false;
+                    if (filters.activity === 'active' && champion.tournaments < 20) return false;
+                    if (filters.activity === 'casual' && champion.tournaments >= 20) return false;
+                }
+
+                // Badge filter
+                if (filters.badge !== 'all') {
+                    if (!champion.badges.includes(filters.badge.replace('-', '-'))) return false;
+                }
+
+                return true;
+            });
+
+            applySorting();
+            renderLeaderboard();
+            updateResultsCount();
+        }
+
+        function matchesSearch(champion, searchTerm) {
+            return champion.name.toLowerCase().includes(searchTerm) ||
+                   champion.address.toLowerCase().includes(searchTerm) ||
+                   champion.rank.toString().includes(searchTerm);
+        }
+
+        // Sorting functionality
+        function applySorting() {
+            const sortBy = document.getElementById('sortBy').value;
+            const direction = currentSortDirection;
             
-            if (searchTerm === '') {
-                filteredChampions = champions;
+            filteredChampions.sort((a, b) => {
+                let aVal = a[sortBy];
+                let bVal = b[sortBy];
+                
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+                
+                if (direction === 'asc') {
+                    return aVal > bVal ? 1 : -1;
+                } else {
+                    return aVal < bVal ? 1 : -1;
+                }
+            });
+        }
+
+        function sortTable(field) {
+            if (currentSortField === field) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
             } else {
-                filteredChampions = champions.filter(function(champion) {
-                    return champion.name.toLowerCase().includes(searchTerm) ||
-                           champion.address.toLowerCase().includes(searchTerm);
-                });
+                currentSortField = field;
+                currentSortDirection = 'asc';
             }
             
+            document.getElementById('sortBy').value = field;
+            updateSortDirection();
+            applySorting();
+            renderLeaderboard();
+            updateTableHeaders();
+        }
+
+        function toggleSortDirection() {
+            currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            updateSortDirection();
+            applySorting();
             renderLeaderboard();
         }
 
+        function updateSortDirection() {
+            document.getElementById('sortDirection').textContent = currentSortDirection === 'asc' ? '↑' : '↓';
+        }
+
+        function updateTableHeaders() {
+            document.querySelectorAll('.table-header th').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            
+            const currentHeader = document.querySelector(`[onclick="sortTable('${currentSortField}')"]`);
+            if (currentHeader) {
+                currentHeader.classList.add(currentSortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+            }
+        }
+
+        // Reset all filters
+        function resetFilters() {
+            filters = {
+                search: '',
+                rank: 'all',
+                winrate: 'all',
+                activity: 'all',
+                badge: 'all'
+            };
+            
+            // Reset all filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes('all') || 
+                    btn.textContent.toLowerCase().includes('ranks')) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            applyFilters();
+        }
+
+        // Render leaderboard
         function renderLeaderboard() {
             var tbody = document.getElementById('leaderboardBody');
             var noResults = document.getElementById('noResults');
@@ -549,8 +1114,7 @@
             noResults.style.display = 'none';
             
             var html = '';
-            for (var i = 0; i < filteredChampions.length; i++) {
-                var champion = filteredChampions[i];
+            filteredChampions.forEach(champion => {
                 var rankClass = '';
                 if (champion.rank === 1) rankClass = 'rank-1';
                 else if (champion.rank === 2) rankClass = 'rank-2';
@@ -558,142 +1122,157 @@
                 
                 // Create badges
                 var badgesHtml = '';
-                for (var j = 0; j < champion.badges.length; j++) {
-                    var badge = champion.badges[j];
-                    badgesHtml += '<span class="performance-badge badge-' + badge + '">';
+                champion.badges.forEach(badge => {
+                    badgesHtml += `<span class="performance-badge badge-${badge}">`;
                     if (badge === 'legend') badgesHtml += '👑';
                     else if (badge === 'hot-streak') badgesHtml += '🔥';
                     else if (badge === 'rising-star') badgesHtml += '⭐';
                     badgesHtml += '</span>';
-                }
+                });
                 
                 // Create bracket indicator
-                var bracketHtml = '<span class="bracket-indicator bracket-' + champion.bracket + '">';
+                var bracketHtml = `<span class="bracket-indicator bracket-${champion.bracket}">`;
                 if (champion.bracket === 'beginner') bracketHtml += '🟢 BGN';
                 else if (champion.bracket === 'intermediate') bracketHtml += '🟡 INT';
                 else if (champion.bracket === 'advanced') bracketHtml += '🔴 ADV';
                 else if (champion.bracket === 'legendary') bracketHtml += '👑 LEG';
                 bracketHtml += '</span>';
                 
-                html += '<tr class="leaderboard-row">' +
-                    '<td class="rank-cell ' + rankClass + '">' + champion.rank + '</td>' +
-                    '<td>' +
-                        '<div class="champion-cell">' +
-                            '<div class="champion-avatar">' + champion.avatar + '</div>' +
-                            '<div class="champion-info">' +
-                                '<div class="champion-name">' + champion.name + badgesHtml + bracketHtml + '</div>' +
-                                '<div class="champion-address">' + champion.address + '</div>' +
-                            '</div>' +
-                        '</div>' +
-                    '</td>' +
-                    '<td class="winrate-cell">' + champion.winrate + '%</td>' +
-                    '<td class="tournaments-cell">' + champion.tournaments + '</td>' +
-                    '<td class="earnings-cell">' + champion.earnings + ' SOL</td>' +
-                '</tr>';
-            }
+                html += `<tr class="leaderboard-row ${champion.highlighted ? 'highlighted' : ''}">
+                    <td class="rank-cell ${rankClass}">${champion.rank}</td>
+                    <td>
+                        <div class="champion-cell">
+                            <div class="champion-avatar">${champion.avatar}</div>
+                            <div class="champion-info">
+                                <div class="champion-name">${champion.name}${badgesHtml}${bracketHtml}</div>
+                                <div class="champion-address">${champion.address}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="winrate-cell">${champion.winrate}%</td>
+                    <td class="tournaments-cell">${champion.tournaments}</td>
+                    <td class="earnings-cell">${champion.earnings} SOL</td>
+                </tr>`;
+            });
             
             tbody.innerHTML = html;
         }
 
+        function updateResultsCount() {
+            const total = allChampions.length;
+            const filtered = filteredChampions.length;
+            document.getElementById('resultsCount').textContent = 
+                `Showing ${filtered} of ${total} champions`;
+        }
+
+        // View toggle (placeholder for future card view)
+        function setView(viewType) {
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (viewType === 'cards') {
+                alert('🃏 Card View\n\nCard view coming soon! This would display champions in a card-based layout similar to the tournaments section.');
+            }
+        }
+
+        // Mobile Navigation
+        function createMobileNavigation() {
+            const navContainer = document.querySelector('.nav-container');
+            if (!navContainer) return;
+            
+            const mobileToggle = document.createElement('button');
+            mobileToggle.className = 'mobile-menu-toggle';
+            mobileToggle.setAttribute('aria-label', 'Toggle mobile menu');
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            
+            const hamburger = document.createElement('div');
+            hamburger.className = 'hamburger';
+            hamburger.innerHTML = '<span></span><span></span><span></span>';
+            
+            mobileToggle.appendChild(hamburger);
+            
+            const navLinks = document.querySelector('.nav-links');
+            if (navLinks) {
+                navContainer.insertBefore(mobileToggle, navLinks);
+            }
+        }
+
+        function initializeMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            if (!mobileToggle || !navLinks || !hamburger) return;
+            
+            mobileToggle.addEventListener('click', function() {
+                const isOpen = navLinks.classList.contains('active');
+                if (isOpen) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            });
+            
+            const navLinksItems = navLinks.querySelectorAll('a');
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', function() {
+                    closeMobileMenu();
+                });
+            });
+            
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navLinks.contains(event.target) || 
+                                        mobileToggle.contains(event.target);
+                if (!isClickInsideNav && navLinks.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+            });
+        }
+
+        function openMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.add('active');
+            hamburger.classList.add('active');
+            mobileToggle.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('active');
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        function handleWindowResize() {
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    closeMobileMenu();
+                }
+            });
+        }
+
         // Initialize the leaderboard
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize mobile navigation
+            createMobileNavigation();
+            initializeMobileMenu();
+            handleWindowResize();
+            
+            // Initialize leaderboard
             renderLeaderboard();
+            updateResultsCount();
+            updateSortDirection();
         });
-    </script>
-<script>
-// Mobile Navigation JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    createMobileNavigation();
-    initializeMobileMenu();
-    handleWindowResize();
-});
-
-function createMobileNavigation() {
-    const navContainer = document.querySelector('.nav-container');
-    if (!navContainer) return;
-    
-    const mobileToggle = document.createElement('button');
-    mobileToggle.className = 'mobile-menu-toggle';
-    mobileToggle.setAttribute('aria-label', 'Toggle mobile menu');
-    mobileToggle.setAttribute('aria-expanded', 'false');
-    
-    const hamburger = document.createElement('div');
-    hamburger.className = 'hamburger';
-    hamburger.innerHTML = '<span></span><span></span><span></span>';
-    
-    mobileToggle.appendChild(hamburger);
-    
-    const navLinks = document.querySelector('.nav-links');
-    if (navLinks) {
-        navContainer.insertBefore(mobileToggle, navLinks);
-    }
-}
-
-function initializeMobileMenu() {
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    const hamburger = document.querySelector('.hamburger');
-    
-    if (!mobileToggle || !navLinks || !hamburger) return;
-    
-    mobileToggle.addEventListener('click', function() {
-        const isOpen = navLinks.classList.contains('active');
-        if (isOpen) {
-            closeMobileMenu();
-        } else {
-            openMobileMenu();
-        }
-    });
-    
-    const navLinksItems = navLinks.querySelectorAll('a');
-    navLinksItems.forEach(link => {
-        link.addEventListener('click', function() {
-            closeMobileMenu();
-        });
-    });
-    
-    document.addEventListener('click', function(event) {
-        const isClickInsideNav = navLinks.contains(event.target) || 
-                                mobileToggle.contains(event.target);
-        if (!isClickInsideNav && navLinks.classList.contains('active')) {
-            closeMobileMenu();
-        }
-    });
-}
-
-function openMobileMenu() {
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    const hamburger = document.querySelector('.hamburger');
-    
-    navLinks.classList.add('active');
-    hamburger.classList.add('active');
-    mobileToggle.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeMobileMenu() {
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    const hamburger = document.querySelector('.hamburger');
-    
-    navLinks.classList.remove('active');
-    hamburger.classList.remove('active');
-    mobileToggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-}
-
-function handleWindowResize() {
-    window.addEventListener('resize', function() {
-        if (window.innerWidth >= 768) {
-            closeMobileMenu();
-        }
-    });
-}
-</script>
-</body>
-</html>\nPrepare to climb the ranks! 📈');
-        }
     </script>
 </body>
 </html>
