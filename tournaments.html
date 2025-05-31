@@ -949,10 +949,27 @@
             filterToggle.classList.toggle('active');
         }
 
-        // Card Flip Animation
+        // Card Flip Animation - Direct approach
         function flipCard(card) {
-            card.classList.toggle('flipped');
-            console.log('Card flipped:', card.classList.contains('flipped'));
+            const front = card.querySelector('.card-front');
+            const back = card.querySelector('.card-back');
+            
+            console.log('Front element:', front);
+            console.log('Back element:', back);
+            
+            if (card.classList.contains('flipped')) {
+                // Switch back to front
+                card.classList.remove('flipped');
+                front.style.cssText = 'display: block !important;';
+                back.style.cssText = 'display: none !important;';
+                console.log('Showing front');
+            } else {
+                // Switch to back
+                card.classList.add('flipped');
+                front.style.cssText = 'display: none !important;';
+                back.style.cssText = 'display: block !important; background: #ff0000 !important; color: white !important; padding: 1rem !important;';
+                console.log('Showing back');
+            }
         }
 
         // Filter Functions
