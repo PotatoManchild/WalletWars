@@ -63,7 +63,7 @@
         }
 
         .filter-content.active {
-            max-height: 300px;
+            max-height: 400px;
         }
 
         .filter-group {
@@ -111,6 +111,49 @@
             border-color: #8b5cf6;
             color: #8b5cf6;
             transform: translateY(-1px);
+        }
+
+        /* Desktop Compact Filters */
+        @media (min-width: 768px) {
+            .filter-toggle {
+                display: none;
+            }
+
+            .filter-content {
+                max-height: none;
+                overflow: visible;
+            }
+
+            .tournament-filters {
+                padding: 1rem 1.5rem;
+            }
+
+            .filter-groups-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1.5rem;
+                align-items: start;
+            }
+
+            .filter-group {
+                margin-bottom: 0;
+                padding: 0;
+            }
+
+            .filter-label {
+                font-size: 0.9rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .filter-buttons {
+                gap: 0.5rem;
+            }
+
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+                min-height: 38px;
+            }
         }
 
         /* Compact Tournament Cards */
@@ -711,28 +754,6 @@
             .card-front {
                 padding: 1.5rem;
             }
-
-            .filter-toggle {
-                display: none;
-            }
-
-            .filter-content {
-                max-height: none;
-                overflow: visible;
-            }
-
-            .tournament-filters {
-                padding: 1.5rem;
-            }
-
-            .filter-group {
-                margin-bottom: 1rem;
-            }
-
-            .filter-btn {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
-            }
         }
 
         @media (min-width: 1024px) {
@@ -789,32 +810,45 @@
                 </div>
                 
                 <div class="filter-content" id="filterContent">
-                    <div class="filter-group">
-                        <label class="filter-label">Type</label>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" onclick="filterTournaments('all')">All</button>
-                            <button class="filter-btn" onclick="filterTournaments('weekly')">Weekly</button>
-                            <button class="filter-btn" onclick="filterTournaments('monthly')">Monthly</button>
+                    <div class="filter-groups-container">
+                        <div class="filter-group">
+                            <label class="filter-label">Type</label>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" onclick="filterTournaments('all')">All</button>
+                                <button class="filter-btn" onclick="filterTournaments('weekly')">Weekly</button>
+                                <button class="filter-btn" onclick="filterTournaments('monthly')">Monthly</button>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label">Entry Fee</label>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" onclick="filterByFee('all')">All</button>
-                            <button class="filter-btn" onclick="filterByFee('low')">0.01 SOL</button>
-                            <button class="filter-btn" onclick="filterByFee('medium')">0.05 SOL</button>
-                            <button class="filter-btn" onclick="filterByFee('high')">0.1 SOL</button>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Entry Fee</label>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" onclick="filterByFee('all')">All</button>
+                                <button class="filter-btn" onclick="filterByFee('low')">0.01 SOL</button>
+                                <button class="filter-btn" onclick="filterByFee('medium')">0.05 SOL</button>
+                                <button class="filter-btn" onclick="filterByFee('high')">0.1 SOL</button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="filter-group">
-                        <label class="filter-label">Prize Pool</label>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" onclick="filterByPrize('all')">All</button>
-                            <button class="filter-btn" onclick="filterByPrize('small')">< 20 SOL</button>
-                            <button class="filter-btn" onclick="filterByPrize('medium')">20-80 SOL</button>
-                            <button class="filter-btn" onclick="filterByPrize('large')">80+ SOL</button>
+                        <div class="filter-group">
+                            <label class="filter-label">Prize Pool</label>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" onclick="filterByPrize('all')">All</button>
+                                <button class="filter-btn" onclick="filterByPrize('small')">< 25 SOL</button>
+                                <button class="filter-btn" onclick="filterByPrize('medium')">25-100 SOL</button>
+                                <button class="filter-btn" onclick="filterByPrize('large')">100+ SOL</button>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Skill Level</label>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" onclick="filterBySkill('all')">All</button>
+                                <button class="filter-btn" onclick="filterBySkill('rookie')">Rookie</button>
+                                <button class="filter-btn" onclick="filterBySkill('warrior')">Warrior</button>
+                                <button class="filter-btn" onclick="filterBySkill('elite')">Elite</button>
+                                <button class="filter-btn" onclick="filterBySkill('master')">Master</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -823,7 +857,7 @@
             <!-- Tournament Grid -->
             <div class="tournaments-grid">
                 <!-- Tournament 1: Rookie Arena (Weekly) -->
-                <div class="tournament-card show-all show-weekly show-low show-small" onclick="showFullscreenTournament(1)">
+                <div class="tournament-card show-all show-weekly show-low show-small show-rookie" onclick="showFullscreenTournament(1)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
@@ -842,7 +876,7 @@
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Prize</div>
-                                <div class="key-info-value">4 SOL</div>
+                                <div class="key-info-value">5 SOL</div>
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Players</div>
@@ -859,7 +893,7 @@
                 </div>
 
                 <!-- Tournament 2: Warrior's Challenge (Weekly) -->
-                <div class="tournament-card show-all show-weekly show-medium show-medium" onclick="showFullscreenTournament(2)">
+                <div class="tournament-card show-all show-weekly show-medium show-medium show-warrior" onclick="showFullscreenTournament(2)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
@@ -878,7 +912,7 @@
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Prize</div>
-                                <div class="key-info-value">20 SOL</div>
+                                <div class="key-info-value">25 SOL</div>
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Players</div>
@@ -895,7 +929,7 @@
                 </div>
 
                 <!-- Tournament 3: Elite Weekly (Weekly) -->
-                <div class="tournament-card show-all show-weekly show-high show-large" onclick="showFullscreenTournament(3)">
+                <div class="tournament-card show-all show-weekly show-high show-large show-elite" onclick="showFullscreenTournament(3)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
@@ -914,7 +948,7 @@
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Prize</div>
-                                <div class="key-info-value">80 SOL</div>
+                                <div class="key-info-value">100 SOL</div>
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Players</div>
@@ -931,7 +965,7 @@
                 </div>
 
                 <!-- Tournament 4: Monthly Grind (Monthly) -->
-                <div class="tournament-card show-all show-monthly show-low show-small" onclick="showFullscreenTournament(4)">
+                <div class="tournament-card show-all show-monthly show-low show-small show-rookie" onclick="showFullscreenTournament(4)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
@@ -950,7 +984,7 @@
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Prize</div>
-                                <div class="key-info-value">16 SOL</div>
+                                <div class="key-info-value">20 SOL</div>
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Players</div>
@@ -967,7 +1001,7 @@
                 </div>
 
                 <!-- Tournament 5: Champion's League (Monthly) -->
-                <div class="tournament-card show-all show-monthly show-medium show-medium" onclick="showFullscreenTournament(5)">
+                <div class="tournament-card show-all show-monthly show-medium show-medium show-warrior" onclick="showFullscreenTournament(5)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
@@ -986,7 +1020,7 @@
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Prize</div>
-                                <div class="key-info-value">40 SOL</div>
+                                <div class="key-info-value">50 SOL</div>
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Players</div>
@@ -1003,7 +1037,7 @@
                 </div>
 
                 <!-- Tournament 6: Masters Tournament (Monthly) -->
-                <div class="tournament-card show-all show-monthly show-high show-large" onclick="showFullscreenTournament(6)">
+                <div class="tournament-card show-all show-monthly show-high show-large show-master" onclick="showFullscreenTournament(6)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
@@ -1022,7 +1056,7 @@
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Prize</div>
-                                <div class="key-info-value">160 SOL</div>
+                                <div class="key-info-value">200 SOL</div>
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Players</div>
@@ -1123,7 +1157,7 @@
                 registered: 127, 
                 maxPlayers: 500, 
                 entryFee: 0.01, 
-                prizePool: 4, 
+                prizePool: 5, 
                 topPercent: 20, 
                 duration: '7 days',
                 title: 'Rookie Arena',
@@ -1134,7 +1168,7 @@
                 registered: 89, 
                 maxPlayers: 500, 
                 entryFee: 0.05, 
-                prizePool: 20, 
+                prizePool: 25, 
                 topPercent: 20, 
                 duration: '7 days',
                 title: 'Warrior\'s Challenge',
@@ -1145,7 +1179,7 @@
                 registered: 542, 
                 maxPlayers: 1000, 
                 entryFee: 0.1, 
-                prizePool: 80, 
+                prizePool: 100, 
                 topPercent: 15, 
                 duration: '7 days',
                 title: 'Elite Weekly',
@@ -1156,7 +1190,7 @@
                 registered: 1234, 
                 maxPlayers: 2000, 
                 entryFee: 0.01, 
-                prizePool: 16, 
+                prizePool: 20, 
                 topPercent: 25, 
                 duration: '30 days',
                 title: 'Monthly Grind',
@@ -1167,7 +1201,7 @@
                 registered: 456, 
                 maxPlayers: 1000, 
                 entryFee: 0.05, 
-                prizePool: 40, 
+                prizePool: 50, 
                 topPercent: 20, 
                 duration: '30 days',
                 title: 'Champion\'s League',
@@ -1178,7 +1212,7 @@
                 registered: 789, 
                 maxPlayers: 2000, 
                 entryFee: 0.1, 
-                prizePool: 160, 
+                prizePool: 200, 
                 topPercent: 10, 
                 duration: '30 days',
                 title: 'Masters Tournament',
@@ -1187,21 +1221,21 @@
         };
 
         var tournamentDescriptions = {
-            1: 'Perfect entry point for new traders! Low-risk environment with 500 passionate rookies competing for solid rewards. Weekly format keeps you engaged without overwhelming time commitment.',
-            2: 'Step up your game! Mid-tier competition for traders ready to face stronger opponents. Balanced risk-reward ratio makes this ideal for developing your skills and building confidence.',
-            3: 'Elite weekly competition with the largest prize pool in the weekly category! 1000 skilled traders battle for 80 SOL. Currently live - join now and climb the leaderboard!',
-            4: 'The people\'s tournament! Lowest barrier to entry but massive 2000-player field creates substantial prize pools. Monthly duration allows for strategic planning and patient execution.',
-            5: 'Champions unite! Mid-tier monthly competition attracting serious traders. 1000 participants and 40 SOL prize pool create the perfect balance of competition and reward.',
-            6: 'The ultimate challenge! Masters Tournament features the largest field (2000 players) and biggest prizes (160 SOL). Only the elite survive in this monthly gladiator arena.'
+            1: 'Perfect entry point for new traders! Low-risk environment with 500 passionate rookies competing for up to 5 SOL in prizes. Weekly format keeps you engaged without overwhelming time commitment.',
+            2: 'Step up your game! Mid-tier competition for traders ready to face stronger opponents. Up to 25 SOL prize pool creates meaningful rewards for developing your skills.',
+            3: 'Elite weekly competition with the largest prize pool in the weekly category! 1000 skilled traders battle for up to 100 SOL. Currently live - join now and climb the leaderboard!',
+            4: 'The people\'s tournament! Lowest barrier to entry but massive 2000-player field creates up to 20 SOL prize pools. Monthly duration allows for strategic planning and patient execution.',
+            5: 'Champions unite! Mid-tier monthly competition attracting serious traders. 1000 participants and up to 50 SOL prize pool create the perfect balance of competition and reward.',
+            6: 'The ultimate challenge! Masters Tournament features the largest field (2000 players) and biggest prizes (up to 200 SOL). Only the elite survive in this monthly gladiator arena.'
         };
 
         var tournamentRules = {
-            1: '• Open to all skill levels - perfect for beginners\n• Portfolio tracking starts at registration\n• Top 20% share the 4 SOL prize pool\n• No minimum portfolio requirements\n• 7-day tournament duration\n• Fair competition with skill-based matching',
-            2: '• Intermediate skill level recommended\n• 0.05 SOL entry fee creates meaningful stakes\n• Top 20% of 500 participants win prizes\n• Weekly tournament with active leaderboard\n• Balanced competition for developing traders\n• Prize distribution favors consistent performers',
-            3: '• Elite competition - experienced traders preferred\n• Premium 0.1 SOL entry attracts serious competitors\n• Top 15% share substantial 80 SOL prize pool\n• Live tournament with real-time rankings\n• 1000 player capacity for maximum competition\n• Advanced analytics and performance tracking',
-            4: '• Monthly marathon format rewards patience\n• Massive 2000 player field creates substantial prizes\n• Top 25% share the growing prize pool\n• Low entry barrier but high skill ceiling\n• 30-day duration allows strategic development\n• Community-focused with social features',
-            5: '• Champion-level monthly competition\n• 1000 dedicated traders battle for 40 SOL\n• Top 20% guaranteed prize distribution\n• Extended 30-day format for deep strategy\n• Advanced risk management required\n• Prestigious championship recognition',
-            6: '• Masters level - highest skill competition\n• Maximum 2000 players, 160 SOL mega-prizes\n• Top 10% only - ultra-competitive prize sharing\n• Monthly championship with elite recognition\n• Advanced portfolio requirements may apply\n• Premium tournament with exclusive benefits'
+            1: '• Open to all skill levels - perfect for beginners\n• Portfolio tracking starts at registration\n• Top 20% share the up to 5 SOL prize pool\n• No minimum portfolio requirements\n• 7-day tournament duration\n• Fair competition with skill-based matching',
+            2: '• Intermediate skill level recommended\n• 0.05 SOL entry fee creates meaningful stakes\n• Top 20% of 500 participants win prizes up to 25 SOL\n• Weekly tournament with active leaderboard\n• Balanced competition for developing traders\n• Prize distribution favors consistent performers',
+            3: '• Elite competition - experienced traders preferred\n• Premium 0.1 SOL entry attracts serious competitors\n• Top 15% share substantial up to 100 SOL prize pool\n• Live tournament with real-time rankings\n• 1000 player capacity for maximum competition\n• Advanced analytics and performance tracking',
+            4: '• Monthly marathon format rewards patience\n• Massive 2000 player field creates up to 20 SOL prizes\n• Top 25% share the growing prize pool\n• Low entry barrier but high skill ceiling\n• 30-day duration allows strategic development\n• Community-focused with social features',
+            5: '• Champion-level monthly competition\n• 1000 dedicated traders battle for up to 50 SOL\n• Top 20% guaranteed prize distribution\n• Extended 30-day format for deep strategy\n• Advanced risk management required\n• Prestigious championship recognition',
+            6: '• Masters level - highest skill competition\n• Maximum 2000 players, up to 200 SOL mega-prizes\n• Top 10% only - ultra-competitive prize sharing\n• Monthly championship with elite recognition\n• Advanced portfolio requirements may apply\n• Premium tournament with exclusive benefits'
         };
 
         var currentFullscreenTournament = null;
@@ -1408,6 +1442,29 @@
                     (value === 'low' && btnText.includes('0.01')) ||
                     (value === 'medium' && btnText.includes('0.05')) ||
                     (value === 'high' && btnText.includes('0.1')) ||
+                    (value === 'small' && btnText.includes('< 25')) ||
+                    (value === 'medium' && btnText.includes('25-100')) ||
+                    (value === 'large' && btnText.includes('100+'))) {
+                    buttons[i].classList.add('active');
+                }
+            }
+        }
+
+        function filterBySkill(skill) {
+            updateFilterButtons('.filter-group:nth-child(4) .filter-btn', skill);
+            showFilteredTournaments();
+        }
+
+        function updateFilterButtons(selector, value) {
+            var buttons = document.querySelectorAll(selector);
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+                var btnText = buttons[i].textContent.toLowerCase();
+                if ((value === 'all' && btnText === 'all') ||
+                    btnText.includes(value) ||
+                    (value === 'low' && btnText.includes('0.01')) ||
+                    (value === 'medium' && btnText.includes('0.05')) ||
+                    (value === 'high' && btnText.includes('0.1')) ||
                     (value === 'small' && btnText.includes('< 20')) ||
                     (value === 'medium' && btnText.includes('20-80')) ||
                     (value === 'large' && btnText.includes('80+'))) {
@@ -1421,6 +1478,7 @@
             var typeFilter = getActiveFilter('.filter-group:first-child .filter-btn');
             var feeFilter = getActiveFilter('.filter-group:nth-child(2) .filter-btn');
             var prizeFilter = getActiveFilter('.filter-group:nth-child(3) .filter-btn');
+            var skillFilter = getActiveFilter('.filter-group:nth-child(4) .filter-btn');
             
             var cards = document.querySelectorAll('.tournament-card');
             for (var i = 0; i < cards.length; i++) {
@@ -1442,6 +1500,11 @@
                     show = false;
                 }
                 
+                // Check skill filter
+                if (skillFilter !== 'all' && !card.classList.contains('show-' + skillFilter)) {
+                    show = false;
+                }
+                
                 card.style.display = show ? 'block' : 'none';
             }
         }
@@ -1457,9 +1520,13 @@
                     if (text.includes('0.01')) return 'low';
                     if (text.includes('0.05')) return 'medium';
                     if (text.includes('0.1')) return 'high';
-                    if (text.includes('< 20')) return 'small';
-                    if (text.includes('20-80')) return 'medium';
-                    if (text.includes('80+')) return 'large';
+                    if (text.includes('< 25')) return 'small';
+                    if (text.includes('25-100')) return 'medium';
+                    if (text.includes('100+')) return 'large';
+                    if (text.includes('rookie')) return 'rookie';
+                    if (text.includes('warrior')) return 'warrior';
+                    if (text.includes('elite')) return 'elite';
+                    if (text.includes('master')) return 'master';
                     return text;
                 }
             }
