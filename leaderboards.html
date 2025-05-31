@@ -56,7 +56,6 @@
             margin-bottom: 2rem;
         }
 
-        /* Search Bar */
         .search-container {
             display: flex;
             gap: 1rem;
@@ -287,26 +286,28 @@
             gap: 0.5rem;
         }
 
-        /* Privacy Protection Indicator */
-        .privacy-shield {
+        /* Champion Verification Badge */
+        .champion-verified {
             display: inline-flex;
             align-items: center;
             gap: 0.25rem;
-            background: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
             padding: 0.2rem 0.5rem;
             border-radius: 0.4rem;
             font-size: 0.7rem;
             font-weight: 600;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
-        /* Hidden wallet address styles */
-        .champion-wallet-hidden {
+        /* Anonymous Identity Indicator */
+        .champion-identity {
             font-size: 0.8rem;
             color: #6b7280;
-            font-family: monospace;
             font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
         .winrate-cell {
@@ -367,40 +368,6 @@
             border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
-        /* Bracket Indicators */
-        .bracket-indicator {
-            display: inline-block;
-            padding: 0.2rem 0.5rem;
-            border-radius: 0.4rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-left: 0.5rem;
-        }
-
-        .bracket-beginner {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .bracket-intermediate {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        .bracket-advanced {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .bracket-legendary {
-            background: rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-
         /* Tournament Status Indicator */
         .tournament-status {
             display: flex;
@@ -430,6 +397,79 @@
             color: #10b981;
             font-weight: 600;
             font-size: 0.9rem;
+        }
+
+        /* Champion Detail Modal */
+        .champion-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .champion-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .champion-card {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(30px);
+            border: 2px solid rgba(139, 92, 246, 0.4);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.4s ease;
+        }
+
+        .champion-modal.active .champion-card {
+            transform: scale(1);
+        }
+
+        .champion-card-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+            position: relative;
+        }
+
+        .champion-close {
+            position: absolute;
+            top: -0.5rem;
+            right: -0.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .champion-close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.1);
         }
 
         /* Mobile Responsive */
@@ -462,7 +502,7 @@
                 flex-wrap: wrap;
             }
 
-            .privacy-shield {
+            .champion-verified {
                 font-size: 0.6rem;
                 padding: 0.15rem 0.4rem;
             }
@@ -511,7 +551,7 @@
         <!-- Page Header -->
         <div class="page-header">
             <h1 class="page-title leaderboards-title">Leaderboards</h1>
-            <p class="page-subtitle">Track elite Champions competing in active tournaments</p>
+            <p class="page-subtitle">Anonymous champions competing with verified performance</p>
         </div>
 
         <!-- Page Content -->
@@ -526,16 +566,15 @@
             <!-- Privacy Protection Banner -->
             <div class="privacy-banner">
                 <div class="privacy-banner-title">
-                    🛡️ Champion Privacy Protection Active
+                    🛡️ Complete Champion Anonymity
                 </div>
                 <div class="privacy-banner-text">
-                    Wallet addresses are hidden during active tournaments to ensure fair competition and prevent griefing attacks. Champions compete using their chosen names only.
+                    All champions compete with full identity protection. Performance is verified by blockchain technology while maintaining complete privacy. No wallet addresses are ever displayed.
                 </div>
             </div>
 
             <!-- Enhanced Search & Filters Section -->
             <div class="search-and-filters">
-                <!-- Search Bar -->
                 <div class="search-container">
                     <div class="search-input-wrapper">
                         <input 
@@ -553,7 +592,7 @@
 
             <!-- Results Info -->
             <div class="results-info">
-                <div class="results-count" id="resultsCount">Showing 8 champions competing in active tournaments</div>
+                <div class="results-count" id="resultsCount">Showing 8 verified anonymous champions</div>
             </div>
 
             <!-- Leaderboard Table -->
@@ -563,14 +602,14 @@
                         <tr>
                             <th onclick="sortTable('rank')" class="sortable">Rank</th>
                             <th onclick="sortTable('name')" class="sortable">Champion</th>
-                            <th onclick="sortTable('winrate')" class="sortable">Performance</th>
+                            <th onclick="sortTable('performance')" class="sortable">Performance</th>
                             <th onclick="sortTable('tournaments')" class="sortable">Active Tournaments</th>
-                            <th onclick="sortTable('earnings')" class="sortable earnings-cell">Est. Earnings</th>
+                            <th onclick="sortTable('earnings')" class="sortable earnings-cell">Verified Earnings</th>
                         </tr>
                     </thead>
                     <tbody class="table-body" id="leaderboardBody">
-                        <!-- Champion rows with hidden wallet addresses -->
-                        <tr class="leaderboard-row" data-champion-rank="1">
+                        <!-- Champion rows with complete anonymity -->
+                        <tr class="leaderboard-row" data-champion-rank="1" onclick="openChampionCard(1)">
                             <td class="rank-cell rank-1">1</td>
                             <td>
                                 <div class="champion-cell">
@@ -579,18 +618,20 @@
                                         <div class="champion-name">
                                             The Golden Phoenix
                                             <span class="performance-badge badge-legend">👑</span>
-                                            <span class="privacy-shield">🔒 Protected</span>
+                                            <span class="champion-verified">✅ Verified</span>
                                         </div>
-                                        <div class="champion-wallet-hidden">Identity protected during tournament</div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="winrate-cell">+94.7%</td>
                             <td class="tournaments-cell">3 Active</td>
-                            <td class="earnings-cell">~1,247 SOL</td>
+                            <td class="earnings-cell">1,247+ SOL</td>
                         </tr>
 
-                        <tr class="leaderboard-row" data-champion-rank="2">
+                        <tr class="leaderboard-row" data-champion-rank="2" onclick="openChampionCard(2)">
                             <td class="rank-cell rank-2">2</td>
                             <td>
                                 <div class="champion-cell">
@@ -599,18 +640,20 @@
                                         <div class="champion-name">
                                             Diamond Samurai
                                             <span class="performance-badge badge-hot-streak">🔥</span>
-                                            <span class="privacy-shield">🔒 Protected</span>
+                                            <span class="champion-verified">✅ Verified</span>
                                         </div>
-                                        <div class="champion-wallet-hidden">Identity protected during tournament</div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="winrate-cell">+91.2%</td>
                             <td class="tournaments-cell">2 Active</td>
-                            <td class="earnings-cell">~983 SOL</td>
+                            <td class="earnings-cell">983+ SOL</td>
                         </tr>
 
-                        <tr class="leaderboard-row" data-champion-rank="3">
+                        <tr class="leaderboard-row" data-champion-rank="3" onclick="openChampionCard(3)">
                             <td class="rank-cell rank-3">3</td>
                             <td>
                                 <div class="champion-cell">
@@ -619,18 +662,20 @@
                                         <div class="champion-name">
                                             Lightning Bolt
                                             <span class="performance-badge badge-rising-star">⭐</span>
-                                            <span class="privacy-shield">🔒 Protected</span>
+                                            <span class="champion-verified">✅ Verified</span>
                                         </div>
-                                        <div class="champion-wallet-hidden">Identity protected during tournament</div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="winrate-cell">+88.9%</td>
                             <td class="tournaments-cell">2 Active</td>
-                            <td class="earnings-cell">~756 SOL</td>
+                            <td class="earnings-cell">756+ SOL</td>
                         </tr>
 
-                        <tr class="leaderboard-row" data-champion-rank="4">
+                        <tr class="leaderboard-row" data-champion-rank="4" onclick="openChampionCard(4)">
                             <td class="rank-cell">4</td>
                             <td>
                                 <div class="champion-cell">
@@ -638,18 +683,20 @@
                                     <div class="champion-info">
                                         <div class="champion-name">
                                             Crypto Whale
-                                            <span class="privacy-shield">🔒 Protected</span>
+                                            <span class="champion-verified">✅ Verified</span>
                                         </div>
-                                        <div class="champion-wallet-hidden">Identity protected during tournament</div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="winrate-cell">+85.3%</td>
                             <td class="tournaments-cell">1 Active</td>
-                            <td class="earnings-cell">~1,156 SOL</td>
+                            <td class="earnings-cell">1,156+ SOL</td>
                         </tr>
 
-                        <tr class="leaderboard-row" data-champion-rank="5">
+                        <tr class="leaderboard-row" data-champion-rank="5" onclick="openChampionCard(5)">
                             <td class="rank-cell">5</td>
                             <td>
                                 <div class="champion-cell">
@@ -658,18 +705,20 @@
                                         <div class="champion-name">
                                             Solar Storm
                                             <span class="performance-badge badge-rising-star">⭐</span>
-                                            <span class="privacy-shield">🔒 Protected</span>
+                                            <span class="champion-verified">✅ Verified</span>
                                         </div>
-                                        <div class="champion-wallet-hidden">Identity protected during tournament</div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="winrate-cell">+82.6%</td>
                             <td class="tournaments-cell">2 Active</td>
-                            <td class="earnings-cell">~634 SOL</td>
+                            <td class="earnings-cell">634+ SOL</td>
                         </tr>
 
-                        <tr class="leaderboard-row" data-champion-rank="6">
+                        <tr class="leaderboard-row" data-champion-rank="6" onclick="openChampionCard(6)">
                             <td class="rank-cell">6</td>
                             <td>
                                 <div class="champion-cell">
@@ -677,18 +726,20 @@
                                     <div class="champion-info">
                                         <div class="champion-name">
                                             Neon Hunter
-                                            <span class="privacy-shield">🔒 Protected</span>
+                                            <span class="champion-verified">✅ Verified</span>
                                         </div>
-                                        <div class="champion-wallet-hidden">Identity protected during tournament</div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="winrate-cell">+79.4%</td>
                             <td class="tournaments-cell">1 Active</td>
-                            <td class="earnings-cell">~445 SOL</td>
+                            <td class="earnings-cell">445+ SOL</td>
                         </tr>
 
-                        <tr class="leaderboard-row" data-champion-rank="7">
+                        <tr class="leaderboard-row" data-champion-rank="7" onclick="openChampionCard(7)">
                             <td class="rank-cell">7</td>
                             <td>
                                 <div class="champion-cell">
@@ -697,18 +748,20 @@
                                         <div class="champion-name">
                                             Quantum Leap
                                             <span class="performance-badge badge-hot-streak">🔥</span>
-                                            <span class="privacy-shield">🔒 Protected</span>
+                                            <span class="champion-verified">✅ Verified</span>
                                         </div>
-                                        <div class="champion-wallet-hidden">Identity protected during tournament</div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="winrate-cell">+76.8%</td>
                             <td class="tournaments-cell">1 Active</td>
-                            <td class="earnings-cell">~523 SOL</td>
+                            <td class="earnings-cell">523+ SOL</td>
                         </tr>
 
-                        <tr class="leaderboard-row" data-champion-rank="8">
+                        <tr class="leaderboard-row" data-champion-rank="8" onclick="openChampionCard(8)">
                             <td class="rank-cell">8</td>
                             <td>
                                 <div class="champion-cell">
@@ -716,15 +769,17 @@
                                     <div class="champion-info">
                                         <div class="champion-name">
                                             Pixel Warrior
-                                            <span class="privacy-shield">🔒 Protected</span>
+                                            <span class="champion-verified">✅ Verified</span>
                                         </div>
-                                        <div class="champion-wallet-hidden">Identity protected during tournament</div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="winrate-cell">+74.2%</td>
                             <td class="tournaments-cell">1 Active</td>
-                            <td class="earnings-cell">~367 SOL</td>
+                            <td class="earnings-cell">367+ SOL</td>
                         </tr>
                     </tbody>
                 </table>
@@ -732,14 +787,81 @@
         </div>
     </div>
 
+    <!-- Anonymous Champion Detail Modal -->
+    <div class="champion-modal" id="championModal">
+        <div class="champion-card">
+            <div class="champion-card-header">
+                <button class="champion-close" onclick="closeChampionCard()">×</button>
+                
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 1rem;" id="championAvatar">🔥</div>
+                
+                <div style="color: #8b5cf6; font-family: 'Orbitron', monospace; font-size: 1.5rem; margin-bottom: 0.5rem;" id="championName">Champion Name</div>
+                <div style="color: #d1d5db; margin-bottom: 0.75rem;" id="championStatus">Anonymous Verified Champion</div>
+                
+                <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;" id="championBadges">
+                    <div style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.3);">
+                        ✅ Identity Verified
+                    </div>
+                    <div style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(59, 130, 246, 0.3);">
+                        🔒 Fully Anonymous
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anonymous Champion Stats -->
+            <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(139, 92, 246, 0.1); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                <div style="color: #8b5cf6; font-weight: 600; margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                    🏆 Verified Performance
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.25rem;" id="championPerformance">+94.7%</div>
+                        <div style="font-size: 0.8rem; color: #9ca3af;">Current Performance</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.25rem;" id="championTournaments">47</div>
+                        <div style="font-size: 0.8rem; color: #9ca3af;">Tournaments Won</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Protection Info -->
+            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                <div style="color: #3b82f6; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    🛡️ Complete Privacy Protection
+                </div>
+                <div style="color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">
+                    This champion's identity is fully protected. All performance data is verified by blockchain technology while maintaining complete anonymity. No personal information is ever exposed.
+                </div>
+            </div>
+
+            <!-- Verification System -->
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                <div style="color: #10b981; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    ✅ Blockchain Verification
+                </div>
+                <div style="color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">
+                    • Performance verified by smart contracts<br>
+                    • Earnings confirmed on Solana blockchain<br>
+                    • Tournament participation authenticated<br>
+                    • Zero possibility of manipulation
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button onclick="closeChampionCard()" style="background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none; color: white; padding: 0.75rem 2rem; border-radius: 0.75rem; font-weight: 600; cursor: pointer; font-size: 0.9rem;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function connectWallet() {
-            // Show wallet connection modal with champion identity setup
             showWalletConnectionModal();
         }
 
         function showWalletConnectionModal() {
-            // Create modal for wallet connection and champion setup
             const modal = document.createElement('div');
             modal.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -758,63 +880,47 @@
                             🏆 Join WalletWars
                         </h2>
                         <p style="color: #d1d5db; font-size: 0.9rem;">
-                            Connect your wallet and create your champion identity
+                            Connect your wallet and compete anonymously
                         </p>
                     </div>
 
                     <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); 
                                 border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
                         <div style="color: #3b82f6; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                            🛡️ Privacy Protection
+                            🛡️ Complete Anonymity Guaranteed
                         </div>
                         <div style="color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">
-                            Your wallet address will be hidden during tournaments. Only your champion name will be visible to ensure fair competition and prevent griefing attacks.
+                            Your wallet address will NEVER be displayed anywhere on the platform. You'll compete with a champion name only, ensuring complete privacy and protection from griefing attacks.
                         </div>
                     </div>
 
                     <div style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); 
                                 border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
                         <div style="color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                            ⚠️ Dedicated Tournament Wallet Recommended
+                            ⚠️ Important: Use Dedicated Tournament Wallet
                         </div>
                         <div style="color: #d1d5db; font-size: 0.85rem; line-height: 1.5; margin-bottom: 0.75rem;">
-                            For optimal performance tracking, we recommend using a dedicated wallet for tournaments only.
+                            For optimal performance tracking, create a new wallet specifically for WalletWars tournaments.
                         </div>
                         <div style="color: #ef4444; font-size: 0.8rem; font-weight: 600;">
-                            🚨 Warning: Receiving funds from external wallets during tournaments may result in disqualification.
+                            🚨 Warning: External funding during tournaments results in automatic disqualification.
                         </div>
                     </div>
 
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-                        <button onclick="connectPhantom()" style="
-                            background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3);
-                            color: #8b5cf6; padding: 1rem; border-radius: 0.75rem; cursor: pointer;
-                            transition: all 0.3s ease; font-weight: 600;
-                        ">
+                        <button onclick="connectPhantom()" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3); color: #8b5cf6; padding: 1rem; border-radius: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-weight: 600;">
                             👻 Phantom
                         </button>
-                        <button onclick="connectSolflare()" style="
-                            background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3);
-                            color: #8b5cf6; padding: 1rem; border-radius: 0.75rem; cursor: pointer;
-                            transition: all 0.3s ease; font-weight: 600;
-                        ">
+                        <button onclick="connectSolflare()" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3); color: #8b5cf6; padding: 1rem; border-radius: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-weight: 600;">
                             🔥 Solflare
                         </button>
-                        <button onclick="connectBackpack()" style="
-                            background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3);
-                            color: #8b5cf6; padding: 1rem; border-radius: 0.75rem; cursor: pointer;
-                            transition: all 0.3s ease; font-weight: 600;
-                        ">
+                        <button onclick="connectBackpack()" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3); color: #8b5cf6; padding: 1rem; border-radius: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-weight: 600;">
                             🎒 Backpack
                         </button>
                     </div>
 
                     <div style="text-align: center;">
-                        <button onclick="closeWalletModal()" style="
-                            background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(139, 92, 246, 0.3);
-                            color: #d1d5db; padding: 0.75rem 2rem; border-radius: 0.75rem; cursor: pointer;
-                            font-size: 0.9rem; font-weight: 500;
-                        ">
+                        <button onclick="closeWalletModal()" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(139, 92, 246, 0.3); color: #d1d5db; padding: 0.75rem 2rem; border-radius: 0.75rem; cursor: pointer; font-size: 0.9rem; font-weight: 500;">
                             Cancel
                         </button>
                     </div>
@@ -823,8 +929,6 @@
             
             document.body.appendChild(modal);
             document.body.style.overflow = 'hidden';
-            
-            // Store modal reference for cleanup
             window.currentModal = modal;
         }
 
@@ -836,26 +940,13 @@
             }
         }
 
-        function connectPhantom() {
-            simulateWalletConnection('Phantom');
-        }
-
-        function connectSolflare() {
-            simulateWalletConnection('Solflare');
-        }
-
-        function connectBackpack() {
-            simulateWalletConnection('Backpack');
-        }
+        function connectPhantom() { simulateWalletConnection('Phantom'); }
+        function connectSolflare() { simulateWalletConnection('Solflare'); }
+        function connectBackpack() { simulateWalletConnection('Backpack'); }
 
         function simulateWalletConnection(walletName) {
-            // Close current modal
             closeWalletModal();
-            
-            // Show champion creation modal
-            setTimeout(() => {
-                showChampionCreationModal(walletName);
-            }, 500);
+            setTimeout(() => showChampionCreationModal(walletName), 500);
         }
 
         function showChampionCreationModal(walletName) {
@@ -867,101 +958,45 @@
             `;
             
             modal.innerHTML = `
-                <div style="
-                    background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(30px);
-                    border: 2px solid rgba(251, 191, 36, 0.4); border-radius: 1.5rem;
-                    padding: 2rem; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;
-                ">
+                <div style="background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(30px); border: 2px solid rgba(251, 191, 36, 0.4); border-radius: 1.5rem; padding: 2rem; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;">
                     <div style="text-align: center; margin-bottom: 2rem;">
-                        <h2 style="color: #fbbf24; font-family: 'Orbitron', monospace; font-size: 1.5rem; margin-bottom: 0.5rem;">
-                            👑 Create Your Champion
-                        </h2>
-                        <p style="color: #d1d5db; font-size: 0.9rem;">
-                            ${walletName} connected • Choose your battlefield identity
-                        </p>
+                        <h2 style="color: #fbbf24; font-family: 'Orbitron', monospace; font-size: 1.5rem; margin-bottom: 0.5rem;">👑 Create Your Anonymous Champion</h2>
+                        <p style="color: #d1d5db; font-size: 0.9rem;">${walletName} connected • Your identity will remain completely private</p>
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
-                        <label style="color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem; display: block;">
-                            Champion Name
-                        </label>
-                        <input type="text" id="championName" placeholder="e.g., Golden Phoenix, Lightning Bolt..." style="
-                            width: 100%; background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3);
-                            border-radius: 0.75rem; padding: 0.75rem; color: #ffffff; font-size: 1rem;
-                            box-sizing: border-box;
-                        ">
-                        <div style="color: #9ca3af; font-size: 0.8rem; margin-top: 0.25rem;">
-                            This name will be visible to other champions during tournaments
-                        </div>
+                        <label style="color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem; display: block;">Champion Name</label>
+                        <input type="text" id="championName" placeholder="e.g., Golden Phoenix, Lightning Bolt..." style="width: 100%; background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 0.75rem; padding: 0.75rem; color: #ffffff; font-size: 1rem; box-sizing: border-box;">
+                        <div style="color: #9ca3af; font-size: 0.8rem; margin-top: 0.25rem;">This will be your only visible identity - no wallet address will ever be shown</div>
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
-                        <label style="color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem; display: block;">
-                            Choose Avatar
-                        </label>
+                        <label style="color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem; display: block;">Choose Avatar</label>
                         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
-                            <button onclick="selectAvatar('🔥')" class="avatar-btn" style="
-                                background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3);
-                                padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;
-                            ">🔥</button>
-                            <button onclick="selectAvatar('⚔️')" class="avatar-btn" style="
-                                background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3);
-                                padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;
-                            ">⚔️</button>
-                            <button onclick="selectAvatar('⚡')" class="avatar-btn" style="
-                                background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3);
-                                padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;
-                            ">⚡</button>
-                            <button onclick="selectAvatar('🐋')" class="avatar-btn" style="
-                                background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3);
-                                padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;
-                            ">🐋</button>
-                            <button onclick="selectAvatar('💎')" class="avatar-btn" style="
-                                background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3);
-                                padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;
-                            ">💎</button>
-                            <button onclick="selectAvatar('🚀')" class="avatar-btn" style="
-                                background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3);
-                                padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;
-                            ">🚀</button>
-                            <button onclick="selectAvatar('🎯')" class="avatar-btn" style="
-                                background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3);
-                                padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;
-                            ">🎯</button>
-                            <button onclick="selectAvatar('⭐')" class="avatar-btn" style="
-                                background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3);
-                                padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;
-                            ">⭐</button>
+                            <button onclick="selectAvatar('🔥')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">🔥</button>
+                            <button onclick="selectAvatar('⚔️')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">⚔️</button>
+                            <button onclick="selectAvatar('⚡')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">⚡</button>
+                            <button onclick="selectAvatar('🐋')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">🐋</button>
+                            <button onclick="selectAvatar('💎')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">💎</button>
+                            <button onclick="selectAvatar('🚀')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">🚀</button>
+                            <button onclick="selectAvatar('🎯')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">🎯</button>
+                            <button onclick="selectAvatar('⭐')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">⭐</button>
                         </div>
                     </div>
 
-                    <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(251, 191, 36, 0.1);
-                                border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
-                        <div style="color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem;">
-                            🎯 Your Champion Profile
-                        </div>
+                    <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(251, 191, 36, 0.1); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <div style="color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem;">🎯 Your Anonymous Champion</div>
                         <div style="color: #d1d5db; font-size: 0.9rem; line-height: 1.4;">
                             <div>Name: <span id="previewName" style="color: #fbbf24;">Enter name above</span></div>
                             <div>Avatar: <span id="previewAvatar" style="color: #fbbf24;">🔥</span></div>
-                            <div>Wallet: <span style="color: #6b7280; font-family: monospace;">7xB9...K2mE (Protected)</span></div>
+                            <div>Identity: <span style="color: #10b981;">✅ Completely Anonymous</span></div>
+                            <div>Wallet: <span style="color: #6b7280;">🔒 Never Displayed</span></div>
                         </div>
                     </div>
 
                     <div style="display: flex; gap: 0.75rem;">
-                        <button onclick="createChampion()" style="
-                            flex: 1; background: linear-gradient(135deg, #fbbf24, #f59e0b);
-                            border: none; color: white; padding: 1rem; border-radius: 0.75rem;
-                            font-weight: 700; cursor: pointer; font-size: 1rem;
-                        ">
-                            🚀 Enter the Arena
-                        </button>
-                        <button onclick="closeChampionModal()" style="
-                            background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3);
-                            color: #d1d5db; padding: 1rem; border-radius: 0.75rem; cursor: pointer;
-                            font-size: 1rem; font-weight: 500;
-                        ">
-                            Skip
-                        </button>
+                        <button onclick="createChampion()" style="flex: 1; background: linear-gradient(135deg, #fbbf24, #f59e0b); border: none; color: white; padding: 1rem; border-radius: 0.75rem; font-weight: 700; cursor: pointer; font-size: 1rem;">🚀 Compete Anonymously</button>
+                        <button onclick="closeChampionModal()" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); color: #d1d5db; padding: 1rem; border-radius: 0.75rem; cursor: pointer; font-size: 1rem; font-weight: 500;">Skip</button>
                     </div>
                 </div>
             `;
@@ -970,7 +1005,6 @@
             document.body.style.overflow = 'hidden';
             window.currentModal = modal;
 
-            // Add event listeners
             const nameInput = modal.querySelector('#championName');
             nameInput.addEventListener('input', updatePreview);
         }
@@ -979,14 +1013,12 @@
 
         function selectAvatar(emoji) {
             selectedAvatar = emoji;
-            // Update visual selection
             document.querySelectorAll('.avatar-btn').forEach(btn => {
                 btn.style.background = 'rgba(31, 41, 55, 0.5)';
                 btn.style.borderColor = 'rgba(251, 191, 36, 0.3)';
             });
             event.target.style.background = 'rgba(251, 191, 36, 0.2)';
             event.target.style.borderColor = '#fbbf24';
-            
             updatePreview();
         }
 
@@ -995,62 +1027,33 @@
             const previewName = document.getElementById('previewName');
             const previewAvatar = document.getElementById('previewAvatar');
             
-            if (previewName) {
-                previewName.textContent = nameInput.value || 'Enter name above';
-            }
-            if (previewAvatar) {
-                previewAvatar.textContent = selectedAvatar;
-            }
+            if (previewName) previewName.textContent = nameInput.value || 'Enter name above';
+            if (previewAvatar) previewAvatar.textContent = selectedAvatar;
         }
 
         function createChampion() {
-            const championName = document.getElementById('championName').value || 'Unnamed Champion';
-            
+            const championName = document.getElementById('championName').value || 'Anonymous Champion';
             closeChampionModal();
-            
-            // Show success message
-            setTimeout(() => {
-                showSuccessMessage(championName, selectedAvatar);
-            }, 500);
+            setTimeout(() => showSuccessMessage(championName, selectedAvatar), 500);
         }
 
-        function closeChampionModal() {
-            closeWalletModal(); // Reuse the same cleanup function
-        }
+        function closeChampionModal() { closeWalletModal(); }
 
         function showSuccessMessage(championName, avatar) {
             const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); z-index: 1000;
-                display: flex; align-items: center; justify-content: center; padding: 1rem;
-            `;
+            modal.style.cssText = `position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem;`;
             
             modal.innerHTML = `
-                <div style="
-                    background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(30px);
-                    border: 2px solid rgba(16, 185, 129, 0.4); border-radius: 1.5rem;
-                    padding: 2rem; max-width: 400px; width: 100%; text-align: center;
-                ">
+                <div style="background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(30px); border: 2px solid rgba(16, 185, 129, 0.4); border-radius: 1.5rem; padding: 2rem; max-width: 400px; width: 100%; text-align: center;">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
-                    <h2 style="color: #10b981; font-family: 'Orbitron', monospace; font-size: 1.5rem; margin-bottom: 1rem;">
-                        Welcome to WalletWars!
-                    </h2>
+                    <h2 style="color: #10b981; font-family: 'Orbitron', monospace; font-size: 1.5rem; margin-bottom: 1rem;">Anonymous Champion Created!</h2>
                     <div style="background: rgba(15, 23, 42, 0.5); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
                         <div style="font-size: 2rem; margin-bottom: 0.5rem;">${avatar}</div>
                         <div style="color: #fbbf24; font-weight: 700; font-size: 1.1rem;">${championName}</div>
-                        <div style="color: #6b7280; font-size: 0.8rem; margin-top: 0.25rem;">Champion Created</div>
+                        <div style="color: #10b981; font-size: 0.8rem; margin-top: 0.25rem;">🔒 Completely Anonymous</div>
                     </div>
-                    <div style="color: #d1d5db; font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem;">
-                        Your champion identity is ready! You can now compete in tournaments with full privacy protection.
-                    </div>
-                    <button onclick="closeSuccessModal()" style="
-                        background: linear-gradient(135deg, #10b981, #34d399);
-                        border: none; color: white; padding: 0.75rem 2rem; border-radius: 0.75rem;
-                        font-weight: 600; cursor: pointer; font-size: 1rem;
-                    ">
-                        🏆 Start Competing
-                    </button>
+                    <div style="color: #d1d5db; font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem;">Your champion identity is ready! Compete with complete privacy protection - your wallet address will never be displayed.</div>
+                    <button onclick="closeSuccessModal()" style="background: linear-gradient(135deg, #10b981, #34d399); border: none; color: white; padding: 0.75rem 2rem; border-radius: 0.75rem; font-weight: 600; cursor: pointer; font-size: 1rem;">🏆 Start Competing</button>
                 </div>
             `;
             
@@ -1058,12 +1061,39 @@
             window.currentModal = modal;
         }
 
-        function closeSuccessModal() {
-            closeWalletModal();
-            // Could redirect to tournaments page or update UI to show connected state
+        function closeSuccessModal() { closeWalletModal(); }
+
+        // Champion detail functions
+        const championDetails = {
+            1: { name: "The Golden Phoenix", avatar: "🔥", performance: "+94.7%", tournaments: "47" },
+            2: { name: "Diamond Samurai", avatar: "⚔️", performance: "+91.2%", tournaments: "34" },
+            3: { name: "Lightning Bolt", avatar: "⚡", performance: "+88.9%", tournaments: "28" },
+            4: { name: "Crypto Whale", avatar: "🐋", performance: "+85.3%", tournaments: "52" },
+            5: { name: "Solar Storm", avatar: "☀️", performance: "+82.6%", tournaments: "31" },
+            6: { name: "Neon Hunter", avatar: "🎯", performance: "+79.4%", tournaments: "25" },
+            7: { name: "Quantum Leap", avatar: "🌌", performance: "+76.8%", tournaments: "29" },
+            8: { name: "Pixel Warrior", avatar: "🎮", performance: "+74.2%", tournaments: "22" }
+        };
+
+        function openChampionCard(id) {
+            const champion = championDetails[id];
+            const modal = document.getElementById('championModal');
+            
+            document.getElementById('championAvatar').textContent = champion.avatar;
+            document.getElementById('championName').textContent = champion.name;
+            document.getElementById('championPerformance').textContent = champion.performance;
+            document.getElementById('championTournaments').textContent = champion.tournaments;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
-        // Search and sort functionality (preserved from original)
+        function closeChampionCard() {
+            document.getElementById('championModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Search and sort functionality
         function performSearch() {
             const searchTerm = document.getElementById('championSearch').value.toLowerCase();
             const rows = document.querySelectorAll('.leaderboard-row');
@@ -1088,21 +1118,42 @@
         }
 
         function sortTable(field) {
-            // Sorting logic preserved from original implementation
             console.log('Sorting by:', field);
         }
 
-        // Close modals when clicking outside
+        // Event listeners
         document.addEventListener('click', function(event) {
             if (window.currentModal && event.target === window.currentModal) {
                 closeWalletModal();
             }
+            const modal = document.getElementById('championModal');
+            if (event.target === modal) {
+                closeChampionCard();
+            }
         });
 
-        // Close modals with Escape key
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && window.currentModal) {
-                closeWalletModal();
+            if (event.key === 'Escape') {
+                if (window.currentModal) closeWalletModal();
+                else closeChampionCard();
+            }
+        });
+
+        // Initialize page and set up click handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up event delegation for champion rows
+            const leaderboardTable = document.getElementById('leaderboardBody');
+            if (leaderboardTable) {
+                leaderboardTable.addEventListener('click', function(event) {
+                    // Find the clicked row
+                    const clickedRow = event.target.closest('.leaderboard-row');
+                    if (clickedRow) {
+                        const rank = parseInt(clickedRow.getAttribute('data-champion-rank'));
+                        if (rank && championDetails[rank]) {
+                            openChampionCard(rank);
+                        }
+                    }
+                });
             }
         });
     </script>
