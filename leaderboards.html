@@ -35,12 +35,13 @@
             gap: 1rem;
             align-items: center;
             margin-bottom: 1.5rem;
+            max-width: 100%;
         }
 
         .search-input-wrapper {
             flex: 1;
             position: relative;
-            min-width: 300px;
+            max-width: calc(100% - 120px);
         }
 
         .search-input {
@@ -234,13 +235,20 @@
         /* Results Info */
         .results-info {
             display: flex;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
             margin-bottom: 1rem;
             padding: 0.75rem 1rem;
             background: rgba(15, 23, 42, 0.3);
             border: 1px solid rgba(139, 92, 246, 0.1);
             border-radius: 0.75rem;
+        }
+
+        /* Force hide any remaining view toggle elements */
+        .view-toggle,
+        .view-btn {
+            display: none !important;
+            visibility: hidden !important;
         }
 
         .results-count {
@@ -544,7 +552,7 @@
             }
 
             .search-input-wrapper {
-                min-width: 400px;
+                width: 100%;
             }
 
             .earnings-cell {
@@ -1040,7 +1048,7 @@
             }
 
             .search-input-wrapper {
-                min-width: auto;
+                width: 100%;
             }
 
             .results-info {
