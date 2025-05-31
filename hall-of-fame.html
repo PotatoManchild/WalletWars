@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hall of Fame - WalletWars</title>
+    <title>Leaderboards - WalletWars</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -12,593 +12,13 @@
     <link rel="stylesheet" href="shared.css">
     
     <style>
-        /* Hall of Fame Specific Styles */
-        .hall-of-fame-title {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+        /* Leaderboards Specific Styles */
+        .leaderboards-title {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-    </style>
-</head>
-<body>
-    <!-- Animated Background -->
-    <div class="animated-background"></div>
-    <div class="geometric-patterns"></div>
-
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">WalletWars</a>
-            
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="tournaments.html">Tournaments</a></li>
-                <li><a href="leaderboards.html">Leaderboards</a></li>
-                <li><a href="hall-of-fame.html" class="active">Hall of Fame</a></li>
-                <li><a href="#" class="btn-primary" onclick="connectWallet()">Connect Wallet</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Page Container -->
-    <div class="page-container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title hall-of-fame-title">Hall of Fame</h1>
-            <p class="page-subtitle">Anonymous legends who achieved greatness through verified skill</p>
-        </div>
-
-        <!-- Page Content -->
-        <div class="page-content">
-            <!-- Privacy Protection Banner -->
-            <div class="privacy-banner">
-                <div class="privacy-banner-title">
-                    🛡️ Legendary Champions Protected by Complete Anonymity
-                </div>
-                <div class="privacy-banner-text">
-                    All Hall of Fame legends maintain complete privacy protection. Their achievements are verified by blockchain technology while their identities remain forever anonymous. True legends are defined by skill, not exposure.
-                </div>
-            </div>
-
-            <!-- Section Navigation -->
-            <div class="section-nav">
-                <button class="section-nav-btn active" onclick="showSection('achievements')">🏆 Achievements</button>
-                <button class="section-nav-btn" onclick="showSection('legends')">👑 Anonymous Legends</button>
-                <button class="section-nav-btn" onclick="showSection('records')">📊 Record Holders</button>
-                <button class="section-nav-btn" onclick="showSection('moments')">⚡ Epic Moments</button>
-            </div>
-
-            <!-- Enhanced Achievements Section -->
-            <div id="achievements-section" class="hall-section active">
-                <div class="section-header">
-                    <h2 class="section-title">Achievement Gallery</h2>
-                    <p class="section-subtitle">Unlock legendary status through anonymous skill and dedication</p>
-                </div>
-                
-                <!-- Achievement Overview Stats -->
-                <div class="achievement-overview">
-                    <div class="achievement-stat-card">
-                        <div class="achievement-stat-value">16</div>
-                        <div class="achievement-stat-label">Unlocked</div>
-                    </div>
-                    <div class="achievement-stat-card">
-                        <div class="achievement-stat-value">25</div>
-                        <div class="achievement-stat-label">Total</div>
-                    </div>
-                    <div class="achievement-stat-card">
-                        <div class="achievement-stat-value">64%</div>
-                        <div class="achievement-stat-label">Complete</div>
-                    </div>
-                    <div class="achievement-stat-card">
-                        <div class="achievement-stat-value">3</div>
-                        <div class="achievement-stat-label">Legendary</div>
-                    </div>
-                    <div class="achievement-stat-card">
-                        <div class="achievement-stat-value">252</div>
-                        <div class="achievement-stat-label">Points</div>
-                    </div>
-                </div>
-
-                <!-- Achievement Filters -->
-                <div class="achievement-filters">
-                    <button class="filter-btn active" onclick="filterAchievements('all')">All</button>
-                    <button class="filter-btn" onclick="filterAchievements('unlocked')">Unlocked</button>
-                    <button class="filter-btn" onclick="filterAchievements('locked')">Locked</button>
-                    <button class="filter-btn" onclick="filterAchievements('tournament')">Tournament</button>
-                    <button class="filter-btn" onclick="filterAchievements('earnings')">Earnings</button>
-                    <button class="filter-btn" onclick="filterAchievements('consistency')">Consistency</button>
-                    <button class="filter-btn" onclick="filterAchievements('platform')">Platform</button>
-                    <button class="filter-btn" onclick="filterAchievements('legendary')">Legendary</button>
-                </div>
-
-                <!-- Achievements Grid (Sample achievements) -->
-                <div class="achievements-grid" id="achievementsGrid">
-                    <!-- Tournament Performance Achievements -->
-                    <div class="achievement-card bronze unlocked tournament">
-                        <div class="unlock-badge">✓ Unlocked</div>
-                        <div class="achievement-header">
-                            <div class="achievement-icon">🚪</div>
-                            <div class="achievement-info">
-                                <div class="achievement-title">Tournament Debut</div>
-                                <div class="achievement-rarity rarity-bronze">Bronze Achievement</div>
-                            </div>
-                        </div>
-                        <div class="achievement-description">
-                            Enter your first tournament with complete anonymity protection.
-                        </div>
-                        <div class="achievement-progress">
-                            <div class="progress-header">
-                                <span class="progress-text">First Tournament Entry</span>
-                                <span class="progress-value">1/1</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100%"></div>
-                            </div>
-                        </div>
-                        <div class="achievement-reward">
-                            <span class="reward-text">Reward</span>
-                            <span class="reward-value">+5 Achievement Points</span>
-                        </div>
-                    </div>
-
-                    <div class="achievement-card legendary unlocked platform">
-                        <div class="unlock-badge">✓ Unlocked</div>
-                        <div class="achievement-header">
-                            <div class="achievement-icon">🛡️</div>
-                            <div class="achievement-info">
-                                <div class="achievement-title">Anonymous Pioneer</div>
-                                <div class="achievement-rarity rarity-legendary">Legendary Achievement</div>
-                            </div>
-                        </div>
-                        <div class="achievement-description">
-                            Be among the first champions to compete with complete anonymity protection.
-                        </div>
-                        <div class="achievement-progress">
-                            <div class="progress-header">
-                                <span class="progress-text">Pioneer Status</span>
-                                <span class="progress-value">Achieved</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100%"></div>
-                            </div>
-                        </div>
-                        <div class="achievement-reward">
-                            <span class="reward-text">Reward</span>
-                            <span class="reward-value">+50 Points & Pioneer Badge</span>
-                        </div>
-                    </div>
-
-                    <div class="achievement-card gold unlocked tournament">
-                        <div class="unlock-badge">✓ Unlocked</div>
-                        <div class="achievement-header">
-                            <div class="achievement-icon">🔥</div>
-                            <div class="achievement-info">
-                                <div class="achievement-title">Anonymous Streak</div>
-                                <div class="achievement-rarity rarity-gold">Gold Achievement</div>
-                            </div>
-                        </div>
-                        <div class="achievement-description">
-                            Win multiple tournaments while maintaining complete identity protection.
-                        </div>
-                        <div class="achievement-progress">
-                            <div class="progress-header">
-                                <span class="progress-text">Protected Wins</span>
-                                <span class="progress-value">5/5</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100%"></div>
-                            </div>
-                        </div>
-                        <div class="achievement-reward">
-                            <span class="reward-text">Reward</span>
-                            <span class="reward-value">+25 Achievement Points</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Anonymous Legends Section -->
-            <div id="legends-section" class="hall-section">
-                <div class="section-header">
-                    <h2 class="section-title">Anonymous Legends</h2>
-                    <p class="section-subtitle">Elite champions who achieved greatness while maintaining complete privacy</p>
-                </div>
-
-                <div class="legends-grid">
-                    <!-- Anonymous Legend 1 -->
-                    <div class="legend-card" onclick="openLegendCard(1)">
-                        <div class="legend-header">
-                            <div class="legend-avatar">🔥</div>
-                            <div class="legend-info">
-                                <div class="legend-name">The Golden Phoenix</div>
-                                <div class="legend-title">
-                                    Eternal Champion • First Anonymous Legend
-                                    <span class="legend-anonymous-badge">🔒 Anonymous</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="legend-stats">
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">94.7%</div>
-                                <div class="legend-stat-label">Verified Rate</div>
-                            </div>
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">47</div>
-                                <div class="legend-stat-label">Tournaments</div>
-                            </div>
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">1,247+</div>
-                                <div class="legend-stat-label">SOL Earned</div>
-                            </div>
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">23</div>
-                                <div class="legend-stat-label">Win Streak</div>
-                            </div>
-                        </div>
-                        
-                        <div class="legend-achievements">
-                            <div class="legend-achievements-title">Anonymous Achievements</div>
-                            <span class="legend-achievement-badge">👑 First Anonymous Champion</span>
-                            <span class="legend-achievement-badge">🔥 Protected Streak Master</span>
-                            <span class="legend-achievement-badge">🛡️ Privacy Pioneer</span>
-                            <span class="legend-achievement-badge">🏆 Anonymous Legend</span>
-                        </div>
-                    </div>
-
-                    <!-- Anonymous Legend 2 -->
-                    <div class="legend-card" onclick="openLegendCard(2)">
-                        <div class="legend-header">
-                            <div class="legend-avatar">⚔️</div>
-                            <div class="legend-info">
-                                <div class="legend-name">Diamond Samurai</div>
-                                <div class="legend-title">
-                                    Blade Master • Anonymous Precision Expert
-                                    <span class="legend-anonymous-badge">🔒 Anonymous</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="legend-stats">
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">91.2%</div>
-                                <div class="legend-stat-label">Verified Rate</div>
-                            </div>
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">34</div>
-                                <div class="legend-stat-label">Tournaments</div>
-                            </div>
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">983+</div>
-                                <div class="legend-stat-label">SOL Earned</div>
-                            </div>
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">15</div>
-                                <div class="legend-stat-label">Win Streak</div>
-                            </div>
-                        </div>
-                        
-                        <div class="legend-achievements">
-                            <div class="legend-achievements-title">Anonymous Achievements</div>
-                            <span class="legend-achievement-badge">⚔️ Anonymous Blade Master</span>
-                            <span class="legend-achievement-badge">💎 Protected Diamond Soul</span>
-                            <span class="legend-achievement-badge">🎯 Anonymous Precision</span>
-                            <span class="legend-achievement-badge">🛡️ Privacy Warrior</span>
-                        </div>
-                    </div>
-
-                    <!-- Anonymous Legend 3 -->
-                    <div class="legend-card" onclick="openLegendCard(3)">
-                        <div class="legend-header">
-                            <div class="legend-avatar">⚡</div>
-                            <div class="legend-info">
-                                <div class="legend-name">Lightning Bolt</div>
-                                <div class="legend-title">
-                                    Speed Demon • Anonymous Lightning Champion
-                                    <span class="legend-anonymous-badge">🔒 Anonymous</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="legend-stats">
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">88.9%</div>
-                                <div class="legend-stat-label">Verified Rate</div>
-                            </div>
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">28</div>
-                                <div class="legend-stat-label">Tournaments</div>
-                            </div>
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">756+</div>
-                                <div class="legend-stat-label">SOL Earned</div>
-                            </div>
-                            <div class="legend-stat">
-                                <div class="legend-stat-value">12</div>
-                                <div class="legend-stat-label">Win Streak</div>
-                            </div>
-                        </div>
-                        
-                        <div class="legend-achievements">
-                            <div class="legend-achievements-title">Anonymous Achievements</div>
-                            <span class="legend-achievement-badge">⚡ Anonymous Lightning Speed</span>
-                            <span class="legend-achievement-badge">🌪️ Protected Storm Bringer</span>
-                            <span class="legend-achievement-badge">⭐ Anonymous Rising Star</span>
-                            <span class="legend-achievement-badge">🏃 Privacy Speed Runner</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Record Holders Section -->
-            <div id="records-section" class="hall-section">
-                <div class="section-header">
-                    <h2 class="section-title">Anonymous Record Holders</h2>
-                    <p class="section-subtitle">Champions who set extraordinary milestones while maintaining complete privacy</p>
-                </div>
-                
-                <div style="text-align: center; padding: 4rem 2rem; color: #9ca3af;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">📊</div>
-                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">Anonymous Record System</div>
-                    <div style="font-size: 0.9rem; line-height: 1.5;">
-                        All records are maintained with complete champion anonymity.<br>
-                        Performance verified by blockchain technology.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Epic Moments Section -->
-            <div id="moments-section" class="hall-section">
-                <div class="section-header">
-                    <h2 class="section-title">Anonymous Epic Moments</h2>
-                    <p class="section-subtitle">Legendary moments that defined WalletWars history - all with protected identities</p>
-                </div>
-                
-                <div style="text-align: center; padding: 4rem 2rem; color: #9ca3af;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">⚡</div>
-                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">Protected Epic Moments</div>
-                    <div style="font-size: 0.9rem; line-height: 1.5;">
-                        Historic moments preserved with champion anonymity.<br>
-                        Legends defined by achievements, not identity exposure.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Anonymous Legend Detail Modal -->
-    <div class="legend-modal" id="legendModal">
-        <div class="legend-detail-card">
-            <div class="legend-detail-header">
-                <button class="legend-close" onclick="closeLegendCard()">×</button>
-                
-                <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; margin: 0 auto 1rem; border: 3px solid rgba(251, 191, 36, 0.5); box-shadow: 0 0 30px rgba(251, 191, 36, 0.4);" id="legendAvatar">🔥</div>
-                
-                <div style="font-family: 'Orbitron', monospace; font-size: 2rem; font-weight: 700; color: #fbbf24; margin-bottom: 0.5rem;" id="legendName">Anonymous Legend</div>
-                <div style="color: #d1d5db; font-size: 1rem; margin-bottom: 0.75rem;" id="legendTitle">Protected Champion Status</div>
-                
-                <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-                    <div style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(59, 130, 246, 0.3);">
-                        🔒 Completely Anonymous
-                    </div>
-                    <div style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.3);">
-                        ✅ Blockchain Verified
-                    </div>
-                    <div style="background: rgba(251, 191, 36, 0.2); color: #fbbf24; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(251, 191, 36, 0.3);">
-                        👑 Hall of Fame Legend
-                    </div>
-                </div>
-            </div>
-
-            <!-- Anonymous Legend Stats -->
-            <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(251, 191, 36, 0.1); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
-                <div style="color: #fbbf24; font-weight: 600; margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">
-                    🏆 Verified Anonymous Performance
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 2rem; font-weight: 700; color: #fbbf24; margin-bottom: 0.25rem; font-family: 'Orbitron', monospace;" id="legendVerifiedRate">94.7%</div>
-                        <div style="font-size: 0.8rem; color: #9ca3af;">Verified Performance Rate</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 2rem; font-weight: 700; color: #fbbf24; margin-bottom: 0.25rem; font-family: 'Orbitron', monospace;" id="legendTournamentWins">47</div>
-                        <div style="font-size: 0.8rem; color: #9ca3af;">Tournament Victories</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Complete Privacy Protection -->
-            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
-                <div style="color: #3b82f6; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                    🛡️ Anonymous Legend Protection
-                </div>
-                <div style="color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">
-                    This legend's identity is permanently protected by our anonymity system. All achievements are verified by blockchain technology while maintaining complete privacy. No personal information has ever been exposed.
-                </div>
-            </div>
-
-            <!-- Legendary Achievements -->
-            <div style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
-                <div style="color: #fbbf24; font-weight: 600; margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 0.5rem;">
-                    👑 Anonymous Hall of Fame Status
-                </div>
-                <div style="display: grid; gap: 0.5rem;" id="legendAchievements">
-                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: rgba(31, 41, 55, 0.5); border-radius: 0.5rem; border: 1px solid rgba(251, 191, 36, 0.1);">
-                        <div style="font-size: 1.2rem; width: 30px; text-align: center;">👑</div>
-                        <div style="color: #d1d5db; font-size: 0.85rem;">First Anonymous Champion - Protected Legacy</div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: rgba(31, 41, 55, 0.5); border-radius: 0.5rem; border: 1px solid rgba(251, 191, 36, 0.1);">
-                        <div style="font-size: 1.2rem; width: 30px; text-align: center;">🔥</div>
-                        <div style="color: #d1d5db; font-size: 0.85rem;">Longest Anonymous Win Streak - Privacy Protected</div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: rgba(31, 41, 55, 0.5); border-radius: 0.5rem; border: 1px solid rgba(251, 191, 36, 0.1);">
-                        <div style="font-size: 1.2rem; width: 30px; text-align: center;">🛡️</div>
-                        <div style="color: #d1d5db; font-size: 0.85rem;">Anonymous Pioneer - Identity Never Exposed</div>
-                    </div>
-                </div>
-            </div>
-
-            <div style="text-align: center;">
-                <button onclick="closeLegendCard()" style="background: linear-gradient(135deg, #fbbf24, #f59e0b); border: none; color: white; padding: 0.75rem 2rem; border-radius: 0.75rem; font-weight: 600; cursor: pointer; font-size: 1rem;">
-                    Honor Anonymous Legend
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function connectWallet() {
-            alert('🔗 Connect Wallet\n\nJoin the anonymous champion system!\n\nYour wallet address will never be displayed anywhere on the platform.');
         }
-
-        // Anonymous legend data
-        var anonymousLegendData = {
-            1: {
-                name: "The Golden Phoenix",
-                title: "Eternal Champion • First Anonymous Legend",
-                avatar: "🔥",
-                verifiedRate: "94.7%",
-                tournaments: "47",
-                achievements: [
-                    { icon: "👑", text: "First Anonymous Champion - Protected Legacy" },
-                    { icon: "🔥", text: "Longest Anonymous Win Streak - Privacy Protected" },
-                    { icon: "🛡️", text: "Anonymous Pioneer - Identity Never Exposed" },
-                    { icon: "🏆", text: "Most Tournament Wins - Verified Anonymously" }
-                ]
-            },
-            2: {
-                name: "Diamond Samurai",
-                title: "Blade Master • Anonymous Precision Expert",
-                avatar: "⚔️",
-                verifiedRate: "91.2%",
-                tournaments: "34",
-                achievements: [
-                    { icon: "⚔️", text: "Anonymous Blade Master - Protected Identity" },
-                    { icon: "💎", text: "Diamond Tier Achievement - Privacy Maintained" },
-                    { icon: "🎯", text: "Perfect Anonymous Strategy - Never Exposed" },
-                    { icon: "🛡️", text: "Privacy Warrior - Identity Secured" }
-                ]
-            },
-            3: {
-                name: "Lightning Bolt",
-                title: "Speed Demon • Anonymous Lightning Champion",
-                avatar: "⚡",
-                verifiedRate: "88.9%",
-                tournaments: "28",
-                achievements: [
-                    { icon: "⚡", text: "Anonymous Speed Record - Protected Champion" },
-                    { icon: "🌪️", text: "Storm Bringer Status - Privacy Protected" },
-                    { icon: "⭐", text: "Rising Anonymous Star - Identity Secured" },
-                    { icon: "🏃", text: "Fastest Anonymous Victory - Never Revealed" }
-                ]
-            }
-        };
-
-        var currentLegend = null;
-
-        function openLegendCard(legendId) {
-            currentLegend = legendId;
-            var legend = anonymousLegendData[legendId];
-            var modal = document.getElementById('legendModal');
-            
-            if (!legend || !modal) return;
-            
-            // Update legend details with anonymity focus
-            document.getElementById('legendAvatar').textContent = legend.avatar;
-            document.getElementById('legendName').textContent = legend.name;
-            document.getElementById('legendTitle').textContent = legend.title;
-            document.getElementById('legendVerifiedRate').textContent = legend.verifiedRate;
-            document.getElementById('legendTournamentWins').textContent = legend.tournaments;
-            
-            // Update achievements
-            var achievementsContainer = document.getElementById('legendAchievements');
-            if (achievementsContainer) {
-                achievementsContainer.innerHTML = '';
-                legend.achievements.forEach(function(achievement) {
-                    var achievementEl = document.createElement('div');
-                    achievementEl.style.cssText = 'display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; background: rgba(31, 41, 55, 0.5); border-radius: 0.5rem; border: 1px solid rgba(251, 191, 36, 0.1);';
-                    achievementEl.innerHTML = '<div style="font-size: 1.2rem; width: 30px; text-align: center;">' + achievement.icon + '</div><div style="color: #d1d5db; font-size: 0.85rem;">' + achievement.text + '</div>';
-                    achievementsContainer.appendChild(achievementEl);
-                });
-            }
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeLegendCard() {
-            document.getElementById('legendModal').classList.remove('active');
-            document.body.style.overflow = '';
-            currentLegend = null;
-        }
-
-        function showSection(sectionName) {
-            var sections = document.querySelectorAll('.hall-section');
-            for (var i = 0; i < sections.length; i++) {
-                sections[i].classList.remove('active');
-            }
-            
-            document.getElementById(sectionName + '-section').classList.add('active');
-            
-            var navButtons = document.querySelectorAll('.section-nav-btn');
-            for (var i = 0; i < navButtons.length; i++) {
-                navButtons[i].classList.remove('active');
-            }
-            
-            for (var i = 0; i < navButtons.length; i++) {
-                var btn = navButtons[i];
-                if ((sectionName === 'achievements' && btn.textContent.includes('Achievements')) ||
-                    (sectionName === 'legends' && btn.textContent.includes('Anonymous')) ||
-                    (sectionName === 'records' && btn.textContent.includes('Record')) ||
-                    (sectionName === 'moments' && btn.textContent.includes('Epic'))) {
-                    btn.classList.add('active');
-                    break;
-                }
-            }
-        }
-
-        function filterAchievements(filter) {
-            var filterButtons = document.querySelectorAll('.filter-btn');
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            var cards = document.querySelectorAll('.achievement-card');
-            cards.forEach(card => {
-                var shouldShow = false;
-                
-                if (filter === 'all') {
-                    shouldShow = true;
-                } else if (filter === 'unlocked' && card.classList.contains('unlocked')) {
-                    shouldShow = true;
-                } else if (filter === 'locked' && card.classList.contains('locked')) {
-                    shouldShow = true;
-                } else if (filter === 'legendary' && card.classList.contains('legendary')) {
-                    shouldShow = true;
-                } else if (card.classList.contains(filter)) {
-                    shouldShow = true;
-                }
-                
-                card.style.display = shouldShow ? 'block' : 'none';
-            });
-        }
-
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            var modal = document.getElementById('legendModal');
-            if (event.target === modal) {
-                closeLegendCard();
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeLegendCard();
-            }
-        });
-    </script>
-</body>
-</html>
 
         /* Privacy Protection Banner */
         .privacy-banner {
@@ -627,513 +47,360 @@
             line-height: 1.5;
         }
 
-        /* Section Navigation */
-        .section-nav {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
-            padding: 1.5rem;
+        /* Enhanced Search & Filter Section */
+        .search-and-filters {
             background: rgba(31, 41, 55, 0.3);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            border-radius: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .section-nav-btn {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            color: #d1d5db;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .section-nav-btn:hover,
-        .section-nav-btn.active {
-            background: rgba(251, 191, 36, 0.2);
-            border-color: #fbbf24;
-            color: #fbbf24;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
-        }
-
-        /* Section Container */
-        .hall-section {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-            padding-bottom: 4rem;
-        }
-
-        .hall-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #fbbf24;
-        }
-
-        .section-subtitle {
-            color: #9ca3af;
-            font-size: 1.1rem;
-        }
-
-        /* Enhanced Achievement Gallery Styles */
-        .achievement-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 1rem;
-            border: 1px solid rgba(251, 191, 36, 0.2);
-        }
-
-        .achievement-stat-card {
-            text-align: center;
-            padding: 1rem;
-            background: rgba(31, 41, 55, 0.4);
-            border-radius: 0.75rem;
-            border: 1px solid rgba(251, 191, 36, 0.1);
-        }
-
-        .achievement-stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #fbbf24;
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-
-        .achievement-stat-label {
-            font-size: 0.9rem;
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        /* Achievement Filters */
-        .achievement-filters {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            padding: 1rem;
-            background: rgba(31, 41, 55, 0.2);
-            border-radius: 1rem;
-            border: 1px solid rgba(251, 191, 36, 0.1);
-        }
-
-        .filter-btn {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            color: #d1d5db;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: rgba(251, 191, 36, 0.2);
-            border-color: #fbbf24;
-            color: #fbbf24;
-            transform: translateY(-1px);
-        }
-
-        /* Achievement Cards Grid */
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .achievement-card {
-            background: rgba(31, 41, 55, 0.4);
-            border: 1px solid rgba(251, 191, 36, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 1rem;
             padding: 1.5rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
+            margin-bottom: 2rem;
         }
 
-        .achievement-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--rarity-gradient);
-        }
-
-        .achievement-card:hover {
-            transform: translateY(-3px);
-            border-color: #fbbf24;
-            box-shadow: 0 15px 30px rgba(251, 191, 36, 0.2);
-        }
-
-        .achievement-card.locked {
-            opacity: 0.6;
-            background: rgba(31, 41, 55, 0.2);
-            border-color: rgba(251, 191, 36, 0.1);
-        }
-
-        .achievement-card.locked:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(251, 191, 36, 0.1);
-        }
-
-        /* Rarity Styles */
-        .achievement-card.bronze {
-            --rarity-gradient: linear-gradient(90deg, #cd7f32, #b8860b);
-        }
-
-        .achievement-card.silver {
-            --rarity-gradient: linear-gradient(90deg, #c0c0c0, #a8a8a8);
-        }
-
-        .achievement-card.gold {
-            --rarity-gradient: linear-gradient(90deg, #fbbf24, #f59e0b);
-        }
-
-        .achievement-card.legendary {
-            --rarity-gradient: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706, #92400e);
-            border-color: rgba(251, 191, 36, 0.5);
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
-        }
-
-        .achievement-header {
+        .search-container {
             display: flex;
-            align-items: center;
             gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .achievement-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            border-radius: 50%;
-            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        .achievement-card.locked .achievement-icon {
-            background: linear-gradient(135deg, #4b5563, #6b7280);
-            filter: grayscale(100%);
-        }
-
-        .achievement-icon::after {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            border-radius: 50%;
-            background: var(--rarity-gradient);
-            z-index: -1;
-            opacity: 0.3;
-        }
-
-        .achievement-info {
-            flex: 1;
-        }
-
-        .achievement-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fbbf24;
-            margin-bottom: 0.25rem;
-            font-family: 'Orbitron', monospace;
-        }
-
-        .achievement-card.locked .achievement-title {
-            color: #6b7280;
-        }
-
-        .achievement-rarity {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            opacity: 0.8;
-        }
-
-        .rarity-bronze { color: #cd7f32; }
-        .rarity-silver { color: #c0c0c0; }
-        .rarity-gold { color: #fbbf24; }
-        .rarity-legendary { 
-            color: #fbbf24; 
-            text-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
-        }
-
-        .achievement-description {
-            color: #d1d5db;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-        }
-
-        .achievement-card.locked .achievement-description {
-            color: #6b7280;
-        }
-
-        .achievement-progress {
-            margin-bottom: 1rem;
-        }
-
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .progress-text {
-            font-size: 0.8rem;
-            color: #9ca3af;
-        }
-
-        .progress-value {
-            font-size: 0.8rem;
-            color: #fbbf24;
-            font-weight: 600;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(31, 41, 55, 0.8);
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid rgba(251, 191, 36, 0.2);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #fbbf24, #f59e0b);
-            border-radius: 4px;
-            transition: width 0.8s ease;
-        }
-
-        .achievement-card.locked .progress-fill {
-            background: linear-gradient(90deg, #4b5563, #6b7280);
-        }
-
-        .achievement-reward {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(251, 191, 36, 0.1);
-        }
-
-        .reward-text {
-            font-size: 0.8rem;
-            color: #9ca3af;
-        }
-
-        .reward-value {
-            font-size: 0.8rem;
-            color: #fbbf24;
-            font-weight: 600;
-        }
-
-        .unlock-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.5rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .locked-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(107, 114, 128, 0.2);
-            color: #6b7280;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.5rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            border: 1px solid rgba(107, 114, 128, 0.3);
-        }
-
-        /* Legendary Champions Styles */
-        .legends-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-
-        .legend-card {
-            background: rgba(31, 41, 55, 0.4);
-            border: 2px solid rgba(251, 191, 36, 0.3);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .legend-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706, #92400e);
-        }
-
-        .legend-card:hover {
-            transform: translateY(-5px);
-            border-color: #fbbf24;
-            box-shadow: 0 20px 40px rgba(251, 191, 36, 0.3);
-        }
-
-        .legend-header {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
             margin-bottom: 1.5rem;
+            max-width: 66%;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .legend-avatar {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 0.75rem 3rem 0.75rem 1rem;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(31, 41, 55, 0.8);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #8b5cf6;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .clear-search {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .clear-search:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Results Info */
+        .results-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            border-radius: 0.75rem;
+        }
+
+        .results-count {
+            color: #8b5cf6;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Leaderboard Table */
+        .leaderboard-container {
+            background: rgba(31, 41, 55, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            overflow: hidden;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-header {
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom: 2px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .table-header th {
+            padding: 1rem 2.5rem 1rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #8b5cf6;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .table-header th:hover {
+            background: rgba(139, 92, 246, 0.15);
+        }
+
+        .table-header th:first-child {
+            text-align: center;
+            width: 60px;
+            padding: 1rem 1.5rem 1rem 1rem;
+        }
+
+        .table-header th.sortable::after {
+            content: '▼';
+            position: absolute;
+            right: 0.5rem;
+            opacity: 1;
+            font-size: 0.9rem;
+            color: #ffffff;
+            margin-left: 0.5rem;
+        }
+
+        .table-header th.sort-asc::after {
+            content: '▲';
+            opacity: 1;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .table-header th.sort-desc::after {
+            content: '▼';
+            opacity: 1;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .table-body {
+            background: transparent;
+        }
+
+        .leaderboard-row {
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .leaderboard-row:hover {
+            background: rgba(139, 92, 246, 0.08);
+            border-left-color: #8b5cf6;
+            border-right-color: #8b5cf6;
+            border-bottom-color: rgba(139, 92, 246, 0.3);
+            transform: translateX(2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+        }
+
+        .leaderboard-row.highlighted {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+
+        .leaderboard-row td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .rank-cell {
+            text-align: center;
+            font-weight: 700;
+            color: #8b5cf6;
+            font-size: 1rem;
+        }
+
+        .champion-cell {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .champion-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
-            border: 3px solid rgba(251, 191, 36, 0.3);
+            font-size: 1rem;
+            flex-shrink: 0;
         }
 
-        .legend-info {
+        .champion-info {
             flex: 1;
         }
 
-        .legend-name {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #fbbf24;
-            margin-bottom: 0.5rem;
-            font-family: 'Orbitron', monospace;
-        }
-
-        .legend-title {
-            color: #d1d5db;
-            font-size: 0.9rem;
-            font-weight: 500;
+        .champion-name {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .legend-anonymous-badge {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
+        /* Champion Verification Badge */
+        .champion-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
             padding: 0.2rem 0.5rem;
             border-radius: 0.4rem;
             font-size: 0.7rem;
             font-weight: 600;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
-        .legend-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .legend-stat {
-            text-align: center;
-            padding: 0.75rem;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 0.75rem;
-            border: 1px solid rgba(251, 191, 36, 0.1);
-        }
-
-        .legend-stat-value {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #fbbf24;
-            display: block;
-        }
-
-        .legend-stat-label {
+        /* Anonymous Identity Indicator */
+        .champion-identity {
             font-size: 0.8rem;
-            color: #9ca3af;
-            margin-top: 0.25rem;
+            color: #6b7280;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
-        .legend-achievements {
-            margin-bottom: 1rem;
+        .winrate-cell {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 1rem;
         }
 
-        .legend-achievements-title {
-            font-size: 0.9rem;
-            color: #9ca3af;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+        .tournaments-cell,
+        .earnings-cell {
+            color: #d1d5db;
+            font-size: 0.95rem;
         }
 
-        .legend-achievement-badge {
+        .earnings-cell {
+            font-weight: 600;
+        }
+
+        /* Rank Styling */
+        .rank-1 { 
+            color: #fbbf24; 
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+        .rank-2 { 
+            color: #c0c0c0; 
+            text-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+        }
+        .rank-3 { 
+            color: #cd7f32; 
+            text-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
+        }
+
+        /* Performance Badges */
+        .performance-badge {
             display: inline-block;
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-            padding: 0.3rem 0.6rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-right: 0.5rem;
-            margin-bottom: 0.25rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
         }
 
-        /* Legend Detail Modal */
-        .legend-modal {
+        .badge-legend {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .badge-hot-streak {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-rising-star {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        /* Tournament Status Indicator */
+        .tournament-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 0.75rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Champion Detail Modal */
+        .champion-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -1150,18 +417,18 @@
             transition: opacity 0.4s ease;
         }
 
-        .legend-modal.active {
+        .champion-modal.active {
             display: flex;
             opacity: 1;
         }
 
-        .legend-detail-card {
+        .champion-card {
             background: rgba(31, 41, 55, 0.95);
             backdrop-filter: blur(30px);
-            border: 2px solid rgba(251, 191, 36, 0.4);
+            border: 2px solid rgba(139, 92, 246, 0.4);
             border-radius: 1.5rem;
-            padding: 2rem;
-            max-width: 600px;
+            padding: 1.5rem;
+            max-width: 500px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -1170,19 +437,19 @@
             transition: transform 0.4s ease;
         }
 
-        .legend-modal.active .legend-detail-card {
+        .champion-modal.active .champion-card {
             transform: scale(1);
         }
 
-        .legend-detail-header {
+        .champion-card-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             padding-bottom: 1rem;
-            border-bottom: 2px solid rgba(251, 191, 36, 0.2);
+            border-bottom: 2px solid rgba(139, 92, 246, 0.2);
             position: relative;
         }
 
-        .legend-close {
+        .champion-close {
             position: absolute;
             top: -0.5rem;
             right: -0.5rem;
@@ -1200,76 +467,44 @@
             transition: all 0.3s ease;
         }
 
-        .legend-close:hover {
+        .champion-close:hover {
             background: rgba(239, 68, 68, 0.2);
             transform: scale(1.1);
         }
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            .achievements-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .achievement-card {
-                padding: 1.25rem;
-            }
-
-            .achievement-header {
+            .search-container {
+                flex-direction: column;
                 gap: 0.75rem;
             }
 
-            .achievement-icon {
-                width: 45px;
-                height: 45px;
-                font-size: 1.3rem;
+            .search-input-wrapper {
+                width: 100%;
             }
 
-            .achievement-title {
-                font-size: 1rem;
+            .earnings-cell {
+                display: none;
             }
 
-            .achievement-filters {
-                gap: 0.5rem;
-                padding: 0.75rem;
+            .champion-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
             }
 
-            .filter-btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.8rem;
+            .champion-info {
+                min-width: 0;
             }
 
-            .achievement-overview {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.75rem;
-                padding: 1rem;
+            .champion-name {
+                font-size: 0.9rem;
+                flex-wrap: wrap;
             }
 
-            .achievement-stat-card {
-                padding: 0.75rem;
-            }
-
-            .achievement-stat-value {
-                font-size: 1.5rem;
-            }
-
-            .legend-card {
-                padding: 1.5rem;
-            }
-
-            .legend-header {
-                gap: 1rem;
-            }
-
-            .legend-avatar {
-                width: 60px;
-                height: 60px;
-                font-size: 2rem;
-            }
-
-            .legend-name {
-                font-size: 1.2rem;
+            .champion-verified {
+                font-size: 0.6rem;
+                padding: 0.15rem 0.4rem;
             }
 
             .privacy-banner {
@@ -1284,4 +519,625 @@
             .privacy-banner-text {
                 font-size: 0.8rem;
             }
+
+            .search-input::placeholder {
+                content: "Search champions...";
+            }
         }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background"></div>
+    <div class="geometric-patterns"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">WalletWars</a>
+            
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tournaments.html">Tournaments</a></li>
+                <li><a href="leaderboards.html" class="active">Leaderboards</a></li>
+                <li><a href="hall-of-fame.html">Hall of Fame</a></li>
+                <li><a href="#" class="btn-primary" onclick="connectWallet()">Connect Wallet</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Container -->
+    <div class="page-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title leaderboards-title">Leaderboards</h1>
+            <p class="page-subtitle">Anonymous champions competing with verified performance</p>
+        </div>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Tournament Status -->
+            <div class="tournament-status">
+                <div class="status-indicator"></div>
+                <div class="status-text">Live Tournament: Elite Weekly Finals</div>
+                <div style="margin-left: auto; color: #9ca3af; font-size: 0.8rem;">3 tournaments active</div>
+            </div>
+
+            <!-- Privacy Protection Banner -->
+            <div class="privacy-banner">
+                <div class="privacy-banner-title">
+                    🛡️ Complete Champion Anonymity
+                </div>
+                <div class="privacy-banner-text">
+                    All champions compete with full identity protection. Performance is verified by blockchain technology while maintaining complete privacy. No wallet addresses are ever displayed.
+                </div>
+            </div>
+
+            <!-- Enhanced Search & Filters Section -->
+            <div class="search-and-filters">
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <input 
+                            type="text" 
+                            id="championSearch" 
+                            class="search-input" 
+                            placeholder="Search by champion name or rank..." 
+                            oninput="performSearch()"
+                        >
+                        <button class="search-btn" onclick="performSearch()">🔍</button>
+                    </div>
+                    <button class="clear-search" onclick="clearSearch()">Clear All</button>
+                </div>
+            </div>
+
+            <!-- Results Info -->
+            <div class="results-info">
+                <div class="results-count" id="resultsCount">Showing 8 verified anonymous champions</div>
+            </div>
+
+            <!-- Leaderboard Table -->
+            <div class="leaderboard-container">
+                <table class="leaderboard-table">
+                    <thead class="table-header">
+                        <tr>
+                            <th onclick="sortTable('rank')" class="sortable">Rank</th>
+                            <th onclick="sortTable('name')" class="sortable">Champion</th>
+                            <th onclick="sortTable('performance')" class="sortable">Performance</th>
+                            <th onclick="sortTable('tournaments')" class="sortable">Active Tournaments</th>
+                            <th onclick="sortTable('earnings')" class="sortable earnings-cell">Verified Earnings</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body" id="leaderboardBody">
+                        <!-- Champion rows with complete anonymity -->
+                        <tr class="leaderboard-row" data-champion-rank="1" onclick="openChampionCard(1)">
+                            <td class="rank-cell rank-1">1</td>
+                            <td>
+                                <div class="champion-cell">
+                                    <div class="champion-avatar">🔥</div>
+                                    <div class="champion-info">
+                                        <div class="champion-name">
+                                            The Golden Phoenix
+                                            <span class="performance-badge badge-legend">👑</span>
+                                            <span class="champion-verified">✅ Verified</span>
+                                        </div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="winrate-cell">+94.7%</td>
+                            <td class="tournaments-cell">3 Active</td>
+                            <td class="earnings-cell">1,247+ SOL</td>
+                        </tr>
+
+                        <tr class="leaderboard-row" data-champion-rank="2" onclick="openChampionCard(2)">
+                            <td class="rank-cell rank-2">2</td>
+                            <td>
+                                <div class="champion-cell">
+                                    <div class="champion-avatar">⚔️</div>
+                                    <div class="champion-info">
+                                        <div class="champion-name">
+                                            Diamond Samurai
+                                            <span class="performance-badge badge-hot-streak">🔥</span>
+                                            <span class="champion-verified">✅ Verified</span>
+                                        </div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="winrate-cell">+91.2%</td>
+                            <td class="tournaments-cell">2 Active</td>
+                            <td class="earnings-cell">983+ SOL</td>
+                        </tr>
+
+                        <tr class="leaderboard-row" data-champion-rank="3" onclick="openChampionCard(3)">
+                            <td class="rank-cell rank-3">3</td>
+                            <td>
+                                <div class="champion-cell">
+                                    <div class="champion-avatar">⚡</div>
+                                    <div class="champion-info">
+                                        <div class="champion-name">
+                                            Lightning Bolt
+                                            <span class="performance-badge badge-rising-star">⭐</span>
+                                            <span class="champion-verified">✅ Verified</span>
+                                        </div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="winrate-cell">+88.9%</td>
+                            <td class="tournaments-cell">2 Active</td>
+                            <td class="earnings-cell">756+ SOL</td>
+                        </tr>
+
+                        <tr class="leaderboard-row" data-champion-rank="4" onclick="openChampionCard(4)">
+                            <td class="rank-cell">4</td>
+                            <td>
+                                <div class="champion-cell">
+                                    <div class="champion-avatar">🐋</div>
+                                    <div class="champion-info">
+                                        <div class="champion-name">
+                                            Crypto Whale
+                                            <span class="champion-verified">✅ Verified</span>
+                                        </div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="winrate-cell">+85.3%</td>
+                            <td class="tournaments-cell">1 Active</td>
+                            <td class="earnings-cell">1,156+ SOL</td>
+                        </tr>
+
+                        <tr class="leaderboard-row" data-champion-rank="5" onclick="openChampionCard(5)">
+                            <td class="rank-cell">5</td>
+                            <td>
+                                <div class="champion-cell">
+                                    <div class="champion-avatar">☀️</div>
+                                    <div class="champion-info">
+                                        <div class="champion-name">
+                                            Solar Storm
+                                            <span class="performance-badge badge-rising-star">⭐</span>
+                                            <span class="champion-verified">✅ Verified</span>
+                                        </div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="winrate-cell">+82.6%</td>
+                            <td class="tournaments-cell">2 Active</td>
+                            <td class="earnings-cell">634+ SOL</td>
+                        </tr>
+
+                        <tr class="leaderboard-row" data-champion-rank="6" onclick="openChampionCard(6)">
+                            <td class="rank-cell">6</td>
+                            <td>
+                                <div class="champion-cell">
+                                    <div class="champion-avatar">🎯</div>
+                                    <div class="champion-info">
+                                        <div class="champion-name">
+                                            Neon Hunter
+                                            <span class="champion-verified">✅ Verified</span>
+                                        </div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="winrate-cell">+79.4%</td>
+                            <td class="tournaments-cell">1 Active</td>
+                            <td class="earnings-cell">445+ SOL</td>
+                        </tr>
+
+                        <tr class="leaderboard-row" data-champion-rank="7" onclick="openChampionCard(7)">
+                            <td class="rank-cell">7</td>
+                            <td>
+                                <div class="champion-cell">
+                                    <div class="champion-avatar">🌌</div>
+                                    <div class="champion-info">
+                                        <div class="champion-name">
+                                            Quantum Leap
+                                            <span class="performance-badge badge-hot-streak">🔥</span>
+                                            <span class="champion-verified">✅ Verified</span>
+                                        </div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="winrate-cell">+76.8%</td>
+                            <td class="tournaments-cell">1 Active</td>
+                            <td class="earnings-cell">523+ SOL</td>
+                        </tr>
+
+                        <tr class="leaderboard-row" data-champion-rank="8" onclick="openChampionCard(8)">
+                            <td class="rank-cell">8</td>
+                            <td>
+                                <div class="champion-cell">
+                                    <div class="champion-avatar">🎮</div>
+                                    <div class="champion-info">
+                                        <div class="champion-name">
+                                            Pixel Warrior
+                                            <span class="champion-verified">✅ Verified</span>
+                                        </div>
+                                        <div class="champion-identity">
+                                            🔒 Anonymous Champion • Performance Verified
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="winrate-cell">+74.2%</td>
+                            <td class="tournaments-cell">1 Active</td>
+                            <td class="earnings-cell">367+ SOL</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Anonymous Champion Detail Modal -->
+    <div class="champion-modal" id="championModal">
+        <div class="champion-card">
+            <div class="champion-card-header">
+                <button class="champion-close" onclick="closeChampionCard()">×</button>
+                
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 1rem;" id="championAvatar">🔥</div>
+                
+                <div style="color: #8b5cf6; font-family: 'Orbitron', monospace; font-size: 1.5rem; margin-bottom: 0.5rem;" id="championName">Champion Name</div>
+                <div style="color: #d1d5db; margin-bottom: 0.75rem;" id="championStatus">Anonymous Verified Champion</div>
+                
+                <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;" id="championBadges">
+                    <div style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.3);">
+                        ✅ Identity Verified
+                    </div>
+                    <div style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(59, 130, 246, 0.3);">
+                        🔒 Fully Anonymous
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anonymous Champion Stats -->
+            <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(139, 92, 246, 0.1); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                <div style="color: #8b5cf6; font-weight: 600; margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                    🏆 Verified Performance
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.25rem;" id="championPerformance">+94.7%</div>
+                        <div style="font-size: 0.8rem; color: #9ca3af;">Current Performance</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.25rem;" id="championTournaments">47</div>
+                        <div style="font-size: 0.8rem; color: #9ca3af;">Tournaments Won</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Protection Info -->
+            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                <div style="color: #3b82f6; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    🛡️ Complete Privacy Protection
+                </div>
+                <div style="color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">
+                    This champion's identity is fully protected. All performance data is verified by blockchain technology while maintaining complete anonymity. No personal information is ever exposed.
+                </div>
+            </div>
+
+            <!-- Verification System -->
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                <div style="color: #10b981; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    ✅ Blockchain Verification
+                </div>
+                <div style="color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">
+                    • Performance verified by smart contracts<br>
+                    • Earnings confirmed on Solana blockchain<br>
+                    • Tournament participation authenticated<br>
+                    • Zero possibility of manipulation
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button onclick="closeChampionCard()" style="background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none; color: white; padding: 0.75rem 2rem; border-radius: 0.75rem; font-weight: 600; cursor: pointer; font-size: 0.9rem;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function connectWallet() {
+            showWalletConnectionModal();
+        }
+
+        function showWalletConnectionModal() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); z-index: 1000;
+                display: flex; align-items: center; justify-content: center; padding: 1rem;
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(30px);
+                    border: 2px solid rgba(139, 92, 246, 0.4); border-radius: 1.5rem;
+                    padding: 2rem; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;
+                ">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 style="color: #8b5cf6; font-family: 'Orbitron', monospace; font-size: 1.5rem; margin-bottom: 0.5rem;">
+                            🏆 Join WalletWars
+                        </h2>
+                        <p style="color: #d1d5db; font-size: 0.9rem;">
+                            Connect your wallet and compete anonymously
+                        </p>
+                    </div>
+
+                    <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); 
+                                border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <div style="color: #3b82f6; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            🛡️ Complete Anonymity Guaranteed
+                        </div>
+                        <div style="color: #d1d5db; font-size: 0.85rem; line-height: 1.5;">
+                            Your wallet address will NEVER be displayed anywhere on the platform. You'll compete with a champion name only, ensuring complete privacy and protection from griefing attacks.
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); 
+                                border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <div style="color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            ⚠️ Important: Use Dedicated Tournament Wallet
+                        </div>
+                        <div style="color: #d1d5db; font-size: 0.85rem; line-height: 1.5; margin-bottom: 0.75rem;">
+                            For optimal performance tracking, create a new wallet specifically for WalletWars tournaments.
+                        </div>
+                        <div style="color: #ef4444; font-size: 0.8rem; font-weight: 600;">
+                            🚨 Warning: External funding during tournaments results in automatic disqualification.
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <button onclick="connectPhantom()" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3); color: #8b5cf6; padding: 1rem; border-radius: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-weight: 600;">
+                            👻 Phantom
+                        </button>
+                        <button onclick="connectSolflare()" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3); color: #8b5cf6; padding: 1rem; border-radius: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-weight: 600;">
+                            🔥 Solflare
+                        </button>
+                        <button onclick="connectBackpack()" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3); color: #8b5cf6; padding: 1rem; border-radius: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-weight: 600;">
+                            🎒 Backpack
+                        </button>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <button onclick="closeWalletModal()" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(139, 92, 246, 0.3); color: #d1d5db; padding: 0.75rem 2rem; border-radius: 0.75rem; cursor: pointer; font-size: 0.9rem; font-weight: 500;">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            window.currentModal = modal;
+        }
+
+        function closeWalletModal() {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                document.body.style.overflow = '';
+                window.currentModal = null;
+            }
+        }
+
+        function connectPhantom() { simulateWalletConnection('Phantom'); }
+        function connectSolflare() { simulateWalletConnection('Solflare'); }
+        function connectBackpack() { simulateWalletConnection('Backpack'); }
+
+        function simulateWalletConnection(walletName) {
+            closeWalletModal();
+            setTimeout(() => showChampionCreationModal(walletName), 500);
+        }
+
+        function showChampionCreationModal(walletName) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); z-index: 1000;
+                display: flex; align-items: center; justify-content: center; padding: 1rem;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(30px); border: 2px solid rgba(251, 191, 36, 0.4); border-radius: 1.5rem; padding: 2rem; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 style="color: #fbbf24; font-family: 'Orbitron', monospace; font-size: 1.5rem; margin-bottom: 0.5rem;">👑 Create Your Anonymous Champion</h2>
+                        <p style="color: #d1d5db; font-size: 0.9rem;">${walletName} connected • Your identity will remain completely private</p>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem; display: block;">Champion Name</label>
+                        <input type="text" id="championName" placeholder="e.g., Golden Phoenix, Lightning Bolt..." style="width: 100%; background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 0.75rem; padding: 0.75rem; color: #ffffff; font-size: 1rem; box-sizing: border-box;">
+                        <div style="color: #9ca3af; font-size: 0.8rem; margin-top: 0.25rem;">This will be your only visible identity - no wallet address will ever be shown</div>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem; display: block;">Choose Avatar</label>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
+                            <button onclick="selectAvatar('🔥')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">🔥</button>
+                            <button onclick="selectAvatar('⚔️')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">⚔️</button>
+                            <button onclick="selectAvatar('⚡')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">⚡</button>
+                            <button onclick="selectAvatar('🐋')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">🐋</button>
+                            <button onclick="selectAvatar('💎')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">💎</button>
+                            <button onclick="selectAvatar('🚀')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">🚀</button>
+                            <button onclick="selectAvatar('🎯')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">🎯</button>
+                            <button onclick="selectAvatar('⭐')" class="avatar-btn" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 1.5rem; cursor: pointer;">⭐</button>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(251, 191, 36, 0.1); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <div style="color: #fbbf24; font-weight: 600; margin-bottom: 0.5rem;">🎯 Your Anonymous Champion</div>
+                        <div style="color: #d1d5db; font-size: 0.9rem; line-height: 1.4;">
+                            <div>Name: <span id="previewName" style="color: #fbbf24;">Enter name above</span></div>
+                            <div>Avatar: <span id="previewAvatar" style="color: #fbbf24;">🔥</span></div>
+                            <div>Identity: <span style="color: #10b981;">✅ Completely Anonymous</span></div>
+                            <div>Wallet: <span style="color: #6b7280;">🔒 Never Displayed</span></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button onclick="createChampion()" style="flex: 1; background: linear-gradient(135deg, #fbbf24, #f59e0b); border: none; color: white; padding: 1rem; border-radius: 0.75rem; font-weight: 700; cursor: pointer; font-size: 1rem;">🚀 Compete Anonymously</button>
+                        <button onclick="closeChampionModal()" style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(251, 191, 36, 0.3); color: #d1d5db; padding: 1rem; border-radius: 0.75rem; cursor: pointer; font-size: 1rem; font-weight: 500;">Skip</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            window.currentModal = modal;
+
+            const nameInput = modal.querySelector('#championName');
+            nameInput.addEventListener('input', updatePreview);
+        }
+
+        let selectedAvatar = '🔥';
+
+        function selectAvatar(emoji) {
+            selectedAvatar = emoji;
+            document.querySelectorAll('.avatar-btn').forEach(btn => {
+                btn.style.background = 'rgba(31, 41, 55, 0.5)';
+                btn.style.borderColor = 'rgba(251, 191, 36, 0.3)';
+            });
+            event.target.style.background = 'rgba(251, 191, 36, 0.2)';
+            event.target.style.borderColor = '#fbbf24';
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const nameInput = document.getElementById('championName');
+            const previewName = document.getElementById('previewName');
+            const previewAvatar = document.getElementById('previewAvatar');
+            
+            if (previewName) previewName.textContent = nameInput.value || 'Enter name above';
+            if (previewAvatar) previewAvatar.textContent = selectedAvatar;
+        }
+
+        function createChampion() {
+            const championName = document.getElementById('championName').value || 'Anonymous Champion';
+            closeChampionModal();
+            setTimeout(() => showSuccessMessage(championName, selectedAvatar), 500);
+        }
+
+        function closeChampionModal() { closeWalletModal(); }
+
+        function showSuccessMessage(championName, avatar) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem;`;
+            
+            modal.innerHTML = `
+                <div style="background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(30px); border: 2px solid rgba(16, 185, 129, 0.4); border-radius: 1.5rem; padding: 2rem; max-width: 400px; width: 100%; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+                    <h2 style="color: #10b981; font-family: 'Orbitron', monospace; font-size: 1.5rem; margin-bottom: 1rem;">Anonymous Champion Created!</h2>
+                    <div style="background: rgba(15, 23, 42, 0.5); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">${avatar}</div>
+                        <div style="color: #fbbf24; font-weight: 700; font-size: 1.1rem;">${championName}</div>
+                        <div style="color: #10b981; font-size: 0.8rem; margin-top: 0.25rem;">🔒 Completely Anonymous</div>
+                    </div>
+                    <div style="color: #d1d5db; font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem;">Your champion identity is ready! Compete with complete privacy protection - your wallet address will never be displayed.</div>
+                    <button onclick="closeSuccessModal()" style="background: linear-gradient(135deg, #10b981, #34d399); border: none; color: white; padding: 0.75rem 2rem; border-radius: 0.75rem; font-weight: 600; cursor: pointer; font-size: 1rem;">🏆 Start Competing</button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        function closeSuccessModal() { closeWalletModal(); }
+
+        // Champion detail functions
+        const championDetails = {
+            1: { name: "The Golden Phoenix", avatar: "🔥", performance: "+94.7%", tournaments: "47" },
+            2: { name: "Diamond Samurai", avatar: "⚔️", performance: "+91.2%", tournaments: "34" },
+            3: { name: "Lightning Bolt", avatar: "⚡", performance: "+88.9%", tournaments: "28" },
+            4: { name: "Crypto Whale", avatar: "🐋", performance: "+85.3%", tournaments: "52" },
+            5: { name: "Solar Storm", avatar: "☀️", performance: "+82.6%", tournaments: "31" },
+            6: { name: "Neon Hunter", avatar: "🎯", performance: "+79.4%", tournaments: "25" },
+            7: { name: "Quantum Leap", avatar: "🌌", performance: "+76.8%", tournaments: "29" },
+            8: { name: "Pixel Warrior", avatar: "🎮", performance: "+74.2%", tournaments: "22" }
+        };
+
+        function openChampionCard(id) {
+            const champion = championDetails[id];
+            const modal = document.getElementById('championModal');
+            
+            document.getElementById('championAvatar').textContent = champion.avatar;
+            document.getElementById('championName').textContent = champion.name;
+            document.getElementById('championPerformance').textContent = champion.performance;
+            document.getElementById('championTournaments').textContent = champion.tournaments;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeChampionCard() {
+            document.getElementById('championModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Search and sort functionality
+        function performSearch() {
+            const searchTerm = document.getElementById('championSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('.leaderboard-row');
+            
+            rows.forEach(row => {
+                const championName = row.querySelector('.champion-name').textContent.toLowerCase();
+                const rank = row.querySelector('.rank-cell').textContent;
+                
+                if (championName.includes(searchTerm) || rank.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function clearSearch() {
+            document.getElementById('championSearch').value = '';
+            document.querySelectorAll('.leaderboard-row').forEach(row => {
+                row.style.display = '';
+            });
+        }
+
+        function sortTable(field) {
+            console.log('Sorting by:', field);
+        }
+
+        // Event listeners
+        document.addEventListener('click', function(event) {
+            if (window.currentModal && event.target === window.currentModal) {
+                closeWalletModal();
+            }
+            const modal = document.getElementById('championModal');
+            if (event.target === modal) {
+                closeChampionCard();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                if (window.currentModal) closeWalletModal();
+                else closeChampionCard();
+            }
+        });
+    </script>
+</body>
+</html>
