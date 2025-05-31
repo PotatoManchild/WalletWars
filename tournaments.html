@@ -140,11 +140,6 @@
             transform: translateY(-2px);
         }
 
-        .tournament-card.flipped {
-            transform: rotateY(180deg) scale(1.15);
-            z-index: 10;
-        }
-
         /* Card Front (Compact View) */
         .card-front {
             position: absolute;
@@ -160,24 +155,6 @@
             background: rgba(31, 41, 55, 0.6);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 1rem;
-        }
-
-        .card-back {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            padding: 1.25rem;
-            backface-visibility: hidden;
-            transform: rotateY(180deg);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(251, 191, 36, 0.4);
             border-radius: 1rem;
         }
 
@@ -266,438 +243,6 @@
             color: #6b7280;
             font-size: 0.65rem;
             margin-top: 0.25rem;
-        }
-
-        /* Detailed Back View */
-        .card-back {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            padding: 1.25rem;
-            backface-visibility: hidden;
-            transform: rotateY(180deg);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(251, 191, 36, 0.4);
-            border-radius: 1rem;
-        }
-
-        .tournament-header-detailed {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-        }
-
-        .close-hint {
-            text-align: center;
-            color: #6b7280;
-            font-size: 0.7rem;
-            margin-bottom: 1rem;
-            padding: 0.5rem;
-            background: rgba(139, 92, 246, 0.1);
-            border-radius: 0.5rem;
-        }
-
-        .tournament-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .detail-item {
-            background: rgba(15, 23, 42, 0.5);
-            padding: 0.5rem;
-            border-radius: 0.4rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-        }
-
-        .detail-label {
-            color: #9ca3af;
-            font-weight: 500;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
-        }
-
-        .detail-value {
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 0.8rem;
-        }
-
-        .detail-value .highlight {
-            color: #8b5cf6;
-        }
-
-        .countdown-timer {
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            color: #06b6d4;
-            font-size: 0.9rem;
-            padding: 0.5rem;
-            background: rgba(6, 182, 212, 0.1);
-            border: 1px solid rgba(6, 182, 212, 0.2);
-            border-radius: 0.5rem;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .countdown-urgent {
-            color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
-            border-color: rgba(239, 68, 68, 0.2);
-            animation: urgentPulse 2s infinite;
-        }
-
-        @keyframes urgentPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        .registration-progress {
-            margin-bottom: 1rem;
-        }
-
-        .registration-progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .registration-progress-label {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        .registration-progress-text {
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .registration-progress-text.low {
-            color: #10b981;
-        }
-
-        .registration-progress-text.medium {
-            color: #f59e0b;
-        }
-
-        .registration-progress-text.high {
-            color: #ef4444;
-        }
-
-        .registration-progress-bar {
-            height: 8px;
-            background: rgba(31, 41, 55, 0.8);
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid rgba(139, 92, 246, 0.2);
-        }
-
-        .registration-progress-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-
-        .registration-progress-fill.low {
-            background: linear-gradient(90deg, #10b981, #34d399);
-        }
-
-        .registration-progress-fill.medium {
-            background: linear-gradient(90deg, #f59e0b, #fbbf24);
-        }
-
-        .registration-progress-fill.high {
-            background: linear-gradient(90deg, #ef4444, #f87171);
-        }
-
-        .spots-warning {
-            font-size: 0.75rem;
-            color: #ef4444;
-            font-weight: 600;
-            text-align: center;
-            margin-top: 0.25rem;
-            animation: urgentPulse 2s infinite;
-        }
-
-        .potential-winnings {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .potential-winnings-title {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .winnings-breakdown {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-        }
-
-        .winnings-item {
-            text-align: center;
-        }
-
-        .winnings-label {
-            font-size: 0.7rem;
-            color: #9ca3af;
-            margin-bottom: 0.25rem;
-        }
-
-        .winnings-value {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #10b981;
-        }
-
-        .winnings-value.highlight {
-            color: #fbbf24;
-            font-size: 0.9rem;
-        }
-
-        /* Essential Info Layout for Card Back */
-        .essential-info {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .essential-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-        }
-
-        .essential-label {
-            font-size: 0.85rem;
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        .essential-value {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #8b5cf6;
-        }
-
-        .btn-details {
-            background: rgba(6, 182, 212, 0.1);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            color: #06b6d4;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.8rem;
-            font-weight: 600;
-            min-height: 40px;
-            flex: 1;
-        }
-
-        .btn-details:hover {
-            background: rgba(6, 182, 212, 0.2);
-            border-color: #06b6d4;
-            transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
-        }
-
-        /* Tournament Details Modal */
-        .tournament-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .tournament-modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: rgba(31, 41, 55, 0.95);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(139, 92, 246, 0.3);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid rgba(139, 92, 246, 0.2);
-        }
-
-        .modal-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #8b5cf6;
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-close {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #ef4444;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-
-        .modal-close:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: scale(1.1);
-        }
-
-        .modal-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-section-title {
-            color: #8b5cf6;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .modal-detail-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .modal-detail-item {
-            background: rgba(15, 23, 42, 0.5);
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            text-align: center;
-        }
-
-        .modal-detail-label {
-            color: #9ca3af;
-            font-size: 0.75rem;
-            margin-bottom: 0.25rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .modal-detail-value {
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
-        .modal-detail-value.highlight {
-            color: #8b5cf6;
-        }
-
-        .modal-description {
-            background: rgba(15, 23, 42, 0.3);
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            color: #d1d5db;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-        }
-
-        .modal-rules {
-            background: rgba(15, 23, 42, 0.3);
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            color: #d1d5db;
-            line-height: 1.5;
-            font-size: 0.9rem;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .modal-btn-register {
-            flex: 1;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            border: none;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.75rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-
-        .modal-btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
-        }
-
-        .modal-btn-close {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #d1d5db;
-            padding: 1rem 2rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            font-weight: 500;
         }
 
         /* Tournament Fullscreen Overlay */
@@ -867,6 +412,18 @@
             font-size: 1.2rem;
             font-weight: 700;
             color: #06b6d4;
+        }
+
+        .countdown-urgent {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.2);
+            animation: urgentPulse 2s infinite;
+        }
+
+        @keyframes urgentPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
         .registration-section {
@@ -1099,124 +656,6 @@
             }
         }
 
-        .tournament-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding: 0.75rem;
-            background: rgba(139, 92, 246, 0.1);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(139, 92, 246, 0.2);
-        }
-
-        .participants-count {
-            font-weight: 700;
-            color: #8b5cf6;
-            font-size: 0.85rem;
-        }
-
-        .tournament-timer {
-            font-size: 0.85rem;
-            color: #06b6d4;
-            font-weight: 600;
-        }
-
-        .tournament-description {
-            background: rgba(15, 23, 42, 0.3);
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            margin-bottom: 1rem;
-        }
-
-        .tournament-description-title {
-            color: #8b5cf6;
-            font-weight: 600;
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .tournament-description-text {
-            color: #d1d5db;
-            font-size: 0.8rem;
-            line-height: 1.4;
-        }
-
-        .tournament-rules {
-            background: rgba(15, 23, 42, 0.3);
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border: 1px solid rgba(139, 92, 246, 0.1);
-            margin-bottom: 1rem;
-        }
-
-        .tournament-rules-title {
-            color: #8b5cf6;
-            font-weight: 600;
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .rules-list {
-            color: #d1d5db;
-            font-size: 0.75rem;
-            line-height: 1.4;
-        }
-
-        .tournament-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: auto;
-            flex-shrink: 0;
-        }
-
-        .btn-register {
-            flex: 1;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            border: none;
-            color: white;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.8rem;
-            min-height: 40px;
-        }
-
-        .btn-register:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
-        }
-
-        .btn-view {
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #d1d5db;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.8rem;
-            font-weight: 500;
-            min-height: 40px;
-            min-width: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-view:hover {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: #8b5cf6;
-            color: #8b5cf6;
-        }
-
         .bracket-badge {
             display: inline-block;
             padding: 0.2rem 0.4rem;
@@ -1227,25 +666,31 @@
             letter-spacing: 0.5px;
         }
 
-        .bracket-beginner {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+        .bracket-rookie {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
         }
 
-        .bracket-intermediate {
+        .bracket-warrior {
             background: rgba(245, 158, 11, 0.2);
             color: #f59e0b;
             border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
-        .bracket-advanced {
+        .bracket-elite {
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
-        .bracket-legendary {
+        .bracket-champion {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .bracket-master {
             background: rgba(251, 191, 36, 0.2);
             color: #fbbf24;
             border: 1px solid rgba(251, 191, 36, 0.3);
@@ -1263,8 +708,7 @@
                 min-height: 200px;
             }
 
-            .card-front,
-            .card-back {
+            .card-front {
                 padding: 1.5rem;
             }
 
@@ -1301,8 +745,7 @@
                 padding: 2rem;
             }
 
-            .card-front,
-            .card-back {
+            .card-front {
                 padding: 2rem;
             }
         }
@@ -1352,7 +795,6 @@
                             <button class="filter-btn active" onclick="filterTournaments('all')">All</button>
                             <button class="filter-btn" onclick="filterTournaments('weekly')">Weekly</button>
                             <button class="filter-btn" onclick="filterTournaments('monthly')">Monthly</button>
-                            <button class="filter-btn" onclick="filterTournaments('special')">Special Events</button>
                         </div>
                     </div>
                     
@@ -1360,18 +802,19 @@
                         <label class="filter-label">Entry Fee</label>
                         <div class="filter-buttons">
                             <button class="filter-btn active" onclick="filterByFee('all')">All</button>
-                            <button class="filter-btn" onclick="filterByFee('low')">Low</button>
-                            <button class="filter-btn" onclick="filterByFee('high')">High</button>
+                            <button class="filter-btn" onclick="filterByFee('low')">0.01 SOL</button>
+                            <button class="filter-btn" onclick="filterByFee('medium')">0.05 SOL</button>
+                            <button class="filter-btn" onclick="filterByFee('high')">0.1 SOL</button>
                         </div>
                     </div>
 
                     <div class="filter-group">
-                        <label class="filter-label">Skill Level</label>
+                        <label class="filter-label">Prize Pool</label>
                         <div class="filter-buttons">
-                            <button class="filter-btn active" onclick="filterBySkill('all')">All</button>
-                            <button class="filter-btn" onclick="filterBySkill('beginner')">Beginner</button>
-                            <button class="filter-btn" onclick="filterBySkill('intermediate')">Intermediate</button>
-                            <button class="filter-btn" onclick="filterBySkill('advanced')">Advanced</button>
+                            <button class="filter-btn active" onclick="filterByPrize('all')">All</button>
+                            <button class="filter-btn" onclick="filterByPrize('small')">< 20 SOL</button>
+                            <button class="filter-btn" onclick="filterByPrize('medium')">20-80 SOL</button>
+                            <button class="filter-btn" onclick="filterByPrize('large')">80+ SOL</button>
                         </div>
                     </div>
                 </div>
@@ -1379,15 +822,14 @@
 
             <!-- Tournament Grid -->
             <div class="tournaments-grid">
-                <!-- Tournament 1 -->
-                <div class="tournament-card show-all show-weekly show-low show-beginner" onclick="showFullscreenTournament(1)">
-                    <!-- Tournament Card Content -->
+                <!-- Tournament 1: Rookie Arena (Weekly) -->
+                <div class="tournament-card show-all show-weekly show-low show-small" onclick="showFullscreenTournament(1)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
-                                <h3 class="tournament-title">Weekly Warrior Challenge</h3>
+                                <h3 class="tournament-title">Rookie Arena</h3>
                                 <div class="tournament-subtitle">
-                                    <span class="bracket-badge bracket-beginner">Beginner</span>
+                                    <span class="bracket-badge bracket-rookie">Rookie</span>
                                 </div>
                             </div>
                             <div class="status-badge status-upcoming">Upcoming</div>
@@ -1400,7 +842,15 @@
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Prize</div>
-                                <div class="key-info-value">0.8 SOL</div>
+                                <div class="key-info-value">4 SOL</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Players</div>
+                                <div class="key-info-value">500 max</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Duration</div>
+                                <div class="key-info-value">7 days</div>
                             </div>
                         </div>
                         
@@ -1408,14 +858,50 @@
                     </div>
                 </div>
 
-                <!-- Tournament 2 -->
-                <div class="tournament-card show-all show-monthly show-high show-advanced" onclick="showFullscreenTournament(2)">
+                <!-- Tournament 2: Warrior's Challenge (Weekly) -->
+                <div class="tournament-card show-all show-weekly show-medium show-medium" onclick="showFullscreenTournament(2)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
-                                <h3 class="tournament-title">Monthly Masters</h3>
+                                <h3 class="tournament-title">Warrior's Challenge</h3>
                                 <div class="tournament-subtitle">
-                                    <span class="bracket-badge bracket-advanced">Advanced</span>
+                                    <span class="bracket-badge bracket-warrior">Warrior</span>
+                                </div>
+                            </div>
+                            <div class="status-badge status-upcoming">Upcoming</div>
+                        </div>
+                        
+                        <div class="key-info">
+                            <div class="key-info-item">
+                                <div class="key-info-label">Entry</div>
+                                <div class="key-info-value">0.05 SOL</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Prize</div>
+                                <div class="key-info-value">20 SOL</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Players</div>
+                                <div class="key-info-value">500 max</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Duration</div>
+                                <div class="key-info-value">7 days</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tap-hint">👆 Tap for full details</div>
+                    </div>
+                </div>
+
+                <!-- Tournament 3: Elite Weekly (Weekly) -->
+                <div class="tournament-card show-all show-weekly show-high show-large" onclick="showFullscreenTournament(3)">
+                    <div class="card-front">
+                        <div class="tournament-header-compact">
+                            <div>
+                                <h3 class="tournament-title">Elite Weekly</h3>
+                                <div class="tournament-subtitle">
+                                    <span class="bracket-badge bracket-elite">Elite</span>
                                 </div>
                             </div>
                             <div class="status-badge status-live">Live</div>
@@ -1430,20 +916,64 @@
                                 <div class="key-info-label">Prize</div>
                                 <div class="key-info-value">80 SOL</div>
                             </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Players</div>
+                                <div class="key-info-value">1000 max</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Duration</div>
+                                <div class="key-info-value">7 days</div>
+                            </div>
                         </div>
                         
                         <div class="tap-hint">👆 Tap for full details</div>
                     </div>
                 </div>
 
-                <!-- Tournament 3 -->
-                <div class="tournament-card show-all show-weekly show-low show-intermediate" onclick="flipCard(this)">
+                <!-- Tournament 4: Monthly Grind (Monthly) -->
+                <div class="tournament-card show-all show-monthly show-low show-small" onclick="showFullscreenTournament(4)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
-                                <h3 class="tournament-title">Intermediate Showdown</h3>
+                                <h3 class="tournament-title">Monthly Grind</h3>
                                 <div class="tournament-subtitle">
-                                    <span class="bracket-badge bracket-intermediate">Intermediate</span>
+                                    <span class="bracket-badge bracket-rookie">Grinder</span>
+                                </div>
+                            </div>
+                            <div class="status-badge status-upcoming">Upcoming</div>
+                        </div>
+                        
+                        <div class="key-info">
+                            <div class="key-info-item">
+                                <div class="key-info-label">Entry</div>
+                                <div class="key-info-value">0.01 SOL</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Prize</div>
+                                <div class="key-info-value">16 SOL</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Players</div>
+                                <div class="key-info-value">2000 max</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Duration</div>
+                                <div class="key-info-value">30 days</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tap-hint">👆 Tap for full details</div>
+                    </div>
+                </div>
+
+                <!-- Tournament 5: Champion's League (Monthly) -->
+                <div class="tournament-card show-all show-monthly show-medium show-medium" onclick="showFullscreenTournament(5)">
+                    <div class="card-front">
+                        <div class="tournament-header-compact">
+                            <div>
+                                <h3 class="tournament-title">Champion's League</h3>
+                                <div class="tournament-subtitle">
+                                    <span class="bracket-badge bracket-champion">Champion</span>
                                 </div>
                             </div>
                             <div class="status-badge status-upcoming">Upcoming</div>
@@ -1456,67 +986,30 @@
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Prize</div>
-                                <div class="key-info-value">12.5 SOL</div>
+                                <div class="key-info-value">40 SOL</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Players</div>
+                                <div class="key-info-value">1000 max</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Duration</div>
+                                <div class="key-info-value">30 days</div>
                             </div>
                         </div>
                         
-                        <div class="tap-hint">👆 Tap for details</div>
-                    </div>
-
-                    <div class="card-back">
-                        <div class="close-hint">👆 Tap again to close</div>
-                        
-                        <div class="tournament-header-detailed">
-                            <div>
-                                <h3 class="tournament-title">Intermediate Showdown</h3>
-                                <div class="tournament-subtitle">
-                                    <span class="bracket-badge bracket-intermediate">Intermediate</span>
-                                </div>
-                            </div>
-                            <div class="status-badge status-upcoming">Upcoming</div>
-                        </div>
-                        
-                        <div class="essential-info">
-                            <div class="essential-item">
-                                <div class="essential-label">Entry</div>
-                                <div class="essential-value">0.05 SOL</div>
-                            </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Prize</div>
-                                <div class="essential-value"><span id="current-prize-3">4.45</span>/12.5 SOL</div>
-                            </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Players</div>
-                                <div class="essential-value"><span id="player-count-3">89</span>/250</div>
-                            </div>
-                            
-                            <div class="essential-item">
-                                <div class="essential-label">Duration</div>
-                                <div class="essential-value">7 days</div>
-                            </div>
-                        </div>
-                        
-                        <div class="countdown-timer" id="countdown-3">
-                            Loading countdown...
-                        </div>
-                        
-                        <div class="tournament-actions">
-                            <button class="btn-register" onclick="event.stopPropagation(); registerTournament(3)">Register</button>
-                            <button class="btn-details" onclick="event.stopPropagation(); showTournamentDetails(3)">See Details</button>
-                        </div>
+                        <div class="tap-hint">👆 Tap for full details</div>
                     </div>
                 </div>
 
-                <!-- Tournament 4 -->
-                <div class="tournament-card show-all show-special show-high show-advanced" onclick="showFullscreenTournament(4)">
+                <!-- Tournament 6: Masters Tournament (Monthly) -->
+                <div class="tournament-card show-all show-monthly show-high show-large" onclick="showFullscreenTournament(6)">
                     <div class="card-front">
                         <div class="tournament-header-compact">
                             <div>
-                                <h3 class="tournament-title">Elite Championship</h3>
+                                <h3 class="tournament-title">Masters Tournament</h3>
                                 <div class="tournament-subtitle">
-                                    <span class="bracket-badge bracket-advanced">Advanced</span>
+                                    <span class="bracket-badge bracket-master">Master</span>
                                 </div>
                             </div>
                             <div class="status-badge status-upcoming">Upcoming</div>
@@ -1525,11 +1018,19 @@
                         <div class="key-info">
                             <div class="key-info-item">
                                 <div class="key-info-label">Entry</div>
-                                <div class="key-info-value">0.2 SOL</div>
+                                <div class="key-info-value">0.1 SOL</div>
                             </div>
                             <div class="key-info-item">
                                 <div class="key-info-label">Prize</div>
-                                <div class="key-info-value">35 SOL</div>
+                                <div class="key-info-value">160 SOL</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Players</div>
+                                <div class="key-info-value">2000 max</div>
+                            </div>
+                            <div class="key-info-item">
+                                <div class="key-info-label">Duration</div>
+                                <div class="key-info-value">30 days</div>
                             </div>
                         </div>
                         
@@ -1609,78 +1110,98 @@
             </div>
         </div>
     </div>
-
-    <!-- Tournament Details Modal (keeping for compatibility) -->
-    <div class="tournament-modal" id="tournamentModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div>
-                    <div class="modal-title" id="modalTitle">Tournament Details</div>
-                    <div id="modalSubtitle"></div>
-                </div>
-                <button class="modal-close" onclick="closeTournamentModal()">×</button>
-            </div>
-            
-            <div class="modal-section">
-                <div class="modal-section-title">📊 Tournament Overview</div>
-                <div class="modal-detail-grid" id="modalDetailGrid">
-                    <!-- Details will be populated by JavaScript -->
-                </div>
-            </div>
-            
-            <div class="modal-section">
-                <div class="modal-section-title">📖 About This Tournament</div>
-                <div class="modal-description" id="modalDescription">
-                    <!-- Description will be populated by JavaScript -->
-                </div>
-            </div>
-            
-            <div class="modal-section">
-                <div class="modal-section-title">📋 Rules & Requirements</div>
-                <div class="modal-rules" id="modalRules">
-                    <!-- Rules will be populated by JavaScript -->
-                </div>
-            </div>
-            
-            <div class="modal-actions">
-                <button class="modal-btn-register" id="modalRegisterBtn" onclick="registerFromModal()">Register Now</button>
-                <button class="modal-btn-close" onclick="closeTournamentModal()">Close</button>
-            </div>
-        </div>
-    </div>
     
     <script>
         function connectWallet() {
             alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!\n\nThis would integrate with Solana wallet adapters like Phantom, Solflare, etc.');
         }
 
-        // Tournament countdown and registration management
+        // Enhanced Tournament data with 6 new tournaments
         var tournamentData = {
-            1: { type: 'weekly', registered: 23, maxPlayers: 100, entryFee: 0.01, prizePool: 0.8, topPercent: 20, duration: '7 days' },
-            2: { type: 'monthly', registered: 542, maxPlayers: 1000, entryFee: 0.1, prizePool: 80, topPercent: 10, duration: '30 days' },
-            3: { type: 'weekly', registered: 89, maxPlayers: 250, entryFee: 0.05, prizePool: 12.5, topPercent: 20, duration: '7 days' },
-            4: { type: 'special', registered: 156, maxPlayers: 200, entryFee: 0.2, prizePool: 35, topPercent: 25, duration: '14 days' }
-        };
-
-        var tournamentNames = {
-            1: 'Weekly Warrior Challenge',
-            2: 'Monthly Masters',
-            3: 'Intermediate Showdown',
-            4: 'Elite Championship'
+            1: { 
+                type: 'weekly', 
+                registered: 127, 
+                maxPlayers: 500, 
+                entryFee: 0.01, 
+                prizePool: 4, 
+                topPercent: 20, 
+                duration: '7 days',
+                title: 'Rookie Arena',
+                bracket: 'rookie'
+            },
+            2: { 
+                type: 'weekly', 
+                registered: 89, 
+                maxPlayers: 500, 
+                entryFee: 0.05, 
+                prizePool: 20, 
+                topPercent: 20, 
+                duration: '7 days',
+                title: 'Warrior\'s Challenge',
+                bracket: 'warrior'
+            },
+            3: { 
+                type: 'weekly', 
+                registered: 542, 
+                maxPlayers: 1000, 
+                entryFee: 0.1, 
+                prizePool: 80, 
+                topPercent: 15, 
+                duration: '7 days',
+                title: 'Elite Weekly',
+                bracket: 'elite'
+            },
+            4: { 
+                type: 'monthly', 
+                registered: 1234, 
+                maxPlayers: 2000, 
+                entryFee: 0.01, 
+                prizePool: 16, 
+                topPercent: 25, 
+                duration: '30 days',
+                title: 'Monthly Grind',
+                bracket: 'grinder'
+            },
+            5: { 
+                type: 'monthly', 
+                registered: 456, 
+                maxPlayers: 1000, 
+                entryFee: 0.05, 
+                prizePool: 40, 
+                topPercent: 20, 
+                duration: '30 days',
+                title: 'Champion\'s League',
+                bracket: 'champion'
+            },
+            6: { 
+                type: 'monthly', 
+                registered: 789, 
+                maxPlayers: 2000, 
+                entryFee: 0.1, 
+                prizePool: 160, 
+                topPercent: 10, 
+                duration: '30 days',
+                title: 'Masters Tournament',
+                bracket: 'master'
+            }
         };
 
         var tournamentDescriptions = {
-            1: 'Perfect for newcomers! Test your trading skills in a low-risk environment with other beginners. Weekly tournaments focus on consistent performance over quick gains, making them ideal for learning the ropes without high financial pressure.',
-            2: 'The ultimate test for experienced traders! Monthly competitions feature the largest prize pools and most competitive field on the platform. Join live tournaments and climb the ranks against Solana\'s best traders.',
-            3: 'Step up your game! Designed for traders with some experience who want to compete against skilled opponents without the pressure of advanced tournaments. Perfect middle ground for developing your skills.',
-            4: 'Elite competition for proven champions only! Battle the best traders on Solana for substantial prizes. This special championship event requires top 25% historical performance and features extended tournament duration for maximum strategy depth.'
+            1: 'Perfect entry point for new traders! Low-risk environment with 500 passionate rookies competing for solid rewards. Weekly format keeps you engaged without overwhelming time commitment.',
+            2: 'Step up your game! Mid-tier competition for traders ready to face stronger opponents. Balanced risk-reward ratio makes this ideal for developing your skills and building confidence.',
+            3: 'Elite weekly competition with the largest prize pool in the weekly category! 1000 skilled traders battle for 80 SOL. Currently live - join now and climb the leaderboard!',
+            4: 'The people\'s tournament! Lowest barrier to entry but massive 2000-player field creates substantial prize pools. Monthly duration allows for strategic planning and patient execution.',
+            5: 'Champions unite! Mid-tier monthly competition attracting serious traders. 1000 participants and 40 SOL prize pool create the perfect balance of competition and reward.',
+            6: 'The ultimate challenge! Masters Tournament features the largest field (2000 players) and biggest prizes (160 SOL). Only the elite survive in this monthly gladiator arena.'
         };
 
         var tournamentRules = {
-            1: '• Portfolio tracking starts immediately upon registration\n• Performance calculated against SOL baseline price\n• Top 20% of participants split the prize pool\n• No leverage restrictions or minimum portfolio requirements\n• Registration remains open until tournament starts\n• All skill levels welcome',
-            2: '• Live leaderboard updates every hour during tournament\n• Advanced risk metrics and analytics tracked\n• Top 10% guaranteed payouts with tiered prize structure\n• Minimum 0.5 SOL portfolio value required to participate\n• Tournament runs for full 30 days with no early exit\n• Advanced trader verification required',
-            3: '• Minimum 5 completed tournaments required for entry\n• Portfolio tracking starts at registration confirmation\n• Top 20% of participants share the prize pool\n• Advanced performance metrics and analytics available\n• Intermediate skill level verification required\n• 7-day tournament duration with weekend bonus tracking',
-            4: '• Must have top 25% historical winrate to qualify\n• Extended 14-day tournament format for strategic depth\n• Top 25% share substantial prize distribution\n• Advanced risk analysis and portfolio requirements\n• Elite trader verification and background check required\n• Special championship rules and bonus objectives apply'
+            1: '• Open to all skill levels - perfect for beginners\n• Portfolio tracking starts at registration\n• Top 20% share the 4 SOL prize pool\n• No minimum portfolio requirements\n• 7-day tournament duration\n• Fair competition with skill-based matching',
+            2: '• Intermediate skill level recommended\n• 0.05 SOL entry fee creates meaningful stakes\n• Top 20% of 500 participants win prizes\n• Weekly tournament with active leaderboard\n• Balanced competition for developing traders\n• Prize distribution favors consistent performers',
+            3: '• Elite competition - experienced traders preferred\n• Premium 0.1 SOL entry attracts serious competitors\n• Top 15% share substantial 80 SOL prize pool\n• Live tournament with real-time rankings\n• 1000 player capacity for maximum competition\n• Advanced analytics and performance tracking',
+            4: '• Monthly marathon format rewards patience\n• Massive 2000 player field creates substantial prizes\n• Top 25% share the growing prize pool\n• Low entry barrier but high skill ceiling\n• 30-day duration allows strategic development\n• Community-focused with social features',
+            5: '• Champion-level monthly competition\n• 1000 dedicated traders battle for 40 SOL\n• Top 20% guaranteed prize distribution\n• Extended 30-day format for deep strategy\n• Advanced risk management required\n• Prestigious championship recognition',
+            6: '• Masters level - highest skill competition\n• Maximum 2000 players, 160 SOL mega-prizes\n• Top 10% only - ultra-competitive prize sharing\n• Monthly championship with elite recognition\n• Advanced portfolio requirements may apply\n• Premium tournament with exclusive benefits'
         };
 
         var currentFullscreenTournament = null;
@@ -1691,10 +1212,17 @@
             var overlay = document.getElementById('tournamentOverlay');
             
             // Update header
-            document.getElementById('fullscreenTitle').textContent = tournamentNames[tournamentId];
+            document.getElementById('fullscreenTitle').textContent = tournament.title;
+            
+            // Create bracket badge for subtitle
+            var bracketClass = 'bracket-' + tournament.bracket;
+            var bracketText = tournament.bracket.charAt(0).toUpperCase() + tournament.bracket.slice(1);
+            var statusText = tournamentId === '3' ? 'LIVE' : 'UPCOMING';
+            var statusClass = tournamentId === '3' ? 'status-live' : 'status-upcoming';
+            
             document.getElementById('fullscreenSubtitle').innerHTML = `
-                <span class="bracket-badge bracket-${tournament.type === 'weekly' ? 'beginner' : tournament.type === 'monthly' ? 'advanced' : tournament.type === 'special' ? 'legendary' : 'intermediate'}">${tournament.type.toUpperCase()}</span>
-                <div class="status-badge status-${tournamentId === '2' ? 'live' : 'upcoming'}">${tournamentId === '2' ? 'LIVE' : 'UPCOMING'}</div>
+                <span class="bracket-badge ${bracketClass}">${bracketText.toUpperCase()}</span>
+                <div class="status-badge ${statusClass}">${statusText}</div>
             `;
             
             // Populate info grid
@@ -1743,7 +1271,7 @@
             
             // Update register button
             var registerBtn = document.getElementById('fullscreenRegisterBtn');
-            if (tournamentId === '2') {
+            if (tournamentId === '3') {
                 registerBtn.textContent = 'Join Live Tournament';
             } else {
                 registerBtn.textContent = 'Register Now';
@@ -1779,7 +1307,12 @@
             var timeRemaining = targetTime.getTime() - utcNow.getTime();
             
             var countdownText = formatCountdown(timeRemaining);
-            var prefix = tournament.type === 'monthly' || tournamentId === '2' ? 'Ends in: ' : 'Starts in: ';
+            var prefix = tournament.type === 'monthly' || tournamentId === '3' ? 'Ends in: ' : 'Starts in: ';
+            
+            // Special handling for live tournament
+            if (tournamentId === '3') {
+                prefix = 'Ends in: ';
+            }
             
             document.getElementById('fullscreenCountdown').textContent = prefix + countdownText;
         }
@@ -1840,190 +1373,6 @@
             }
         }
 
-        function updateCountdowns() {
-            var nextMonday = getNextMonday();
-            var firstMondayNextMonth = getFirstMondayOfNextMonth();
-            var now = new Date();
-            var utcNow = new Date(now.getTime() + (now.getTimezoneOffset() * 60000));
-            
-            for (var tournamentId in tournamentData) {
-                var tournament = tournamentData[tournamentId];
-                var targetTime = tournament.type === 'monthly' ? firstMondayNextMonth : nextMonday;
-                var timeRemaining = targetTime.getTime() - utcNow.getTime();
-                
-                var countdownElement = document.getElementById('countdown-' + tournamentId);
-                if (countdownElement) {
-                    var countdownText = formatCountdown(timeRemaining);
-                    var prefix = tournament.type === 'monthly' ? 'Ends in: ' : 'Starts in: ';
-                    
-                    // Special handling for live tournament (ID 2)
-                    if (tournamentId === '2') {
-                        prefix = 'Ends in: ';
-                        countdownText = formatCountdown(timeRemaining);
-                    }
-                    
-                    countdownElement.textContent = prefix + countdownText;
-                    
-                    // Add urgency styling for tournaments starting/ending soon
-                    if (timeRemaining < 24 * 60 * 60 * 1000) { // Less than 24 hours
-                        countdownElement.classList.add('countdown-urgent');
-                    } else {
-                        countdownElement.classList.remove('countdown-urgent');
-                    }
-                }
-            }
-        }
-
-        function calculateWinnings(tournamentId) {
-            var tournament = tournamentData[tournamentId];
-            var currentPrizePool = tournament.registered * tournament.entryFee * 0.8; // 80% to prizes, 20% platform fee
-            var firstPlace = currentPrizePool * 0.4; // 40% to winner
-            var topPercentPrize = currentPrizePool * 0.6 / Math.ceil(tournament.maxPlayers * (tournament.topPercent / 100)); // Rest split among top %
-            
-            var firstPrizeElement = document.getElementById('first-prize-' + tournamentId);
-            var topPrizeElement = document.getElementById('top' + tournament.topPercent + '-prize-' + tournamentId);
-            
-            if (firstPrizeElement) {
-                firstPrizeElement.textContent = firstPlace.toFixed(2) + ' SOL';
-            }
-            if (topPrizeElement) {
-                topPrizeElement.textContent = topPercentPrize.toFixed(2) + ' SOL';
-            }
-        }
-
-        function updateRegistrationProgress() {
-            for (var tournamentId in tournamentData) {
-                var tournament = tournamentData[tournamentId];
-                var percentage = Math.round((tournament.registered / tournament.maxPlayers) * 100);
-                var currentPrize = (tournament.registered * tournament.entryFee * 0.8).toFixed(2);
-                
-                // Update player counts
-                var playerCountElement = document.getElementById('player-count-' + tournamentId);
-                if (playerCountElement) {
-                    playerCountElement.textContent = tournament.registered;
-                }
-                
-                // Update current prize pools
-                var currentPrizeElement = document.getElementById('current-prize-' + tournamentId);
-                if (currentPrizeElement) {
-                    currentPrizeElement.textContent = currentPrize;
-                }
-            }
-        }
-
-        function showTournamentDetails(tournamentId) {
-            currentModalTournament = tournamentId;
-            var tournament = tournamentData[tournamentId];
-            var modal = document.getElementById('tournamentModal');
-            
-            // Update modal content
-            document.getElementById('modalTitle').textContent = tournamentNames[tournamentId];
-            document.getElementById('modalSubtitle').innerHTML = `
-                <span class="bracket-badge bracket-${tournament.type === 'weekly' ? 'beginner' : tournament.type === 'monthly' ? 'advanced' : 'legendary'}">${tournament.type.toUpperCase()}</span>
-            `;
-            
-            // Populate detail grid
-            var currentPrize = (tournament.registered * tournament.entryFee * 0.8).toFixed(2);
-            var detailGrid = document.getElementById('modalDetailGrid');
-            detailGrid.innerHTML = `
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Entry Fee</div>
-                    <div class="modal-detail-value highlight">${tournament.entryFee} SOL</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Prize Pool</div>
-                    <div class="modal-detail-value highlight">${tournament.prizePool} SOL</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Current Prize</div>
-                    <div class="modal-detail-value">${currentPrize} SOL</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Max Players</div>
-                    <div class="modal-detail-value">${tournament.maxPlayers}</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Registered</div>
-                    <div class="modal-detail-value">${tournament.registered}</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Duration</div>
-                    <div class="modal-detail-value">${tournament.duration}</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Prize Share</div>
-                    <div class="modal-detail-value">Top ${tournament.topPercent}%</div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="modal-detail-label">Tournament Type</div>
-                    <div class="modal-detail-value">${tournament.type.charAt(0).toUpperCase() + tournament.type.slice(1)}</div>
-                </div>
-            `;
-            
-            // Update description and rules
-            document.getElementById('modalDescription').textContent = tournamentDescriptions[tournamentId];
-            document.getElementById('modalRules').innerHTML = tournamentRules[tournamentId].replace(/\n/g, '<br>');
-            
-            // Update register button
-            var registerBtn = document.getElementById('modalRegisterBtn');
-            if (tournamentId === '2') {
-                registerBtn.textContent = 'Join Live Tournament';
-            } else {
-                registerBtn.textContent = 'Register Now';
-            }
-            
-            // Show modal
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeTournamentModal() {
-            var modal = document.getElementById('tournamentModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-            currentModalTournament = null;
-        }
-
-        function registerFromModal() {
-            if (currentModalTournament) {
-                registerTournament(currentModalTournament);
-                closeTournamentModal();
-            }
-        }
-
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            var modal = document.getElementById('tournamentModal');
-            if (event.target === modal) {
-                closeTournamentModal();
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeTournamentModal();
-            }
-        });
-
-        // Initialize and update every second
-        document.addEventListener('DOMContentLoaded', function() {
-            updateCountdowns();
-            updateRegistrationProgress();
-            
-            setInterval(function() {
-                updateCountdowns();
-                // Simulate occasional registration updates (in real app, this would come from server)
-                if (Math.random() < 0.1) { // 10% chance per second
-                    var randomTournament = Math.floor(Math.random() * 4) + 1;
-                    if (tournamentData[randomTournament].registered < tournamentData[randomTournament].maxPlayers) {
-                        tournamentData[randomTournament].registered++;
-                        updateRegistrationProgress();
-                    }
-                }
-            }, 1000);
-        });
-
         // Filter Toggle for Mobile
         function toggleFilters() {
             const filterContent = document.getElementById('filterContent');
@@ -2033,7 +1382,7 @@
             filterToggle.classList.toggle('active');
         }
 
-        // Filter Functions
+        // Enhanced Filter Functions
         function filterTournaments(type) {
             updateFilterButtons('.filter-group:first-child .filter-btn', type);
             showFilteredTournaments();
@@ -2044,8 +1393,8 @@
             showFilteredTournaments();
         }
 
-        function filterBySkill(skill) {
-            updateFilterButtons('.filter-group:nth-child(3) .filter-btn', skill);
+        function filterByPrize(prize) {
+            updateFilterButtons('.filter-group:nth-child(3) .filter-btn', prize);
             showFilteredTournaments();
         }
 
@@ -2055,116 +1404,100 @@
                 buttons[i].classList.remove('active');
                 var btnText = buttons[i].textContent.toLowerCase();
                 if ((value === 'all' && btnText === 'all') ||
-                    btnText.includes(value)) {
+                    btnText.includes(value) ||
+                    (value === 'low' && btnText.includes('0.01')) ||
+                    (value === 'medium' && btnText.includes('0.05')) ||
+                    (value === 'high' && btnText.includes('0.1')) ||
+                    (value === 'small' && btnText.includes('< 20')) ||
+                    (value === 'medium' && btnText.includes('20-80')) ||
+                    (value === 'large' && btnText.includes('80+'))) {
                     buttons[i].classList.add('active');
                 }
             }
         }
 
         function showFilteredTournaments() {
+            // Get active filter values
+            var typeFilter = getActiveFilter('.filter-group:first-child .filter-btn');
+            var feeFilter = getActiveFilter('.filter-group:nth-child(2) .filter-btn');
+            var prizeFilter = getActiveFilter('.filter-group:nth-child(3) .filter-btn');
+            
             var cards = document.querySelectorAll('.tournament-card');
             for (var i = 0; i < cards.length; i++) {
-                cards[i].style.display = 'block';
+                var card = cards[i];
+                var show = true;
+                
+                // Check type filter
+                if (typeFilter !== 'all' && !card.classList.contains('show-' + typeFilter)) {
+                    show = false;
+                }
+                
+                // Check fee filter
+                if (feeFilter !== 'all' && !card.classList.contains('show-' + feeFilter)) {
+                    show = false;
+                }
+                
+                // Check prize filter
+                if (prizeFilter !== 'all' && !card.classList.contains('show-' + prizeFilter)) {
+                    show = false;
+                }
+                
+                card.style.display = show ? 'block' : 'none';
+            }
+        }
+
+        function getActiveFilter(selector) {
+            var buttons = document.querySelectorAll(selector);
+            for (var i = 0; i < buttons.length; i++) {
+                if (buttons[i].classList.contains('active')) {
+                    var text = buttons[i].textContent.toLowerCase();
+                    if (text === 'all') return 'all';
+                    if (text.includes('weekly')) return 'weekly';
+                    if (text.includes('monthly')) return 'monthly';
+                    if (text.includes('0.01')) return 'low';
+                    if (text.includes('0.05')) return 'medium';
+                    if (text.includes('0.1')) return 'high';
+                    if (text.includes('< 20')) return 'small';
+                    if (text.includes('20-80')) return 'medium';
+                    if (text.includes('80+')) return 'large';
+                    return text;
+                }
+            }
+            return 'all';
+        }
+
+        function updateCountdowns() {
+            var nextMonday = getNextMonday();
+            var firstMondayNextMonth = getFirstMondayOfNextMonth();
+            var now = new Date();
+            var utcNow = new Date(now.getTime() + (now.getTimezoneOffset() * 60000));
+            
+            // Update fullscreen countdown if open
+            if (currentFullscreenTournament) {
+                updateFullscreenCountdown(currentFullscreenTournament);
             }
         }
 
         function registerTournament(id) {
-            alert('🎯 Tournament Registration\n\nTournament ID: ' + id + '\n\nTo register:\n• Connect your Solana wallet\n• Pay entry fee\n• Meet minimum requirements\n• Confirm registration\n\nReady to compete? 🚀');
+            var tournament = tournamentData[id];
+            alert('🎯 Tournament Registration\n\n' + tournament.title + '\n\nEntry Fee: ' + tournament.entryFee + ' SOL\nPrize Pool: ' + tournament.prizePool + ' SOL\nMax Players: ' + tournament.maxPlayers + '\n\nTo register:\n• Connect your Solana wallet\n• Pay entry fee\n• Meet tournament requirements\n• Confirm registration\n\nReady to compete? 🚀');
         }
 
-        function viewTournament(id) {
-            alert('📊 Tournament Details\n\nTournament ID: ' + id + '\n\nDetailed view would show:\n• Full rules and regulations\n• Current leaderboard\n• Prize distribution\n• Participant list\n• Performance analytics\n\nGood luck! 💪');
-        }
-
-        // Mobile Navigation JavaScript
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            createMobileNavigation();
-            initializeMobileMenu();
-            handleWindowResize();
+            updateCountdowns();
+            
+            setInterval(function() {
+                updateCountdowns();
+                // Simulate occasional registration updates
+                if (Math.random() < 0.05) { // 5% chance per second
+                    var randomTournament = Math.floor(Math.random() * 6) + 1;
+                    if (tournamentData[randomTournament].registered < tournamentData[randomTournament].maxPlayers) {
+                        tournamentData[randomTournament].registered++;
+                    }
+                }
+            }, 1000);
         });
-
-        function createMobileNavigation() {
-            const navContainer = document.querySelector('.nav-container');
-            if (!navContainer) return;
-            
-            const mobileToggle = document.createElement('button');
-            mobileToggle.className = 'mobile-menu-toggle';
-            mobileToggle.setAttribute('aria-label', 'Toggle mobile menu');
-            mobileToggle.setAttribute('aria-expanded', 'false');
-            
-            const hamburger = document.createElement('div');
-            hamburger.className = 'hamburger';
-            hamburger.innerHTML = '<span></span><span></span><span></span>';
-            
-            mobileToggle.appendChild(hamburger);
-            
-            const navLinks = document.querySelector('.nav-links');
-            if (navLinks) {
-                navContainer.insertBefore(mobileToggle, navLinks);
-            }
-        }
-
-        function initializeMobileMenu() {
-            const mobileToggle = document.querySelector('.mobile-menu-toggle');
-            const navLinks = document.querySelector('.nav-links');
-            const hamburger = document.querySelector('.hamburger');
-            
-            if (!mobileToggle || !navLinks || !hamburger) return;
-            
-            mobileToggle.addEventListener('click', function() {
-                const isOpen = navLinks.classList.contains('active');
-                if (isOpen) {
-                    closeMobileMenu();
-                } else {
-                    openMobileMenu();
-                }
-            });
-            
-            const navLinksItems = navLinks.querySelectorAll('a');
-            navLinksItems.forEach(link => {
-                link.addEventListener('click', function() {
-                    closeMobileMenu();
-                });
-            });
-            
-            document.addEventListener('click', function(event) {
-                const isClickInsideNav = navLinks.contains(event.target) || 
-                                        mobileToggle.contains(event.target);
-                if (!isClickInsideNav && navLinks.classList.contains('active')) {
-                    closeMobileMenu();
-                }
-            });
-        }
-
-        function openMobileMenu() {
-            const mobileToggle = document.querySelector('.mobile-menu-toggle');
-            const navLinks = document.querySelector('.nav-links');
-            const hamburger = document.querySelector('.hamburger');
-            
-            navLinks.classList.add('active');
-            hamburger.classList.add('active');
-            mobileToggle.setAttribute('aria-expanded', 'true');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeMobileMenu() {
-            const mobileToggle = document.querySelector('.mobile-menu-toggle');
-            const navLinks = document.querySelector('.nav-links');
-            const hamburger = document.querySelector('.hamburger');
-            
-            navLinks.classList.remove('active');
-            hamburger.classList.remove('active');
-            mobileToggle.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-        }
-
-        function handleWindowResize() {
-            window.addEventListener('resize', function() {
-                if (window.innerWidth >= 768) {
-                    closeMobileMenu();
-                }
-            });
-        }
     </script>
 </body>
 </html>
