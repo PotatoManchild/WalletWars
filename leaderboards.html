@@ -68,6 +68,13 @@
             color: #9ca3af;
         }
 
+        /* Mobile-specific placeholder */
+        @media (max-width: 767px) {
+            .search-input::placeholder {
+                content: "Search...";
+            }
+        }
+
         .search-btn {
             position: absolute;
             right: 0.75rem;
@@ -1913,7 +1920,20 @@
                 if (window.innerWidth >= 768) {
                     closeMobileMenu();
                 }
+                updateSearchPlaceholder();
             });
+        }
+
+        // Update search placeholder based on screen size
+        function updateSearchPlaceholder() {
+            const searchInput = document.getElementById('championSearch');
+            if (searchInput) {
+                if (window.innerWidth <= 767) {
+                    searchInput.placeholder = "Search...";
+                } else {
+                    searchInput.placeholder = "Search by champion name, wallet address, or rank...";
+                }
+            }
         }
 
         // Champion Detail Card Functions
@@ -2048,6 +2068,9 @@
             renderLeaderboard();
             updateResultsCount();
             updateSortDirection();
+            
+            // Set initial search placeholder
+            updateSearchPlaceholder();
             
             // Set up event delegation for champion rows
             const leaderboardTable = document.getElementById('leaderboardBody');
