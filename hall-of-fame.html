@@ -1,4 +1,37 @@
-<!DOCTYPE html>
+/* Large Desktop Layout */
+        @media (min-width: 1024px) {
+            .legend-detail-card {
+                max-width: 1400px;
+                width: 85%;
+                padding: 2.5rem;
+            }
+
+            .legend-modal-content {
+                grid-template-columns: 2fr 1fr 1fr;
+                gap: 2rem;
+            }
+
+            .legend-detail-name {
+                font-size: 2.5rem;
+            }
+
+            .legend-winrate-display {
+                font-size: 3.5rem;
+            }
+
+            .legend-hof-achievements {
+                grid-column: 1 / 2;
+            }
+
+            .legend-legacy {
+                grid-column: 1 / 2;
+            }
+
+            .legend-recent-activity {
+                grid-column: 2 / 4;
+                grid-row: 3 / 4;
+            }
+        }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -276,8 +309,8 @@
             border: 2px solid rgba(251, 191, 36, 0.4);
             border-radius: 1.5rem;
             padding: 1.5rem;
-            max-width: 800px;
-            width: 100%;
+            max-width: 1200px;
+            width: 95%;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
@@ -637,11 +670,13 @@
         @media (min-width: 768px) {
             .legend-detail-card {
                 padding: 2rem;
+                max-width: 1200px;
+                width: 90%;
             }
 
             .legend-modal-content {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr 1fr 1fr;
                 gap: 1.5rem;
             }
 
@@ -652,6 +687,19 @@
             .legend-detail-stats-grid {
                 grid-column: 1 / -1;
                 grid-template-columns: repeat(4, 1fr);
+            }
+
+            .legend-hof-achievements {
+                grid-column: 1 / 3;
+            }
+
+            .legend-legacy {
+                grid-column: 1 / 3;
+            }
+
+            .legend-recent-activity {
+                grid-column: 3 / 4;
+                grid-row: 3 / 5;
             }
 
             .legend-detail-name {
