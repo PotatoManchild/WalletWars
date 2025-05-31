@@ -897,7 +897,7 @@
             filterToggle.classList.toggle('active');
         }
 
-        // Card Flip Animation - Direct approach
+        // Card Flip Animation - Dynamic content insertion
         function flipCard(card) {
             const front = card.querySelector('.card-front');
             const back = card.querySelector('.card-back');
@@ -912,11 +912,46 @@
                 back.style.cssText = 'display: none !important;';
                 console.log('Showing front');
             } else {
-                // Switch to back
+                // Switch to back and inject content
                 card.classList.add('flipped');
                 front.style.cssText = 'display: none !important;';
-                back.style.cssText = 'display: block !important; background: #ff0000 !important; color: white !important; padding: 1rem !important;';
-                console.log('Showing back');
+                back.style.cssText = 'display: block !important; background: #1f2937 !important; color: white !important; padding: 1rem !important; border: 2px solid #fbbf24 !important; border-radius: 1rem !important;';
+                
+                // Inject detailed content dynamically
+                back.innerHTML = `
+                    <h2 style="color: white; margin-bottom: 1rem;">DETAILED VIEW</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                        <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.5rem;">
+                            <div style="color: #9ca3af; font-size: 0.8rem;">ENTRY FEE</div>
+                            <div style="color: #8b5cf6; font-weight: bold;">0.01 SOL</div>
+                        </div>
+                        <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.5rem;">
+                            <div style="color: #9ca3af; font-size: 0.8rem;">PRIZE POOL</div>
+                            <div style="color: #8b5cf6; font-weight: bold;">0.8 SOL</div>
+                        </div>
+                        <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.5rem;">
+                            <div style="color: #9ca3af; font-size: 0.8rem;">MAX PLAYERS</div>
+                            <div style="color: white; font-weight: bold;">100 players</div>
+                        </div>
+                        <div style="background: rgba(15, 23, 42, 0.5); padding: 0.5rem; border-radius: 0.5rem;">
+                            <div style="color: #9ca3af; font-size: 0.8rem;">DURATION</div>
+                            <div style="color: white; font-weight: bold;">7 days</div>
+                        </div>
+                    </div>
+                    <div style="background: rgba(139, 92, 246, 0.1); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                        <div style="color: #8b5cf6; font-weight: bold;">23/100 registered • Starts in: 2d 5h</div>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.3); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                        <div style="color: #8b5cf6; font-size: 0.9rem; font-weight: bold; margin-bottom: 0.5rem;">ABOUT THIS TOURNAMENT</div>
+                        <div style="color: #d1d5db; font-size: 0.85rem;">Perfect for newcomers! Test your trading skills in a low-risk environment with other beginners.</div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button style="flex: 1; background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none; color: white; padding: 0.75rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer;" onclick="event.stopPropagation(); registerTournament(1)">Register Now</button>
+                        <button style="background: rgba(31, 41, 55, 0.5); border: 1px solid #8b5cf6; color: #8b5cf6; padding: 0.75rem; border-radius: 0.5rem; cursor: pointer;" onclick="event.stopPropagation(); viewTournament(1)">📊</button>
+                    </div>
+                `;
+                
+                console.log('Showing back with injected content');
             }
         }
 
