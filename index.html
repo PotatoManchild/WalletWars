@@ -2368,7 +2368,15 @@
         window.addEventListener('beforeunload', saveChampionData);
 
         // Load saved data on page load
-        document.addEventListener('DOMContentLoaded', loadSavedChampion);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize mobile navigation first
+            createMobileNavigation();
+            initializeMobileMenu();
+            handleWindowResize();
+            
+            // Then load saved champion data
+            loadSavedChampion();
+        });
 
         // Add keyboard shortcut for storage debug (Ctrl+Shift+D)
         document.addEventListener('keydown', function(event) {
