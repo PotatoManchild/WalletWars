@@ -20,6 +20,10 @@
     <script src="global-wallet-manager.js"></script> <!-- NEW: Global wallet persistence -->
     <script src="tournament-setup.js"></script>
     
+    <!-- Hybrid Snapshot System Scripts -->
+    <script src="tournament-snapshot-manager.js"></script>
+    <script src="tournament-automation.js"></script>
+    
     <!-- Shared Styles -->
     <link rel="stylesheet" href="shared.css">
     
@@ -751,6 +755,37 @@
                 padding: 2rem;
             }
         }
+
+        /* Hybrid Snapshot Status */
+        .snapshot-status {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .snapshot-status-icon {
+            font-size: 1.5rem;
+        }
+
+        .snapshot-status-text {
+            flex: 1;
+        }
+
+        .snapshot-status-title {
+            color: #10b981;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .snapshot-status-desc {
+            color: #d1d5db;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
@@ -801,6 +836,15 @@
 
         <!-- Page Content -->
         <div class="page-content">
+            <!-- Hybrid Snapshot Status -->
+            <div class="snapshot-status" id="snapshotStatus" style="display: none;">
+                <div class="snapshot-status-icon">📸</div>
+                <div class="snapshot-status-text">
+                    <div class="snapshot-status-title">Hybrid Snapshot System Active</div>
+                    <div class="snapshot-status-desc">Efficient wallet tracking with only 2 API calls per tournament</div>
+                </div>
+            </div>
+
             <!-- Loading State -->
             <div class="loading-container" id="loadingState">
                 <div class="loading-spinner"></div>
@@ -906,6 +950,23 @@
                     
                     return true;
                 }
+            }
+            return false;
+        }
+
+        // Check if hybrid snapshot system is initialized
+        function checkHybridSnapshotSystem() {
+            if (window.tournamentSnapshotManager && window.tournamentAutomation) {
+                console.log('✅ Hybrid Snapshot System detected');
+                document.getElementById('snapshotStatus').style.display = 'flex';
+                
+                // Check automation status
+                if (window.tournamentAutomation.getStatus) {
+                    const status = window.tournamentAutomation.getStatus();
+                    console.log(`🤖 Tournament Automation: ${status.monitoring ? 'Active' : 'Inactive'}`);
+                }
+                
+                return true;
             }
             return false;
         }
@@ -1027,6 +1088,11 @@
                     try {
                         const walletStatus = await window.enhancedWalletService.getServiceStatus();
                         console.log(`💰 Wallet service status: ${walletStatus.provider} - ${walletStatus.online ? 'Online' : 'Offline'}`);
+                        
+                        // Check if Helius API key is configured
+                        if (window.enhancedWalletService.isApiKeyConfigured && window.enhancedWalletService.isApiKeyConfigured()) {
+                            console.log('✅ Helius API key configured');
+                        }
                     } catch (walletError) {
                         console.warn('⚠️ Wallet service status check failed:', walletError);
                     }
@@ -1042,6 +1108,9 @@
                         console.log(`👑 Connected champion: ${globalStatus.championName}`);
                     }
                 }
+                
+                // Check Hybrid Snapshot System
+                checkHybridSnapshotSystem();
                 
                 // Load upcoming tournaments
                 const result = await window.walletWarsAPI.getUpcomingTournaments(20);
@@ -1154,6 +1223,9 @@
             // Get status display
             const statusInfo = getTournamentStatusInfo(tournament);
             
+            // Check if hybrid system is active
+            const hybridActive = window.tournamentSnapshotManager ? ' • Hybrid Snapshots Active' : '';
+            
             card.innerHTML = `
                 <div class="card-front">
                     <div class="tournament-header-compact">
@@ -1192,7 +1264,7 @@
                     </div>
                     
                     <div class="tap-hint">
-                        Tap for details & registration • Enhanced wallet tracking with GlobalWalletManager
+                        Tap for details & registration${hybridActive}
                     </div>
                 </div>
             `;
@@ -1249,12 +1321,13 @@
             // Check GlobalWalletManager status
             const walletStatus = window.getWalletStatus ? window.getWalletStatus() : { isConnected: false };
             const walletServiceStatus = window.enhancedWalletService ? 'Enhanced' : 'Standard';
+            const hybridStatus = window.tournamentSnapshotManager ? 'Active' : 'Not Active';
             
             const statusText = walletStatus.isConnected 
                 ? `Connected: ${walletStatus.championName}\nWallet: ${walletStatus.walletAddress?.substring(0, 8)}...`
                 : 'Not connected - Connect wallet to register';
             
-            alert(`🎮 ${tournament.title}\n\nEntry Fee: ${tournament.entryFee} SOL\nPrize Pool: ${tournament.prizePool} SOL\nParticipants: ${tournament.registered}/${tournament.maxPlayers}\nStatus: ${tournament.status}\n\nWallet Service: ${walletServiceStatus}\nGlobalWalletManager: ${statusText}\n\nClick OK to register for this tournament!`);
+            alert(`🎮 ${tournament.title}\n\nEntry Fee: ${tournament.entryFee} SOL\nPrize Pool: ${tournament.prizePool} SOL\nParticipants: ${tournament.registered}/${tournament.maxPlayers}\nStatus: ${tournament.status}\n\nWallet Service: ${walletServiceStatus}\nHybrid Snapshots: ${hybridStatus}\nGlobalWalletManager: ${statusText}\n\nClick OK to register for this tournament!`);
             
             // If user confirms, show registration
             registerTournament(id);
@@ -1301,8 +1374,12 @@
             modal.className = 'tournament-registration-modal';
             
             const walletServiceInfo = window.enhancedWalletService ? 
-                'Enhanced wallet tracking with Web3.js integration' : 
+                'Enhanced wallet tracking with Web3.js integration and Helius backup' : 
                 'Standard wallet tracking';
+            
+            const hybridInfo = window.tournamentSnapshotManager ? 
+                '✅ Hybrid Snapshot System Active - Only 2 API calls per tournament' :
+                '⚠️ Hybrid Snapshot System not detected';
             
             const globalWalletInfo = walletStatus.isConnected ? 
                 `✅ Connected via GlobalWalletManager\nChampion: ${walletStatus.championName}\nWallet: ${walletStatus.walletAddress?.substring(0, 8)}...` :
@@ -1319,6 +1396,7 @@
                         <p><strong>Current Participants:</strong> ${tournamentInfo.registered}/${tournamentInfo.maxPlayers}</p>
                         <p><strong>Status:</strong> ${tournamentInfo.status}</p>
                         <p><strong>Wallet Tracking:</strong> ${walletServiceInfo}</p>
+                        <p><strong>Snapshot System:</strong> ${hybridInfo}</p>
                         <p><strong>Connection:</strong> ${globalWalletInfo}</p>
                     </div>
                     
@@ -1356,7 +1434,10 @@
                 
                 if (result.success) {
                     const walletServiceType = window.enhancedWalletService ? 'enhanced Web3.js' : 'standard';
-                    alert(`🎉 Registration successful!\n\nYou are now registered for the tournament with ${walletServiceType} wallet tracking via GlobalWalletManager.\n\nYour connection persists across all WalletWars pages. You will receive notifications about tournament start times and progress.`);
+                    const hybridSystemStatus = window.tournamentSnapshotManager ? 
+                        '\n\n📸 Hybrid Snapshot System will automatically capture your wallet state at tournament start and end.' : '';
+                    
+                    alert(`🎉 Registration successful!\n\nYou are now registered for the tournament with ${walletServiceType} wallet tracking via GlobalWalletManager.${hybridSystemStatus}\n\nYour connection persists across all WalletWars pages. Good luck!`);
                     closeRegistrationModal();
                     // Refresh tournament data
                     loadTournaments();
@@ -1415,7 +1496,7 @@
                     <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
                     <div style="font-size: 1.2rem; margin-bottom: 1rem; color: #8b5cf6;">Enhanced Setup Required</div>
                     <div style="font-size: 0.9rem; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">
-                        Your enhanced tournament system with Web3.js wallet service and GlobalWalletManager needs to be configured. Please run the setup process to initialize tournament templates and wallet tracking.
+                        Your enhanced tournament system with Web3.js wallet service, GlobalWalletManager, and Hybrid Snapshot System needs to be configured. Please run the setup process to initialize tournament templates and wallet tracking.
                     </div>
                     <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                         <button onclick="window.open('setup.html', '_blank')" style="
@@ -1552,7 +1633,7 @@
             initializeMobileNavigation();
             handleWindowResize();
             
-            console.log('🎮 WalletWars Tournaments page loading with GlobalWalletManager...');
+            console.log('🎮 WalletWars Tournaments page loading with GlobalWalletManager and Hybrid Snapshots...');
             
             // Check for GlobalWalletManager connection immediately
             const hasConnection = checkGlobalWalletConnection();
@@ -1573,8 +1654,10 @@
                 const hasGlobalWalletManager = !!window.globalWalletManager;
                 const hasWalletService = !!(window.enhancedWalletService || window.solscanService);
                 const hasWeb3 = !!window.solanaWeb3;
+                const hasSnapshotManager = !!window.tournamentSnapshotManager;
+                const hasAutomation = !!window.tournamentAutomation;
                 
-                console.log(`📊 API Status: WalletWarsAPI=${hasWalletWarsAPI}, GlobalWalletManager=${hasGlobalWalletManager}, WalletService=${hasWalletService}, Web3=${hasWeb3}`);
+                console.log(`📊 API Status: WalletWarsAPI=${hasWalletWarsAPI}, GlobalWalletManager=${hasGlobalWalletManager}, WalletService=${hasWalletService}, Web3=${hasWeb3}, SnapshotManager=${hasSnapshotManager}, Automation=${hasAutomation}`);
                 
                 if (hasWalletWarsAPI && hasGlobalWalletManager && hasWeb3) {
                     console.log('✅ Core APIs ready, loading tournaments...');
@@ -1610,7 +1693,7 @@
             }, 30000);
         });
 
-        console.log('✅ WalletWars Tournaments page with GlobalWalletManager integration loaded!');
+        console.log('✅ WalletWars Tournaments page with GlobalWalletManager and Hybrid Snapshots integration loaded!');
     </script>
 </body>
 </html>
