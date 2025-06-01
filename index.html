@@ -1119,6 +1119,19 @@
         .champion-status-check.new .status-icon {
             animation: none;
         }
+
+        /* Confirmation Actions */
+        .confirmation-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .confirmation-actions .btn-modal-primary,
+        .confirmation-actions .btn-modal-secondary {
+            min-width: 120px;
+        }
     </style>
 </head>
 <body>
@@ -1316,6 +1329,11 @@
                     <div class="champion-status-check">
                         <div class="status-icon" id="championStatusIcon">🔍</div>
                         <div class="status-text" id="championStatusText">Checking for existing champion...</div>
+                    </div>
+
+                    <div class="confirmation-actions" id="confirmationActions" style="display: none;">
+                        <button class="btn-modal-secondary" onclick="goToStep(1)">Back</button>
+                        <button class="btn-modal-primary" id="continueBtn" onclick="continueFromConfirmation()">Continue</button>
                     </div>
                 </div>
             </div>
@@ -1600,7 +1618,10 @@
             return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
 
-        // Updated selectWallet function with wallet confirmation step
+        // Global variable to track what happens after confirmation
+        let nextAction = null;
+
+        // Updated selectWallet function with manual confirmation
         async function selectWallet(walletType) {
             selectedWallet = walletType;
             championData.walletType = walletType;
@@ -1634,8 +1655,8 @@
                 const existingChampion = await window.walletWarsAPI.getChampionProfile(championData.wallet);
                 
                 if (existingChampion.success) {
-                    // Champion exists, show found status and load it
-                    updateChampionStatus('found', `Champion "${existingChampion.champion.champion_name}" found! Loading your profile...`);
+                    // Champion exists, show found status and prepare to load it
+                    updateChampionStatus('found', `Champion "${existingChampion.champion.champion_name}" found!`);
                     
                     championData.championId = existingChampion.champion.champion_id;
                     championData.name = existingChampion.champion.champion_name;
@@ -1643,28 +1664,56 @@
                     
                     console.log('✅ Existing champion loaded for real wallet:', championData);
                     
-                    // Wait a moment for user to see the confirmation, then proceed
-                    setTimeout(() => {
-                        goToStep(5);
-                        setTimeout(() => {
-                            completedOnboarding();
-                        }, 1000);
-                    }, 2000);
+                    // Set up continue button for existing champion
+                    showContinueButton('existing', 'Load My Champion');
+                    nextAction = 'loadExisting';
                     
                 } else {
-                    // New wallet, show new status and proceed to champion creation
-                    updateChampionStatus('new', 'No champion found for this wallet. Taking you to champion creation...');
+                    // New wallet, show new status and prepare for champion creation
+                    updateChampionStatus('new', 'No champion found for this wallet. Ready to create your champion!');
                     
-                    setTimeout(() => {
-                        goToStep(3);
-                        updateModalHeader('Create Your Champion', 'Customize your WalletWars identity');
-                    }, 2500);
+                    // Set up continue button for new champion
+                    showContinueButton('new', 'Create Champion');
+                    nextAction = 'createNew';
                 }
                 
             } catch (error) {
                 console.error('❌ Real wallet connection failed:', error);
                 showConnectionError(error.message);
             }
+        }
+
+        // New function to show the continue button
+        function showContinueButton(type, buttonText) {
+            const actionsDiv = document.getElementById('confirmationActions');
+            const continueBtn = document.getElementById('continueBtn');
+            
+            continueBtn.textContent = buttonText;
+            actionsDiv.style.display = 'flex';
+            
+            // Add some visual indication of what will happen
+            if (type === 'existing') {
+                continueBtn.style.background = 'linear-gradient(135deg, #10b981, #34d399)';
+            } else {
+                continueBtn.style.background = 'linear-gradient(135deg, #8b5cf6, #ec4899)';
+            }
+        }
+
+        // New function to handle continue button click
+        function continueFromConfirmation() {
+            if (nextAction === 'loadExisting') {
+                // Go to success step for existing champion
+                goToStep(5);
+                setTimeout(() => {
+                    completedOnboarding();
+                }, 500);
+            } else if (nextAction === 'createNew') {
+                // Go to champion creation
+                goToStep(3);
+                updateModalHeader('Create Your Champion', 'Customize your WalletWars identity');
+            }
+            
+            nextAction = null; // Reset
         }
 
         // New function to show wallet confirmation
