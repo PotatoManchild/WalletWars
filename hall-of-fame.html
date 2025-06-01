@@ -8,272 +8,33 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hall of Fame - WalletWars</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <!-- Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <!-- WalletWars API -->
+    
+    <!-- CRITICAL: Solana Web3.js - MUST LOAD FIRST -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    
+    <!-- WalletWars Scripts - ENHANCED ORDER WITH GLOBAL WALLET MANAGER -->
     <script src="walletwars-api.js"></script>
+    <script src="wallet-service.js"></script> <!-- Enhanced wallet service -->
+    <script src="global-wallet-manager.js"></script> <!-- NEW: Global wallet persistence -->
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="shared.css">
     
     <style>
-        /* Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #0a0a0a;
-            color: #ffffff;
-            line-height: 1.6;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        /* Animated Background */
-        .animated-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: linear-gradient(45deg, #0a0a0a, #1a1a2e, #16213e, #0f0f23);
-            background-size: 400% 400%;
-            animation: gradientShift 25s ease infinite;
-        }
-
-        .geometric-patterns {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.08;
-            background-image: 
-                radial-gradient(circle at 25% 25%, #8b5cf6 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, #06b6d4 0%, transparent 50%),
-                radial-gradient(circle at 75% 25%, #ec4899 0%, transparent 50%),
-                radial-gradient(circle at 25% 75%, #10b981 0%, transparent 50%);
-            animation: patternFloat 35s ease-in-out infinite;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        @keyframes patternFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            33% { transform: translateY(-10px) rotate(60deg); }
-            66% { transform: translateY(5px) rotate(120deg); }
-        }
-
-        /* Navigation */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-            padding: 1rem 0;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #e879f9, #c084fc, #a855f7, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 1px;
-            text-decoration: none;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: #d1d5db;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: #8b5cf6;
-            background: rgba(139, 92, 246, 0.1);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-            border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.75rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            margin-left: 1rem;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
-        }
-
-        /* Mobile Navigation */
-        .mobile-menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-            z-index: 1001;
-        }
-
-        .hamburger {
-            width: 24px;
-            height: 20px;
-            position: relative;
-            transform: rotate(0deg);
-            transition: 0.3s ease-in-out;
-        }
-
-        .hamburger span {
-            display: block;
-            position: absolute;
-            height: 3px;
-            width: 100%;
-            background: #8b5cf6;
-            border-radius: 3px;
-            opacity: 1;
-            left: 0;
-            transform: rotate(0deg);
-            transition: 0.25s ease-in-out;
-        }
-
-        .hamburger span:nth-child(1) {
-            top: 0px;
-        }
-
-        .hamburger span:nth-child(2) {
-            top: 8px;
-        }
-
-        .hamburger span:nth-child(3) {
-            top: 16px;
-        }
-
-        .hamburger.active span:nth-child(1) {
-            top: 8px;
-            transform: rotate(135deg);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-            left: -60px;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            top: 8px;
-            transform: rotate(-135deg);
-        }
-
-        @media (max-width: 768px) {
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .nav-links {
-                position: fixed;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100vh;
-                background: rgba(10, 10, 10, 0.95);
-                backdrop-filter: blur(20px);
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                gap: 2rem;
-                transition: left 0.3s ease;
-                z-index: 1000;
-            }
-
-            .nav-links.active {
-                left: 0;
-            }
-
-            .nav-links a {
-                font-size: 1.2rem;
-                padding: 1rem 2rem;
-            }
-
-            .btn-primary {
-                margin-left: 0;
-                margin-top: 1rem;
-            }
-        }
-
-        /* Page Layout */
-        .page-container {
-            min-height: 100vh;
-            padding-top: 6rem;
-        }
-
-        .page-header {
-            text-align: center;
-            padding: 4rem 2rem 2rem;
-        }
-
-        .page-title {
-            font-family: 'Orbitron', monospace;
-            font-size: clamp(2rem, 6vw, 4rem);
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .page-subtitle {
-            font-size: 1.2rem;
-            color: #d1d5db;
-            opacity: 0.8;
-        }
-
-        .page-content {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
+        /* Enhanced Hall of Fame Styles with GlobalWalletManager Support */
+        
         /* Loading State */
         .loading-container {
             display: flex;
@@ -427,6 +188,12 @@
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid rgba(239, 68, 68, 0.2);
             color: #ef4444;
+        }
+
+        .connection-status.global-manager {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
         }
 
         /* ENHANCED ACHIEVEMENTS SECTION */
@@ -921,7 +688,7 @@
     <div class="animated-background"></div>
     <div class="geometric-patterns"></div>
 
-    <!-- Navigation -->
+    <!-- Navigation with Global Wallet Manager Support -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">WalletWars</a>
@@ -931,7 +698,16 @@
                 <li><a href="tournaments.html">Tournaments</a></li>
                 <li><a href="leaderboards.html">Leaderboards</a></li>
                 <li><a href="hall-of-fame.html" class="active">Hall of Fame</a></li>
-                <li><a href="#" class="btn-primary" onclick="connectWallet()">Connect Wallet</a></li>
+                
+                <!-- Disconnected State -->
+                <li id="connectWalletBtn"><a href="#" class="btn-primary" onclick="window.connectWallet && window.connectWallet('phantom') || fallbackConnect()">Connect Wallet</a></li>
+                
+                <!-- Connected State (Hidden by default, managed by GlobalWalletManager) -->
+                <li id="championInfo" style="display: none;">
+                    <div id="navChampionAvatar">🔥</div>
+                    <span id="navChampionName">Champion</span>
+                    <button class="nav-disconnect" onclick="window.disconnectWallet && window.disconnectWallet()">Disconnect</button>
+                </li>
             </ul>
 
             <!-- Mobile Menu Toggle -->
@@ -957,7 +733,7 @@
         <div class="page-content">
             <!-- Connection Status -->
             <div id="connectionStatus" class="connection-status" style="display: none;">
-                <div id="connectionMessage">Checking database connection...</div>
+                <div id="connectionMessage">Checking GlobalWalletManager connection...</div>
             </div>
 
             <!-- Section Navigation -->
@@ -972,13 +748,13 @@
             <div id="achievements-section" class="hall-section active">
                 <div class="section-header">
                     <h2 class="section-title">Achievement Gallery</h2>
-                    <p class="section-subtitle">Unlock legendary status through skill and dedication</p>
+                    <p class="section-subtitle">Unlock legendary status through skill and dedication with GlobalWalletManager</p>
                 </div>
 
                 <!-- Loading State -->
                 <div id="achievementsLoading" class="loading-container">
                     <div class="loading-spinner"></div>
-                    <div class="loading-text">Loading achievements from database...</div>
+                    <div class="loading-text">Loading achievements via GlobalWalletManager...</div>
                 </div>
 
                 <!-- Error State -->
@@ -1035,7 +811,7 @@
             <div id="legends-section" class="hall-section">
                 <div class="section-header">
                     <h2 class="section-title">Legendary Champions</h2>
-                    <p class="section-subtitle">Elite players who have transcended ordinary competition</p>
+                    <p class="section-subtitle">Elite players who have transcended ordinary competition via GlobalWalletManager</p>
                 </div>
                 <div style="text-align: center; padding: 3rem; color: #9ca3af;">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">👑</div>
@@ -1046,7 +822,7 @@
             <div id="records-section" class="hall-section">
                 <div class="section-header">
                     <h2 class="section-title">Record Holders</h2>
-                    <p class="section-subtitle">Champions who have set extraordinary milestones</p>
+                    <p class="section-subtitle">Champions who have set extraordinary milestones tracked by GlobalWalletManager</p>
                 </div>
                 <div style="text-align: center; padding: 3rem; color: #9ca3af;">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
@@ -1057,7 +833,7 @@
             <div id="moments-section" class="hall-section">
                 <div class="section-header">
                     <h2 class="section-title">Epic Moments</h2>
-                    <p class="section-subtitle">Legendary moments that defined WalletWars history</p>
+                    <p class="section-subtitle">Legendary moments that defined WalletWars history with GlobalWalletManager</p>
                 </div>
                 <div style="text-align: center; padding: 3rem; color: #9ca3af;">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
@@ -1092,7 +868,7 @@
 
             <!-- Community Stats -->
             <div class="achievement-stats">
-                <div class="stats-title">📊 Achievement Statistics</div>
+                <div class="stats-title">📊 Achievement Statistics (GlobalWalletManager)</div>
                 <div class="rarity-stat">
                     <span>Achievement Points</span>
                     <span class="stat-percentage" id="modalPoints">25 AP</span>
@@ -1110,11 +886,51 @@
     </div>
 
     <script>
-        function connectWallet() {
-            alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!');
+        // ========================================
+        // GLOBAL WALLET MANAGER INTEGRATION
+        // ========================================
+
+        // Fallback connect function for when GlobalWalletManager isn't ready
+        function fallbackConnect() {
+            alert('🔗 Wallet Connection\n\nWallet system is loading. Please visit the home page to connect your wallet and it will persist across all pages!');
         }
 
-        // Mobile Navigation Functions
+        // Check if GlobalWalletManager is available and get connection status
+        function checkGlobalWalletConnection() {
+            if (window.getWalletStatus) {
+                const status = window.getWalletStatus();
+                
+                const statusElement = document.getElementById('connectionStatus');
+                const messageElement = document.getElementById('connectionMessage');
+                
+                statusElement.style.display = 'block';
+                
+                if (status.isConnected && status.championName) {
+                    statusElement.className = 'connection-status global-manager';
+                    messageElement.innerHTML = `🏆 GlobalWalletManager: Connected as <strong>${status.championName}</strong> - Your achievements persist across all pages!`;
+                    
+                    console.log(`✅ GlobalWalletManager: Found connected champion ${status.championName}`);
+                    return true;
+                } else {
+                    statusElement.className = 'connection-status disconnected';
+                    messageElement.textContent = '🏆 GlobalWalletManager: No wallet connected - Connect on any page to track achievements globally';
+                    return false;
+                }
+            } else {
+                const statusElement = document.getElementById('connectionStatus');
+                const messageElement = document.getElementById('connectionMessage');
+                
+                statusElement.style.display = 'block';
+                statusElement.className = 'connection-status disconnected';
+                messageElement.textContent = '⚠️ GlobalWalletManager not available - Please refresh the page';
+                return false;
+            }
+        }
+
+        // ========================================
+        // MOBILE NAVIGATION
+        // ========================================
+
         function initializeMobileNavigation() {
             const mobileToggle = document.querySelector('.mobile-menu-toggle');
             const navLinks = document.querySelector('.nav-links');
@@ -1177,18 +993,19 @@
             });
         }
 
+        // ========================================
+        // HALL OF FAME DATA AND STATE
+        // ========================================
+
         // Global state
         let achievementData = [];
         let currentFilter = 'all';
         let currentAchievement = null;
         let isLoading = false;
 
-        // Initialize page
-        function initializePage() {
-            console.log('🏆 Hall of Fame initializing...');
-            checkDatabaseConnection();
-            loadAchievements();
-        }
+        // ========================================
+        // DATABASE CONNECTION WITH GLOBAL WALLET MANAGER
+        // ========================================
 
         // Check database connection
         async function checkDatabaseConnection() {
@@ -1201,7 +1018,7 @@
                 
                 if (isConnected) {
                     statusElement.className = 'connection-status connected';
-                    messageElement.textContent = '✅ Database connected - Achievements loaded from Supabase';
+                    messageElement.textContent = '✅ Database connected - Achievements loaded from Supabase via GlobalWalletManager';
                 } else {
                     statusElement.className = 'connection-status disconnected';
                     messageElement.textContent = '❌ Database connection failed - Showing demo data';
@@ -1227,6 +1044,10 @@
             }
         }
 
+        // ========================================
+        // ACHIEVEMENT LOADING WITH GLOBAL WALLET MANAGER
+        // ========================================
+
         // Load achievements from database
         async function loadAchievements() {
             if (isLoading) return;
@@ -1236,13 +1057,13 @@
             hideError();
             
             try {
-                console.log('📊 Loading achievements from database...');
+                console.log('📊 Loading achievements from database with GlobalWalletManager...');
                 
                 // Get achievement definitions from Supabase
                 const result = await window.walletWarsAPI.getAchievementDefinitions();
                 
                 if (result.success) {
-                    console.log(`✅ Loaded ${result.achievements.length} achievements from database`);
+                    console.log(`✅ Loaded ${result.achievements.length} achievements from database via GlobalWalletManager`);
                     achievementData = result.achievements.map(achievement => ({
                         id: achievement.id,
                         name: achievement.name,
@@ -1255,8 +1076,15 @@
                         rewards: achievement.rewards || `+${achievement.points} AP`,
                         firstUnlocker: achievement.first_unlocker || 'Unknown Champion',
                         tracking: achievement.tracking_field || 'tournaments_played',
-                        unlocked: false // This would come from user's progress
+                        unlocked: false // This would come from user's progress via GlobalWalletManager
                     }));
+                    
+                    // Check if user is connected via GlobalWalletManager for personalized achievements
+                    const walletStatus = window.getWalletStatus ? window.getWalletStatus() : { isConnected: false };
+                    if (walletStatus.isConnected) {
+                        console.log(`🏆 Personalizing achievements for connected champion: ${walletStatus.championName}`);
+                        // Future enhancement: load user's specific achievement progress
+                    }
                     
                     showLoading(false);
                     renderAchievements();
@@ -1289,7 +1117,7 @@
                 {
                     id: 'tournament_debut',
                     name: 'Tournament Debut',
-                    description: 'Participate in your first tournament and begin your champion journey.',
+                    description: 'Participate in your first tournament and begin your champion journey via GlobalWalletManager.',
                     category: 'tournament',
                     rarity: 'common',
                     icon: '🎯',
@@ -1303,7 +1131,7 @@
                 {
                     id: 'first_victory',
                     name: 'First Blood',
-                    description: 'Win your first tournament and taste the sweetness of victory.',
+                    description: 'Win your first tournament and taste the sweetness of victory with GlobalWalletManager tracking.',
                     category: 'victory',
                     rarity: 'common',
                     icon: '🎯',
@@ -1317,7 +1145,7 @@
                 {
                     id: 'first_profit',
                     name: 'First Profit',
-                    description: 'Earn your first SOL from tournament prizes.',
+                    description: 'Earn your first SOL from tournament prizes tracked by GlobalWalletManager.',
                     category: 'earnings',
                     rarity: 'common',
                     icon: '💰',
@@ -1331,7 +1159,7 @@
                 {
                     id: 'tournament_master',
                     name: 'Tournament Master',
-                    description: 'Achieve mastery by winning 25 tournaments total.',
+                    description: 'Achieve mastery by winning 25 tournaments total with GlobalWalletManager persistence.',
                     category: 'victory',
                     rarity: 'legendary',
                     icon: '👑',
@@ -1345,7 +1173,10 @@
             ];
         }
 
-        // UI Control Functions
+        // ========================================
+        // UI CONTROL FUNCTIONS
+        // ========================================
+
         function showLoading(show) {
             document.getElementById('achievementsLoading').style.display = show ? 'flex' : 'none';
         }
@@ -1365,6 +1196,10 @@
         function showContent(show) {
             document.getElementById('achievementsContent').style.display = show ? 'block' : 'none';
         }
+
+        // ========================================
+        // ACHIEVEMENT RENDERING
+        // ========================================
 
         // Render achievement cards
         function renderAchievements() {
@@ -1414,7 +1249,7 @@
                 <div class="achievement-footer">
                     <div class="achievement-rarity">
                         <div class="rarity-badge">${achievement.rarity}</div>
-                        <div style="font-size: 0.8rem; color: #9ca3af;">Available to unlock</div>
+                        <div style="font-size: 0.8rem; color: #9ca3af;">Available via GlobalWalletManager</div>
                     </div>
                     <div class="achievement-rewards">
                         <div class="reward-item">${achievement.points} AP</div>
@@ -1512,6 +1347,24 @@
             event.target.classList.add('active');
         }
 
+        // ========================================
+        // INITIALIZATION WITH GLOBAL WALLET MANAGER
+        // ========================================
+
+        // Initialize page
+        function initializePage() {
+            console.log('🏆 Hall of Fame initializing with GlobalWalletManager...');
+            
+            // Check GlobalWalletManager connection
+            const hasConnection = checkGlobalWalletConnection();
+            if (hasConnection) {
+                console.log('✅ GlobalWalletManager connection detected on Hall of Fame page');
+            }
+            
+            checkDatabaseConnection();
+            loadAchievements();
+        }
+
         // Close modal when clicking outside
         document.addEventListener('click', function(event) {
             const modal = document.getElementById('achievementModal');
@@ -1529,7 +1382,7 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎮 WalletWars Hall of Fame loaded');
+            console.log('🎮 WalletWars Hall of Fame loaded with GlobalWalletManager');
             
             // Initialize mobile navigation
             initializeMobileNavigation();
@@ -1538,6 +1391,8 @@
             // Initialize page
             initializePage();
         });
+
+        console.log('✅ WalletWars Hall of Fame page with GlobalWalletManager integration loaded!');
     </script>
 </body>
 </html>
