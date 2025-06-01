@@ -1127,7 +1127,7 @@
                         <div class="wallet-info">
                             <div class="wallet-name">Phantom</div>
                             <div class="wallet-description">Most popular Solana wallet</div>
-                            <div class="wallet-status" id="phantomStatus">✓ Demo Mode</div>
+                            <div class="wallet-status" id="phantomStatus">✓ Checking...</div>
                         </div>
                     </div>
 
@@ -1136,7 +1136,7 @@
                         <div class="wallet-info">
                             <div class="wallet-name">Solflare</div>
                             <div class="wallet-description">Secure and feature-rich</div>
-                            <div class="wallet-status" id="solflareStatus">✓ Demo Mode</div>
+                            <div class="wallet-status" id="solflareStatus">✓ Checking...</div>
                         </div>
                     </div>
 
@@ -1145,15 +1145,15 @@
                         <div class="wallet-info">
                             <div class="wallet-name">Backpack</div>
                             <div class="wallet-description">Modern crypto wallet</div>
-                            <div class="wallet-status" id="backpackStatus">✓ Demo Mode</div>
+                            <div class="wallet-status" id="backpackStatus">✓ Checking...</div>
                         </div>
                     </div>
 
                     <div class="wallet-option" onclick="selectWallet('torus')">
                         <div class="wallet-icon">🌀</div>
                         <div class="wallet-info">
-                            <div class="wallet-name">Torus</div>
-                            <div class="wallet-description">Social login wallet</div>
+                            <div class="wallet-name">Demo Mode</div>
+                            <div class="wallet-description">For testing without a real wallet</div>
                             <div class="wallet-status" id="torusStatus">✓ Demo Mode</div>
                         </div>
                     </div>
@@ -1469,7 +1469,7 @@
             return result;
         }
 
-        // Updated selectWallet function
+        // Updated selectWallet function - FIXED to prompt real wallet
         async function selectWallet(walletType) {
             selectedWallet = walletType;
             championData.walletType = walletType;
@@ -1486,7 +1486,15 @@
             document.getElementById('selectedWalletName').textContent = walletNames[walletType];
             
             try {
-                await connectToWallet(walletType);
+                // ONLY use demo mode for Torus, force real wallet connection for others
+                if (walletType === 'torus') {
+                    console.log('🎮 Using demo mode for Torus');
+                    await generateDemoWallet(() => {});
+                } else {
+                    // Force real wallet connection for Phantom, Solflare, Backpack
+                    console.log(`🔗 Attempting REAL wallet connection for ${walletType}`);
+                    await connectToWallet(walletType);
+                }
                 
                 // Check if champion already exists for this wallet
                 const existingChampion = await window.walletWarsAPI.getChampionProfile(championData.wallet);
@@ -1515,7 +1523,7 @@
                 
             } catch (error) {
                 console.error('Wallet connection failed:', error);
-                showConnectionError(error.message);
+                // Don't auto-fallback to demo - let user see the error and choose
             }
         }
 
