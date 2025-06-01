@@ -2426,23 +2426,49 @@
             `;
         }
 
-        // Enhanced initialization function
+        // Enhanced initialization function with better error handling
+        let initAttempts = 0;
+        const maxInitAttempts = 10;
+
         async function initializePage() {
-            console.log('🎮 WalletWars initializing...');
+            initAttempts++;
+            console.log(`🎮 WalletWars initializing... (Attempt ${initAttempts})`);
             
-            // Initialize mobile navigation
+            // Initialize mobile navigation first (doesn't require API)
             initializeMobileNavigation();
             handleWindowResize();
             
-            // Setup wallet event listeners
-            setupWalletEventListeners();
+            // Check if we've tried too many times
+            if (initAttempts > maxInitAttempts) {
+                console.error('❌ Failed to initialize after multiple attempts');
+                showAPIError();
+                return;
+            }
             
             // Wait for API to be ready
             if (!window.walletWarsAPI) {
                 console.log('⏳ Waiting for API to load...');
-                setTimeout(initializePage, 500);
+                setTimeout(initializePage, 1000); // Increased timeout
                 return;
             }
+            
+            // Test API connection
+            try {
+                const isConnected = await window.walletWarsAPI.testConnection();
+                if (!isConnected) {
+                    console.error('❌ API connection test failed');
+                    showAPIError();
+                    return;
+                }
+                console.log('✅ API connection successful');
+            } catch (error) {
+                console.error('❌ API connection error:', error);
+                showAPIError();
+                return;
+            }
+            
+            // Setup wallet event listeners
+            setupWalletEventListeners();
             
             // Check for existing champion (with real wallet verification)
             const hasChampion = await checkForExistingChampion();
@@ -2453,6 +2479,35 @@
             }
             
             console.log('✅ WalletWars initialized successfully!');
+        }
+
+        // New function to show API error
+        function showAPIError() {
+            console.error('🚨 WalletWars API failed to load properly');
+            
+            // Show error message to user
+            const heroContent = document.querySelector('.hero-content');
+            if (heroContent) {
+                heroContent.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                        <h2 style="color: #ef4444; margin-bottom: 1rem;">Connection Error</h2>
+                        <p style="color: #d1d5db; margin-bottom: 2rem;">
+                            Unable to connect to WalletWars services. Please refresh the page or check your internet connection.
+                        </p>
+                        <button onclick="location.reload()" style="
+                            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+                            border: none;
+                            color: white;
+                            padding: 1rem 2rem;
+                            border-radius: 0.75rem;
+                            font-size: 1rem;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">Refresh Page</button>
+                    </div>
+                `;
+            }
         }
 
         // Close modal when clicking outside
