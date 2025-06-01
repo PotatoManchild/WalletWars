@@ -58,61 +58,49 @@ class WalletWarsAPI {
         }
     }
 
-    // NEW METHOD: Check if champion name already exists - BULLETPROOF VERSION
+    // NEW METHOD: Check if champion name already exists - SIMPLE APPROACH
     async checkChampionNameExists(championName) {
         try {
             console.log(`🔍 Checking if champion name "${championName}" exists...`);
             
-            // Use RPC function or simple count query to avoid row return issues
-            const { count, error } = await this.supabase
+            // Use a very simple approach: just get all champions and filter client-side
+            // This avoids all the Supabase row return issues
+            const { data, error } = await this.supabase
                 .from('champions')
-                .select('id', { count: 'exact', head: true })
-                .eq('champion_name', championName)
+                .select('champion_name')
                 .eq('is_active', true);
 
             if (error) {
-                console.warn('⚠️ Name check error (trying fallback):', error.message);
-                
-                // FALLBACK: Try a different approach if count fails
-                try {
-                    const { data: fallbackData, error: fallbackError } = await this.supabase
-                        .from('champions')
-                        .select('id')
-                        .eq('champion_name', championName)
-                        .eq('is_active', true);
-                    
-                    if (fallbackError) {
-                        console.error('❌ Fallback name check also failed:', fallbackError);
-                        return { success: false, error: fallbackError.message };
-                    }
-                    
-                    const exists = fallbackData && fallbackData.length > 0;
-                    console.log(`${exists ? '❌' : '✅'} Champion name "${championName}" ${exists ? 'already exists' : 'is available'} (fallback method: ${fallbackData ? fallbackData.length : 0} matches)`);
-                    
-                    return { 
-                        success: true, 
-                        exists: exists,
-                        championName: championName,
-                        matchCount: fallbackData ? fallbackData.length : 0,
-                        method: 'fallback'
-                    };
-                    
-                } catch (fallbackException) {
-                    console.error('❌ Both name check methods failed:', fallbackException);
-                    return { success: false, error: 'Name checking temporarily unavailable' };
-                }
+                console.error('❌ Name check error:', error);
+                return { success: false, error: error.message };
             }
 
-            const exists = count > 0;
+            if (!data) {
+                console.log('✅ No champions found in database');
+                return { 
+                    success: true, 
+                    exists: false,
+                    championName: championName,
+                    method: 'client-side-filter'
+                };
+            }
+
+            // Filter client-side to find matches
+            const matches = data.filter(champion => 
+                champion.champion_name && 
+                champion.champion_name.toLowerCase() === championName.toLowerCase()
+            );
+
+            const exists = matches.length > 0;
             
-            console.log(`${exists ? '❌' : '✅'} Champion name "${championName}" ${exists ? 'already exists' : 'is available'} (count method: ${count} matches)`);
+            console.log(`${exists ? '❌' : '✅'} Champion name "${championName}" ${exists ? 'already exists' : 'is available'} (client-side filter: ${matches.length} matches found)`);
             
             return { 
                 success: true, 
                 exists: exists,
                 championName: championName,
-                matchCount: count,
-                method: 'count'
+                matchCount: matches.length,
+                method: 'client-side-filter'
             };
 
         } catch (error) {
