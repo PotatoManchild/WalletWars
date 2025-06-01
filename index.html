@@ -993,13 +993,131 @@
             line-height: 1.6;
         }
 
-        /* Wallet Status Styles */
-        .wallet-status.not-found {
-            color: #f59e0b;
+        /* Wallet Confirmation Styles */
+        .wallet-confirmation {
+            text-align: center;
+            padding: 2rem;
         }
 
-        .wallet-status.ready {
+        .confirmation-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #10b981, #34d399);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+            animation: confirmationPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes confirmationPulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+            100% { transform: scale(1.05); box-shadow: 0 0 30px rgba(16, 185, 129, 0.5); }
+        }
+
+        .confirmation-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.6rem;
+            font-weight: 700;
             color: #10b981;
+            margin-bottom: 0.5rem;
+        }
+
+        .confirmation-subtitle {
+            color: #d1d5db;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .wallet-address-display {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .address-label {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .address-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.85rem;
+            color: #ffffff;
+            background: rgba(31, 41, 55, 0.8);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            word-break: break-all;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .address-note {
+            color: #9ca3af;
+            font-size: 0.75rem;
+            font-style: italic;
+        }
+
+        .champion-status-check {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .status-icon {
+            font-size: 1.5rem;
+            animation: statusSpin 2s linear infinite;
+        }
+
+        @keyframes statusSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            color: #06b6d4;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .champion-status-check.found {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.2);
+        }
+
+        .champion-status-check.found .status-text {
+            color: #fbbf24;
+        }
+
+        .champion-status-check.found .status-icon {
+            animation: none;
+        }
+
+        .champion-status-check.new {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .champion-status-check.new .status-text {
+            color: #8b5cf6;
+        }
+
+        .champion-status-check.new .status-icon {
+            animation: none;
         }
     </style>
 </head>
@@ -1179,6 +1297,26 @@
                     <div class="loading-spinner"></div>
                     <div style="font-size: 1.2rem; color: #8b5cf6; margin-bottom: 1rem;">Connecting to <span id="selectedWalletName">Phantom</span>...</div>
                     <div style="color: #9ca3af;">Please approve the connection in your wallet</div>
+                </div>
+            </div>
+
+            <!-- Step 2.5: Wallet Confirmation -->
+            <div class="step-content" id="step2_5Content">
+                <div class="wallet-confirmation">
+                    <div class="confirmation-icon">✅</div>
+                    <div class="confirmation-title">Wallet Connected Successfully!</div>
+                    <div class="confirmation-subtitle">Your <span id="connectedWalletType">Phantom</span> wallet has been detected</div>
+                    
+                    <div class="wallet-address-display">
+                        <div class="address-label">Connected Wallet Address:</div>
+                        <div class="address-value" id="connectedWalletAddress">Loading...</div>
+                        <div class="address-note">This address will be used for tournament tracking</div>
+                    </div>
+                    
+                    <div class="champion-status-check">
+                        <div class="status-icon" id="championStatusIcon">🔍</div>
+                        <div class="status-text" id="championStatusText">Checking for existing champion...</div>
+                    </div>
                 </div>
             </div>
 
@@ -1462,7 +1600,7 @@
             return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
 
-        // Updated selectWallet function to use real wallet connection
+        // Updated selectWallet function with wallet confirmation step
         async function selectWallet(walletType) {
             selectedWallet = walletType;
             championData.walletType = walletType;
@@ -1489,35 +1627,97 @@
                 
                 console.log(`🎯 Connected to real wallet: ${championData.wallet.substring(0, 8)}...`);
                 
+                // Show wallet confirmation step
+                showWalletConfirmation(walletType, championData.wallet);
+                
                 // Check if champion already exists for this REAL wallet
                 const existingChampion = await window.walletWarsAPI.getChampionProfile(championData.wallet);
                 
                 if (existingChampion.success) {
-                    // Champion exists, load it
+                    // Champion exists, show found status and load it
+                    updateChampionStatus('found', `Champion "${existingChampion.champion.champion_name}" found! Loading your profile...`);
+                    
                     championData.championId = existingChampion.champion.champion_id;
                     championData.name = existingChampion.champion.champion_name;
                     championData.avatar = existingChampion.champion.avatar_emoji;
                     
                     console.log('✅ Existing champion loaded for real wallet:', championData);
                     
-                    // Skip to success step
-                    goToStep(5);
+                    // Wait a moment for user to see the confirmation, then proceed
                     setTimeout(() => {
-                        completedOnboarding();
-                    }, 1000);
+                        goToStep(5);
+                        setTimeout(() => {
+                            completedOnboarding();
+                        }, 1000);
+                    }, 2000);
                     
                 } else {
-                    // New wallet, proceed to champion creation
+                    // New wallet, show new status and proceed to champion creation
+                    updateChampionStatus('new', 'No champion found for this wallet. Taking you to champion creation...');
+                    
                     setTimeout(() => {
                         goToStep(3);
                         updateModalHeader('Create Your Champion', 'Customize your WalletWars identity');
-                    }, 1000);
+                    }, 2500);
                 }
                 
             } catch (error) {
                 console.error('❌ Real wallet connection failed:', error);
                 showConnectionError(error.message);
             }
+        }
+
+        // New function to show wallet confirmation
+        function showWalletConfirmation(walletType, walletAddress) {
+            // Show the wallet confirmation step
+            goToStep('2_5');
+            
+            const walletNames = {
+                'phantom': 'Phantom',
+                'solflare': 'Solflare', 
+                'backpack': 'Backpack',
+                'torus': 'Torus'
+            };
+            
+            // Update wallet type display
+            document.getElementById('connectedWalletType').textContent = walletNames[walletType];
+            
+            // Display the full wallet address with nice formatting
+            const formattedAddress = `${walletAddress.substring(0, 8)}...${walletAddress.substring(-8)}`;
+            document.getElementById('connectedWalletAddress').textContent = formattedAddress;
+            document.getElementById('connectedWalletAddress').title = walletAddress; // Full address on hover
+            
+            // Reset champion status to checking
+            updateChampionStatus('checking', 'Checking for existing champion...');
+        }
+
+        // New function to update champion status during confirmation
+        function updateChampionStatus(status, message) {
+            const statusCheck = document.querySelector('.champion-status-check');
+            const statusIcon = document.getElementById('championStatusIcon');
+            const statusText = document.getElementById('championStatusText');
+            
+            // Remove all status classes
+            statusCheck.classList.remove('found', 'new');
+            
+            switch (status) {
+                case 'checking':
+                    statusIcon.textContent = '🔍';
+                    statusIcon.style.animation = 'statusSpin 2s linear infinite';
+                    break;
+                case 'found':
+                    statusCheck.classList.add('found');
+                    statusIcon.textContent = '👑';
+                    statusIcon.style.animation = 'none';
+                    break;
+                case 'new':
+                    statusCheck.classList.add('new');
+                    statusIcon.textContent = '✨';
+                    statusIcon.style.animation = 'none';
+                    break;
+            }
+            
+            statusText.textContent = message;
         }
 
         // Enhanced finalizeChamption function with real wallet verification
@@ -1909,11 +2109,20 @@
                 content.classList.remove('active');
             });
             
-            // Show target step
-            document.getElementById(`step${step}Content`).classList.add('active');
+            // Show target step (handle both numbers and strings like '2_5')
+            const stepElement = document.getElementById(`step${step}Content`);
+            if (stepElement) {
+                stepElement.classList.add('active');
+            }
             
-            currentStep = step;
-            updateStepIndicators();
+            // Only update currentStep if it's a number
+            if (typeof step === 'number') {
+                currentStep = step;
+                updateStepIndicators();
+            } else if (step === '2_5') {
+                // For step 2.5, keep currentStep at 2 but don't update indicators yet
+                // This is an intermediate confirmation step
+            }
         }
 
         function updateStepIndicators() {
