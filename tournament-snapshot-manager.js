@@ -133,7 +133,7 @@ class TournamentSnapshotManager {
         }
     }
 
-    /**
+ /**
      * Process tournament start - take snapshots for all participants
      */
     async processTournamentStart(tournamentInstanceId) {
@@ -147,7 +147,18 @@ class TournamentSnapshotManager {
                 throw new Error('Failed to get tournament entries');
             }
             
-            const entries = entriesResult.entries;
+            const entries = entriesResult.entries || [];
+            
+            if (entries.length === 0) {
+                console.log('ℹ️ No participants to snapshot for this tournament');
+                return {
+                    successful: 0,
+                    failed: 0,
+                    errors: [],
+                    message: 'No participants registered'
+                };
+            }
+            
             console.log(`📊 Found ${entries.length} participants to snapshot`);
             
             const results = {
@@ -191,7 +202,12 @@ class TournamentSnapshotManager {
             
         } catch (error) {
             console.error('❌ Failed to process tournament start:', error);
-            throw error;
+            return {
+                successful: 0,
+                failed: 0,
+                errors: [{ error: error.message }],
+                message: error.message
+            };
         }
     }
 
