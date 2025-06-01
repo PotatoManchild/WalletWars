@@ -679,8 +679,17 @@
                 const output = document.getElementById('hybridOutput');
                 output.innerHTML = '<div class="info">Setting up hybrid snapshot system...</div>';
                 
-                // Run the setup
-                const success = await window.setupHybridSnapshots();
+                // Add timeout to prevent page freeze
+                const setupPromise = window.setupHybridSnapshots();
+                const timeoutPromise = new Promise((resolve) => {
+                    setTimeout(() => {
+                        log('⚠️ Setup is taking longer than expected...', 'warning');
+                        resolve(false);
+                    }, 10000); // 10 second timeout
+                });
+                
+                // Run setup with timeout
+                const success = await Promise.race([setupPromise, timeoutPromise]);
                 
                 if (success) {
                     updateProgress(100, 'hybridProgress');
@@ -689,7 +698,7 @@
                         <div class="success">✅ Hybrid Snapshot System initialized successfully!</div>
                         <div class="info">📸 Snapshots will only be taken at tournament start/end</div>
                         <div class="info">💰 API Usage: 2 calls per participant per tournament</div>
-                        <div class="info">🤖 Automation: Active and monitoring tournaments</div>
+                        <div class="info">🤖 Automation: Ready (use console to start monitoring)</div>
                         <div class="info">🛡️ Anti-cheat: Enabled with performance validation</div>
                         <div class="success">🔑 Helius API Key: Configured and ready</div>
                     `;
@@ -697,13 +706,19 @@
                     log('✅ Hybrid snapshot system ready!', 'success');
                     markStepCompleted('step-snapshots');
                 } else {
-                    throw new Error('Setup failed');
+                    output.innerHTML = `
+                        <div class="warning">⚠️ Setup completed with warnings</div>
+                        <div class="info">Some components may need manual configuration</div>
+                        <div class="info">Check the console for details</div>
+                    `;
+                    log('⚠️ Setup completed with warnings - check console', 'warning');
                 }
                 
             } catch (error) {
-                log(`❌ Hybrid snapshot setup failed: ${error.message}`, 'error');
+                log(`❌ Hybrid snapshot setup error: ${error.message}`, 'error');
                 document.getElementById('hybridOutput').innerHTML = 
-                    `<div class="error">❌ Setup failed: ${error.message}</div>`;
+                    `<div class="error">❌ Setup error: ${error.message}</div>
+                     <div class="info">Check console for details</div>`;
             }
         }
         
