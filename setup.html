@@ -322,7 +322,7 @@
             <div class="section-title">🔄 Step 6: Hybrid Snapshot System</div>
             <p>Configure the efficient snapshot system that only captures wallet states at tournament start/end:</p>
             
-            <button class="btn" onclick="setupHybridSnapshots()">Initialize Hybrid Snapshots</button>
+            <button class="btn" onclick="initializeHybridSnapshots()">Initialize Hybrid Snapshots</button>
             <button class="btn-secondary" onclick="testHybridSnapshot()">Test Snapshot System</button>
             <button class="btn-secondary" onclick="checkAutomationStatus()">Check Automation Status</button>
             
@@ -672,7 +672,7 @@
         // NEW HYBRID SNAPSHOT SYSTEM FUNCTIONS
         // ========================================
 
-        async function setupHybridSnapshots() {
+        async function initializeHybridSnapshots() {
             log('🚀 Initializing Hybrid Snapshot System...', 'info');
             updateProgress(0, 'hybridProgress');
             
