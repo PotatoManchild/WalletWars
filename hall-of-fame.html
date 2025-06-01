@@ -146,6 +146,100 @@
             box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
         }
 
+        /* Mobile Navigation */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1001;
+        }
+
+        .hamburger {
+            width: 24px;
+            height: 20px;
+            position: relative;
+            transform: rotate(0deg);
+            transition: 0.3s ease-in-out;
+        }
+
+        .hamburger span {
+            display: block;
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            background: #8b5cf6;
+            border-radius: 3px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: 0.25s ease-in-out;
+        }
+
+        .hamburger span:nth-child(1) {
+            top: 0px;
+        }
+
+        .hamburger span:nth-child(2) {
+            top: 8px;
+        }
+
+        .hamburger span:nth-child(3) {
+            top: 16px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            top: 8px;
+            transform: rotate(135deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            top: 8px;
+            transform: rotate(-135deg);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100vh;
+                background: rgba(10, 10, 10, 0.95);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                transition: left 0.3s ease;
+                z-index: 1000;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.2rem;
+                padding: 1rem 2rem;
+            }
+
+            .btn-primary {
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+        }
+
         /* Page Layout */
         .page-container {
             min-height: 100vh;
@@ -839,6 +933,15 @@
                 <li><a href="hall-of-fame.html" class="active">Hall of Fame</a></li>
                 <li><a href="#" class="btn-primary" onclick="connectWallet()">Connect Wallet</a></li>
             </ul>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
         </div>
     </nav>
 
@@ -1009,6 +1112,69 @@
     <script>
         function connectWallet() {
             alert('🔗 Connect Wallet\n\nWallet connection feature coming soon!');
+        }
+
+        // Mobile Navigation Functions
+        function initializeMobileNavigation() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            if (!mobileToggle || !navLinks || !hamburger) return;
+            
+            mobileToggle.addEventListener('click', function() {
+                const isOpen = navLinks.classList.contains('active');
+                if (isOpen) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            });
+            
+            const navLinksItems = navLinks.querySelectorAll('a');
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', function() {
+                    closeMobileMenu();
+                });
+            });
+            
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navLinks.contains(event.target) || 
+                                        mobileToggle.contains(event.target);
+                if (!isClickInsideNav && navLinks.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+            });
+        }
+
+        function openMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.add('active');
+            hamburger.classList.add('active');
+            mobileToggle.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('active');
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        function handleWindowResize() {
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    closeMobileMenu();
+                }
+            });
         }
 
         // Global state
@@ -1364,6 +1530,12 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🎮 WalletWars Hall of Fame loaded');
+            
+            // Initialize mobile navigation
+            initializeMobileNavigation();
+            handleWindowResize();
+            
+            // Initialize page
             initializePage();
         });
     </script>
