@@ -378,17 +378,49 @@ async function checkSystemStatus() {
     }
 }
 
-// Export functions to global scope for easy testing
-window.tournamentSetup = {
-    runCompleteSetup,
-    setupInitialTournamentTemplates,
-    testSolscanIntegration,
-    createSampleTournament,
-    testWalletSnapshot,
-    testTournamentRegistration,
-    checkSystemStatus
-};
+// Wait for required dependencies before exporting
+function waitForDependencies() {
+    return new Promise((resolve) => {
+        const checkDependencies = () => {
+            if (window.walletWarsAPI && window.solscanService) {
+                console.log('✅ All dependencies loaded, tournament setup ready');
+                resolve();
+            } else {
+                console.log('⏳ Waiting for dependencies...');
+                setTimeout(checkDependencies, 500);
+            }
+        };
+        checkDependencies();
+    });
+}
 
-console.log('✅ Tournament setup script loaded!');
-console.log('🎯 Run window.tournamentSetup.runCompleteSetup() to begin setup');
-console.log('🔍 Run window.tournamentSetup.checkSystemStatus() to check current status');
+// Initialize after dependencies are ready
+async function initializeTournamentSetup() {
+    try {
+        await waitForDependencies();
+        
+        // Export functions to global scope after dependencies are ready
+        window.tournamentSetup = {
+            runCompleteSetup,
+            setupInitialTournamentTemplates,
+            testSolscanIntegration,
+            createSampleTournament,
+            testWalletSnapshot,
+            testTournamentRegistration,
+            checkSystemStatus
+        };
+
+        console.log('✅ Tournament setup script loaded and ready!');
+        console.log('🎯 Run window.tournamentSetup.runCompleteSetup() to begin setup');
+        console.log('🔍 Run window.tournamentSetup.checkSystemStatus() to check current status');
+        
+        // Dispatch event to notify that setup is ready
+        window.dispatchEvent(new CustomEvent('tournamentSetupReady'));
+        
+    } catch (error) {
+        console.error('❌ Failed to initialize tournament setup:', error);
+    }
+}
+
+// Start initialization
+initializeTournamentSetup();
