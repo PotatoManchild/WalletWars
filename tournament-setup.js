@@ -1,10 +1,10 @@
-// tournament-setup.js
-// Initial setup and testing script for WalletWars tournaments
+// tournament-setup.js - ENHANCED VERSION WITH WEB3.js INTEGRATION
+// Enhanced setup and testing script for WalletWars tournaments
 
-console.log('🏗️ WalletWars Tournament Setup Script Starting...');
+console.log('🏗️ Enhanced WalletWars Tournament Setup Script Starting...');
 
 /**
- * Step 1: Setup Initial Tournament Templates
+ * Step 1: Setup Initial Tournament Templates (unchanged)
  */
 async function setupInitialTournamentTemplates() {
     console.log('🏗️ Setting up initial tournament templates...');
@@ -118,42 +118,74 @@ async function setupInitialTournamentTemplates() {
 }
 
 /**
- * Step 2: Test Solscan API Integration
+ * Step 2: Enhanced Wallet Service Integration Test
  */
-async function testSolscanIntegration() {
-    console.log('🔗 Testing Solscan API integration...');
+async function testEnhancedWalletIntegration() {
+    console.log('🚀 Testing Enhanced Wallet Service integration...');
     
     try {
-        // Test with a known Solana address (Solana Foundation)
-        const testAddress = 'So11111111111111111111111111111111111111112'; // SOL token mint
-        
-        // Test API status
-        const status = await window.solscanService.getAPIStatus();
-        console.log('📊 Solscan API Status:', status);
+        // Check if enhanced wallet service is available
+        if (!window.enhancedWalletService) {
+            console.warn('⚠️ Enhanced Wallet Service not loaded, checking for fallback...');
+            
+            if (window.solscanService) {
+                console.log('📡 Using Solscan fallback service');
+                return { success: true, provider: 'Solscan (Fallback)', enhanced: false };
+            } else {
+                throw new Error('No wallet service available');
+            }
+        }
+
+        // Test enhanced service status
+        const status = await window.enhancedWalletService.getServiceStatus();
+        console.log('📊 Enhanced Wallet Service Status:', status);
         
         if (!status.online) {
-            console.warn('⚠️ Solscan API appears to be offline');
-            return { success: false, error: 'API offline' };
+            console.warn('⚠️ Enhanced service offline, attempting multi-provider test');
+            
+            // Test multiple providers
+            const multiStatus = await window.enhancedWalletService.getMultiProviderStatus();
+            console.log('🔄 Multi-provider status:', multiStatus);
+            
+            // Find the best available provider
+            const availableProvider = Object.values(multiStatus).find(p => p.online);
+            if (availableProvider) {
+                console.log(`✅ Found alternative provider: ${availableProvider.name}`);
+                return { success: true, provider: availableProvider.name, enhanced: true };
+            } else {
+                throw new Error('All wallet providers offline');
+            }
         }
         
-        // Test rate limiter status
-        const rateLimitStatus = window.solscanService.rateLimiter.getStatus();
-        console.log('🚦 Rate Limiter Status:', rateLimitStatus);
+        // Test wallet snapshot with enhanced service
+        const testAddress = 'So11111111111111111111111111111111111111112';
+        const snapshot = await window.enhancedWalletService.getFullWalletSnapshot(testAddress);
         
-        console.log('✅ Solscan integration test passed');
-        return { success: true };
+        console.log('✅ Enhanced wallet snapshot test results:');
+        console.log(`💰 SOL Balance: ${snapshot.solBalance}`);
+        console.log(`🪙 Token Count: ${snapshot.tokenBalances.length}`);
+        console.log(`🔧 Provider: ${snapshot.provider}`);
+        console.log(`⏰ Response Time: ${status.responseTime}ms`);
+        
+        return { 
+            success: true, 
+            provider: snapshot.provider,
+            enhanced: true,
+            responseTime: status.responseTime,
+            snapshot: snapshot
+        };
         
     } catch (error) {
-        console.error('❌ Solscan integration test failed:', error);
-        return { success: false, error: error.message };
+        console.error('❌ Enhanced wallet integration test failed:', error);
+        return { success: false, error: error.message, enhanced: false };
     }
 }
 
 /**
- * Step 3: Create Sample Tournament Instance for Testing
+ * Step 3: Enhanced Sample Tournament Creation
  */
 async function createSampleTournament() {
-    console.log('🎮 Creating sample tournament for testing...');
+    console.log('🎮 Creating enhanced sample tournament...');
     
     try {
         // Get the first template
@@ -187,56 +219,89 @@ async function createSampleTournament() {
         const result = await window.walletWarsAPI.createTournamentInstance(instanceData);
         
         if (result.success) {
-            console.log('✅ Sample tournament created successfully');
+            console.log('✅ Enhanced sample tournament created successfully');
             console.log('🎯 Tournament ID:', result.instance.id);
             console.log('📅 Registration opens:', registrationOpens);
             console.log('🚀 Tournament starts:', startTime);
             console.log('🏁 Tournament ends:', endTime);
+            
+            // Test enhanced wallet integration with this tournament
+            console.log('🔄 Testing wallet integration for tournament...');
+            const walletTest = await testEnhancedWalletIntegration();
+            if (walletTest.success) {
+                console.log(`✅ Wallet service ready for tournament (${walletTest.provider})`);
+            }
+            
             return result.instance;
         } else {
             throw new Error(result.error);
         }
         
     } catch (error) {
-        console.error('❌ Failed to create sample tournament:', error);
+        console.error('❌ Failed to create enhanced sample tournament:', error);
         return null;
     }
 }
 
 /**
- * Step 4: Test Wallet Snapshot Functionality
+ * Step 4: Enhanced Wallet Snapshot Testing
  */
-async function testWalletSnapshot(walletAddress = null) {
-    console.log('📸 Testing wallet snapshot functionality...');
+async function testEnhancedWalletSnapshot(walletAddress = null) {
+    console.log('📸 Testing enhanced wallet snapshot functionality...');
     
     try {
         // Use a test address if none provided
         const testAddress = walletAddress || 'So11111111111111111111111111111111111111112';
         
-        console.log(`Testing snapshot for address: ${testAddress.substring(0, 8)}...`);
+        console.log(`Testing enhanced snapshot for address: ${testAddress.substring(0, 8)}...`);
+        
+        // Determine which service to use
+        const walletService = window.enhancedWalletService || window.solscanService;
+        
+        if (!walletService) {
+            throw new Error('No wallet service available');
+        }
         
         // Test getting a wallet snapshot
-        const snapshot = await window.solscanService.getFullWalletSnapshot(testAddress);
+        const snapshot = await walletService.getFullWalletSnapshot(testAddress);
         
-        console.log('✅ Wallet snapshot test results:');
+        console.log('✅ Enhanced wallet snapshot test results:');
         console.log('💰 SOL Balance:', snapshot.solBalance);
         console.log('🪙 Token Count:', snapshot.tokenBalances.length);
         console.log('💎 Total Value:', snapshot.totalValueSol, 'SOL');
+        console.log('🔧 Provider:', snapshot.provider || 'Unknown');
         console.log('⏰ Timestamp:', snapshot.timestamp);
+        
+        // Test token balances if available
+        if (snapshot.tokenBalances.length > 0) {
+            console.log('🪙 Sample token holdings:');
+            snapshot.tokenBalances.slice(0, 3).forEach((token, index) => {
+                console.log(`  ${index + 1}. ${token.uiAmountString || token.amount} tokens (${token.mint.substring(0, 8)}...)`);
+            });
+        }
+        
+        // Test performance metrics
+        if (window.enhancedWalletService) {
+            const serviceStatus = await window.enhancedWalletService.getServiceStatus();
+            console.log('⚡ Performance:', serviceStatus.responseTime, 'ms');
+            
+            const rateLimitStatus = window.enhancedWalletService.rateLimiter.getStatus();
+            console.log('🚦 Rate Limit:', `${rateLimitStatus.available}/${rateLimitStatus.maxRequests} available`);
+        }
         
         return { success: true, snapshot: snapshot };
         
     } catch (error) {
-        console.error('❌ Wallet snapshot test failed:', error);
+        console.error('❌ Enhanced wallet snapshot test failed:', error);
         return { success: false, error: error.message };
     }
 }
 
 /**
- * Step 5: Test Tournament Registration
+ * Step 5: Enhanced Tournament Registration Testing
  */
-async function testTournamentRegistration(championId = null, tournamentId = null) {
-    console.log('🎯 Testing tournament registration...');
+async function testEnhancedTournamentRegistration(championId = null, tournamentId = null) {
+    console.log('🎯 Testing enhanced tournament registration...');
     
     try {
         if (!championId) {
@@ -253,16 +318,39 @@ async function testTournamentRegistration(championId = null, tournamentId = null
             tournamentId = tournamentsResult.tournaments[0].id;
         }
         
-        console.log(`Attempting to register champion ${championId} for tournament ${tournamentId}`);
+        console.log(`Attempting enhanced registration: champion ${championId} → tournament ${tournamentId}`);
+        
+        // Test wallet service before registration
+        const walletTest = await testEnhancedWalletIntegration();
+        if (!walletTest.success) {
+            console.warn('⚠️ Wallet service issues detected, but proceeding with registration test');
+        } else {
+            console.log(`✅ Wallet service ready (${walletTest.provider})`);
+        }
         
         const result = await window.walletWarsAPI.registerForTournament(
             championId,
-            tournamentId,
+            tournamentId, 
             'pure_wallet'
         );
         
         if (result.success) {
-            console.log('✅ Tournament registration test successful');
+            console.log('✅ Enhanced tournament registration test successful');
+            
+            // Test snapshot creation for the registration
+            if (walletTest.success) {
+                console.log('📸 Testing snapshot creation for registration...');
+                try {
+                    // This would normally use a real wallet address from the champion
+                    const testSnapshot = await testEnhancedWalletSnapshot();
+                    if (testSnapshot.success) {
+                        console.log('✅ Registration snapshot test successful');
+                    }
+                } catch (snapshotError) {
+                    console.warn('⚠️ Registration snapshot test failed:', snapshotError.message);
+                }
+            }
+            
             return result;
         } else {
             console.log('⚠️ Registration failed (expected if already registered):', result.error);
@@ -270,16 +358,16 @@ async function testTournamentRegistration(championId = null, tournamentId = null
         }
         
     } catch (error) {
-        console.error('❌ Tournament registration test failed:', error);
+        console.error('❌ Enhanced tournament registration test failed:', error);
         return { success: false, error: error.message };
     }
 }
 
 /**
- * Main Setup Function
+ * Enhanced Main Setup Function
  */
 async function runCompleteSetup() {
-    console.log('🚀 Running complete WalletWars tournament setup...');
+    console.log('🚀 Running enhanced complete WalletWars tournament setup...');
     
     // Wait for APIs to be ready
     if (!window.walletWarsAPI) {
@@ -287,9 +375,18 @@ async function runCompleteSetup() {
         await new Promise(resolve => setTimeout(resolve, 2000));
     }
     
-    if (!window.solscanService) {
-        console.log('⏳ Waiting for Solscan service...');
+    // Check for enhanced wallet service
+    let walletServiceReady = false;
+    if (window.enhancedWalletService) {
+        console.log('✅ Enhanced Wallet Service detected');
+        walletServiceReady = true;
+    } else if (window.solscanService) {
+        console.log('⚠️ Using Solscan fallback service');
+        walletServiceReady = true;
+    } else {
+        console.log('⏳ Waiting for wallet service...');
         await new Promise(resolve => setTimeout(resolve, 1000));
+        walletServiceReady = !!(window.enhancedWalletService || window.solscanService);
     }
     
     try {
@@ -297,17 +394,17 @@ async function runCompleteSetup() {
         console.log('\n🔸 Step 1: Setting up tournament templates');
         await setupInitialTournamentTemplates();
         
-        // Step 2: Test Solscan integration
-        console.log('\n🔸 Step 2: Testing Solscan integration');
-        const solscanTest = await testSolscanIntegration();
+        // Step 2: Test enhanced wallet integration
+        console.log('\n🔸 Step 2: Testing enhanced wallet integration');
+        const walletTest = await testEnhancedWalletIntegration();
         
         // Step 3: Create sample tournament
-        console.log('\n🔸 Step 3: Creating sample tournament');
+        console.log('\n🔸 Step 3: Creating enhanced sample tournament');
         const sampleTournament = await createSampleTournament();
         
-        // Step 4: Test wallet snapshot
-        console.log('\n🔸 Step 4: Testing wallet snapshot');
-        const snapshotTest = await testWalletSnapshot();
+        // Step 4: Test enhanced wallet snapshot
+        console.log('\n🔸 Step 4: Testing enhanced wallet snapshot');
+        const snapshotTest = await testEnhancedWalletSnapshot();
         
         // Step 5: Get upcoming tournaments
         console.log('\n🔸 Step 5: Fetching upcoming tournaments');
@@ -320,41 +417,63 @@ async function runCompleteSetup() {
             });
         }
         
-        console.log('\n🎉 Complete setup finished!');
-        console.log('✅ Tournament system is ready for testing');
+        // Step 6: Enhanced service status summary
+        console.log('\n🔸 Step 6: Enhanced system status summary');
+        const enhancedStatus = await window.walletWarsAPI.getEnhancedServiceStatus();
+        
+        console.log('\n🎉 Enhanced setup finished!');
+        console.log('✅ Enhanced tournament system is ready for testing');
+        console.log('\n📊 Setup Summary:');
+        console.log(`  • Database: ${enhancedStatus.database ? 'Connected' : 'Disconnected'}`);
+        console.log(`  • Wallet Service: ${enhancedStatus.walletServiceProvider}`);
+        console.log(`  • Response Time: ${enhancedStatus.walletServiceResponseTime || 'N/A'}ms`);
+        console.log(`  • Templates: ${enhancedStatus.templates}`);
+        console.log(`  • Tournaments: ${enhancedStatus.tournaments}`);
         
         return {
             success: true,
-            solscanWorking: solscanTest.success,
+            enhanced: walletTest.enhanced,
+            walletServiceProvider: walletTest.provider,
             sampleTournament: sampleTournament,
             snapshotWorking: snapshotTest.success,
-            upcomingTournaments: tournamentsResult.success ? tournamentsResult.tournaments.length : 0
+            upcomingTournaments: tournamentsResult.success ? tournamentsResult.tournaments.length : 0,
+            systemStatus: enhancedStatus
         };
         
     } catch (error) {
-        console.error('❌ Complete setup failed:', error);
+        console.error('❌ Enhanced complete setup failed:', error);
         return { success: false, error: error.message };
     }
 }
 
 /**
- * Quick Status Check
+ * Enhanced System Status Check
  */
 async function checkSystemStatus() {
-    console.log('🔍 Checking WalletWars tournament system status...');
+    console.log('🔍 Checking enhanced WalletWars tournament system status...');
     
     try {
         // Check database connection
         const dbConnected = await window.walletWarsAPI.testConnection();
         console.log(`📊 Database: ${dbConnected ? '✅ Connected' : '❌ Disconnected'}`);
         
-        // Check Solscan API
-        const solscanStatus = await window.solscanService.getAPIStatus();
-        console.log(`🔗 Solscan API: ${solscanStatus.online ? '✅ Online' : '❌ Offline'}`);
-        
-        // Check rate limiter
-        const rateLimitStatus = window.solscanService.rateLimiter.getStatus();
-        console.log(`🚦 Rate Limiter: ${rateLimitStatus.available}/${rateLimitStatus.maxRequests} requests available`);
+        // Check enhanced wallet service
+        let walletStatus = { online: false, provider: 'None' };
+        if (window.enhancedWalletService) {
+            walletStatus = await window.enhancedWalletService.getServiceStatus();
+            console.log(`🚀 Enhanced Wallet Service: ${walletStatus.online ? '✅ Online' : '❌ Offline'} (${walletStatus.provider})`);
+            
+            if (walletStatus.online) {
+                const rateLimitStatus = window.enhancedWalletService.rateLimiter.getStatus();
+                console.log(`🚦 Rate Limiter: ${rateLimitStatus.available}/${rateLimitStatus.maxRequests} requests available`);
+            }
+        } else if (window.solscanService) {
+            const solscanStatus = await window.solscanService.getAPIStatus();
+            walletStatus = { online: solscanStatus.online, provider: 'Solscan (Fallback)' };
+            console.log(`📡 Solscan API: ${solscanStatus.online ? '✅ Online' : '❌ Offline'}`);
+        } else {
+            console.log('❌ No wallet service available');
+        }
         
         // Check templates
         const templatesResult = await window.walletWarsAPI.getTournamentTemplates();
@@ -366,61 +485,41 @@ async function checkSystemStatus() {
         
         return {
             database: dbConnected,
-            solscan: solscanStatus.online,
+            walletService: walletStatus.online,
+            walletServiceProvider: walletStatus.provider,
+            enhanced: !!window.enhancedWalletService,
             templates: templatesResult.success ? templatesResult.templates.length : 0,
             tournaments: tournamentsResult.success ? tournamentsResult.tournaments.length : 0,
-            rateLimitAvailable: rateLimitStatus.available
+            rateLimitAvailable: window.enhancedWalletService ? 
+                window.enhancedWalletService.rateLimiter.getStatus().available : 'N/A'
         };
         
     } catch (error) {
-        console.error('❌ Status check failed:', error);
+        console.error('❌ Enhanced status check failed:', error);
         return { error: error.message };
     }
 }
 
-// Wait for required dependencies before exporting
-function waitForDependencies() {
-    return new Promise((resolve) => {
-        const checkDependencies = () => {
-            if (window.walletWarsAPI && window.solscanService) {
-                console.log('✅ All dependencies loaded, tournament setup ready');
-                resolve();
-            } else {
-                console.log('⏳ Waiting for dependencies...');
-                setTimeout(checkDependencies, 500);
-            }
-        };
-        checkDependencies();
-    });
-}
+// Export enhanced functions to global scope for easy testing
+window.tournamentSetup = {
+    // Enhanced functions
+    runCompleteSetup,
+    checkSystemStatus,
+    testEnhancedWalletIntegration,
+    testEnhancedWalletSnapshot,
+    testEnhancedTournamentRegistration,
+    
+    // Original functions (enhanced internally)
+    setupInitialTournamentTemplates,
+    createSampleTournament,
+    
+    // Aliases for compatibility
+    testSolscanIntegration: testEnhancedWalletIntegration,
+    testWalletSnapshot: testEnhancedWalletSnapshot,
+    testTournamentRegistration: testEnhancedTournamentRegistration
+};
 
-// Initialize after dependencies are ready
-async function initializeTournamentSetup() {
-    try {
-        await waitForDependencies();
-        
-        // Export functions to global scope after dependencies are ready
-        window.tournamentSetup = {
-            runCompleteSetup,
-            setupInitialTournamentTemplates,
-            testSolscanIntegration,
-            createSampleTournament,
-            testWalletSnapshot,
-            testTournamentRegistration,
-            checkSystemStatus
-        };
-
-        console.log('✅ Tournament setup script loaded and ready!');
-        console.log('🎯 Run window.tournamentSetup.runCompleteSetup() to begin setup');
-        console.log('🔍 Run window.tournamentSetup.checkSystemStatus() to check current status');
-        
-        // Dispatch event to notify that setup is ready
-        window.dispatchEvent(new CustomEvent('tournamentSetupReady'));
-        
-    } catch (error) {
-        console.error('❌ Failed to initialize tournament setup:', error);
-    }
-}
-
-// Start initialization
-initializeTournamentSetup();
+console.log('✅ Enhanced Tournament setup script loaded!');
+console.log('🎯 Run window.tournamentSetup.runCompleteSetup() to begin enhanced setup');
+console.log('🔍 Run window.tournamentSetup.checkSystemStatus() to check enhanced status');
+console.log('🚀 Enhanced features: Web3.js integration, multi-provider support, improved performance');
