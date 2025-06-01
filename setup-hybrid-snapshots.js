@@ -128,10 +128,12 @@ window.testHybridSystem = {
 };
 
 // Auto-run setup if all dependencies are loaded
+let autoRunAttempted = false;
 setTimeout(() => {
-    if (window.tournamentSnapshotManager && window.tournamentAutomation) {
-        console.log('🔄 Auto-running hybrid snapshot setup...');
-        setupHybridSnapshots();
+    if (!autoRunAttempted && window.tournamentSnapshotManager && window.tournamentAutomation) {
+        autoRunAttempted = true;
+        console.log('🔄 Dependencies detected, hybrid snapshot setup ready');
+        console.log('💡 Run setupHybridSnapshots() when ready to initialize');
     }
 }, 2000);
 
