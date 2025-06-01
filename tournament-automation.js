@@ -34,8 +34,8 @@ class TournamentAutomation {
         
         console.log('✅ Tournament Automation ready');
         
-        // Start monitoring tournaments
-        this.startMonitoring();
+        // Don't automatically start monitoring - let the user control it
+        console.log('💡 Call startMonitoring() to begin automatic tournament processing');
     }
 
     /**
