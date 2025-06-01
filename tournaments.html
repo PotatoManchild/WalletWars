@@ -10,11 +10,13 @@
     
     <!-- Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <!-- WalletWars API -->
+    
+    <!-- CRITICAL: Solana Web3.js - MUST LOAD FIRST -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    
+    <!-- WalletWars Scripts - ENHANCED ORDER -->
     <script src="walletwars-api.js"></script>
-    <!-- Solscan Service -->
-    <script src="solscan-service.js"></script>
-    <!-- Tournament Setup -->
+    <script src="wallet-service.js"></script> <!-- NEW: Enhanced wallet service -->
     <script src="tournament-setup.js"></script>
     
     <!-- Shared Styles -->
@@ -793,7 +795,7 @@
             <div class="loading-container" id="loadingState">
                 <div class="loading-spinner"></div>
                 <div class="loading-text">Loading Tournaments...</div>
-                <div class="loading-subtext">Fetching tournament data from the blockchain</div>
+                <div class="loading-subtext">Fetching tournament data with enhanced wallet service</div>
             </div>
 
             <!-- Error State -->
@@ -950,7 +952,7 @@
             status: 'all'
         };
 
-        // Load tournaments from database
+        // Load tournaments from database with enhanced wallet service
         async function loadTournaments() {
             if (isLoading) return;
             
@@ -958,7 +960,7 @@
             showLoadingState();
             
             try {
-                console.log('🎮 Loading tournaments from database...');
+                console.log('🎮 Loading tournaments with enhanced wallet service...');
                 
                 // Check if API is available
                 if (!window.walletWarsAPI) {
@@ -969,6 +971,19 @@
                 const connected = await window.walletWarsAPI.testConnection();
                 if (!connected) {
                     throw new Error('Database connection failed');
+                }
+                
+                // Check enhanced wallet service status
+                if (window.enhancedWalletService) {
+                    console.log('🚀 Enhanced wallet service detected');
+                    try {
+                        const walletStatus = await window.enhancedWalletService.getServiceStatus();
+                        console.log(`💰 Wallet service status: ${walletStatus.provider} - ${walletStatus.online ? 'Online' : 'Offline'}`);
+                    } catch (walletError) {
+                        console.warn('⚠️ Wallet service status check failed:', walletError);
+                    }
+                } else {
+                    console.log('📡 Enhanced wallet service not detected, using fallback');
                 }
                 
                 // Load upcoming tournaments
@@ -1120,7 +1135,7 @@
                     </div>
                     
                     <div class="tap-hint">
-                        Tap for details & registration
+                        Tap for details & registration • Enhanced wallet tracking
                     </div>
                 </div>
             `;
@@ -1165,20 +1180,22 @@
             return str.charAt(0).toUpperCase() + str.slice(1);
         }
 
-        // Show tournament details (simplified for now)
+        // Show tournament details (enhanced with wallet service info)
         function showTournamentDetails(id) {
             const tournament = tournamentData[id];
             if (!tournament) return;
             
-            alert(`🎮 ${tournament.title}\n\nEntry Fee: ${tournament.entryFee} SOL\nPrize Pool: ${tournament.prizePool} SOL\nParticipants: ${tournament.registered}/${tournament.maxPlayers}\nStatus: ${tournament.status}\n\nClick OK to register for this tournament!`);
+            const walletServiceStatus = window.enhancedWalletService ? 'Enhanced' : 'Standard';
+            
+            alert(`🎮 ${tournament.title}\n\nEntry Fee: ${tournament.entryFee} SOL\nPrize Pool: ${tournament.prizePool} SOL\nParticipants: ${tournament.registered}/${tournament.maxPlayers}\nStatus: ${tournament.status}\nWallet Service: ${walletServiceStatus}\n\nClick OK to register for this tournament!`);
             
             // If user confirms, show registration
             registerTournament(id);
         }
 
-        // Real tournament registration function
+        // Real tournament registration function with enhanced wallet service
         async function registerTournament(id) {
-            console.log(`🎯 Attempting to register for tournament ${id}`);
+            console.log(`🎯 Attempting to register for tournament ${id} with enhanced wallet service`);
             
             // Check if user is connected
             if (!championData.isConnected || !championData.championId) {
@@ -1200,7 +1217,7 @@
                     return;
                 }
                 
-                // Show trading style selection for this specific tournament
+                // Show enhanced trading style selection
                 showTradingStyleModal(tournamentInfo.id, tournamentInfo);
                 
             } catch (error) {
@@ -1209,10 +1226,15 @@
             }
         }
 
-        // Show trading style selection modal
+        // Show trading style selection modal with enhanced wallet service info
         function showTradingStyleModal(tournamentInstanceId, tournamentInfo) {
             const modal = document.createElement('div');
             modal.className = 'tournament-registration-modal';
+            
+            const walletServiceInfo = window.enhancedWalletService ? 
+                'Enhanced wallet tracking with Web3.js integration' : 
+                'Standard wallet tracking';
+            
             modal.innerHTML = `
                 <div class="modal-content">
                     <h2>Register for ${tournamentInfo.title}</h2>
@@ -1223,6 +1245,7 @@
                         <p><strong>Duration:</strong> ${tournamentInfo.duration}</p>
                         <p><strong>Current Participants:</strong> ${tournamentInfo.registered}/${tournamentInfo.maxPlayers}</p>
                         <p><strong>Status:</strong> ${tournamentInfo.status}</p>
+                        <p><strong>Wallet Tracking:</strong> ${walletServiceInfo}</p>
                     </div>
                     
                     <div class="registration-actions">
@@ -1237,10 +1260,10 @@
             document.body.appendChild(modal);
         }
 
-        // Confirm registration
+        // Confirm registration with enhanced wallet service
         async function confirmRegistration(tournamentInstanceId, tradingStyle) {
             try {
-                console.log(`🎮 Registering champion ${championData.championId} for tournament ${tournamentInstanceId}`);
+                console.log(`🎮 Registering champion ${championData.championId} for tournament ${tournamentInstanceId} with enhanced wallet service`);
                 
                 const result = await window.walletWarsAPI.registerForTournament(
                     championData.championId,
@@ -1249,7 +1272,8 @@
                 );
                 
                 if (result.success) {
-                    alert('🎉 Registration successful!\n\nYou are now registered for the tournament. You will receive notifications about tournament start times and progress.');
+                    const walletServiceType = window.enhancedWalletService ? 'enhanced Web3.js' : 'standard';
+                    alert(`🎉 Registration successful!\n\nYou are now registered for the tournament with ${walletServiceType} wallet tracking. You will receive notifications about tournament start times and progress.`);
                     closeRegistrationModal();
                     // Refresh tournament data
                     loadTournaments();
@@ -1270,7 +1294,7 @@
             }
         }
 
-        // Check for connected champion
+        // Check for connected champion with enhanced service awareness
         async function checkConnectedChampion() {
             try {
                 const savedChampion = localStorage.getItem('walletWars_champion_data');
@@ -1286,6 +1310,7 @@
                             championData.isConnected = true;
                             
                             console.log('✅ Connected champion found:', championData.championName);
+                            console.log('🚀 Enhanced wallet service ready for tournament tracking');
                             return true;
                         }
                     }
@@ -1300,14 +1325,14 @@
         // Create demo tournament if database is empty
         async function createDemoTournamentIfNeeded() {
             try {
-                console.log('🏗️ Creating demo tournament data...');
+                console.log('🏗️ Creating demo tournament data with enhanced wallet service...');
                 
                 // Check if we have tournament setup available
                 if (window.tournamentSetup) {
-                    // Run basic setup
+                    // Run enhanced setup
                     const result = await window.tournamentSetup.runCompleteSetup();
                     if (result.success) {
-                        console.log('✅ Demo tournaments created, reloading...');
+                        console.log('✅ Enhanced demo tournaments created, reloading...');
                         // Reload tournaments
                         setTimeout(() => loadTournaments(), 2000);
                         return;
@@ -1323,15 +1348,15 @@
             }
         }
 
-        // Show setup instructions
+        // Show setup instructions with enhanced service info
         function showSetupInstructions() {
             const grid = document.getElementById('tournamentsGrid');
             grid.innerHTML = `
                 <div style="text-align: center; padding: 3rem; color: #9ca3af; grid-column: 1 / -1;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🏗️</div>
-                    <div style="font-size: 1.2rem; margin-bottom: 1rem; color: #8b5cf6;">Setup Required</div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+                    <div style="font-size: 1.2rem; margin-bottom: 1rem; color: #8b5cf6;">Enhanced Setup Required</div>
                     <div style="font-size: 0.9rem; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">
-                        It looks like your tournament system needs to be set up. Please run the database schema setup and tournament initialization.
+                        Your enhanced tournament system with Web3.js wallet service needs to be configured. Please run the setup process to initialize tournament templates and wallet tracking.
                     </div>
                     <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                         <button onclick="window.open('setup.html', '_blank')" style="
@@ -1342,7 +1367,7 @@
                             border-radius: 0.75rem;
                             font-weight: 600;
                             cursor: pointer;
-                        ">Open Setup Page</button>
+                        ">Open Enhanced Setup</button>
                         <button onclick="loadTournaments()" style="
                             background: rgba(31, 41, 55, 0.5);
                             border: 1px solid rgba(139, 92, 246, 0.3);
@@ -1452,41 +1477,61 @@
             });
         }
 
-        // Initialize
+        // ENHANCED INITIALIZATION with better API loading
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize mobile navigation
             initializeMobileNavigation();
             handleWindowResize();
             
-            console.log('🎮 WalletWars Tournaments page loading...');
+            console.log('🎮 WalletWars Tournaments page loading with enhanced wallet service...');
             
             // Check for connected champion
             checkConnectedChampion();
             
-            // Wait for APIs to be ready, then load tournaments
+            // Enhanced API loading with better timeout handling
             let initAttempts = 0;
-            const maxAttempts = 10;
+            const maxAttempts = 15; // Increased timeout
             
             function tryLoadTournaments() {
                 initAttempts++;
+                console.log(`⏳ Checking APIs... (${initAttempts}/${maxAttempts})`);
                 
-                if (window.walletWarsAPI && window.solscanService) {
-                    console.log('✅ APIs ready, loading tournaments...');
-                    loadTournaments();
+                // Check for required APIs
+                const hasWalletWarsAPI = !!window.walletWarsAPI;
+                const hasWalletService = !!(window.enhancedWalletService || window.solscanService);
+                const hasWeb3 = !!window.solanaWeb3;
+                
+                console.log(`📊 API Status: WalletWarsAPI=${hasWalletWarsAPI}, WalletService=${hasWalletService}, Web3=${hasWeb3}`);
+                
+                if (hasWalletWarsAPI && hasWeb3) {
+                    console.log('✅ Core APIs ready, loading tournaments...');
+                    
+                    // Give wallet service a moment to initialize
+                    setTimeout(() => {
+                        loadTournaments();
+                    }, 1000);
+                    
                 } else if (initAttempts < maxAttempts) {
-                    console.log(`⏳ Waiting for APIs... (${initAttempts}/${maxAttempts})`);
                     setTimeout(tryLoadTournaments, 1000);
                 } else {
-                    console.warn('⚠️ APIs not ready after timeout, showing setup instructions');
-                    showSetupInstructions();
+                    console.warn('⚠️ APIs not ready after timeout, attempting to load anyway...');
+                    
+                    // Fallback: try to load tournaments even if wallet service isn't ready
+                    if (hasWalletWarsAPI) {
+                        loadTournaments();
+                    } else {
+                        showSetupInstructions();
+                    }
                 }
             }
             
+            // Start the loading process
             tryLoadTournaments();
             
             // Refresh tournament data every 30 seconds
             setInterval(function() {
                 if (!isLoading && window.walletWarsAPI) {
+                    console.log('🔄 Auto-refreshing tournament data...');
                     loadTournaments();
                 }
             }, 30000);
