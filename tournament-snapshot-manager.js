@@ -133,7 +133,7 @@ class TournamentSnapshotManager {
         }
     }
 
- /**
+/**
      * Process tournament start - take snapshots for all participants
      */
     async processTournamentStart(tournamentInstanceId) {
