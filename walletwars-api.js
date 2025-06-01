@@ -1,5 +1,5 @@
-// walletwars-api.js - COMPLETE FIXED VERSION WITH NAME CHECKING
-console.log('🎮 WalletWars API Loading...');
+// walletwars-api.js - ENHANCED VERSION WITH TOURNAMENT TRACKING
+console.log('🎮 WalletWars API Loading with Tournament Support...');
 
 // ========================================
 // SUPABASE CONFIGURATION
@@ -15,14 +15,18 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 console.log('✅ Supabase client initialized');
 
 // ========================================
-// WALLETWARS API CLASS
+// WALLETWARS API CLASS WITH TOURNAMENTS
 // ========================================
 
 class WalletWarsAPI {
     constructor() {
         this.supabase = supabase;
-        console.log('🏆 WalletWars API Ready!');
+        console.log('🏆 WalletWars API Ready with Tournament Support!');
     }
+
+    // ========================================
+    // EXISTING METHODS (unchanged)
+    // ========================================
 
     // Create wallet hash for privacy
     createWalletHash(walletAddress) {
@@ -58,13 +62,11 @@ class WalletWarsAPI {
         }
     }
 
-    // NEW METHOD: Check if champion name already exists - SIMPLE APPROACH
+    // Check if champion name already exists
     async checkChampionNameExists(championName) {
         try {
             console.log(`🔍 Checking if champion name "${championName}" exists...`);
             
-            // Use a very simple approach: just get all champions and filter client-side
-            // This avoids all the Supabase row return issues
             const { data, error } = await this.supabase
                 .from('champions')
                 .select('champion_name')
@@ -76,16 +78,9 @@ class WalletWarsAPI {
             }
 
             if (!data) {
-                console.log('✅ No champions found in database');
-                return { 
-                    success: true, 
-                    exists: false,
-                    championName: championName,
-                    method: 'client-side-filter'
-                };
+                return { success: true, exists: false, championName: championName };
             }
 
-            // Filter client-side to find matches
             const matches = data.filter(champion => 
                 champion.champion_name && 
                 champion.champion_name.toLowerCase() === championName.toLowerCase()
@@ -93,15 +88,9 @@ class WalletWarsAPI {
 
             const exists = matches.length > 0;
             
-            console.log(`${exists ? '❌' : '✅'} Champion name "${championName}" ${exists ? 'already exists' : 'is available'} (client-side filter: ${matches.length} matches found)`);
+            console.log(`${exists ? '❌' : '✅'} Champion name "${championName}" ${exists ? 'already exists' : 'is available'}`);
             
-            return { 
-                success: true, 
-                exists: exists,
-                championName: championName,
-                matchCount: matches.length,
-                method: 'client-side-filter'
-            };
+            return { success: true, exists: exists, championName: championName };
 
         } catch (error) {
             console.error('❌ Name check exception:', error);
@@ -109,24 +98,23 @@ class WalletWarsAPI {
         }
     }
 
-    // Create new champion - ENHANCED VERSION WITH NAME CHECKING
+    // Create new champion
     async createChampion(walletAddress, championName, avatarEmoji = '🔥') {
         try {
             console.log(`🎯 Creating champion: ${championName}`);
             
             const walletHash = this.createWalletHash(walletAddress);
             
-            // ADDITIONAL CHECK: Verify name is still available before creation
+            // Check if name is still available
             const nameCheck = await this.checkChampionNameExists(championName);
             if (nameCheck.success && nameCheck.exists) {
-                console.error('❌ Champion name already taken during creation');
                 return { 
                     success: false, 
-                    error: `Champion name "${championName}" is already taken. Please choose a different name.`
+                    error: `Champion name "${championName}" is already taken.`
                 };
             }
             
-            // First check if champion already exists using direct query
+            // Check if champion already exists for this wallet
             const { data: existingChampion, error: checkError } = await this.supabase
                 .from('champions')
                 .select('id, champion_name, avatar_emoji')
@@ -134,7 +122,6 @@ class WalletWarsAPI {
                 .single();
 
             if (existingChampion && !checkError) {
-                console.log('ℹ️ Champion already exists for this wallet');
                 return { 
                     success: false, 
                     error: 'Champion already exists for this wallet',
@@ -143,7 +130,7 @@ class WalletWarsAPI {
                 };
             }
 
-            // Create new champion using direct insert
+            // Create new champion
             const { data: newChampion, error: insertError } = await this.supabase
                 .from('champions')
                 .insert([{
@@ -156,17 +143,6 @@ class WalletWarsAPI {
 
             if (insertError) {
                 console.error('❌ Create champion error:', insertError);
-                
-                // Check if the error is due to duplicate name
-                if (insertError.message && (insertError.message.includes('duplicate') || 
-                                           insertError.message.includes('unique') || 
-                                           insertError.message.includes('champion_name'))) {
-                    return { 
-                        success: false, 
-                        error: `Champion name "${championName}" is already taken. Please choose a different name.`
-                    };
-                }
-                
                 return { success: false, error: insertError.message };
             }
 
@@ -187,9 +163,6 @@ class WalletWarsAPI {
 
             if (statsError) {
                 console.warn('⚠️ Failed to initialize champion stats:', statsError);
-                // Don't fail the whole creation for this
-            } else {
-                console.log('✅ Champion stats initialized');
             }
 
             return { 
@@ -200,35 +173,23 @@ class WalletWarsAPI {
 
         } catch (error) {
             console.error('❌ Create champion exception:', error);
-            
-            // Check if the error is related to duplicate names
-            if (error.message && (error.message.includes('duplicate') || 
-                                 error.message.includes('unique') || 
-                                 error.message.includes('champion_name'))) {
-                return { 
-                    success: false, 
-                    error: `Champion name "${championName}" is already taken. Please choose a different name.`
-                };
-            }
-            
             return { success: false, error: error.message };
         }
     }
 
-    // Get champion profile - FIXED VERSION (no more 406 errors)
+    // Get champion profile
     async getChampionProfile(walletAddress) {
         try {
             console.log('📋 Getting champion profile...');
             
             const walletHash = this.createWalletHash(walletAddress);
             
-            // Simple direct query without complex joins that cause 406 errors
             const { data: champion, error: championError } = await this.supabase
                 .from('champions')
                 .select('*')
                 .eq('wallet_hash', walletHash)
                 .eq('is_active', true)
-                .maybeSingle(); // Use maybeSingle() instead of single() to avoid errors when no data
+                .maybeSingle();
 
             if (championError) {
                 console.error('❌ Get champion error:', championError);
@@ -236,11 +197,10 @@ class WalletWarsAPI {
             }
 
             if (!champion) {
-                console.log('ℹ️ No champion found for this wallet');
                 return { success: false, error: 'No champion found' };
             }
 
-            // Get stats separately to avoid complex joins
+            // Get stats separately
             const { data: stats, error: statsError } = await this.supabase
                 .from('champion_stats')
                 .select('*')
@@ -249,10 +209,8 @@ class WalletWarsAPI {
 
             if (statsError) {
                 console.warn('⚠️ Could not load champion stats:', statsError);
-                // Continue without stats rather than failing
             }
 
-            // Calculate win rate
             const winRate = stats && stats.tournaments_played > 0 
                 ? Math.round((stats.tournaments_won / stats.tournaments_played) * 100)
                 : 0;
@@ -313,12 +271,11 @@ class WalletWarsAPI {
         }
     }
 
-    // Get leaderboard - SIMPLIFIED VERSION
+    // Get leaderboard
     async getLeaderboard(limit = 100, offset = 0) {
         try {
             console.log('🏆 Loading leaderboard...');
             
-            // Simple direct query instead of RPC function
             const { data, error } = await this.supabase
                 .from('champions')
                 .select(`
@@ -341,9 +298,8 @@ class WalletWarsAPI {
                 return { success: false, error: error.message };
             }
 
-            // Process and rank the data
             const leaderboard = data
-                .filter(champion => champion.champion_stats) // Only champions with stats
+                .filter(champion => champion.champion_stats)
                 .map((champion, index) => {
                     const stats = champion.champion_stats;
                     const winRate = stats.tournaments_played > 0 
@@ -363,7 +319,6 @@ class WalletWarsAPI {
                     };
                 })
                 .sort((a, b) => {
-                    // Sort by tournaments won first, then by SOL earned
                     if (b.tournaments_won !== a.tournaments_won) {
                         return b.tournaments_won - a.tournaments_won;
                     }
@@ -382,76 +337,291 @@ class WalletWarsAPI {
         }
     }
 
-    // Get champion's achievement progress
-    async getChampionAchievements(walletAddress) {
+    // ========================================
+    // NEW TOURNAMENT METHODS
+    // ========================================
+
+    // Create tournament template
+    async createTournamentTemplate(templateData) {
         try {
-            console.log('🏆 Loading champion achievements...');
+            console.log('🏆 Creating tournament template:', templateData.name);
             
-            const championProfile = await this.getChampionProfile(walletAddress);
+            const { data, error } = await this.supabase
+                .from('tournament_templates')
+                .insert([templateData])
+                .select()
+                .single();
+
+            if (error) {
+                console.error('❌ Create template error:', error);
+                return { success: false, error: error.message };
+            }
+
+            console.log('✅ Tournament template created successfully');
+            return { success: true, template: data };
             
-            if (!championProfile.success) {
+        } catch (error) {
+            console.error('❌ Create template exception:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Get all active tournament templates
+    async getTournamentTemplates() {
+        try {
+            const { data, error } = await this.supabase
+                .from('tournament_templates')
+                .select('*')
+                .eq('is_active', true)
+                .order('tournament_type', { ascending: true })
+                .order('start_day', { ascending: true });
+
+            if (error) {
+                console.error('❌ Get templates error:', error);
+                return { success: false, error: error.message };
+            }
+
+            return { success: true, templates: data };
+        } catch (error) {
+            console.error('❌ Get templates exception:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Create tournament instance from template
+    async createTournamentInstance(instanceData) {
+        try {
+            console.log('🎮 Creating tournament instance');
+            
+            const { data, error } = await this.supabase
+                .from('tournament_instances')
+                .insert([instanceData])
+                .select()
+                .single();
+
+            if (error) {
+                console.error('❌ Create instance error:', error);
+                return { success: false, error: error.message };
+            }
+
+            console.log('✅ Tournament instance created successfully');
+            return { success: true, instance: data };
+            
+        } catch (error) {
+            console.error('❌ Create instance exception:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Get upcoming tournaments for display
+    async getUpcomingTournaments(limit = 10) {
+        try {
+            const { data, error } = await this.supabase
+                .from('tournament_instances')
+                .select(`
+                    *,
+                    tournament_templates (
+                        name,
+                        tournament_type,
+                        trading_style,
+                        start_day,
+                        entry_fee,
+                        max_participants
+                    )
+                `)
+                .in('status', ['upcoming', 'registering'])
+                .order('start_time', { ascending: true })
+                .limit(limit);
+
+            if (error) {
+                console.error('❌ Get upcoming tournaments error:', error);
+                return { success: false, error: error.message };
+            }
+
+            return { success: true, tournaments: data };
+        } catch (error) {
+            console.error('❌ Get upcoming tournaments exception:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Register champion for tournament
+    async registerForTournament(championId, tournamentInstanceId, tradingStyle) {
+        try {
+            console.log(`🎯 Registering champion ${championId} for tournament ${tournamentInstanceId}`);
+            
+            // Get tournament details
+            const tournamentResult = await this.supabase
+                .from('tournament_instances')
+                .select(`
+                    *,
+                    tournament_templates (*)
+                `)
+                .eq('id', tournamentInstanceId)
+                .single();
+
+            if (tournamentResult.error) {
+                return { success: false, error: 'Tournament not found' };
+            }
+
+            const tournament = tournamentResult.data;
+            
+            // Validate registration is open
+            if (tournament.status !== 'registering') {
+                return { success: false, error: 'Registration is not open for this tournament' };
+            }
+
+            // Check if champion is already registered
+            const existingEntry = await this.supabase
+                .from('tournament_entries')
+                .select('id')
+                .eq('tournament_instance_id', tournamentInstanceId)
+                .eq('champion_id', championId)
+                .single();
+
+            if (existingEntry.data) {
+                return { success: false, error: 'Already registered for this tournament' };
+            }
+
+            // Get champion details
+            const championResult = await this.supabase
+                .from('champions')
+                .select('wallet_hash')
+                .eq('id', championId)
+                .single();
+
+            if (championResult.error) {
                 return { success: false, error: 'Champion not found' };
             }
 
-            // Get unlocked achievements
-            const { data: unlockedData, error: unlockedError } = await this.supabase
-                .from('champion_achievements')
-                .select(`
-                    achievement_id,
-                    unlocked_at,
-                    achievement_definitions (
-                        id,
-                        name,
-                        description,
-                        category,
-                        rarity,
-                        icon_emoji,
-                        points,
-                        rewards
-                    )
-                `)
-                .eq('champion_id', championProfile.champion.champion_id);
-
-            if (unlockedError) {
-                console.error('❌ Get unlocked achievements error:', unlockedError);
-            }
-
-            // Get achievement progress
-            const { data: progressData, error: progressError } = await this.supabase
-                .from('achievement_progress')
-                .select(`
-                    achievement_id,
-                    current_progress,
-                    required_progress,
-                    achievement_definitions (
-                        id,
-                        name,
-                        description,
-                        category,
-                        rarity,
-                        icon_emoji,
-                        points,
-                        rewards
-                    )
-                `)
-                .eq('champion_id', championProfile.champion.champion_id);
-
-            if (progressError) {
-                console.error('❌ Get achievement progress error:', progressError);
-            }
-
-            const unlocked = unlockedData || [];
-            const progress = progressData || [];
-
-            console.log(`✅ Loaded ${unlocked.length} unlocked achievements and ${progress.length} in progress`);
-            return { 
-                success: true, 
-                unlocked: unlocked,
-                progress: progress,
-                champion: championProfile.champion
+            // Create tournament entry
+            const entryData = {
+                tournament_instance_id: tournamentInstanceId,
+                champion_id: championId,
+                wallet_address: championResult.data.wallet_hash,
+                entry_fee_paid: tournament.tournament_templates.entry_fee,
+                trading_style_declared: tradingStyle,
+                status: 'registered'
             };
+
+            const { data, error } = await this.supabase
+                .from('tournament_entries')
+                .insert([entryData])
+                .select()
+                .single();
+
+            if (error) {
+                console.error('❌ Registration error:', error);
+                return { success: false, error: error.message };
+            }
+
+            // Update tournament participant count
+            await this.supabase
+                .from('tournament_instances')
+                .update({ 
+                    participant_count: tournament.participant_count + 1,
+                    total_prize_pool: (tournament.participant_count + 1) * tournament.tournament_templates.entry_fee * (tournament.tournament_templates.prize_pool_percentage / 100)
+                })
+                .eq('id', tournamentInstanceId);
+
+            console.log('✅ Tournament registration successful');
+            return { success: true, entry: data };
+            
         } catch (error) {
-            console.error('❌ Get champion achievements exception:', error);
+            console.error('❌ Registration exception:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Take wallet snapshot for tournament tracking
+    async takeWalletSnapshot(walletAddress, tournamentEntryId, snapshotType) {
+        try {
+            console.log(`📸 Taking ${snapshotType} snapshot for wallet: ${walletAddress.substring(0, 8)}...`);
+            
+            // Ensure Solscan service is available
+            if (!window.solscanService) {
+                throw new Error('Solscan service not available');
+            }
+
+            // Get wallet data from Solscan
+            const walletSnapshot = await window.solscanService.getFullWalletSnapshot(walletAddress);
+            
+            // Store in database
+            const { data, error } = await this.supabase
+                .from('wallet_snapshots')
+                .insert([{
+                    wallet_address: walletAddress,
+                    tournament_entry_id: tournamentEntryId,
+                    snapshot_type: snapshotType,
+                    sol_balance: walletSnapshot.solBalance,
+                    token_balances: walletSnapshot.tokenBalances,
+                    total_value_sol: walletSnapshot.totalValueSol,
+                    api_response: walletSnapshot.raw
+                }])
+                .select()
+                .single();
+
+            if (error) {
+                console.error('❌ Failed to save snapshot:', error);
+                return { success: false, error: error.message };
+            }
+
+            console.log(`✅ ${snapshotType} snapshot saved successfully`);
+            return { success: true, snapshot: data };
+            
+        } catch (error) {
+            console.error('❌ Snapshot error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Get tournament entries that need snapshots
+    async getTournamentEntries(tournamentInstanceId) {
+        try {
+            const { data, error } = await this.supabase
+                .from('tournament_entries')
+                .select(`
+                    *,
+                    champions (
+                        wallet_hash,
+                        champion_name
+                    )
+                `)
+                .eq('tournament_instance_id', tournamentInstanceId)
+                .eq('status', 'registered');
+
+            if (error) {
+                console.error('❌ Get tournament entries error:', error);
+                return { success: false, error: error.message };
+            }
+
+            return { success: true, entries: data };
+        } catch (error) {
+            console.error('❌ Get tournament entries exception:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Update tournament entry with snapshot reference
+    async updateTournamentEntrySnapshot(entryId, snapshotType, snapshotId) {
+        try {
+            const updateField = `${snapshotType}_snapshot_id`;
+            
+            const { data, error } = await this.supabase
+                .from('tournament_entries')
+                .update({ [updateField]: snapshotId })
+                .eq('id', entryId)
+                .select()
+                .single();
+
+            if (error) {
+                console.error('❌ Update entry snapshot error:', error);
+                return { success: false, error: error.message };
+            }
+
+            return { success: true, entry: data };
+        } catch (error) {
+            console.error('❌ Update entry snapshot exception:', error);
             return { success: false, error: error.message };
         }
     }
@@ -467,10 +637,10 @@ window.walletWarsAPI = new WalletWarsAPI();
 // Test the connection when the script loads
 window.walletWarsAPI.testConnection().then(connected => {
     if (connected) {
-        console.log('🎮 WalletWars database ready for champions!');
+        console.log('🎮 WalletWars database ready for tournaments!');
     } else {
         console.error('🚨 Database connection failed - check your configuration!');
     }
 });
 
-console.log('🚀 WalletWars API script loaded successfully!');
+console.log('🚀 WalletWars API with Tournament Support loaded successfully!');
