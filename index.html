@@ -1132,6 +1132,65 @@
         .confirmation-actions .btn-modal-secondary {
             min-width: 120px;
         }
+
+        /* Name Status Styles */
+        .name-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            animation: statusSlideIn 0.3s ease-out;
+        }
+
+        @keyframes statusSlideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .name-status.checking {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            color: #06b6d4;
+        }
+
+        .name-status.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .name-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .name-status.warning {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .name-status .status-icon {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .name-status .status-message {
+            flex: 1;
+            line-height: 1.3;
+        }
+
+        .name-status .loading-spinner {
+            width: 14px;
+            height: 14px;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -2084,7 +2143,12 @@
             }, 500);
         }
 
-        // Updated updateChampionPreview function
+        // Global variables for name checking
+        let nameCheckTimeout = null;
+        let lastCheckedName = '';
+        let nameCheckInProgress = false;
+
+        // Updated updateChampionPreview function with name uniqueness checking
         function updateChampionPreview() {
             const nameInput = document.getElementById('championName');
             const name = nameInput.value.trim();
@@ -2096,15 +2160,156 @@
             document.getElementById('previewName').textContent = name || 'Champion Name';
             document.getElementById('previewAvatar').textContent = championData.avatar;
             
-            // Update create button state
-            const createBtn = document.getElementById('createChampionBtn');
-            if (name.length >= 3 && name.length <= 20) {
-                createBtn.disabled = false;
-                createBtn.textContent = 'Create Champion';
-            } else {
-                createBtn.disabled = true;
-                createBtn.textContent = 'Enter Name (3-20 chars)';
+            // Clear any existing timeout
+            if (nameCheckTimeout) {
+                clearTimeout(nameCheckTimeout);
             }
+            
+            const createBtn = document.getElementById('createChampionBtn');
+            
+            // Basic validation first
+            if (name.length < 3) {
+                createBtn.disabled = true;
+                createBtn.innerHTML = 'Enter Name (3-20 chars)';
+                hideNameStatus();
+                return;
+            }
+            
+            if (name.length > 20) {
+                createBtn.disabled = true;
+                createBtn.innerHTML = 'Name Too Long (20 max)';
+                showNameStatus('error', 'Champion name must be 20 characters or less');
+                return;
+            }
+            
+            // Check for inappropriate content (basic filter)
+            if (containsInappropriateContent(name)) {
+                createBtn.disabled = true;
+                createBtn.innerHTML = 'Invalid Name';
+                showNameStatus('error', 'Please choose a family-friendly name');
+                return;
+            }
+            
+            // Show checking status and set timeout for name uniqueness check
+            if (name !== lastCheckedName && name.length >= 3) {
+                showNameStatus('checking', 'Checking name availability...');
+                createBtn.disabled = true;
+                createBtn.innerHTML = '<span class="loading-spinner"></span>Checking Name...';
+                
+                // Debounce the API call to avoid too many requests
+                nameCheckTimeout = setTimeout(() => {
+                    checkNameUniqueness(name);
+                }, 800); // Wait 800ms after user stops typing
+            }
+        }
+
+        // New function to check champion name uniqueness
+        async function checkNameUniqueness(name) {
+            if (nameCheckInProgress) return;
+            
+            nameCheckInProgress = true;
+            lastCheckedName = name;
+            
+            try {
+                console.log(`🔍 Checking name uniqueness for: "${name}"`);
+                
+                // Check if API is available
+                if (!window.walletWarsAPI) {
+                    throw new Error('Database connection not available');
+                }
+                
+                // Call a new API method to check name uniqueness
+                const result = await window.walletWarsAPI.checkChampionNameExists(name);
+                
+                const createBtn = document.getElementById('createChampionBtn');
+                
+                if (result.success) {
+                    if (result.exists) {
+                        // Name already exists
+                        console.log(`❌ Name "${name}" is already taken`);
+                        createBtn.disabled = true;
+                        createBtn.innerHTML = 'Name Taken';
+                        showNameStatus('error', `"${name}" is already taken. Please choose a different name.`);
+                    } else {
+                        // Name is available
+                        console.log(`✅ Name "${name}" is available`);
+                        createBtn.disabled = false;
+                        createBtn.innerHTML = 'Create Champion';
+                        showNameStatus('success', `"${name}" is available!`);
+                    }
+                } else {
+                    // API error, allow creation but warn
+                    console.warn('⚠️ Could not check name uniqueness:', result.error);
+                    createBtn.disabled = false;
+                    createBtn.innerHTML = 'Create Champion';
+                    showNameStatus('warning', 'Could not verify name uniqueness. Proceeding anyway.');
+                }
+                
+            } catch (error) {
+                console.error('❌ Name uniqueness check failed:', error);
+                
+                // On error, allow creation but show warning
+                const createBtn = document.getElementById('createChampionBtn');
+                createBtn.disabled = false;
+                createBtn.innerHTML = 'Create Champion';
+                showNameStatus('warning', 'Could not verify name uniqueness. Proceeding anyway.');
+            }
+            
+            nameCheckInProgress = false;
+        }
+
+        // New function to show name status messages
+        function showNameStatus(type, message) {
+            let statusDiv = document.getElementById('nameStatus');
+            
+            // Create status div if it doesn't exist
+            if (!statusDiv) {
+                statusDiv = document.createElement('div');
+                statusDiv.id = 'nameStatus';
+                statusDiv.className = 'name-status';
+                
+                // Insert after the champion name input
+                const nameInput = document.getElementById('championName');
+                nameInput.parentNode.insertBefore(statusDiv, nameInput.nextSibling);
+            }
+            
+            // Update status
+            statusDiv.className = `name-status ${type}`;
+            statusDiv.innerHTML = `
+                <div class="status-icon">${getStatusIcon(type)}</div>
+                <div class="status-message">${message}</div>
+            `;
+            statusDiv.style.display = 'flex';
+        }
+
+        // New function to hide name status
+        function hideNameStatus() {
+            const statusDiv = document.getElementById('nameStatus');
+            if (statusDiv) {
+                statusDiv.style.display = 'none';
+            }
+        }
+
+        // Helper function to get status icons
+        function getStatusIcon(type) {
+            switch (type) {
+                case 'checking': return '<div class="loading-spinner"></div>';
+                case 'success': return '✅';
+                case 'error': return '❌';
+                case 'warning': return '⚠️';
+                default: return '';
+            }
+        }
+
+        // Basic inappropriate content filter
+        function containsInappropriateContent(name) {
+            const inappropriate = [
+                'admin', 'moderator', 'official', 'support', 'walletwars',
+                // Add more inappropriate words as needed
+            ];
+            
+            const lowerName = name.toLowerCase();
+            return inappropriate.some(word => lowerName.includes(word));
         }
 
         // Updated selectAvatar function
