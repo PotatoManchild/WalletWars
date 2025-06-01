@@ -490,7 +490,12 @@
                 updateProgress(60, 'walletProgress');
 
                 // Check if Helius API key is configured
-                const heliusConfigured = window.enhancedWalletService.isApiKeyConfigured();
+                const heliusConfigured = window.enhancedWalletService.isApiKeyConfigured ? 
+                    window.enhancedWalletService.isApiKeyConfigured() : 
+                    (window.enhancedWalletService.config && 
+                     window.enhancedWalletService.config.backup && 
+                     window.enhancedWalletService.config.backup.rpcUrl.includes('97322e35-59f5-424c-89f0-e6a826353c48'));
+                     
                 output.innerHTML += `<div class="${heliusConfigured ? 'success' : 'warning'}">
                     🔑 Helius API Key: ${heliusConfigured ? 'Configured ✅' : 'Not configured (using public RPCs)'}
                 </div>`;
