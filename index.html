@@ -1672,11 +1672,57 @@
             console.log('Avatar selected:', emoji);
         }
 
+        // Check wallet availability when modal opens
+        function checkWalletAvailability() {
+            // Check Phantom
+            if (window.solana && window.solana.isPhantom) {
+                document.getElementById('phantomStatus').textContent = '✓ Ready';
+                document.getElementById('phantomStatus').style.color = '#10b981';
+            } else if (isMobileDevice()) {
+                document.getElementById('phantomStatus').textContent = '📱 Open in App';
+                document.getElementById('phantomStatus').style.color = '#8b5cf6';
+            } else {
+                document.getElementById('phantomStatus').textContent = '⚠️ Install Extension';
+                document.getElementById('phantomStatus').style.color = '#f59e0b';
+            }
+
+            // Check Solflare
+            if (window.solflare) {
+                document.getElementById('solflareStatus').textContent = '✓ Ready';
+                document.getElementById('solflareStatus').style.color = '#10b981';
+            } else if (isMobileDevice()) {
+                document.getElementById('solflareStatus').textContent = '📱 Open in App';
+                document.getElementById('solflareStatus').style.color = '#8b5cf6';
+            } else {
+                document.getElementById('solflareStatus').textContent = '⚠️ Install Extension';
+                document.getElementById('solflareStatus').style.color = '#f59e0b';
+            }
+
+            // Check Backpack
+            if (window.backpack) {
+                document.getElementById('backpackStatus').textContent = '✓ Ready';
+                document.getElementById('backpackStatus').style.color = '#10b981';
+            } else if (isMobileDevice()) {
+                document.getElementById('backpackStatus').textContent = '📱 Open in App';
+                document.getElementById('backpackStatus').style.color = '#8b5cf6';
+            } else {
+                document.getElementById('backpackStatus').textContent = '⚠️ Install Extension';
+                document.getElementById('backpackStatus').style.color = '#f59e0b';
+            }
+
+            // Torus is always available
+            document.getElementById('torusStatus').textContent = '✓ Demo Mode';
+            document.getElementById('torusStatus').style.color = '#8b5cf6';
+        }
+
         // Modal management functions
         function openWalletModal() {
             document.getElementById('walletModal').classList.add('active');
             document.body.style.overflow = 'hidden';
             resetModalToStep1();
+            
+            // Check wallet availability when modal opens
+            setTimeout(checkWalletAvailability, 100);
         }
 
         function closeWalletModal() {
