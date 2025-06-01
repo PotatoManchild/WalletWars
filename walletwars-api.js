@@ -619,7 +619,7 @@ class WalletWarsAPI {
         }
     }
 
-    // Get tournament entries that need snapshots
+  // Get tournament entries that need snapshots
     async getTournamentEntries(tournamentInstanceId) {
         try {
             const { data, error } = await this.supabase
@@ -639,7 +639,12 @@ class WalletWarsAPI {
                 return { success: false, error: error.message };
             }
 
-            return { success: true, entries: data };
+            // Handle empty results gracefully
+            const entries = data || [];
+            
+            console.log(`📋 Found ${entries.length} tournament entries`);
+            
+            return { success: true, entries: entries };
         } catch (error) {
             console.error('❌ Get tournament entries exception:', error);
             return { success: false, error: error.message };
