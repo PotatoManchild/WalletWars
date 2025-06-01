@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - WalletWars</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- CRITICAL: Solana Web3.js - MUST LOAD FIRST -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    
+    <!-- WalletWars Scripts - ENHANCED ORDER WITH GLOBAL WALLET MANAGER -->
+    <script src="walletwars-api.js"></script>
+    <script src="wallet-service.js"></script> <!-- Enhanced wallet service -->
+    <script src="global-wallet-manager.js"></script> <!-- Global wallet persistence -->
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="shared.css">
+    
+    <style>
+        /* Profile Page Specific Styles */
+        .profile-title {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Champion Profile Card */
+        .champion-profile-card {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .champion-profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+            z-index: -1;
+        }
+
+        .champion-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .champion-avatar-large {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 4px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+        }
+
+        .champion-details {
+            flex: 1;
+        }
+
+        .champion-name-large {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .champion-meta {
+            display: flex;
+            gap: 2rem;
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        .champion-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .champion-rank-badge {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #000;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: #8b5cf6;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 0.25rem;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Tabs Navigation */
+        .profile-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+            overflow-x: auto;
+            padding-bottom: 0;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: #8b5cf6;
+        }
+
+        .tab-btn.active {
+            color: #8b5cf6;
+            border-bottom-color: #8b5cf6;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tournament List */
+        .tournament-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .tournament-item {
+            background: rgba(31, 41, 55, 0.4);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tournament-item:hover {
+            transform: translateX(4px);
+            border-color: #8b5cf6;
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
+        }
+
+        .tournament-status-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .status-active {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 2px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-upcoming {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .tournament-item-info {
+            flex: 1;
+        }
+
+        .tournament-item-name {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        .tournament-item-meta {
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        .tournament-item-stats {
+            text-align: right;
+        }
+
+        .tournament-rank {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 0.25rem;
+        }
+
+        .tournament-performance {
+            font-size: 0.85rem;
+            color: #10b981;
+        }
+
+        /* Achievement Progress */
+        .achievement-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .achievement-category-card {
+            background: rgba(31, 41, 55, 0.4);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-category-card:hover {
+            transform: translateY(-2px);
+            border-color: #8b5cf6;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .category-name {
+            font-weight: 600;
+            color: #8b5cf6;
+        }
+
+        .category-progress {
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(31, 41, 55, 0.8);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #ec4899);
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        /* Performance Chart Container */
+        .performance-chart {
+            background: rgba(31, 41, 55, 0.4);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            margin-bottom: 2rem;
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #9ca3af;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state-message {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state-action {
+            display: inline-block;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .empty-state-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Loading State */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            min-height: 400px;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(139, 92, 246, 0.2);
+            border-top: 4px solid #8b5cf6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #8b5cf6;
+            font-weight: 600;
+        }
+
+        /* Wallet Info Section */
+        .wallet-info-section {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .wallet-address-display {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .wallet-label {
+            color: #8b5cf6;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .wallet-address {
+            font-family: 'Monaco', monospace;
+            font-size: 0.85rem;
+            color: #d1d5db;
+            background: rgba(31, 41, 55, 0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            flex: 1;
+        }
+
+        .copy-btn {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #8b5cf6;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .copy-btn:hover {
+            background: rgba(139, 92, 246, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .wallet-balance {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .balance-label {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        .balance-value {
+            font-weight: 700;
+            color: #10b981;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', monospace;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .champion-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .champion-avatar-large {
+                width: 100px;
+                height: 100px;
+                font-size: 2.5rem;
+            }
+
+            .champion-name-large {
+                font-size: 1.5rem;
+            }
+
+            .champion-meta {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .profile-tabs {
+                gap: 0.5rem;
+            }
+
+            .tab-btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .tournament-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .tournament-item-stats {
+                text-align: center;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background"></div>
+    <div class="geometric-patterns"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">WalletWars</a>
+            
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tournaments.html">Tournaments</a></li>
+                <li><a href="leaderboards.html">Leaderboards</a></li>
+                <li><a href="hall-of-fame.html">Hall of Fame</a></li>
+                <li><a href="profile.html" class="active">Profile</a></li>
+                
+                <!-- Disconnected State -->
+                <li id="connectWalletBtn"><a href="#" class="btn-primary" onclick="window.connectWallet && window.connectWallet('phantom') || fallbackConnect()">Connect Wallet</a></li>
+                
+                <!-- Connected State (Hidden by default, managed by GlobalWalletManager) -->
+                <li id="championInfo" style="display: none;">
+                    <div id="navChampionAvatar">🔥</div>
+                    <span id="navChampionName">Champion</span>
+                    <button class="nav-disconnect" onclick="window.disconnectWallet && window.disconnectWallet()">Disconnect</button>
+                </li>
+            </ul>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Container -->
+    <div class="page-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title profile-title">My Profile</h1>
+            <p class="page-subtitle">Track your progress and dominate the leaderboards</p>
+        </div>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Not Connected State -->
+            <div id="notConnectedState" style="display: none;">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔗</div>
+                    <div class="empty-state-message">Connect your wallet to view your profile</div>
+                    <a href="index.html" class="empty-state-action">Connect Wallet</a>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-container" style="display: none;">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading profile data...</div>
+            </div>
+
+            <!-- Profile Content -->
+            <div id="profileContent" style="display: none;">
+                <!-- Champion Profile Card -->
+                <div class="champion-profile-card">
+                    <div class="champion-header">
+                        <div class="champion-avatar-large" id="profileAvatar">🔥</div>
+                        <div class="champion-details">
+                            <h2 class="champion-name-large" id="profileName">Loading...</h2>
+                            <div class="champion-meta">
+                                <div class="champion-meta-item">
+                                    <span>🗓️</span>
+                                    <span>Joined <span id="joinDate">--</span></span>
+                                </div>
+                                <div class="champion-meta-item">
+                                    <span>🏆</span>
+                                    <span>Rank #<span id="globalRank">--</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="champion-rank-badge">
+                            <span>⭐</span>
+                            <span id="rankTitle">Novice</span>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="tournamentsPlayed">0</div>
+                            <div class="stat-label">Tournaments</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="tournamentsWon">0</div>
+                            <div class="stat-label">Victories</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="winRate">0%</div>
+                            <div class="stat-label">Win Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalEarnings">0</div>
+                            <div class="stat-label">SOL Earned</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="currentStreak">0</div>
+                            <div class="stat-label">Win Streak</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="achievementPoints">0</div>
+                            <div class="stat-label">Achievement Points</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wallet Info Section -->
+                <div class="wallet-info-section">
+                    <div class="wallet-address-display">
+                        <span class="wallet-label">Tournament Wallet:</span>
+                        <span class="wallet-address" id="walletAddress">--</span>
+                        <button class="copy-btn" onclick="copyWalletAddress()">Copy</button>
+                    </div>
+                    <div class="wallet-balance">
+                        <span class="balance-label">Current Balance:</span>
+                        <span class="balance-value" id="walletBalance">-- SOL</span>
+                    </div>
+                </div>
+
+                <!-- Profile Tabs -->
+                <div class="profile-tabs">
+                    <button class="tab-btn active" onclick="switchTab('tournaments')">🎮 Tournaments</button>
+                    <button class="tab-btn" onclick="switchTab('achievements')">🏆 Achievements</button>
+                    <button class="tab-btn" onclick="switchTab('performance')">📈 Performance</button>
+                    <button class="tab-btn" onclick="switchTab('history')">📜 History</button>
+                </div>
+
+                <!-- Tournaments Tab -->
+                <div id="tournaments-tab" class="tab-content active">
+                    <h3 style="margin-bottom: 1.5rem; color: #8b5cf6;">Active & Recent Tournaments</h3>
+                    
+                    <div id="tournamentsList" class="tournament-list">
+                        <!-- Tournament items will be populated by JavaScript -->
+                    </div>
+                    
+                    <div id="noTournaments" class="empty-state" style="display: none;">
+                        <div class="empty-state-icon">🎮</div>
+                        <div class="empty-state-message">No tournament history yet</div>
+                        <a href="tournaments.html" class="empty-state-action">Join a Tournament</a>
+                    </div>
+                </div>
+
+                <!-- Achievements Tab -->
+                <div id="achievements-tab" class="tab-content">
+                    <h3 style="margin-bottom: 1.5rem; color: #8b5cf6;">Achievement Progress</h3>
+                    
+                    <div class="achievement-categories">
+                        <div class="achievement-category-card">
+                            <div class="category-header">
+                                <div>
+                                    <span class="category-icon">🎮</span>
+                                    <span class="category-name">Tournament</span>
+                                </div>
+                                <span class="category-progress" id="tournamentAchievements">0/10</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="tournamentProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-category-card">
+                            <div class="category-header">
+                                <div>
+                                    <span class="category-icon">🏆</span>
+                                    <span class="category-name">Victory</span>
+                                </div>
+                                <span class="category-progress" id="victoryAchievements">0/8</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="victoryProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-category-card">
+                            <div class="category-header">
+                                <div>
+                                    <span class="category-icon">💰</span>
+                                    <span class="category-name">Earnings</span>
+                                </div>
+                                <span class="category-progress" id="earningsAchievements">0/6</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="earningsProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <a href="hall-of-fame.html" class="empty-state-action">View All Achievements</a>
+                    </div>
+                </div>
+
+                <!-- Performance Tab -->
+                <div id="performance-tab" class="tab-content">
+                    <h3 style="margin-bottom: 1.5rem; color: #8b5cf6;">Performance Analytics</h3>
+                    
+                    <div class="performance-chart">
+                        <span>📊 Performance chart visualization coming soon...</span>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="avgPerformance">--%</div>
+                            <div class="stat-label">Avg Performance</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="bestPerformance">--%</div>
+                            <div class="stat-label">Best Performance</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="avgRank">--</div>
+                            <div class="stat-label">Avg Rank</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="profitLoss">-- SOL</div>
+                            <div class="stat-label">Total P&L</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div id="history-tab" class="tab-content">
+                    <h3 style="margin-bottom: 1.5rem; color: #8b5cf6;">Complete Tournament History</h3>
+                    
+                    <div id="historyList" class="tournament-list">
+                        <!-- History items will be populated by JavaScript -->
+                    </div>
+                    
+                    <div id="noHistory" class="empty-state" style="display: none;">
+                        <div class="empty-state-icon">📜</div>
+                        <div class="empty-state-message">No tournament history yet</div>
+                        <a href="tournaments.html" class="empty-state-action">Start Competing</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // GLOBAL STATE AND DATA
+        // ========================================
+        
+        let profileData = null;
+        let tournamentsData = [];
+        let currentTab = 'tournaments';
+        let isLoading = false;
+
+        // ========================================
+        // MOBILE NAVIGATION
+        // ========================================
+
+        function initializeMobileNavigation() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            if (!mobileToggle || !navLinks || !hamburger) return;
+            
+            mobileToggle.addEventListener('click', function() {
+                const isOpen = navLinks.classList.contains('active');
+                if (isOpen) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            });
+            
+            const navLinksItems = navLinks.querySelectorAll('a');
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', function() {
+                    closeMobileMenu();
+                });
+            });
+            
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navLinks.contains(event.target) || 
+                                        mobileToggle.contains(event.target);
+                if (!isClickInsideNav && navLinks.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+            });
+        }
+
+        function openMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.add('active');
+            hamburger.classList.add('active');
+            mobileToggle.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('active');
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        function handleWindowResize() {
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    closeMobileMenu();
+                }
+            });
+        }
+
+        // ========================================
+        // WALLET CONNECTION FALLBACK
+        // ========================================
+        
+        function fallbackConnect() {
+            alert('🔗 Wallet Connection\n\nPlease visit the home page to connect your wallet. Your connection will persist across all pages!');
+        }
+
+        // ========================================
+        // PROFILE DATA LOADING
+        // ========================================
+        
+        async function loadProfileData() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            showLoadingState();
+            
+            try {
+                // Get wallet status from GlobalWalletManager
+                const walletStatus = window.getWalletStatus ? window.getWalletStatus() : { isConnected: false };
+                
+                if (!walletStatus.isConnected || !walletStatus.walletAddress) {
+                    showNotConnectedState();
+                    return;
+                }
+                
+                console.log(`📊 Loading profile for ${walletStatus.championName}...`);
+                
+                // Get champion profile from database
+                const profileResult = await window.walletWarsAPI.getChampionProfile(walletStatus.walletAddress);
+                
+                if (!profileResult.success) {
+                    throw new Error(profileResult.error || 'Failed to load profile');
+                }
+                
+                profileData = profileResult.champion;
+                
+                // Load tournament entries
+                await loadTournamentData(profileData.champion_id);
+                
+                // Load current wallet balance
+                await loadWalletBalance(walletStatus.walletAddress);
+                
+                // Update UI with data
+                updateProfileUI();
+                showProfileContent();
+                
+            } catch (error) {
+                console.error('❌ Failed to load profile:', error);
+                showNotConnectedState();
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        // Load tournament data for the champion
+        async function loadTournamentData(championId) {
+            try {
+                // This would need a new API method to get tournaments by champion
+                // For now, we'll simulate with sample data
+                console.log(`🎮 Loading tournaments for champion ${championId}...`);
+                
+                // TODO: Implement API method to fetch champion's tournament entries
+                // const result = await window.walletWarsAPI.getChampionTournaments(championId);
+                
+                // Sample data for demonstration
+                tournamentsData = [
+                    {
+                        id: 1,
+                        name: 'Weekly Pure Wallet Championship',
+                        status: 'active',
+                        rank: 3,
+                        participants: 25,
+                        performance: '+12.5%',
+                        startDate: '2024-01-22',
+                        endDate: '2024-01-29'
+                    },
+                    {
+                        id: 2,
+                        name: 'Monthly Trading Masters',
+                        status: 'completed',
+                        rank: 1,
+                        participants: 50,
+                        performance: '+28.3%',
+                        startDate: '2024-01-01',
+                        endDate: '2024-01-31',
+                        prizesWon: 5.0
+                    }
+                ];
+                
+            } catch (error) {
+                console.error('❌ Failed to load tournament data:', error);
+                tournamentsData = [];
+            }
+        }
+
+        // Load current wallet balance
+        async function loadWalletBalance(walletAddress) {
+            try {
+                if (window.enhancedWalletService) {
+                    const snapshot = await window.enhancedWalletService.getFullWalletSnapshot(walletAddress);
+                    document.getElementById('walletBalance').textContent = `${snapshot.solBalance.toFixed(2)} SOL`;
+                }
+            } catch (error) {
+                console.error('❌ Failed to load wallet balance:', error);
+                document.getElementById('walletBalance').textContent = '-- SOL';
+            }
+        }
+
+        // ========================================
+        // UI UPDATE FUNCTIONS
+        // ========================================
+        
+        function updateProfileUI() {
+            if (!profileData) return;
+            
+            // Update champion info
+            document.getElementById('profileAvatar').textContent = profileData.avatar_emoji || '🔥';
+            document.getElementById('profileName').textContent = profileData.champion_name;
+            
+            // Format join date
+            const joinDate = new Date(profileData.created_at);
+            document.getElementById('joinDate').textContent = joinDate.toLocaleDateString('en-US', { 
+                month: 'short', 
+                year: 'numeric' 
+            });
+            
+            // Update stats
+            document.getElementById('tournamentsPlayed').textContent = profileData.tournaments_played || 0;
+            document.getElementById('tournamentsWon').textContent = profileData.tournaments_won || 0;
+            document.getElementById('winRate').textContent = `${profileData.win_rate || 0}%`;
+            document.getElementById('totalEarnings').textContent = (profileData.total_sol_earned || 0).toFixed(2);
+            document.getElementById('currentStreak').textContent = profileData.current_win_streak || 0;
+            document.getElementById('achievementPoints').textContent = profileData.total_achievement_points || 0;
+            
+            // Update rank and title
+            updateRankInfo();
+            
+            // Update wallet address
+            const walletStatus = window.getWalletStatus();
+            if (walletStatus.walletAddress) {
+                const shortAddress = `${walletStatus.walletAddress.substring(0, 6)}...${walletStatus.walletAddress.substring(-4)}`;
+                document.getElementById('walletAddress').textContent = shortAddress;
+                document.getElementById('walletAddress').setAttribute('data-full-address', walletStatus.walletAddress);
+            }
+            
+            // Update tournament list
+            updateTournamentsList();
+            
+            // Update achievement progress (mock data for now)
+            updateAchievementProgress();
+        }
+
+        function updateRankInfo() {
+            // Calculate rank title based on tournaments won
+            const wins = profileData.tournaments_won || 0;
+            let rankTitle = 'Novice';
+            let globalRank = '--';
+            
+            if (wins >= 50) {
+                rankTitle = 'Grand Master';
+            } else if (wins >= 25) {
+                rankTitle = 'Master';
+            } else if (wins >= 10) {
+                rankTitle = 'Expert';
+            } else if (wins >= 5) {
+                rankTitle = 'Warrior';
+            } else if (wins >= 1) {
+                rankTitle = 'Competitor';
+            }
+            
+            document.getElementById('rankTitle').textContent = rankTitle;
+            document.getElementById('globalRank').textContent = globalRank;
+        }
+
+        function updateTournamentsList() {
+            const listContainer = document.getElementById('tournamentsList');
+            const noTournamentsDiv = document.getElementById('noTournaments');
+            
+            if (tournamentsData.length === 0) {
+                listContainer.style.display = 'none';
+                noTournamentsDiv.style.display = 'block';
+                return;
+            }
+            
+            listContainer.style.display = 'grid';
+            noTournamentsDiv.style.display = 'none';
+            
+            let html = '';
+            tournamentsData.forEach(tournament => {
+                const statusClass = `status-${tournament.status}`;
+                const statusIcon = tournament.status === 'active' ? '⚡' : 
+                                 tournament.status === 'completed' ? '✅' : '📅';
+                
+                html += `
+                    <div class="tournament-item" onclick="viewTournamentDetails(${tournament.id})">
+                        <div class="tournament-status-icon ${statusClass}">${statusIcon}</div>
+                        <div class="tournament-item-info">
+                            <div class="tournament-item-name">${tournament.name}</div>
+                            <div class="tournament-item-meta">
+                                ${tournament.startDate} → ${tournament.endDate} • ${tournament.participants} players
+                            </div>
+                        </div>
+                        <div class="tournament-item-stats">
+                            <div class="tournament-rank">#${tournament.rank}</div>
+                            <div class="tournament-performance">${tournament.performance}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            listContainer.innerHTML = html;
+        }
+
+        function updateAchievementProgress() {
+            // Mock achievement progress - would come from API
+            const progress = {
+                tournament: { completed: 2, total: 10 },
+                victory: { completed: 1, total: 8 },
+                earnings: { completed: 0, total: 6 }
+            };
+            
+            // Update tournament achievements
+            document.getElementById('tournamentAchievements').textContent = `${progress.tournament.completed}/${progress.tournament.total}`;
+            document.getElementById('tournamentProgress').style.width = `${(progress.tournament.completed / progress.tournament.total) * 100}%`;
+            
+            // Update victory achievements
+            document.getElementById('victoryAchievements').textContent = `${progress.victory.completed}/${progress.victory.total}`;
+            document.getElementById('victoryProgress').style.width = `${(progress.victory.completed / progress.victory.total) * 100}%`;
+            
+            // Update earnings achievements
+            document.getElementById('earningsAchievements').textContent = `${progress.earnings.completed}/${progress.earnings.total}`;
+            document.getElementById('earningsProgress').style.width = `${(progress.earnings.completed / progress.earnings.total) * 100}%`;
+        }
+
+        // ========================================
+        // UI STATE MANAGEMENT
+        // ========================================
+        
+        function showLoadingState() {
+            document.getElementById('notConnectedState').style.display = 'none';
+            document.getElementById('loadingState').style.display = 'flex';
+            document.getElementById('profileContent').style.display = 'none';
+        }
+
+        function showNotConnectedState() {
+            document.getElementById('notConnectedState').style.display = 'block';
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('profileContent').style.display = 'none';
+        }
+
+        function showProfileContent() {
+            document.getElementById('notConnectedState').style.display = 'none';
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('profileContent').style.display = 'block';
+        }
+
+        // ========================================
+        // TAB SWITCHING
+        // ========================================
+        
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Load additional data if needed
+            if (tabName === 'history' && document.getElementById('historyList').innerHTML === '') {
+                loadHistoryData();
+            } else if (tabName === 'performance') {
+                updatePerformanceStats();
+            }
+        }
+
+        // ========================================
+        // ADDITIONAL DATA LOADING
+        // ========================================
+        
+        function loadHistoryData() {
+            // Would load complete tournament history from API
+            const historyContainer = document.getElementById('historyList');
+            const noHistoryDiv = document.getElementById('noHistory');
+            
+            if (tournamentsData.length === 0) {
+                historyContainer.style.display = 'none';
+                noHistoryDiv.style.display = 'block';
+                return;
+            }
+            
+            // For now, show same data as tournaments tab
+            historyContainer.innerHTML = document.getElementById('tournamentsList').innerHTML;
+            historyContainer.style.display = 'grid';
+            noHistoryDiv.style.display = 'none';
+        }
+
+        function updatePerformanceStats() {
+            // Calculate performance statistics
+            if (tournamentsData.length > 0) {
+                // Mock calculations - would be done server-side
+                document.getElementById('avgPerformance').textContent = '+15.2%';
+                document.getElementById('bestPerformance').textContent = '+28.3%';
+                document.getElementById('avgRank').textContent = '4.5';
+                document.getElementById('profitLoss').textContent = `+${(profileData.total_sol_earned || 0).toFixed(2)} SOL`;
+            }
+        }
+
+        // ========================================
+        // UTILITY FUNCTIONS
+        // ========================================
+        
+        function copyWalletAddress() {
+            const addressElement = document.getElementById('walletAddress');
+            const fullAddress = addressElement.getAttribute('data-full-address');
+            
+            if (fullAddress) {
+                navigator.clipboard.writeText(fullAddress).then(() => {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                    }, 2000);
+                });
+            }
+        }
+
+        function viewTournamentDetails(tournamentId) {
+            // Navigate to tournament details or show modal
+            console.log(`View tournament ${tournamentId} details`);
+            // Could implement a modal or navigate to tournaments page with specific tournament
+        }
+
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎮 WalletWars Profile page loading...');
+            
+            // Initialize mobile navigation
+            initializeMobileNavigation();
+            handleWindowResize();
+            
+            // Check if GlobalWalletManager is available and connected
+            setTimeout(() => {
+                const walletStatus = window.getWalletStatus ? window.getWalletStatus() : { isConnected: false };
+                
+                if (walletStatus.isConnected) {
+                    console.log(`✅ GlobalWalletManager: Connected as ${walletStatus.championName}`);
+                    loadProfileData();
+                } else {
+                    console.log('❌ No wallet connected');
+                    showNotConnectedState();
+                }
+            }, 1000);
+            
+            // Set up auto-refresh
+            setInterval(() => {
+                const walletStatus = window.getWalletStatus ? window.getWalletStatus() : { isConnected: false };
+                if (walletStatus.isConnected && !isLoading) {
+                    loadWalletBalance(walletStatus.walletAddress);
+                }
+            }, 30000); // Refresh balance every 30 seconds
+        });
+
+        console.log('✅ WalletWars Profile page loaded!');
+    </script>
+</body>
+</html>
