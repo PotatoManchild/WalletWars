@@ -1831,6 +1831,29 @@
             `;
         }
 
+        // MANUAL TEST FUNCTION - Add this for debugging
+        window.testPhantomConnection = async function() {
+            console.log('🧪 MANUAL TEST: Testing Phantom connection directly...');
+            console.log('window.solana exists:', !!window.solana);
+            console.log('window.solana.isPhantom:', !!window.solana?.isPhantom);
+            
+            if (window.solana && window.solana.isPhantom) {
+                try {
+                    console.log('🚀 Calling window.solana.connect() directly...');
+                    const result = await window.solana.connect();
+                    console.log('✅ Direct connection successful!', result);
+                    console.log('✅ Public key:', window.solana.publicKey?.toString());
+                    return window.solana.publicKey?.toString();
+                } catch (error) {
+                    console.error('❌ Direct connection failed:', error);
+                    return null;
+                }
+            } else {
+                console.log('❌ Phantom not found');
+                return null;
+            }
+        };
+
         // Initialize page - call this when the page loads
         async function initializePage() {
             console.log('🎮 WalletWars initializing...');
