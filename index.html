@@ -1469,8 +1469,11 @@
             return result;
         }
 
-        // Updated selectWallet function - FIXED to prompt real wallet
+        // Updated selectWallet function - FIXED to prompt real wallet (with more debugging)
         async function selectWallet(walletType) {
+            console.log(`👆 User clicked on ${walletType} wallet`);
+            console.log('Current championData before connection:', championData);
+            
             selectedWallet = walletType;
             championData.walletType = walletType;
             
@@ -1480,7 +1483,7 @@
                 'phantom': 'Phantom',
                 'solflare': 'Solflare', 
                 'backpack': 'Backpack',
-                'torus': 'Torus'
+                'torus': 'Demo Mode'
             };
             
             document.getElementById('selectedWalletName').textContent = walletNames[walletType];
@@ -1488,15 +1491,31 @@
             try {
                 // ONLY use demo mode for Torus, force real wallet connection for others
                 if (walletType === 'torus') {
-                    console.log('🎮 Using demo mode for Torus');
+                    console.log('🎮 User selected demo mode');
                     await generateDemoWallet(() => {});
+                    console.log('🎮 Demo wallet generated:', championData.wallet?.substring(0, 8) + '...');
                 } else {
                     // Force real wallet connection for Phantom, Solflare, Backpack
                     console.log(`🔗 Attempting REAL wallet connection for ${walletType}`);
+                    console.log('Available wallet objects before connection:', {
+                        'window.solana': !!window.solana,
+                        'window.solana.isPhantom': !!window.solana?.isPhantom,
+                        'window.solflare': !!window.solflare,
+                        'window.backpack': !!window.backpack
+                    });
+                    
                     await connectToWallet(walletType);
+                    console.log('🎯 Real wallet connection completed. Wallet address:', championData.wallet?.substring(0, 8) + '...');
                 }
                 
+                console.log('✅ Wallet connection successful. Champion data:', {
+                    wallet: championData.wallet?.substring(0, 8) + '...',
+                    walletType: championData.walletType,
+                    name: championData.name
+                });
+                
                 // Check if champion already exists for this wallet
+                console.log('🔍 Checking for existing champion...');
                 const existingChampion = await window.walletWarsAPI.getChampionProfile(championData.wallet);
                 
                 if (existingChampion.success) {
@@ -1514,6 +1533,7 @@
                     }, 1000);
                     
                 } else {
+                    console.log('🆕 No existing champion found, proceeding to champion creation');
                     // New wallet, proceed to champion creation
                     setTimeout(() => {
                         goToStep(3);
@@ -1522,7 +1542,8 @@
                 }
                 
             } catch (error) {
-                console.error('Wallet connection failed:', error);
+                console.error('❌ Wallet connection failed:', error);
+                console.log('❌ Champion data after failed connection:', championData);
                 // Don't auto-fallback to demo - let user see the error and choose
             }
         }
