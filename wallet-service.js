@@ -1,47 +1,55 @@
 // wallet-service.js
-// Enhanced wallet tracking service using Web3.js + Helius backup
-// Replaces the failing Solscan integration
+// Enhanced wallet tracking service using Web3.js with working RPC endpoints
+// Fixed CORS and API key issues
 
-console.log('🚀 Loading Enhanced Wallet Service (Web3.js + Helius)...');
+console.log('🚀 Loading Enhanced Wallet Service (Web3.js + Working RPCs)...');
 
 class EnhancedWalletService {
     constructor() {
-        this.rateLimiter = new RateLimiter(100, 60000); // 100 req/min for free tiers
+        this.rateLimiter = new RateLimiter(30, 60000); // 30 req/min for safety
         this.retryAttempts = 3;
         this.retryDelay = 1000;
         
-        // Configuration
+        // Configuration with working public RPC endpoints
         this.config = {
-            // Primary: Solana Web3.js with public RPC
+            // Primary: QuickNode Public RPC (no CORS issues)
             primary: {
-                name: 'Solana Web3.js',
-                rpcUrl: 'https://api.mainnet-beta.solana.com',
+                name: 'QuickNode Public',
+                rpcUrl: 'https://solana-mainnet.rpc.extrnode.com',
                 type: 'web3js',
                 priority: 1
             },
-            // Backup: Helius (add API key when needed)
+            // Backup: Solana Labs (official)
             backup: {
-                name: 'Helius',
-                rpcUrl: 'https://mainnet.helius-rpc.com/?api-key=', // Add key when scaling
-                type: 'helius',
+                name: 'Solana Labs',
+                rpcUrl: 'https://api.mainnet-beta.solana.com',
+                type: 'web3js',
                 priority: 2
             },
-            // Fallback: Alternative public RPC
+            // Fallback: Additional public RPC
             fallback: {
-                name: 'Ankr Public',
-                rpcUrl: 'https://rpc.ankr.com/solana',
+                name: 'Project Serum',
+                rpcUrl: 'https://solana-api.projectserum.com',
                 type: 'web3js',
                 priority: 3
             }
         };
         
+        // Additional backup endpoints if needed
+        this.additionalEndpoints = [
+            'https://rpc.ankr.com/solana',
+            'https://ssc-dao.genesysgo.net',
+            'https://solana.rpcpool.com'
+        ];
+        
         this.currentProvider = this.config.primary;
         this.web3Connection = null;
-        this.heliusConnection = null;
+        this.backupConnection = null;
+        this.fallbackConnection = null;
         
         this.initializeConnections();
         
-        console.log('✅ Enhanced Wallet Service initialized with multi-provider support');
+        console.log('✅ Enhanced Wallet Service initialized with working RPC endpoints');
     }
 
     /**
@@ -53,12 +61,15 @@ class EnhancedWalletService {
             if (typeof window !== 'undefined' && window.solanaWeb3) {
                 this.Connection = window.solanaWeb3.Connection;
                 this.PublicKey = window.solanaWeb3.PublicKey;
-                this.LAMPORTS_PER_SOL = window.solanaWeb3.LAMPORTS_PER_SOL;
+                this.LAMPORTS_PER_SOL = window.solanaWeb3.LAMPORTS_PER_SOL || 1000000000;
+                
+                console.log('✅ Solana Web3.js loaded successfully');
+                this.createConnections();
             } else {
                 console.warn('⚠️ Solana Web3.js not loaded yet, will retry when needed');
+                // Set up retry mechanism
+                this.setupWeb3Retry();
             }
-            
-            this.createConnections();
             
         } catch (error) {
             console.error('❌ Error initializing connections:', error);
@@ -66,67 +77,204 @@ class EnhancedWalletService {
     }
 
     /**
-     * Create connection instances
+     * Setup retry mechanism for Web3.js loading
+     */
+    setupWeb3Retry() {
+        let retryCount = 0;
+        const maxRetries = 10;
+        
+        const retryInterval = setInterval(() => {
+            retryCount++;
+            
+            if (window.solanaWeb3) {
+                clearInterval(retryInterval);
+                console.log('✅ Solana Web3.js loaded after retry');
+                this.Connection = window.solanaWeb3.Connection;
+                this.PublicKey = window.solanaWeb3.PublicKey;
+                this.LAMPORTS_PER_SOL = window.solanaWeb3.LAMPORTS_PER_SOL || 1000000000;
+                this.createConnections();
+            } else if (retryCount >= maxRetries) {
+                clearInterval(retryInterval);
+                console.error('❌ Failed to load Solana Web3.js after maximum retries');
+            }
+        }, 1000);
+    }
+
+    /**
+     * Create connection instances with commitment level
      */
     createConnections() {
         try {
-            if (this.Connection) {
-                this.web3Connection = new this.Connection(this.config.primary.rpcUrl, 'confirmed');
-                console.log('🔗 Primary Web3.js connection established');
-                
-                // Create backup connections
-                this.ankrConnection = new this.Connection(this.config.fallback.rpcUrl, 'confirmed');
-                console.log('🔗 Fallback Ankr connection established');
+            if (!this.Connection) {
+                console.warn('⚠️ Connection class not available yet');
+                return;
             }
+
+            // Create connections with 'finalized' commitment for stability
+            const connectionConfig = {
+                commitment: 'finalized',
+                confirmTransactionInitialTimeout: 60000
+            };
+
+            this.web3Connection = new this.Connection(
+                this.config.primary.rpcUrl, 
+                connectionConfig
+            );
+            console.log(`🔗 Primary connection established: ${this.config.primary.name}`);
+            
+            // Create backup connections
+            this.backupConnection = new this.Connection(
+                this.config.backup.rpcUrl,
+                connectionConfig
+            );
+            console.log(`🔗 Backup connection established: ${this.config.backup.name}`);
+            
+            this.fallbackConnection = new this.Connection(
+                this.config.fallback.rpcUrl,
+                connectionConfig
+            );
+            console.log(`🔗 Fallback connection established: ${this.config.fallback.name}`);
+            
         } catch (error) {
             console.error('❌ Error creating connections:', error);
         }
     }
 
     /**
-     * Get wallet SOL balance using Web3.js
+     * Ensure connections are ready before use
+     */
+    async ensureConnectionsReady() {
+        if (!this.web3Connection && this.Connection) {
+            console.log('🔄 Recreating connections...');
+            this.createConnections();
+            
+            // Wait a moment for connections to establish
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        
+        if (!this.web3Connection) {
+            throw new Error('Web3.js connections not ready');
+        }
+    }
+
+    /**
+     * Get wallet SOL balance using Web3.js with fallback logic
      * @param {string} walletAddress - Solana wallet address
      * @returns {Object} Balance data
      */
     async getWalletBalance(walletAddress) {
         await this.rateLimiter.wait();
         
+        // Validate address first
+        if (!this.isValidSolanaAddress(walletAddress)) {
+            throw new Error('Invalid Solana wallet address');
+        }
+        
         try {
             console.log(`💰 Fetching SOL balance for: ${walletAddress.substring(0, 8)}...`);
             
             // Ensure connections are ready
-            if (!this.web3Connection) {
-                this.createConnections();
-            }
+            await this.ensureConnectionsReady();
             
-            if (!this.web3Connection || !this.PublicKey) {
-                throw new Error('Web3.js not properly loaded');
+            if (!this.PublicKey) {
+                throw new Error('PublicKey class not available from Web3.js');
             }
             
             // Create PublicKey instance
             const publicKey = new this.PublicKey(walletAddress);
             
-            // Get balance in lamports
-            const balanceInLamports = await this.web3Connection.getBalance(publicKey);
-            
-            // Convert to SOL
-            const solBalance = balanceInLamports / this.LAMPORTS_PER_SOL;
-            
-            console.log(`✅ SOL Balance retrieved: ${solBalance} SOL`);
-            
-            return {
-                solBalance: solBalance,
-                lamports: balanceInLamports,
-                provider: this.currentProvider.name,
-                timestamp: new Date().toISOString()
-            };
+            // Try primary connection first
+            try {
+                const balanceInLamports = await this.web3Connection.getBalance(publicKey);
+                const solBalance = balanceInLamports / this.LAMPORTS_PER_SOL;
+                
+                console.log(`✅ SOL Balance retrieved: ${solBalance} SOL (${this.config.primary.name})`);
+                
+                return {
+                    solBalance: solBalance,
+                    lamports: balanceInLamports,
+                    provider: this.config.primary.name,
+                    timestamp: new Date().toISOString()
+                };
+            } catch (primaryError) {
+                console.warn(`⚠️ Primary provider failed: ${primaryError.message}`);
+                
+                // Try backup connection
+                if (this.backupConnection) {
+                    try {
+                        const balanceInLamports = await this.backupConnection.getBalance(publicKey);
+                        const solBalance = balanceInLamports / this.LAMPORTS_PER_SOL;
+                        
+                        console.log(`✅ SOL Balance retrieved via backup: ${solBalance} SOL (${this.config.backup.name})`);
+                        
+                        return {
+                            solBalance: solBalance,
+                            lamports: balanceInLamports,
+                            provider: this.config.backup.name,
+                            timestamp: new Date().toISOString()
+                        };
+                    } catch (backupError) {
+                        console.warn(`⚠️ Backup provider failed: ${backupError.message}`);
+                        
+                        // Try fallback connection
+                        if (this.fallbackConnection) {
+                            const balanceInLamports = await this.fallbackConnection.getBalance(publicKey);
+                            const solBalance = balanceInLamports / this.LAMPORTS_PER_SOL;
+                            
+                            console.log(`✅ SOL Balance retrieved via fallback: ${solBalance} SOL (${this.config.fallback.name})`);
+                            
+                            return {
+                                solBalance: solBalance,
+                                lamports: balanceInLamports,
+                                provider: this.config.fallback.name,
+                                timestamp: new Date().toISOString()
+                            };
+                        }
+                    }
+                }
+                
+                throw primaryError;
+            }
             
         } catch (error) {
-            console.error(`❌ Web3.js balance fetch error for ${walletAddress.substring(0, 8)}:`, error);
+            console.error(`❌ All providers failed for ${walletAddress.substring(0, 8)}:`, error);
             
-            // Try fallback provider
-            return await this.getBalanceWithFallback(walletAddress, error);
+            // Last resort: try additional endpoints
+            return await this.tryAdditionalEndpoints(walletAddress, error);
         }
+    }
+
+    /**
+     * Try additional RPC endpoints as last resort
+     */
+    async tryAdditionalEndpoints(walletAddress, originalError) {
+        console.log('🔄 Trying additional RPC endpoints...');
+        
+        for (const endpoint of this.additionalEndpoints) {
+            try {
+                console.log(`🔄 Trying ${endpoint}...`);
+                
+                const connection = new this.Connection(endpoint, 'finalized');
+                const publicKey = new this.PublicKey(walletAddress);
+                const balanceInLamports = await connection.getBalance(publicKey);
+                const solBalance = balanceInLamports / this.LAMPORTS_PER_SOL;
+                
+                console.log(`✅ Success with ${endpoint}: ${solBalance} SOL`);
+                
+                return {
+                    solBalance: solBalance,
+                    lamports: balanceInLamports,
+                    provider: endpoint.split('//')[1].split('/')[0],
+                    timestamp: new Date().toISOString()
+                };
+                
+            } catch (error) {
+                console.warn(`⚠️ ${endpoint} failed: ${error.message}`);
+                continue;
+            }
+        }
+        
+        throw new Error(`All wallet providers failed. Please try again later. Original error: ${originalError.message}`);
     }
 
     /**
@@ -140,33 +288,68 @@ class EnhancedWalletService {
         try {
             console.log(`🪙 Fetching token balances for: ${walletAddress.substring(0, 8)}...`);
             
-            if (!this.web3Connection || !this.PublicKey) {
-                throw new Error('Web3.js not properly loaded');
+            await this.ensureConnectionsReady();
+            
+            if (!this.PublicKey) {
+                throw new Error('PublicKey class not available');
             }
             
             const publicKey = new this.PublicKey(walletAddress);
             
-            // Get all token accounts owned by this wallet
-            const tokenAccounts = await this.web3Connection.getParsedTokenAccountsByOwner(
-                publicKey,
-                {
-                    programId: new this.PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA')
+            // Try to get token accounts
+            let tokenAccounts = null;
+            let usedProvider = null;
+            
+            // Try primary connection first
+            try {
+                const TOKEN_PROGRAM_ID = new this.PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+                tokenAccounts = await this.web3Connection.getParsedTokenAccountsByOwner(
+                    publicKey,
+                    { programId: TOKEN_PROGRAM_ID }
+                );
+                usedProvider = this.config.primary.name;
+            } catch (primaryError) {
+                console.warn(`⚠️ Primary provider failed for tokens: ${primaryError.message}`);
+                
+                // Try backup
+                if (this.backupConnection) {
+                    try {
+                        const TOKEN_PROGRAM_ID = new this.PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+                        tokenAccounts = await this.backupConnection.getParsedTokenAccountsByOwner(
+                            publicKey,
+                            { programId: TOKEN_PROGRAM_ID }
+                        );
+                        usedProvider = this.config.backup.name;
+                    } catch (backupError) {
+                        console.warn(`⚠️ Backup provider failed for tokens: ${backupError.message}`);
+                        throw backupError;
+                    }
                 }
-            );
+            }
             
-            const tokenBalances = tokenAccounts.value.map(account => {
-                const parsedInfo = account.account.data.parsed.info;
-                return {
-                    mint: parsedInfo.mint,
-                    owner: parsedInfo.owner,
-                    amount: parsedInfo.tokenAmount.amount,
-                    decimals: parsedInfo.tokenAmount.decimals,
-                    uiAmount: parsedInfo.tokenAmount.uiAmount,
-                    uiAmountString: parsedInfo.tokenAmount.uiAmountString
-                };
-            });
+            if (!tokenAccounts) {
+                console.warn('⚠️ Could not fetch token accounts');
+                return [];
+            }
             
-            console.log(`✅ Found ${tokenBalances.length} token holdings`);
+            const tokenBalances = tokenAccounts.value
+                .filter(account => {
+                    const amount = account.account.data.parsed.info.tokenAmount.uiAmount;
+                    return amount > 0; // Only return tokens with balance
+                })
+                .map(account => {
+                    const parsedInfo = account.account.data.parsed.info;
+                    return {
+                        mint: parsedInfo.mint,
+                        owner: parsedInfo.owner,
+                        amount: parsedInfo.tokenAmount.amount,
+                        decimals: parsedInfo.tokenAmount.decimals,
+                        uiAmount: parsedInfo.tokenAmount.uiAmount,
+                        uiAmountString: parsedInfo.tokenAmount.uiAmountString
+                    };
+                });
+            
+            console.log(`✅ Found ${tokenBalances.length} token holdings (${usedProvider})`);
             
             return tokenBalances;
             
@@ -186,10 +369,18 @@ class EnhancedWalletService {
         try {
             console.log(`📸 Taking full wallet snapshot for: ${walletAddress.substring(0, 8)}...`);
             
+            // Validate address
+            if (!this.isValidSolanaAddress(walletAddress)) {
+                throw new Error('Invalid Solana wallet address');
+            }
+            
             // Get both SOL balance and token balances
             const [balanceData, tokenData] = await Promise.all([
                 this.getWalletBalance(walletAddress),
-                this.getTokenBalances(walletAddress)
+                this.getTokenBalances(walletAddress).catch(err => {
+                    console.warn('⚠️ Token fetch failed, continuing with SOL only:', err.message);
+                    return [];
+                })
             ]);
             
             // Calculate total value (for now, just SOL - can add token values later)
@@ -220,60 +411,6 @@ class EnhancedWalletService {
     }
 
     /**
-     * Fallback balance retrieval with alternative providers
-     */
-    async getBalanceWithFallback(walletAddress, originalError) {
-        console.log('🔄 Attempting fallback providers...');
-        
-        try {
-            // Try Ankr fallback
-            if (this.ankrConnection) {
-                console.log('🔄 Trying Ankr fallback...');
-                
-                const publicKey = new this.PublicKey(walletAddress);
-                const balanceInLamports = await this.ankrConnection.getBalance(publicKey);
-                const solBalance = balanceInLamports / this.LAMPORTS_PER_SOL;
-                
-                console.log(`✅ Ankr fallback successful: ${solBalance} SOL`);
-                
-                return {
-                    solBalance: solBalance,
-                    lamports: balanceInLamports,
-                    provider: 'Ankr Fallback',
-                    timestamp: new Date().toISOString()
-                };
-            }
-            
-            // If Helius API key is configured, try Helius
-            if (this.config.backup.rpcUrl.includes('api-key=') && 
-                this.config.backup.rpcUrl.split('api-key=')[1].length > 0) {
-                
-                console.log('🔄 Trying Helius backup...');
-                
-                const heliusConnection = new this.Connection(this.config.backup.rpcUrl, 'confirmed');
-                const publicKey = new this.PublicKey(walletAddress);
-                const balanceInLamports = await heliusConnection.getBalance(publicKey);
-                const solBalance = balanceInLamports / this.LAMPORTS_PER_SOL;
-                
-                console.log(`✅ Helius backup successful: ${solBalance} SOL`);
-                
-                return {
-                    solBalance: solBalance,
-                    lamports: balanceInLamports,
-                    provider: 'Helius Backup',
-                    timestamp: new Date().toISOString()
-                };
-            }
-            
-            throw originalError;
-            
-        } catch (fallbackError) {
-            console.error('❌ All providers failed:', fallbackError);
-            throw new Error(`All wallet providers failed. Primary: ${originalError.message}, Fallback: ${fallbackError.message}`);
-        }
-    }
-
-    /**
      * Calculate total wallet value in SOL terms
      * @param {number} solBalance - SOL balance
      * @param {Array} tokenBalances - Token holdings
@@ -285,8 +422,9 @@ class EnhancedWalletService {
         // For MVP, only count SOL
         // Later enhancement: add major token values (USDC, USDT, etc.)
         // Example future implementation:
+        // const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
         // tokenBalances.forEach(token => {
-        //     if (token.mint === USDC_MINT_ADDRESS) {
+        //     if (token.mint === USDC_MINT) {
         //         totalValue += token.uiAmount * getUSDCToSOLRate();
         //     }
         // });
@@ -315,17 +453,19 @@ class EnhancedWalletService {
      */
     async getServiceStatus() {
         try {
+            await this.ensureConnectionsReady();
+            
             // Test primary connection
             const testAddress = 'So11111111111111111111111111111111111111112'; // SOL token mint
             const startTime = Date.now();
             
-            await this.getWalletBalance(testAddress);
+            const balanceResult = await this.getWalletBalance(testAddress);
             
             const responseTime = Date.now() - startTime;
             
             return {
                 online: true,
-                provider: this.currentProvider.name,
+                provider: balanceResult.provider,
                 responseTime: responseTime,
                 timestamp: new Date().toISOString()
             };
@@ -352,17 +492,36 @@ class EnhancedWalletService {
         try {
             console.log(`📋 Fetching transaction history for: ${walletAddress.substring(0, 8)}... (limit: ${limit})`);
             
-            if (!this.web3Connection || !this.PublicKey) {
-                throw new Error('Web3.js not properly loaded');
+            await this.ensureConnectionsReady();
+            
+            if (!this.PublicKey) {
+                throw new Error('PublicKey class not available');
             }
             
             const publicKey = new this.PublicKey(walletAddress);
             
-            // Get confirmed signatures for this address
-            const signatures = await this.web3Connection.getSignaturesForAddress(
-                publicKey,
-                { limit: limit }
-            );
+            // Try to get signatures with fallback
+            let signatures = null;
+            
+            try {
+                signatures = await this.web3Connection.getSignaturesForAddress(
+                    publicKey,
+                    { limit: limit }
+                );
+            } catch (primaryError) {
+                console.warn('⚠️ Primary provider failed for transactions, trying backup...');
+                
+                if (this.backupConnection) {
+                    signatures = await this.backupConnection.getSignaturesForAddress(
+                        publicKey,
+                        { limit: limit }
+                    );
+                }
+            }
+            
+            if (!signatures) {
+                throw new Error('Could not fetch transaction signatures');
+            }
             
             console.log(`✅ Retrieved ${signatures.length} transaction signatures`);
             
@@ -375,14 +534,15 @@ class EnhancedWalletService {
     }
 
     /**
-     * Enhanced API status with multiple providers
+     * Test all configured RPC endpoints
      */
     async getMultiProviderStatus() {
         const statuses = {};
         
+        // Test configured endpoints
         for (const [key, config] of Object.entries(this.config)) {
             try {
-                const connection = new this.Connection(config.rpcUrl, 'confirmed');
+                const connection = new this.Connection(config.rpcUrl, 'finalized');
                 const testAddress = new this.PublicKey('So11111111111111111111111111111111111111112');
                 
                 const startTime = Date.now();
@@ -406,12 +566,41 @@ class EnhancedWalletService {
             }
         }
         
+        // Test additional endpoints
+        for (const endpoint of this.additionalEndpoints) {
+            const name = endpoint.split('//')[1].split('/')[0];
+            
+            try {
+                const connection = new this.Connection(endpoint, 'finalized');
+                const testAddress = new this.PublicKey('So11111111111111111111111111111111111111112');
+                
+                const startTime = Date.now();
+                await connection.getBalance(testAddress);
+                const responseTime = Date.now() - startTime;
+                
+                statuses[name] = {
+                    name: name,
+                    online: true,
+                    responseTime: responseTime,
+                    priority: 99
+                };
+                
+            } catch (error) {
+                statuses[name] = {
+                    name: name,
+                    online: false,
+                    error: error.message,
+                    priority: 99
+                };
+            }
+        }
+        
         return statuses;
     }
 }
 
 /**
- * Rate limiter utility class (reused from original)
+ * Rate limiter utility class
  */
 class RateLimiter {
     constructor(maxRequests, timeWindow) {
@@ -477,22 +666,20 @@ if (typeof window !== 'undefined') {
         initializeWalletService();
     } else {
         // Wait for Web3.js to load
+        let checkCount = 0;
         const checkForWeb3 = setInterval(() => {
+            checkCount++;
+            
             if (window.solanaWeb3) {
                 clearInterval(checkForWeb3);
+                console.log(`✅ Solana Web3.js detected after ${checkCount} checks`);
+                initializeWalletService();
+            } else if (checkCount > 20) {
+                clearInterval(checkForWeb3);
+                console.warn('⚠️ Solana Web3.js not detected after 10 seconds, initializing anyway');
                 initializeWalletService();
             }
         }, 500);
-        
-        // Timeout after 10 seconds
-        setTimeout(() => {
-            clearInterval(checkForWeb3);
-            if (!window.solanaWeb3) {
-                console.warn('⚠️ Solana Web3.js not loaded within 10 seconds');
-                // Initialize anyway for testing
-                initializeWalletService();
-            }
-        }, 10000);
     }
 }
 
