@@ -1,4 +1,4 @@
-// walletwars-api.js - Simple Working Version
+// walletwars-api.js - ULTRA SIMPLE VERSION THAT WORKS
 console.log('🎮 WalletWars API Loading...');
 
 // ========================================
@@ -36,12 +36,10 @@ class WalletWarsAPI {
         return Math.abs(hash).toString(36);
     }
 
-    // 🔧 FIXED: Simple connection test that actually works
+    // Test connection to database
     async testConnection() {
         try {
             console.log('🔌 Testing database connection...');
-            
-            // Simple query - just get one achievement to test connection
             const { data, error } = await this.supabase
                 .from('achievement_definitions')
                 .select('id')
@@ -60,26 +58,32 @@ class WalletWarsAPI {
         }
     }
 
-    // 🔧 SIMPLIFIED: Basic champion creation
+    // Create new champion - FIXED VERSION
     async createChampion(walletAddress, championName, avatarEmoji = '🔥') {
         try {
-            console.log(`🎯 Creating champion: ${championName} for wallet: ${walletAddress.substring(0, 8)}...`);
+            console.log(`🎯 Creating champion: ${championName}`);
             
             const walletHash = this.createWalletHash(walletAddress);
             
-            // Check if champion already exists
-            const existing = await this.getChampionByWalletHash(walletHash);
-            if (existing.success) {
-                console.log('ℹ️ Champion already exists');
+            // First check if champion already exists using direct query
+            const { data: existingChampion, error: checkError } = await this.supabase
+                .from('champions')
+                .select('id, champion_name, avatar_emoji')
+                .eq('wallet_hash', walletHash)
+                .single();
+
+            if (existingChampion && !checkError) {
+                console.log('ℹ️ Champion already exists for this wallet');
                 return { 
                     success: false, 
                     error: 'Champion already exists for this wallet',
-                    championId: existing.champion.id 
+                    championId: existingChampion.id,
+                    existingChampion: existingChampion
                 };
             }
 
-            // Create new champion
-            const { data, error } = await this.supabase
+            // Create new champion using direct insert
+            const { data: newChampion, error: insertError } = await this.supabase
                 .from('champions')
                 .insert([{
                     wallet_hash: walletHash,
@@ -89,35 +93,18 @@ class WalletWarsAPI {
                 .select()
                 .single();
 
-            if (error) {
-                console.error('❌ Create champion error:', error);
-                return { success: false, error: error.message };
+            if (insertError) {
+                console.error('❌ Create champion error:', insertError);
+                return { success: false, error: insertError.message };
             }
 
-            console.log('✅ Champion created successfully!', data);
-            
+            console.log('✅ Champion created successfully!', newChampion);
+
             // Initialize champion stats
-            await this.initializeChampionStats(data.id);
-            
-            return { 
-                success: true, 
-                championId: data.id,
-                champion: data
-            };
-
-        } catch (error) {
-            console.error('❌ Create champion exception:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    // 🔧 HELPER: Initialize champion stats
-    async initializeChampionStats(championId) {
-        try {
-            const { error } = await this.supabase
+            const { error: statsError } = await this.supabase
                 .from('champion_stats')
                 .insert([{
-                    champion_id: championId,
+                    champion_id: newChampion.id,
                     tournaments_played: 0,
                     tournaments_won: 0,
                     total_sol_earned: 0,
@@ -126,69 +113,72 @@ class WalletWarsAPI {
                     total_achievement_points: 0
                 }]);
 
-            if (error) {
-                console.warn('⚠️ Failed to initialize champion stats:', error);
+            if (statsError) {
+                console.warn('⚠️ Failed to initialize champion stats:', statsError);
+                // Don't fail the whole creation for this
             } else {
                 console.log('✅ Champion stats initialized');
             }
+
+            return { 
+                success: true, 
+                championId: newChampion.id,
+                champion: newChampion
+            };
+
         } catch (error) {
-            console.warn('⚠️ Champion stats initialization error:', error);
-        }
-    }
-
-    // 🔧 HELPER: Get champion by wallet hash
-    async getChampionByWalletHash(walletHash) {
-        try {
-            const { data, error } = await this.supabase
-                .from('champions')
-                .select(`
-                    *,
-                    champion_stats (*)
-                `)
-                .eq('wallet_hash', walletHash)
-                .eq('is_active', true)
-                .single();
-
-            if (error) {
-                if (error.code === 'PGRST116') {
-                    // No rows found - this is expected for new users
-                    return { success: false, error: 'No champion found' };
-                }
-                console.error('❌ Get champion error:', error);
-                return { success: false, error: error.message };
-            }
-
-            return { success: true, champion: data };
-        } catch (error) {
-            console.error('❌ Get champion exception:', error);
+            console.error('❌ Create champion exception:', error);
             return { success: false, error: error.message };
         }
     }
 
-    // 🔧 SIMPLIFIED: Get champion profile
+    // Get champion profile - FIXED VERSION (no more 406 errors)
     async getChampionProfile(walletAddress) {
         try {
             console.log('📋 Getting champion profile...');
             
             const walletHash = this.createWalletHash(walletAddress);
-            const result = await this.getChampionByWalletHash(walletHash);
             
-            if (!result.success) {
+            // Simple direct query without complex joins that cause 406 errors
+            const { data: champion, error: championError } = await this.supabase
+                .from('champions')
+                .select('*')
+                .eq('wallet_hash', walletHash)
+                .eq('is_active', true)
+                .maybeSingle(); // Use maybeSingle() instead of single() to avoid errors when no data
+
+            if (championError) {
+                console.error('❌ Get champion error:', championError);
+                return { success: false, error: championError.message };
+            }
+
+            if (!champion) {
                 console.log('ℹ️ No champion found for this wallet');
                 return { success: false, error: 'No champion found' };
             }
 
+            // Get stats separately to avoid complex joins
+            const { data: stats, error: statsError } = await this.supabase
+                .from('champion_stats')
+                .select('*')
+                .eq('champion_id', champion.id)
+                .maybeSingle();
+
+            if (statsError) {
+                console.warn('⚠️ Could not load champion stats:', statsError);
+                // Continue without stats rather than failing
+            }
+
             // Calculate win rate
-            const stats = result.champion.champion_stats;
             const winRate = stats && stats.tournaments_played > 0 
                 ? Math.round((stats.tournaments_won / stats.tournaments_played) * 100)
                 : 0;
 
-            const champion = {
-                champion_id: result.champion.id,
-                champion_name: result.champion.champion_name,
-                avatar_emoji: result.champion.avatar_emoji,
-                created_at: result.champion.created_at,
+            const profileData = {
+                champion_id: champion.id,
+                champion_name: champion.champion_name,
+                avatar_emoji: champion.avatar_emoji,
+                created_at: champion.created_at,
                 tournaments_played: stats?.tournaments_played || 0,
                 tournaments_won: stats?.tournaments_won || 0,
                 total_sol_earned: stats?.total_sol_earned || 0,
@@ -198,8 +188,8 @@ class WalletWarsAPI {
                 win_rate: winRate
             };
 
-            console.log('✅ Champion profile loaded:', champion);
-            return { success: true, champion: champion };
+            console.log('✅ Champion profile loaded:', profileData);
+            return { success: true, champion: profileData };
 
         } catch (error) {
             console.error('❌ Get profile exception:', error);
@@ -207,7 +197,7 @@ class WalletWarsAPI {
         }
     }
 
-    // Check if champion exists (simplified)
+    // Check if champion exists
     async championExists(walletAddress) {
         const result = await this.getChampionProfile(walletAddress);
         return {
@@ -216,7 +206,7 @@ class WalletWarsAPI {
         };
     }
 
-    // 🔧 WORKING: Get all achievement definitions
+    // Get all achievement definitions
     async getAchievementDefinitions() {
         try {
             console.log('🏆 Loading achievement definitions...');
@@ -240,12 +230,12 @@ class WalletWarsAPI {
         }
     }
 
-    // 🔧 SIMPLIFIED: Get leaderboard
+    // Get leaderboard - SIMPLIFIED VERSION
     async getLeaderboard(limit = 100, offset = 0) {
         try {
             console.log('🏆 Loading leaderboard...');
             
-            // Simple query - get champions with their stats
+            // Simple direct query instead of RPC function
             const { data, error } = await this.supabase
                 .from('champions')
                 .select(`
@@ -309,7 +299,7 @@ class WalletWarsAPI {
         }
     }
 
-    // 🔧 HELPER: Get champion's achievement progress
+    // Get champion's achievement progress
     async getChampionAchievements(walletAddress) {
         try {
             console.log('🏆 Loading champion achievements...');
