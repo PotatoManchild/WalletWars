@@ -399,10 +399,61 @@
             log('Setting up tournament templates...', 'info');
             
             try {
-                const result = await window.tournamentSetup.setupInitialTournamentTemplates();
-                log(`Templates setup: ${result.created} created, ${result.existing} already existed`, 'success');
-                markStepCompleted('step-templates');
-                updateProgress(30);
+                // Direct API call if tournament setup not available
+                if (!window.tournamentSetup && window.walletWarsAPI) {
+                    log('Using direct API calls for template setup', 'info');
+                    
+                    const templates = [
+                        {
+                            name: "Rookie Pure Wallet - Monday",
+                            tournament_type: "weekly",
+                            trading_style: "pure_wallet",
+                            start_day: "monday",
+                            entry_fee: 0.01,
+                            max_participants: 500,
+                            prize_pool_percentage: 85.00
+                        },
+                        {
+                            name: "Elite Open Trading - Monday", 
+                            tournament_type: "weekly",
+                            trading_style: "open_trading",
+                            start_day: "monday",
+                            entry_fee: 0.05,
+                            max_participants: 1000,
+                            prize_pool_percentage: 80.00
+                        }
+                    ];
+                    
+                    let successCount = 0;
+                    for (const template of templates) {
+                        try {
+                            const result = await window.walletWarsAPI.createTournamentTemplate(template);
+                            if (result.success) {
+                                successCount++;
+                                log(`✅ Created: ${template.name}`, 'success');
+                            } else {
+                                log(`⚠️ Template exists or failed: ${template.name}`, 'warning');
+                            }
+                        } catch (error) {
+                            log(`❌ Error creating ${template.name}: ${error.message}`, 'error');
+                        }
+                    }
+                    
+                    log(`Templates setup: ${successCount} created successfully`, 'success');
+                    markStepCompleted('step-templates');
+                    updateProgress(30);
+                    return;
+                }
+                
+                // Use tournament setup if available
+                if (window.tournamentSetup) {
+                    const result = await window.tournamentSetup.setupInitialTournamentTemplates();
+                    log(`Templates setup: ${result.created} created, ${result.existing} already existed`, 'success');
+                    markStepCompleted('step-templates');
+                    updateProgress(30);
+                } else {
+                    throw new Error('Neither tournament setup scripts nor API available');
+                }
             } catch (error) {
                 log(`Template setup error: ${error.message}`, 'error');
             }
