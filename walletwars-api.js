@@ -58,33 +58,61 @@ class WalletWarsAPI {
         }
     }
 
-    // NEW METHOD: Check if champion name already exists - ROBUST VERSION
+    // NEW METHOD: Check if champion name already exists - BULLETPROOF VERSION
     async checkChampionNameExists(championName) {
         try {
             console.log(`🔍 Checking if champion name "${championName}" exists...`);
             
-            // Use a simple select with limit to avoid the multiple rows issue
-            const { data, error } = await this.supabase
+            // Use RPC function or simple count query to avoid row return issues
+            const { count, error } = await this.supabase
                 .from('champions')
-                .select('id, champion_name')
+                .select('id', { count: 'exact', head: true })
                 .eq('champion_name', championName)
-                .eq('is_active', true)
-                .limit(1);
+                .eq('is_active', true);
 
             if (error) {
-                console.error('❌ Name check error:', error);
-                return { success: false, error: error.message };
+                console.warn('⚠️ Name check error (trying fallback):', error.message);
+                
+                // FALLBACK: Try a different approach if count fails
+                try {
+                    const { data: fallbackData, error: fallbackError } = await this.supabase
+                        .from('champions')
+                        .select('id')
+                        .eq('champion_name', championName)
+                        .eq('is_active', true);
+                    
+                    if (fallbackError) {
+                        console.error('❌ Fallback name check also failed:', fallbackError);
+                        return { success: false, error: fallbackError.message };
+                    }
+                    
+                    const exists = fallbackData && fallbackData.length > 0;
+                    console.log(`${exists ? '❌' : '✅'} Champion name "${championName}" ${exists ? 'already exists' : 'is available'} (fallback method: ${fallbackData ? fallbackData.length : 0} matches)`);
+                    
+                    return { 
+                        success: true, 
+                        exists: exists,
+                        championName: championName,
+                        matchCount: fallbackData ? fallbackData.length : 0,
+                        method: 'fallback'
+                    };
+                    
+                } catch (fallbackException) {
+                    console.error('❌ Both name check methods failed:', fallbackException);
+                    return { success: false, error: 'Name checking temporarily unavailable' };
+                }
             }
 
-            const exists = data && data.length > 0;
+            const exists = count > 0;
             
-            console.log(`${exists ? '❌' : '✅'} Champion name "${championName}" ${exists ? 'already exists' : 'is available'} (${data ? data.length : 0} matches found)`);
+            console.log(`${exists ? '❌' : '✅'} Champion name "${championName}" ${exists ? 'already exists' : 'is available'} (count method: ${count} matches)`);
             
             return { 
                 success: true, 
                 exists: exists,
                 championName: championName,
-                matchCount: data ? data.length : 0
+                matchCount: count,
+                method: 'count'
             };
 
         } catch (error) {
