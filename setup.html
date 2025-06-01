@@ -889,24 +889,28 @@
             log('🚀 Enhanced WalletWars Setup page loaded', 'info');
             log('🔑 Helius API Key: Configured', 'success');
             
-            // Check dependencies immediately
+            // Check dependencies after a short delay to allow scripts to load
             setTimeout(() => {
-                const deps = checkDependencies();
-                const web3Loaded = deps.find(d => d.name === 'Solana Web3.js')?.status === 'success';
-                const enhancedLoaded = deps.find(d => d.name === 'Enhanced Wallet Service')?.status === 'success';
-                const hybridLoaded = deps.find(d => d.name === 'Hybrid Setup')?.status === 'success';
-                
-                if (web3Loaded && enhancedLoaded) {
-                    log('✅ Enhanced wallet service ready!', 'success');
-                    if (hybridLoaded) {
-                        log('✅ Hybrid snapshot system scripts loaded!', 'success');
+                try {
+                    const deps = checkDependencies();
+                    const web3Loaded = deps.find(d => d.name === 'Solana Web3.js')?.status === 'success';
+                    const enhancedLoaded = deps.find(d => d.name === 'Enhanced Wallet Service')?.status === 'success';
+                    const hybridLoaded = deps.find(d => d.name === 'Hybrid Setup')?.status === 'success';
+                    
+                    if (web3Loaded && enhancedLoaded) {
+                        log('✅ Enhanced wallet service ready!', 'success');
+                        if (hybridLoaded) {
+                            log('✅ Hybrid snapshot system scripts loaded!', 'success');
+                        } else {
+                            log('⚠️ Hybrid snapshot scripts loading...', 'warning');
+                        }
+                    } else if (web3Loaded) {
+                        log('⚠️ Web3.js loaded, waiting for enhanced service...', 'warning');
                     } else {
-                        log('⚠️ Hybrid snapshot scripts loading...', 'warning');
+                        log('❌ Web3.js not loaded - enhanced features unavailable', 'error');
                     }
-                } else if (web3Loaded) {
-                    log('⚠️ Web3.js loaded, waiting for enhanced service...', 'warning');
-                } else {
-                    log('❌ Web3.js not loaded - enhanced features unavailable', 'error');
+                } catch (error) {
+                    log(`⚠️ Dependency check error: ${error.message}`, 'warning');
                 }
             }, 2000);
         });
