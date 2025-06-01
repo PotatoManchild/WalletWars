@@ -32,36 +32,33 @@ async function setupHybridSnapshots() {
             throw new Error('Not all required components are loaded');
         }
         
-   // Step 2: Check Helius API configuration
-console.log('\n2️⃣ Checking wallet service configuration...');
-
-// Check if Helius API key is configured by examining the config
-let heliusConfigured = false;
-try {
-    if (window.enhancedWalletService.config && 
-        window.enhancedWalletService.config.backup && 
-        window.enhancedWalletService.config.backup.rpcUrl) {
-        // Check if the Helius URL contains an API key
-        const heliusUrl = window.enhancedWalletService.config.backup.rpcUrl;
-        heliusConfigured = heliusUrl.includes('api-key=') && !heliusUrl.includes('YOUR_API_KEY');
+        // Step 2: Check Helius API configuration
+        console.log('\n2️⃣ Checking wallet service configuration...');
         
-        if (heliusConfigured) {
-            console.log('✅ Helius API key detected in configuration');
+        // Check if Helius API key is configured by examining the config
+        let heliusConfigured = false;
+        try {
+            if (window.enhancedWalletService.config && 
+                window.enhancedWalletService.config.backup && 
+                window.enhancedWalletService.config.backup.rpcUrl) {
+                // Check if the Helius URL contains an API key
+                const heliusUrl = window.enhancedWalletService.config.backup.rpcUrl;
+                heliusConfigured = heliusUrl.includes('api-key=') && heliusUrl.includes('97322e35-59f5-424c-89f0-e6a826353c48');
+                
+                if (heliusConfigured) {
+                    console.log('✅ Helius API key detected in configuration');
+                }
+            }
+        } catch (configError) {
+            console.warn('⚠️ Could not check Helius configuration:', configError);
         }
-    }
-} catch (configError) {
-    console.warn('⚠️ Could not check Helius configuration:', configError);
-}
-
-if (!heliusConfigured) {
-    console.warn('⚠️ Helius API key may not be configured properly');
-    console.log('👉 The system will use public RPC endpoints as fallback');
-    console.log('👉 For better performance, add your Helius API key to wallet-service.js');
-    console.log('👉 Get your free key at https://dev.helius.xyz/');
-    // Continue anyway with public endpoints
-}
-
-console.log('✅ Wallet service ready (using available providers)');
+        
+        if (!heliusConfigured) {
+            console.warn('⚠️ Helius API key may not be configured properly');
+            console.log('👉 The system will use public RPC endpoints as fallback');
+        }
+        
+        console.log('✅ Wallet service ready (using available providers)');
         
         // Step 3: Test wallet service
         console.log('\n3️⃣ Testing wallet service...');
