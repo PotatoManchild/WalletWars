@@ -1,5 +1,5 @@
-// walletwars-api.js - ENHANCED VERSION WITH TOURNAMENT TRACKING
-console.log('🎮 WalletWars API Loading with Tournament Support...');
+// walletwars-api.js - ENHANCED VERSION WITH NEW WALLET SERVICE
+console.log('🎮 WalletWars API Loading with Enhanced Wallet Service...');
 
 // ========================================
 // SUPABASE CONFIGURATION
@@ -15,13 +15,13 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 console.log('✅ Supabase client initialized');
 
 // ========================================
-// WALLETWARS API CLASS WITH TOURNAMENTS
+// WALLETWARS API CLASS WITH ENHANCED WALLET SERVICE
 // ========================================
 
 class WalletWarsAPI {
     constructor() {
         this.supabase = supabase;
-        console.log('🏆 WalletWars API Ready with Tournament Support!');
+        console.log('🏆 WalletWars API Ready with Enhanced Wallet Service Support!');
     }
 
     // ========================================
@@ -338,7 +338,7 @@ class WalletWarsAPI {
     }
 
     // ========================================
-    // NEW TOURNAMENT METHODS
+    // TOURNAMENT METHODS
     // ========================================
 
     // Create tournament template
@@ -533,18 +533,30 @@ class WalletWarsAPI {
         }
     }
 
-    // Take wallet snapshot for tournament tracking
+    // ========================================
+    // ENHANCED WALLET SNAPSHOT METHODS
+    // ========================================
+
+    // Take wallet snapshot using enhanced wallet service
     async takeWalletSnapshot(walletAddress, tournamentEntryId, snapshotType) {
         try {
             console.log(`📸 Taking ${snapshotType} snapshot for wallet: ${walletAddress.substring(0, 8)}...`);
             
-            // Ensure Solscan service is available
-            if (!window.solscanService) {
-                throw new Error('Solscan service not available');
+            // Use enhanced wallet service if available, fallback to original method
+            const walletService = window.enhancedWalletService || window.solscanService;
+            
+            if (!walletService) {
+                throw new Error('No wallet service available');
             }
 
-            // Get wallet data from Solscan
-            const walletSnapshot = await window.solscanService.getFullWalletSnapshot(walletAddress);
+            // Get wallet data using enhanced service
+            const walletSnapshot = await walletService.getFullWalletSnapshot(walletAddress);
+            
+            console.log(`📊 Snapshot data:`, {
+                solBalance: walletSnapshot.solBalance,
+                tokenCount: walletSnapshot.tokenBalances.length,
+                provider: walletSnapshot.provider || 'Unknown'
+            });
             
             // Store in database
             const { data, error } = await this.supabase
@@ -556,7 +568,8 @@ class WalletWarsAPI {
                     sol_balance: walletSnapshot.solBalance,
                     token_balances: walletSnapshot.tokenBalances,
                     total_value_sol: walletSnapshot.totalValueSol,
-                    api_response: walletSnapshot.raw
+                    api_response: walletSnapshot.raw,
+                    provider_used: walletSnapshot.provider || 'Enhanced Wallet Service'
                 }])
                 .select()
                 .single();
@@ -566,11 +579,42 @@ class WalletWarsAPI {
                 return { success: false, error: error.message };
             }
 
-            console.log(`✅ ${snapshotType} snapshot saved successfully`);
+            console.log(`✅ ${snapshotType} snapshot saved successfully (Provider: ${walletSnapshot.provider})`);
             return { success: true, snapshot: data };
             
         } catch (error) {
             console.error('❌ Snapshot error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Test wallet snapshot with enhanced service
+    async testWalletSnapshot(walletAddress = null) {
+        try {
+            const testAddress = walletAddress || 'So11111111111111111111111111111111111111112';
+            console.log(`🧪 Testing wallet snapshot for: ${testAddress.substring(0, 8)}...`);
+            
+            // Use enhanced wallet service if available
+            const walletService = window.enhancedWalletService || window.solscanService;
+            
+            if (!walletService) {
+                throw new Error('No wallet service available');
+            }
+            
+            // Test getting a wallet snapshot
+            const snapshot = await walletService.getFullWalletSnapshot(testAddress);
+            
+            console.log('✅ Enhanced wallet snapshot test results:');
+            console.log('💰 SOL Balance:', snapshot.solBalance);
+            console.log('🪙 Token Count:', snapshot.tokenBalances.length);
+            console.log('💎 Total Value:', snapshot.totalValueSol, 'SOL');
+            console.log('🔧 Provider:', snapshot.provider || 'Unknown');
+            console.log('⏰ Timestamp:', snapshot.timestamp);
+            
+            return { success: true, snapshot: snapshot };
+            
+        } catch (error) {
+            console.error('❌ Enhanced wallet snapshot test failed:', error);
             return { success: false, error: error.message };
         }
     }
@@ -625,6 +669,70 @@ class WalletWarsAPI {
             return { success: false, error: error.message };
         }
     }
+
+    // ========================================
+    // ENHANCED SERVICE STATUS
+    // ========================================
+
+    // Get comprehensive service status including wallet service
+    async getEnhancedServiceStatus() {
+        try {
+            console.log('🔍 Checking enhanced service status...');
+            
+            const status = {
+                database: false,
+                walletService: false,
+                walletServiceProvider: 'None',
+                templates: 0,
+                tournaments: 0,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Test database
+            status.database = await this.testConnection();
+            
+            // Test wallet service
+            if (window.enhancedWalletService) {
+                try {
+                    const walletStatus = await window.enhancedWalletService.getServiceStatus();
+                    status.walletService = walletStatus.online;
+                    status.walletServiceProvider = walletStatus.provider;
+                    status.walletServiceResponseTime = walletStatus.responseTime;
+                } catch (error) {
+                    console.warn('⚠️ Enhanced wallet service test failed:', error);
+                }
+            } else if (window.solscanService) {
+                try {
+                    const solscanStatus = await window.solscanService.getAPIStatus();
+                    status.walletService = solscanStatus.online;
+                    status.walletServiceProvider = 'Solscan (Fallback)';
+                } catch (error) {
+                    console.warn('⚠️ Solscan service test failed:', error);
+                }
+            }
+            
+            // Get template count
+            if (status.database) {
+                const templatesResult = await this.getTournamentTemplates();
+                status.templates = templatesResult.success ? templatesResult.templates.length : 0;
+                
+                const tournamentsResult = await this.getUpcomingTournaments();
+                status.tournaments = tournamentsResult.success ? tournamentsResult.tournaments.length : 0;
+            }
+            
+            console.log('📊 Enhanced service status:', status);
+            return status;
+            
+        } catch (error) {
+            console.error('❌ Enhanced service status check failed:', error);
+            return {
+                database: false,
+                walletService: false,
+                error: error.message,
+                timestamp: new Date().toISOString()
+            };
+        }
+    }
 }
 
 // ========================================
@@ -638,9 +746,24 @@ window.walletWarsAPI = new WalletWarsAPI();
 window.walletWarsAPI.testConnection().then(connected => {
     if (connected) {
         console.log('🎮 WalletWars database ready for tournaments!');
+        
+        // Test enhanced wallet service if available
+        setTimeout(async () => {
+            if (window.enhancedWalletService) {
+                try {
+                    const testResult = await window.walletWarsAPI.testWalletSnapshot();
+                    if (testResult.success) {
+                        console.log('🚀 Enhanced wallet service integration successful!');
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Enhanced wallet service test failed:', error);
+                }
+            }
+        }, 2000);
+        
     } else {
         console.error('🚨 Database connection failed - check your configuration!');
     }
 });
 
-console.log('🚀 WalletWars API with Tournament Support loaded successfully!');
+console.log('🚀 WalletWars API with Enhanced Wallet Service loaded successfully!');
