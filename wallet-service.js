@@ -10,26 +10,26 @@ class EnhancedWalletService {
         this.retryAttempts = 3;
         this.retryDelay = 1000;
         
-        // Configuration with working public RPC endpoints
+// Configuration
         this.config = {
-            // Primary: QuickNode Public RPC (no CORS issues)
+            // Primary: Solana Web3.js with public RPC
             primary: {
-                name: 'QuickNode Public',
-                rpcUrl: 'https://solana-mainnet.rpc.extrnode.com',
+                name: 'Solana Web3.js',
+                rpcUrl: 'https://api.mainnet-beta.solana.com',
                 type: 'web3js',
                 priority: 1
             },
-            // Backup: Solana Labs (official)
+            // Backup: Helius (add API key when needed)
             backup: {
-                name: 'Solana Labs',
-                rpcUrl: 'https://api.mainnet-beta.solana.com',
-                type: 'web3js',
+                name: 'Helius',
+                rpcUrl: 'https://mainnet.helius-rpc.com/?api-key=97322e35-59f5-424c-89f0-e6a826353c48',
+                type: 'helius',
                 priority: 2
             },
-            // Fallback: Additional public RPC
+            // Fallback: Alternative public RPC
             fallback: {
-                name: 'Project Serum',
-                rpcUrl: 'https://solana-api.projectserum.com',
+                name: 'Ankr Public',
+                rpcUrl: 'https://rpc.ankr.com/solana',
                 type: 'web3js',
                 priority: 3
             }
