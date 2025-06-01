@@ -14,7 +14,7 @@ class TournamentAutomation {
         console.log('✅ Tournament Automation initialized');
     }
 
-    /**
+   /**
      * Initialize the automation system
      */
     async initialize() {
