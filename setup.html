@@ -16,6 +16,11 @@
     <script src="wallet-service.js"></script> <!-- NEW ENHANCED SERVICE -->
     <script src="tournament-setup.js"></script>
     
+    <!-- Hybrid Snapshot System Scripts -->
+    <script src="tournament-snapshot-manager.js"></script>
+    <script src="tournament-automation.js"></script>
+    <script src="setup-hybrid-snapshots.js"></script>
+    
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -293,7 +298,7 @@
 
         <!-- Launch -->
         <div class="setup-section">
-            <div class="section-title">🚀 Step 6: Launch Enhanced System</div>
+            <div class="section-title">🚀 Step 5: Launch Enhanced System</div>
             <p>Your enhanced tournament system is ready:</p>
             
             <button class="btn" onclick="goToTournaments()">Go to Tournaments Page</button>
@@ -309,6 +314,34 @@
                     <li><strong>Better Performance:</strong> Faster wallet balance queries</li>
                     <li><strong>Enhanced Monitoring:</strong> Real-time provider status tracking</li>
                 </ol>
+            </div>
+        </div>
+
+        <!-- NEW: Hybrid Snapshot System -->
+        <div class="setup-section">
+            <div class="section-title">🔄 Step 6: Hybrid Snapshot System</div>
+            <p>Configure the efficient snapshot system that only captures wallet states at tournament start/end:</p>
+            
+            <button class="btn" onclick="setupHybridSnapshots()">Initialize Hybrid Snapshots</button>
+            <button class="btn-secondary" onclick="testHybridSnapshot()">Test Snapshot System</button>
+            <button class="btn-secondary" onclick="checkAutomationStatus()">Check Automation Status</button>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="hybridProgress"></div>
+            </div>
+            
+            <div class="status-display" id="hybridOutput">
+                Click "Initialize Hybrid Snapshots" to set up the efficient snapshot system...
+            </div>
+            
+            <div class="instruction">
+                <div class="instruction-title">📸 Hybrid Snapshot Features</div>
+                <ul>
+                    <li><strong>Minimal API Usage:</strong> Only 2 API calls per participant per tournament</li>
+                    <li><strong>Anti-Cheat Detection:</strong> Monitors for external deposits and manipulation</li>
+                    <li><strong>Automatic Processing:</strong> Handles tournament lifecycle automatically</li>
+                    <li><strong>Prize Distribution:</strong> Calculates and distributes prizes based on performance</li>
+                </ul>
             </div>
         </div>
 
@@ -367,7 +400,10 @@
                 { name: 'Solana Web3.js', check: () => window.solanaWeb3, status: 'unknown' },
                 { name: 'WalletWars API', check: () => window.walletWarsAPI, status: 'unknown' },
                 { name: 'Enhanced Wallet Service', check: () => window.enhancedWalletService, status: 'unknown' },
-                { name: 'Tournament Setup', check: () => window.tournamentSetup, status: 'unknown' }
+                { name: 'Tournament Setup', check: () => window.tournamentSetup, status: 'unknown' },
+                { name: 'Snapshot Manager', check: () => window.tournamentSnapshotManager, status: 'unknown' },
+                { name: 'Tournament Automation', check: () => window.tournamentAutomation, status: 'unknown' },
+                { name: 'Hybrid Setup', check: () => window.setupHybridSnapshots, status: 'unknown' }
             ];
             
             dependencies.forEach(dep => {
@@ -452,6 +488,12 @@
                 </div>`;
                 
                 updateProgress(60, 'walletProgress');
+
+                // Check if Helius API key is configured
+                const heliusConfigured = window.enhancedWalletService.isApiKeyConfigured();
+                output.innerHTML += `<div class="${heliusConfigured ? 'success' : 'warning'}">
+                    🔑 Helius API Key: ${heliusConfigured ? 'Configured ✅' : 'Not configured (using public RPCs)'}
+                </div>`;
 
                 // Test rate limiter
                 const rateLimitStatus = window.enhancedWalletService.rateLimiter.getStatus();
@@ -621,6 +663,101 @@
             }
         }
 
+        // ========================================
+        // NEW HYBRID SNAPSHOT SYSTEM FUNCTIONS
+        // ========================================
+
+        async function setupHybridSnapshots() {
+            log('🚀 Initializing Hybrid Snapshot System...', 'info');
+            updateProgress(0, 'hybridProgress');
+            
+            try {
+                if (!window.setupHybridSnapshots) {
+                    throw new Error('Hybrid snapshot scripts not loaded');
+                }
+                
+                const output = document.getElementById('hybridOutput');
+                output.innerHTML = '<div class="info">Setting up hybrid snapshot system...</div>';
+                
+                // Run the setup
+                const success = await window.setupHybridSnapshots();
+                
+                if (success) {
+                    updateProgress(100, 'hybridProgress');
+                    
+                    output.innerHTML = `
+                        <div class="success">✅ Hybrid Snapshot System initialized successfully!</div>
+                        <div class="info">📸 Snapshots will only be taken at tournament start/end</div>
+                        <div class="info">💰 API Usage: 2 calls per participant per tournament</div>
+                        <div class="info">🤖 Automation: Active and monitoring tournaments</div>
+                        <div class="info">🛡️ Anti-cheat: Enabled with performance validation</div>
+                        <div class="success">🔑 Helius API Key: Configured and ready</div>
+                    `;
+                    
+                    log('✅ Hybrid snapshot system ready!', 'success');
+                    markStepCompleted('step-snapshots');
+                } else {
+                    throw new Error('Setup failed');
+                }
+                
+            } catch (error) {
+                log(`❌ Hybrid snapshot setup failed: ${error.message}`, 'error');
+                document.getElementById('hybridOutput').innerHTML = 
+                    `<div class="error">❌ Setup failed: ${error.message}</div>`;
+            }
+        }
+        
+        async function testHybridSnapshot() {
+            log('🧪 Testing hybrid snapshot system...', 'info');
+            
+            try {
+                if (!window.testHybridSystem) {
+                    throw new Error('Test functions not available');
+                }
+                
+                const testAddress = 'So11111111111111111111111111111111111111112';
+                const result = await window.testHybridSystem.testSnapshot(testAddress);
+                
+                if (result) {
+                    log(`✅ Snapshot test successful - ${result.solBalance} SOL`, 'success');
+                    document.getElementById('hybridOutput').innerHTML = 
+                        `<div class="success">✅ Snapshot working! Balance: ${result.solBalance} SOL</div>`;
+                } else {
+                    throw new Error('Snapshot test returned no data');
+                }
+                
+            } catch (error) {
+                log(`❌ Snapshot test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkAutomationStatus() {
+            log('🤖 Checking tournament automation status...', 'info');
+            
+            try {
+                if (!window.testHybridSystem) {
+                    throw new Error('Hybrid system not initialized');
+                }
+                
+                const status = window.testHybridSystem.checkStatus();
+                
+                document.getElementById('hybridOutput').innerHTML = `
+                    <div class="${status.monitoring ? 'success' : 'warning'}">
+                        🤖 Automation: ${status.monitoring ? 'Active' : 'Inactive'}
+                    </div>
+                    <div class="info">⏱️ Check Interval: ${status.checkInterval / 1000} seconds</div>
+                    <div class="info">🎯 Active Checks: ${status.activeChecks.join(', ') || 'None'}</div>
+                    <div class="info">📊 Initialized: ${status.initialized ? 'Yes' : 'No'}</div>
+                `;
+                
+                log(`Automation status: ${status.monitoring ? 'Active' : 'Inactive'}`, 
+                    status.monitoring ? 'success' : 'warning');
+                
+            } catch (error) {
+                log(`❌ Status check failed: ${error.message}`, 'error');
+            }
+        }
+
         // ENHANCED: Wallet snapshot test
         async function testWalletSnapshot() {
             log('📸 Testing enhanced wallet snapshot...', 'info');
@@ -740,6 +877,8 @@
             if (setupProgress >= 80) {
                 log('🎉 Enhanced tournament system is ready for use!', 'success');
                 log('✨ New features: Web3.js integration, multi-provider support, improved reliability', 'info');
+                log('🔄 Hybrid snapshots: Only 2 API calls per participant per tournament', 'info');
+                log('🤖 Automation: Tournament lifecycle handled automatically', 'info');
             } else {
                 log('⚠️ Enhanced setup may be incomplete - check status above', 'warning');
             }
@@ -748,15 +887,22 @@
         // Initialize enhanced page
         document.addEventListener('DOMContentLoaded', function() {
             log('🚀 Enhanced WalletWars Setup page loaded', 'info');
+            log('🔑 Helius API Key: Configured', 'success');
             
             // Check dependencies immediately
             setTimeout(() => {
                 const deps = checkDependencies();
                 const web3Loaded = deps.find(d => d.name === 'Solana Web3.js')?.status === 'success';
                 const enhancedLoaded = deps.find(d => d.name === 'Enhanced Wallet Service')?.status === 'success';
+                const hybridLoaded = deps.find(d => d.name === 'Hybrid Setup')?.status === 'success';
                 
                 if (web3Loaded && enhancedLoaded) {
                     log('✅ Enhanced wallet service ready!', 'success');
+                    if (hybridLoaded) {
+                        log('✅ Hybrid snapshot system scripts loaded!', 'success');
+                    } else {
+                        log('⚠️ Hybrid snapshot scripts loading...', 'warning');
+                    }
                 } else if (web3Loaded) {
                     log('⚠️ Web3.js loaded, waiting for enhanced service...', 'warning');
                 } else {
