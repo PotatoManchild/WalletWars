@@ -58,31 +58,33 @@ class WalletWarsAPI {
         }
     }
 
-    // NEW METHOD: Check if champion name already exists
+    // NEW METHOD: Check if champion name already exists - ROBUST VERSION
     async checkChampionNameExists(championName) {
         try {
             console.log(`🔍 Checking if champion name "${championName}" exists...`);
             
+            // Use a simple select with limit to avoid the multiple rows issue
             const { data, error } = await this.supabase
                 .from('champions')
                 .select('id, champion_name')
                 .eq('champion_name', championName)
                 .eq('is_active', true)
-                .maybeSingle();
+                .limit(1);
 
             if (error) {
                 console.error('❌ Name check error:', error);
                 return { success: false, error: error.message };
             }
 
-            const exists = data !== null;
+            const exists = data && data.length > 0;
             
-            console.log(`${exists ? '❌' : '✅'} Champion name "${championName}" ${exists ? 'already exists' : 'is available'}`);
+            console.log(`${exists ? '❌' : '✅'} Champion name "${championName}" ${exists ? 'already exists' : 'is available'} (${data ? data.length : 0} matches found)`);
             
             return { 
                 success: true, 
                 exists: exists,
-                championName: championName
+                championName: championName,
+                matchCount: data ? data.length : 0
             };
 
         } catch (error) {
