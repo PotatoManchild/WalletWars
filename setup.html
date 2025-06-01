@@ -526,7 +526,7 @@
                 sqlPre.textContent = `-- WalletWars Tournament Database Schema
 -- Copy this SQL and run it in your Supabase SQL Editor
 
--- See the "Tournament Database Schema" artifact for the complete SQL
+-- See the Tournament Database Schema artifact for the complete SQL
 -- It includes tables for:
 -- • tournament_templates
 -- • tournament_instances  
@@ -534,13 +534,10 @@
 -- • wallet_snapshots
 -- • transaction_monitoring
 
--- Plus indexes, RLS policies, and sample data
-
--- Go back to the artifacts and copy the complete SQL from:
--- "Tournament Database Schema" artifact`;
+-- Plus indexes, RLS policies, and sample data`;
                 
                 display.style.display = 'block';
-                log('Database schema displayed - copy SQL from the artifacts', 'info');
+                log('Database schema displayed - copy SQL to Supabase', 'info');
             } else {
                 display.style.display = 'none';
             }
@@ -567,26 +564,57 @@
         document.addEventListener('DOMContentLoaded', function() {
             log('WalletWars Tournament Setup page loaded', 'info');
             
-            // Check if APIs are loaded
-            setTimeout(() => {
+            // Wait for all APIs to be ready
+            let checkAttempts = 0;
+            const maxCheckAttempts = 20;
+            
+            function checkAPIs() {
+                checkAttempts++;
+                
                 if (window.walletWarsAPI) {
                     log('WalletWars API detected', 'success');
                 } else {
-                    log('WalletWars API not loaded', 'error');
+                    log('WalletWars API not loaded', 'warning');
                 }
                 
                 if (window.solscanService) {
                     log('Solscan service detected', 'success');
                 } else {
-                    log('Solscan service not loaded', 'error');
+                    log('Solscan service not loaded', 'warning');
                 }
                 
                 if (window.tournamentSetup) {
                     log('Tournament setup scripts detected', 'success');
+                    updateProgress(25);
                 } else {
-                    log('Tournament setup scripts not loaded', 'error');
+                    log('Tournament setup scripts not loaded', 'warning');
                 }
-            }, 2000);
+                
+                // If all APIs are loaded or we've tried enough times, stop checking
+                if ((window.walletWarsAPI && window.solscanService && window.tournamentSetup) || 
+                    checkAttempts >= maxCheckAttempts) {
+                    
+                    if (window.tournamentSetup) {
+                        log('🎉 All systems ready for tournament setup!', 'success');
+                        updateProgress(30);
+                    } else {
+                        log('⚠️ Some systems may not be ready. You can still try the setup.', 'warning');
+                    }
+                    return;
+                }
+                
+                // Continue checking
+                setTimeout(checkAPIs, 1000);
+            }
+            
+            // Start checking after a brief delay
+            setTimeout(checkAPIs, 2000);
+            
+            // Also listen for tournament setup ready event
+            window.addEventListener('tournamentSetupReady', function() {
+                log('🚀 Tournament setup system initialized!', 'success');
+                updateProgress(30);
+            });
         });
     </script>
 </body>
