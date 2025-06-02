@@ -1278,62 +1278,143 @@ async function loadTournaments() {
     isLoading = false;
 }
 
-        // Process tournament data for display
-        function processTournamentData() {
-            tournamentData = {};
-            
-            if (!realTournamentData || realTournamentData.length === 0) {
-                console.log('⚠️ No tournament data to process');
-                return;
+     // Process tournament data for display
+function processTournamentData() {
+    tournamentData = {};
+    
+    if (!realTournamentData || realTournamentData.length === 0) {
+        console.log('⚠️ No tournament data to process');
+        return;
+    }
+    
+    realTournamentData.forEach((tournament, index) => {
+        // Handle tournaments with missing templates
+        const template = tournament.tournament_templates || {
+            name: tournament.tournament_name || 'Tournament',
+            tournament_type: 'weekly',
+            trading_style: 'pure_wallet',
+            entry_fee: 0.01,
+            max_participants: 100,
+            prize_pool_percentage: 85
+        };
+        
+        const id = tournament.id || index + 1;
+        
+        // Calculate derived values
+        const currentTime = new Date();
+        const startTime = new Date(tournament.start_time);
+        const registrationOpens = new Date(tournament.registration_opens || tournament.registration_opens_at || tournament.created_at);
+        const registrationCloses = new Date(tournament.registration_closes || tournament.registration_closes_at || tournament.start_time);
+        
+        // Determine actual status based on times
+        let actualStatus = tournament.status;
+        if (actualStatus === 'scheduled' || actualStatus === 'upcoming') {
+            if (currentTime >= registrationOpens && currentTime < registrationCloses) {
+                actualStatus = 'registering';
             }
-            
-            realTournamentData.forEach((tournament, index) => {
-                if (!tournament || !tournament.tournament_templates) {
-                    console.warn(`Skipping invalid tournament at index ${index}`);
-                    return;
-                }
-                
-                const template = tournament.tournament_templates;
-                const id = tournament.id || index + 1;
-                
-                // Calculate derived values
-                const currentTime = new Date();
-                const startTime = new Date(tournament.start_time);
-                const registrationOpens = new Date(tournament.registration_opens || tournament.registration_opens_at);
-                const registrationCloses = new Date(tournament.registration_closes || tournament.registration_closes_at);
-                
-                // Determine actual status based on times
-                let actualStatus = tournament.status;
-                if (actualStatus === 'scheduled') {
-                    if (currentTime >= registrationOpens && currentTime < registrationCloses) {
-                        actualStatus = 'registering';
-                    }
-                }
-                
-                tournamentData[id] = {
-                    id: tournament.id,
-                    templateId: tournament.template_id,
-                    type: template.tournament_type || 'weekly',
-                    registered: tournament.participant_count || 0,
-                    maxPlayers: template.max_participants || 100,
-                    entryFee: parseFloat(template.entry_fee || 0),
-                    prizePool: parseFloat(tournament.total_prize_pool || 0),
-                    duration: template.tournament_type === 'monthly' ? '30 days' : '7 days',
-                    title: template.name || tournament.tournament_name || 'Unnamed Tournament',
-                    tradingStyle: template.trading_style || 'pure_wallet',
-                    startDay: template.start_day || 'variable',
-                    status: actualStatus,
-                    startTime: tournament.start_time,
-                    endTime: tournament.end_time,
-                    registrationOpens: tournament.registration_opens || tournament.registration_opens_at,
-                    registrationCloses: tournament.registration_closes || tournament.registration_closes_at,
-                    bracket: getBracketFromEntryFee(template.entry_fee || 0),
-                    minParticipants: tournament.min_participants || 10
-                };
-            });
-            
-            console.log(`✅ Processed ${Object.keys(tournamentData).length} tournaments`);
         }
+        
+        tournamentData[id] = {
+            id: tournament.id,
+            templateId: tournament.template_id,
+            type: template.tournament_type || 'weekly',
+            registered: tournament.participant_count || 0,
+            maxPlayers: template.max_participants || 100,
+            entryFee: parseFloat(template.entry_fee || 0.01),
+            prizePool: parseFloat(tournament.total_prize_pool || 0),
+            duration: template.tournament_type === 'monthly' ? '30 days' : '7 days',
+            title: template.name || tournament.tournament_name || 'Unnamed Tournament',
+            tradingStyle: template.trading_style || 'pure_wallet',
+            startDay: template.start_day || 'variable',
+            status: actualStatus,
+            startTime: tournament.start_time,
+            endTime: tournament.end_time,
+            registrationOpens: tournament.registration_opens || tournament.registration_opens_at,
+            registrationCloses: tournament.registration_closes || tournament.registration_closes_at,
+            bracket: getBracketFromEntryFee(template.entry_fee || 0.01),
+            minParticipants: tournament.min_participants || 10
+        };
+    });
+    
+    console.log(`✅ Processed ${Object.keys(tournamentData).length} tournaments`);
+}
+
+// Also update createTournamentCardFromData to handle missing templates:
+function createTournamentCardFromData(tournament, displayId) {
+    // Handle missing template
+    const template = tournament.tournament_templates || {
+        name: tournament.tournament_name || 'Tournament',
+        tournament_type: 'weekly',
+        trading_style: 'pure_wallet',
+        entry_fee: 0.01,
+        max_participants: 100,
+        start_day: 'variable'
+    };
+    
+    const card = document.createElement('div');
+    
+    // Determine CSS classes for filtering
+    const typeClass = `show-${template.tournament_type}`;
+    const feeClass = getFeeClass(template.entry_fee);
+    const prizeClass = getPrizeClass(tournament.total_prize_pool);
+    const bracketClass = getBracketFromEntryFee(template.entry_fee);
+    const statusClass = `show-${tournament.status}`;
+    const tradingStyleClass = `show-${template.trading_style}`;
+    
+    card.className = `tournament-card show-all ${typeClass} ${feeClass} ${prizeClass} ${bracketClass} ${statusClass} ${tradingStyleClass}`;
+    card.onclick = () => showTournamentDetails(displayId);
+    
+    // Get status display
+    const statusInfo = getTournamentStatusInfo(tournament);
+    
+    // Check if hybrid system is active
+    const hybridActive = window.tournamentSnapshotManager ? ' • Hybrid Snapshots Active' : '';
+    
+    card.innerHTML = `
+        <div class="card-front">
+            <div class="tournament-header-compact">
+                <div>
+                    <h3 class="tournament-title">${template.name || tournament.tournament_name || 'Tournament'}</h3>
+                    <div class="tournament-subtitle">
+                        <span class="bracket-badge bracket-${bracketClass}">${capitalizeFirst(bracketClass)}</span>
+                        <span class="trading-badge ${template.trading_style}">
+                            ${template.trading_style === 'pure_wallet' ? '📊 Pure Wallet' : '⚡ Open Trading'}
+                        </span>
+                        <span class="schedule-badge">
+                            ${new Date(tournament.start_time).toLocaleDateString()}
+                        </span>
+                    </div>
+                </div>
+                <div class="status-badge ${statusInfo.class}">${statusInfo.text}</div>
+            </div>
+            
+            <div class="key-info">
+                <div class="key-info-item">
+                    <div class="key-info-label">Entry</div>
+                    <div class="key-info-value">${template.entry_fee || '0.01'} SOL</div>
+                </div>
+                <div class="key-info-item">
+                    <div class="key-info-label">Prize Pool</div>
+                    <div class="key-info-value">${parseFloat(tournament.total_prize_pool || 0).toFixed(2)} SOL</div>
+                </div>
+                <div class="key-info-item">
+                    <div class="key-info-label">Players</div>
+                    <div class="key-info-value">${tournament.participant_count || 0}/${template.max_participants || 100}</div>
+                </div>
+                <div class="key-info-item">
+                    <div class="key-info-label">Duration</div>
+                    <div class="key-info-value">${template.tournament_type === 'weekly' ? '7 days' : '30 days'}</div>
+                </div>
+            </div>
+            
+            <div class="tap-hint">
+                Tap for details & registration${hybridActive}
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
 
         // Helper function to determine bracket from entry fee
         function getBracketFromEntryFee(entryFee) {
