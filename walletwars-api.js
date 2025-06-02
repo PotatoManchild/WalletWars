@@ -413,23 +413,14 @@ class WalletWarsAPI {
         }
     }
 
-  // Get upcoming tournaments for display
 async getUpcomingTournaments(limit = 50) {
     try {
         console.log('🔍 Fetching upcoming tournaments...');
         
-        // First, let's check what tournaments exist in the database
-        const { data: allTournaments, error: checkError } = await this.supabase
-            .from('tournament_instances')
-            .select('id, status, start_time, tournament_name')
-            .order('created_at', { ascending: false })
-            .limit(10);
-            
-        if (allTournaments) {
-            console.log('📊 Sample tournaments in database:', allTournaments);
-        }
+        // Get current time for comparison
+        const now = new Date().toISOString();
         
-        // Now get tournaments with full details - include ALL statuses to debug
+        // Fetch tournaments that are NOT cancelled and have valid states
         const { data, error } = await this.supabase
             .from('tournament_instances')
             .select(`
@@ -444,6 +435,8 @@ async getUpcomingTournaments(limit = 50) {
                     prize_pool_percentage
                 )
             `)
+            .in('status', ['scheduled', 'registering', 'pending_start', 'active'])
+            .gte('end_time', now) // Only get tournaments that haven't ended
             .order('start_time', { ascending: true })
             .limit(limit);
 
@@ -452,7 +445,7 @@ async getUpcomingTournaments(limit = 50) {
             return { success: false, error: error.message };
         }
 
-        console.log(`📋 Found ${data?.length || 0} total tournaments`);
+        console.log(`📋 Found ${data?.length || 0} upcoming tournaments`);
         
         // Log tournament statuses for debugging
         if (data && data.length > 0) {
@@ -461,6 +454,12 @@ async getUpcomingTournaments(limit = 50) {
                 return acc;
             }, {});
             console.log('📊 Tournament status breakdown:', statusCounts);
+            
+            // Log any tournaments missing templates
+            const missingTemplates = data.filter(t => !t.tournament_templates);
+            if (missingTemplates.length > 0) {
+                console.warn(`⚠️ ${missingTemplates.length} tournaments missing template data`);
+            }
         }
 
         return { success: true, tournaments: data || [] };
