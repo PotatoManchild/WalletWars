@@ -1,4 +1,4 @@
-// walletwars-api.js - ENHANCED VERSION WITH NEW WALLET SERVICE
+// walletwars-api.js - ENHANCED VERSION WITH NEW WALLET SERVICE AND PROFILE METHODS
 console.log('🎮 WalletWars API Loading with Enhanced Wallet Service...');
 
 // ========================================
@@ -738,6 +738,308 @@ class WalletWarsAPI {
             };
         }
     }
+
+    // ========================================
+    // PROFILE PAGE METHODS
+    // ========================================
+
+    // Get all tournaments for a specific champion
+    async getChampionTournaments(championId, limit = 50) {
+        try {
+            console.log(`🎮 Loading tournaments for champion ${championId}...`);
+            
+            const { data, error } = await this.supabase
+                .from('tournament_entries')
+                .select(`
+                    *,
+                    tournament_instances (
+                        *,
+                        tournament_templates (
+                            name,
+                            tournament_type,
+                            trading_style,
+                            entry_fee,
+                            prize_pool_percentage
+                        )
+                    ),
+                    start_snapshot:wallet_snapshots!tournament_entries_start_snapshot_id_fkey (
+                        total_value_sol,
+                        sol_balance,
+                        snapshot_type
+                    ),
+                    end_snapshot:wallet_snapshots!tournament_entries_end_snapshot_id_fkey (
+                        total_value_sol,
+                        sol_balance,
+                        snapshot_type
+                    )
+                `)
+                .eq('champion_id', championId)
+                .order('created_at', { ascending: false })
+                .limit(limit);
+
+            if (error) {
+                console.error('❌ Get champion tournaments error:', error);
+                return { success: false, error: error.message };
+            }
+
+            // Process tournament data to calculate performance
+            const processedTournaments = data.map(entry => {
+                const tournament = entry.tournament_instances;
+                const template = tournament?.tournament_templates;
+                
+                // Calculate performance if snapshots exist
+                let performance = null;
+                let performancePercentage = null;
+                if (entry.start_snapshot && entry.end_snapshot) {
+                    const startValue = entry.start_snapshot.total_value_sol;
+                    const endValue = entry.end_snapshot.total_value_sol;
+                    performance = endValue - startValue;
+                    performancePercentage = ((endValue - startValue) / startValue * 100).toFixed(2);
+                }
+                
+                return {
+                    id: entry.id,
+                    tournamentId: tournament?.id,
+                    name: template?.name || 'Unknown Tournament',
+                    tournamentType: template?.tournament_type,
+                    tradingStyle: template?.trading_style,
+                    status: tournament?.status || 'unknown',
+                    rank: entry.final_rank || null,
+                    performance: performancePercentage,
+                    performanceValue: performance,
+                    prizesWon: entry.prize_won || 0,
+                    entryFee: entry.entry_fee_paid || 0,
+                    startTime: tournament?.start_time,
+                    endTime: tournament?.end_time,
+                    participantCount: tournament?.participant_count || 0,
+                    isDisqualified: entry.is_disqualified || false,
+                    disqualificationReason: entry.disqualification_reason
+                };
+            });
+
+            console.log(`✅ Loaded ${processedTournaments.length} tournaments for champion`);
+            return { success: true, tournaments: processedTournaments };
+            
+        } catch (error) {
+            console.error('❌ Get champion tournaments exception:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Get champion's achievement progress
+    async getChampionAchievements(championId) {
+        try {
+            console.log(`🏆 Loading achievements for champion ${championId}...`);
+            
+            // First get all achievement definitions
+            const { data: definitions, error: defError } = await this.supabase
+                .from('achievement_definitions')
+                .select('*')
+                .eq('is_active', true);
+
+            if (defError) {
+                throw defError;
+            }
+
+            // Then get champion's unlocked achievements
+            const { data: unlocked, error: unlockError } = await this.supabase
+                .from('champion_achievements')
+                .select('*')
+                .eq('champion_id', championId);
+
+            if (unlockError) {
+                throw unlockError;
+            }
+
+            // Create a map of unlocked achievements
+            const unlockedMap = new Map();
+            unlocked.forEach(achievement => {
+                unlockedMap.set(achievement.achievement_id, achievement);
+            });
+
+            // Combine definitions with unlock status
+            const achievementsWithProgress = definitions.map(definition => {
+                const isUnlocked = unlockedMap.has(definition.id);
+                const unlockedData = unlockedMap.get(definition.id);
+                
+                return {
+                    ...definition,
+                    isUnlocked: isUnlocked,
+                    unlockedAt: unlockedData?.unlocked_at || null,
+                    progress: unlockedData?.progress || 0
+                };
+            });
+
+            // Calculate category progress
+            const categoryProgress = {};
+            achievementsWithProgress.forEach(achievement => {
+                if (!categoryProgress[achievement.category]) {
+                    categoryProgress[achievement.category] = {
+                        total: 0,
+                        unlocked: 0,
+                        points: 0,
+                        totalPoints: 0
+                    };
+                }
+                
+                categoryProgress[achievement.category].total++;
+                categoryProgress[achievement.category].totalPoints += achievement.points;
+                
+                if (achievement.isUnlocked) {
+                    categoryProgress[achievement.category].unlocked++;
+                    categoryProgress[achievement.category].points += achievement.points;
+                }
+            });
+
+            console.log(`✅ Loaded ${achievementsWithProgress.length} achievements with progress`);
+            return { 
+                success: true, 
+                achievements: achievementsWithProgress,
+                categoryProgress: categoryProgress
+            };
+            
+        } catch (error) {
+            console.error('❌ Get champion achievements exception:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Get champion's performance statistics
+    async getChampionStats(championId) {
+        try {
+            console.log(`📊 Loading performance stats for champion ${championId}...`);
+            
+            // Get all completed tournaments with performance data
+            const { data, error } = await this.supabase
+                .from('tournament_entries')
+                .select(`
+                    performance_percentage,
+                    final_rank,
+                    prize_won,
+                    entry_fee_paid,
+                    is_disqualified,
+                    tournament_instances!inner (
+                        participant_count,
+                        status
+                    )
+                `)
+                .eq('champion_id', championId)
+                .eq('tournament_instances.status', 'complete')
+                .not('performance_percentage', 'is', null);
+
+            if (error) {
+                throw error;
+            }
+
+            // Calculate statistics
+            const stats = {
+                totalTournaments: data.length,
+                averagePerformance: 0,
+                bestPerformance: 0,
+                worstPerformance: 0,
+                averageRank: 0,
+                totalProfitLoss: 0,
+                totalPrizesWon: 0,
+                totalEntryFees: 0,
+                topThreeFinishes: 0,
+                disqualifications: 0
+            };
+
+            if (data.length > 0) {
+                let performanceSum = 0;
+                let rankSum = 0;
+                let validRankCount = 0;
+
+                data.forEach(entry => {
+                    // Performance stats
+                    const perf = parseFloat(entry.performance_percentage || 0);
+                    performanceSum += perf;
+                    
+                    if (perf > stats.bestPerformance) {
+                        stats.bestPerformance = perf;
+                    }
+                    if (stats.worstPerformance === 0 || perf < stats.worstPerformance) {
+                        stats.worstPerformance = perf;
+                    }
+
+                    // Rank stats
+                    if (entry.final_rank) {
+                        rankSum += entry.final_rank;
+                        validRankCount++;
+                        
+                        if (entry.final_rank <= 3) {
+                            stats.topThreeFinishes++;
+                        }
+                    }
+
+                    // Financial stats
+                    stats.totalPrizesWon += parseFloat(entry.prize_won || 0);
+                    stats.totalEntryFees += parseFloat(entry.entry_fee_paid || 0);
+                    
+                    // Disqualifications
+                    if (entry.is_disqualified) {
+                        stats.disqualifications++;
+                    }
+                });
+
+                stats.averagePerformance = (performanceSum / data.length).toFixed(2);
+                stats.averageRank = validRankCount > 0 ? (rankSum / validRankCount).toFixed(1) : null;
+                stats.totalProfitLoss = stats.totalPrizesWon - stats.totalEntryFees;
+            }
+
+            console.log('✅ Calculated champion performance statistics');
+            return { success: true, stats: stats };
+            
+        } catch (error) {
+            console.error('❌ Get champion stats exception:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Update tournament entry results (for automation system)
+    async updateTournamentEntryResults(entryId, results) {
+        try {
+            const { data, error } = await this.supabase
+                .from('tournament_entries')
+                .update({
+                    performance_percentage: results.performance_percentage,
+                    final_value: results.final_value,
+                    final_rank: results.final_rank,
+                    prize_won: results.prize_won,
+                    is_disqualified: results.is_disqualified,
+                    disqualification_reason: results.disqualification_reason,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', entryId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            
+            return { success: true, entry: data };
+        } catch (error) {
+            console.error('❌ Update tournament entry results error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Get specific wallet snapshot
+    async getSnapshot(snapshotId) {
+        try {
+            const { data, error } = await this.supabase
+                .from('wallet_snapshots')
+                .select('*')
+                .eq('id', snapshotId)
+                .single();
+
+            if (error) throw error;
+            
+            return data;
+        } catch (error) {
+            console.error('❌ Get snapshot error:', error);
+            throw error;
+        }
+    }
 }
 
 // ========================================
@@ -771,4 +1073,4 @@ window.walletWarsAPI.testConnection().then(connected => {
     }
 });
 
-console.log('🚀 WalletWars API with Enhanced Wallet Service loaded successfully!');
+console.log('🚀 WalletWars API with Enhanced Wallet Service and Profile Methods loaded successfully!');
