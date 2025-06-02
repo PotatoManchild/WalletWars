@@ -876,24 +876,36 @@
             showLoadingState();
             
             try {
-                // Get wallet status from GlobalWalletManager
-                const walletStatus = window.getWalletStatus ? window.getWalletStatus() : { isConnected: false };
+                // Get wallet status from GlobalWalletManager with better error handling
+                const walletStatus = window.getWalletStatus ? window.getWalletStatus() : null;
+                console.log('🔍 Wallet status in loadProfileData:', walletStatus);
                 
-                if (!walletStatus.isConnected || !walletStatus.walletAddress) {
+                if (!walletStatus || !walletStatus.isConnected || !walletStatus.walletAddress) {
+                    console.error('❌ Wallet not properly connected:', walletStatus);
                     showNotConnectedState();
                     return;
                 }
                 
-                console.log(`📊 Loading profile for ${walletStatus.championName}...`);
+                console.log(`📊 Loading profile for ${walletStatus.championName} (${walletStatus.walletAddress})...`);
+                
+                // Check if API is available
+                if (!window.walletWarsAPI) {
+                    console.error('❌ WalletWars API not available');
+                    showNotConnectedState();
+                    return;
+                }
                 
                 // Get champion profile from database
                 const profileResult = await window.walletWarsAPI.getChampionProfile(walletStatus.walletAddress);
+                console.log('📋 Profile result:', profileResult);
                 
                 if (!profileResult.success) {
+                    console.error('❌ Failed to load profile:', profileResult.error);
                     throw new Error(profileResult.error || 'Failed to load profile');
                 }
                 
                 profileData = profileResult.champion;
+                console.log('✅ Profile data loaded:', profileData);
                 
                 // Load tournament entries
                 await loadTournamentData(profileData.champion_id);
@@ -901,10 +913,14 @@
                 // Load current wallet balance
                 await loadWalletBalance(walletStatus.walletAddress);
                 
-                // Get global rank
-                const rankResult = await window.walletWarsAPI.getChampionRank(profileData.champion_id);
-                if (rankResult.success && rankResult.rank) {
-                    document.getElementById('globalRank').textContent = rankResult.rank;
+                // Get global rank if the method exists
+                if (window.walletWarsAPI.getChampionRank) {
+                    const rankResult = await window.walletWarsAPI.getChampionRank(profileData.champion_id);
+                    if (rankResult.success && rankResult.rank) {
+                        document.getElementById('globalRank').textContent = rankResult.rank;
+                    }
+                } else {
+                    console.warn('⚠️ getChampionRank method not available');
                 }
                 
                 // Update UI with data
@@ -913,6 +929,10 @@
                 
             } catch (error) {
                 console.error('❌ Failed to load profile:', error);
+                // Show more specific error message
+                if (error.message.includes('No champion found')) {
+                    alert('No champion profile found for this wallet. Please create a champion profile on the home page first.');
+                }
                 showNotConnectedState();
             } finally {
                 isLoading = false;
@@ -1286,24 +1306,49 @@
             initializeMobileNavigation();
             handleWindowResize();
             
-            // Check if GlobalWalletManager is available and connected
-            setTimeout(() => {
-                const walletStatus = window.getWalletStatus ? window.getWalletStatus() : { isConnected: false };
-                
-                if (walletStatus.isConnected) {
-                    console.log(`✅ GlobalWalletManager: Connected as ${walletStatus.championName}`);
-                    loadProfileData();
-                } else {
-                    console.log('❌ No wallet connected');
-                    showNotConnectedState();
-                }
-            }, 1000);
+            // Enhanced initialization with better GlobalWalletManager detection
+            let initAttempts = 0;
+            const maxAttempts = 10;
             
-            // Set up auto-refresh
+            function checkWalletAndLoad() {
+                initAttempts++;
+                console.log(`⏳ Checking wallet connection... (${initAttempts}/${maxAttempts})`);
+                
+                // Check if GlobalWalletManager is available
+                if (window.getWalletStatus) {
+                    const walletStatus = window.getWalletStatus();
+                    console.log('📊 Wallet status:', walletStatus);
+                    
+                    if (walletStatus.isConnected && walletStatus.walletAddress) {
+                        console.log(`✅ GlobalWalletManager: Connected as ${walletStatus.championName}`);
+                        // Wait a bit more to ensure API is ready
+                        setTimeout(() => {
+                            loadProfileData();
+                        }, 500);
+                        return;
+                    }
+                }
+                
+                // If not connected after max attempts, show not connected state
+                if (initAttempts >= maxAttempts) {
+                    console.log('❌ No wallet connected after timeout');
+                    showNotConnectedState();
+                } else {
+                    // Try again in 1 second
+                    setTimeout(checkWalletAndLoad, 1000);
+                }
+            }
+            
+            // Start checking for wallet connection
+            checkWalletAndLoad();
+            
+            // Set up auto-refresh for wallet balance
             setInterval(() => {
-                const walletStatus = window.getWalletStatus ? window.getWalletStatus() : { isConnected: false };
-                if (walletStatus.isConnected && !isLoading) {
-                    loadWalletBalance(walletStatus.walletAddress);
+                if (window.getWalletStatus) {
+                    const walletStatus = window.getWalletStatus();
+                    if (walletStatus.isConnected && !isLoading && walletStatus.walletAddress) {
+                        loadWalletBalance(walletStatus.walletAddress);
+                    }
                 }
             }, 30000); // Refresh balance every 30 seconds
         });
