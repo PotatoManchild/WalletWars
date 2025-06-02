@@ -413,37 +413,62 @@ class WalletWarsAPI {
         }
     }
 
-    // Get upcoming tournaments for display
-    async getUpcomingTournaments(limit = 10) {
-        try {
-            const { data, error } = await this.supabase
-                .from('tournament_instances')
-                .select(`
-                    *,
-                    tournament_templates (
-                        name,
-                        tournament_type,
-                        trading_style,
-                        start_day,
-                        entry_fee,
-                        max_participants
-                    )
-                `)
-                .in('status', ['upcoming', 'registering'])
-                .order('start_time', { ascending: true })
-                .limit(limit);
+  // Get upcoming tournaments for display
+async getUpcomingTournaments(limit = 50) {
+    try {
+        console.log('🔍 Fetching upcoming tournaments...');
+        
+        // First, let's check what tournaments exist in the database
+        const { data: allTournaments, error: checkError } = await this.supabase
+            .from('tournament_instances')
+            .select('id, status, start_time, tournament_name')
+            .order('created_at', { ascending: false })
+            .limit(10);
+            
+        if (allTournaments) {
+            console.log('📊 Sample tournaments in database:', allTournaments);
+        }
+        
+        // Now get tournaments with full details - include ALL statuses to debug
+        const { data, error } = await this.supabase
+            .from('tournament_instances')
+            .select(`
+                *,
+                tournament_templates (
+                    name,
+                    tournament_type,
+                    trading_style,
+                    start_day,
+                    entry_fee,
+                    max_participants,
+                    prize_pool_percentage
+                )
+            `)
+            .order('start_time', { ascending: true })
+            .limit(limit);
 
-            if (error) {
-                console.error('❌ Get upcoming tournaments error:', error);
-                return { success: false, error: error.message };
-            }
-
-            return { success: true, tournaments: data };
-        } catch (error) {
-            console.error('❌ Get upcoming tournaments exception:', error);
+        if (error) {
+            console.error('❌ Get upcoming tournaments error:', error);
             return { success: false, error: error.message };
         }
+
+        console.log(`📋 Found ${data?.length || 0} total tournaments`);
+        
+        // Log tournament statuses for debugging
+        if (data && data.length > 0) {
+            const statusCounts = data.reduce((acc, t) => {
+                acc[t.status] = (acc[t.status] || 0) + 1;
+                return acc;
+            }, {});
+            console.log('📊 Tournament status breakdown:', statusCounts);
+        }
+
+        return { success: true, tournaments: data || [] };
+    } catch (error) {
+        console.error('❌ Get upcoming tournaments exception:', error);
+        return { success: false, error: error.message };
     }
+}
 
     // Register champion for tournament
     async registerForTournament(championId, tournamentInstanceId, tradingStyle) {
