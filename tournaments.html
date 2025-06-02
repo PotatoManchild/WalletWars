@@ -1425,56 +1425,91 @@ function createTournamentCardFromData(tournament, displayId) {
             return 'master';
         }
 
-        // Render tournaments from database data
-        function renderTournamentsFromDatabase() {
-            const grid = document.getElementById('tournamentsGrid');
-            if (!grid) return;
-            
-            // Clear existing tournaments
-            grid.innerHTML = '';
-            
-            // Check if we have real tournament data
-            if (!realTournamentData || realTournamentData.length === 0) {
-                grid.innerHTML = `
-                    <div style="text-align: center; padding: 3rem; color: #9ca3af; grid-column: 1 / -1;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">🎮</div>
-                        <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">No tournaments available</div>
-                        <div style="font-size: 0.9rem;">Check back later or refresh the page</div>
-                        <button onclick="loadTournaments()" style="
-                            margin-top: 1rem;
-                            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-                            border: none;
-                            color: white;
-                            padding: 0.75rem 1.5rem;
-                            border-radius: 0.75rem;
-                            font-weight: 600;
-                            cursor: pointer;
-                        ">Refresh Tournaments</button>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Process and display each tournament
-            realTournamentData.forEach((tournament, index) => {
-                // Skip if tournament or template is missing
-                if (!tournament || !tournament.tournament_templates) {
-                    console.warn(`Skipping invalid tournament at index ${index}`);
-                    return;
-                }
-                
-                const template = tournament.tournament_templates;
-                const card = createTournamentCardFromData(tournament, index + 1);
-                if (card) {
-                    grid.appendChild(card);
-                }
-            });
-            
-            // Apply current filters
-            applyAllFilters();
-            
-            console.log(`✅ Rendered ${grid.children.length} tournament cards`);
+ // Render tournaments from database data
+function renderTournamentsFromDatabase() {
+    console.log('🎨 Starting renderTournamentsFromDatabase...');
+    
+    const grid = document.getElementById('tournamentsGrid');
+    if (!grid) {
+        console.error('❌ Tournament grid element not found!');
+        return;
+    }
+    
+    // Clear existing tournaments
+    grid.innerHTML = '';
+    console.log(`📊 realTournamentData length: ${realTournamentData ? realTournamentData.length : 'null'}`);
+    
+    // Check if we have real tournament data
+    if (!realTournamentData || realTournamentData.length === 0) {
+        console.log('⚠️ No tournament data to render');
+        grid.innerHTML = `
+            <div style="text-align: center; padding: 3rem; color: #9ca3af; grid-column: 1 / -1;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🎮</div>
+                <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">No tournaments available</div>
+                <div style="font-size: 0.9rem;">Check back later or refresh the page</div>
+                <button onclick="loadTournaments()" style="
+                    margin-top: 1rem;
+                    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+                    border: none;
+                    color: white;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 0.75rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                ">Refresh Tournaments</button>
+            </div>
+        `;
+        return;
+    }
+    
+    // Process and display each tournament
+    let renderedCount = 0;
+    realTournamentData.forEach((tournament, index) => {
+        console.log(`🎮 Processing tournament ${index}:`, tournament);
+        
+        // Skip if tournament is missing
+        if (!tournament) {
+            console.warn(`⚠️ Skipping null tournament at index ${index}`);
+            return;
         }
+        
+        // Log template status
+        if (!tournament.tournament_templates) {
+            console.warn(`⚠️ Tournament ${tournament.id} has no template!`);
+        }
+        
+        try {
+            const card = createTournamentCardFromData(tournament, index + 1);
+            if (card) {
+                grid.appendChild(card);
+                renderedCount++;
+                console.log(`✅ Rendered tournament ${index + 1}`);
+            } else {
+                console.error(`❌ Failed to create card for tournament ${index}`);
+            }
+        } catch (error) {
+            console.error(`❌ Error rendering tournament ${index}:`, error);
+        }
+    });
+    
+    console.log(`✅ Rendered ${renderedCount} tournament cards`);
+    
+    // Apply current filters
+    applyAllFilters();
+}
+
+// Also update the loadTournaments success case to log the data:
+// Find this part in loadTournaments and update it:
+if (upcomingTournaments.length > 0) {
+    realTournamentData = upcomingTournaments;
+    console.log(`✅ Loaded ${realTournamentData.length} active/upcoming tournaments`);
+    console.log('📊 Tournament data:', realTournamentData);
+    
+    // Convert to display format
+    processTournamentData();
+    renderTournamentsFromDatabase();
+    showMainContent();
+}
 
         // Create tournament card from database data
         function createTournamentCardFromData(tournament, displayId) {
