@@ -71,7 +71,7 @@ const TOURNAMENT_CONFIG = {
     timing: {
         registrationCloseBeforeStart: 10, // minutes
         minimumCheckTime: 10, // minutes before start
-        advanceDeploymentDays: 28, // Deploy 4 weeks ahead
+        advanceDeploymentDays: 7, // Deploy 4 weeks ahead
         tournamentsToMaintain: 8 // Always have 8 upcoming per variant
     },
     
