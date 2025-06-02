@@ -607,6 +607,114 @@ class EnhancedWalletService {
                 await connection.getBalance(testAddress);
                 const responseTime = Date.now() - startTime;
                 
+                statuses[name] = {
+                    name: name,
+                    online: true,
+                    responseTime: responseTime,
+                    priority: 99
+                };
+                
+            } catch (error) {
+                statuses[name] = {
+                    name: name,
+                    online: false,
+                    error: error.message,
+                    priority: 99
+                };
+            }
+        }
+        
+        return statuses;
+    }
+}
+
+/**
+ * Rate limiter utility class
+ */
+class RateLimiter {
+    constructor(maxRequests, timeWindow) {
+        this.maxRequests = maxRequests;
+        this.timeWindow = timeWindow;
+        this.requests = [];
+        
+        console.log(`🚦 Rate limiter initialized: ${maxRequests} requests per ${timeWindow/1000}s`);
+    }
+
+    async wait() {
+        const now = Date.now();
+        
+        // Remove old requests outside time window
+        this.requests = this.requests.filter(time => now - time < this.timeWindow);
+        
+        // If we're at the limit, wait
+        if (this.requests.length >= this.maxRequests) {
+            const oldestRequest = Math.min(...this.requests);
+            const waitTime = this.timeWindow - (now - oldestRequest) + 100; // Add 100ms buffer
+            
+            if (waitTime > 0) {
+                console.log(`⏳ Rate limit reached, waiting ${waitTime}ms...`);
+                await new Promise(resolve => setTimeout(resolve, waitTime));
+                return this.wait(); // Recursive call after waiting
+            }
+        }
+        
+        // Record this request
+        this.requests.push(now);
+    }
+
+    getStatus() {
+        const now = Date.now();
+        const activeRequests = this.requests.filter(time => now - time < this.timeWindow);
+        
+        return {
+            requestsInWindow: activeRequests.length,
+            maxRequests: this.maxRequests,
+            timeWindow: this.timeWindow,
+            available: this.maxRequests - activeRequests.length,
+            percentUsed: (activeRequests.length / this.maxRequests) * 100
+        };
+    }
+}
+
+// Create global instance
+let walletServiceInstance = null;
+
+function initializeWalletService() {
+    if (!walletServiceInstance) {
+        walletServiceInstance = new EnhancedWalletService();
+        window.enhancedWalletService = walletServiceInstance;
+        console.log('🎯 Enhanced Wallet Service available globally as window.enhancedWalletService');
+        console.log('🔑 Using NEW Helius API key: cbfd228c-6be2-4493-ae67-5df7dc20a3e8');
+    }
+    return walletServiceInstance;
+}
+
+// Initialize when Web3.js is available
+if (typeof window !== 'undefined') {
+    // Check if Web3.js is already loaded
+    if (window.solanaWeb3) {
+        initializeWalletService();
+    } else {
+        // Wait for Web3.js to load
+        let checkCount = 0;
+        const checkForWeb3 = setInterval(() => {
+            checkCount++;
+            
+            if (window.solanaWeb3) {
+                clearInterval(checkForWeb3);
+                console.log(`✅ Solana Web3.js detected after ${checkCount} checks`);
+                initializeWalletService();
+            } else if (checkCount > 20) {
+                clearInterval(checkForWeb3);
+                console.warn('⚠️ Solana Web3.js not detected after 10 seconds, initializing anyway');
+                initializeWalletService();
+            }
+        }, 500);
+    }
+}
+
+console.log('✅ Enhanced Wallet Service module loaded with NEW API KEY!');() - startTime;
+                
                 statuses[key] = {
                     name: config.name,
                     online: true,
