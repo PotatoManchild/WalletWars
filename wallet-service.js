@@ -22,7 +22,7 @@ class EnhancedWalletService {
             // Backup: Helius (add API key when needed)
             backup: {
                 name: 'Helius',
-                rpcUrl: 'https://mainnet.helius-rpc.com/?api-key=97322e35-59f5-424c-89f0-e6a826353c48',
+                rpcUrl: 'https://mainnet.helius-rpc.com/?api-key=cbfd228c-6be2-4493-ae67-5df7dc20a3e8',
                 type: 'helius',
                 priority: 2
             },
