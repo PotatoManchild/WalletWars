@@ -54,7 +54,7 @@ class TournamentDeploymentManager {
             const checkDate = new Date(today);
             checkDate.setDate(today.getDate() + i);
             
-            const dayName = checkDate.toLocaleDateString('en-US', { weekday: 'lowercase' });
+            const dayName = checkDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
             
             if (this.config.deploymentDays.includes(dayName)) {
                 // Set to deployment time
