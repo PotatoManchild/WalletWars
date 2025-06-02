@@ -868,6 +868,7 @@
         // PROFILE DATA LOADING
         // ========================================
         
+        // Update loadProfileData to get global rank
         async function loadProfileData() {
             if (isLoading) return;
             
@@ -900,6 +901,12 @@
                 // Load current wallet balance
                 await loadWalletBalance(walletStatus.walletAddress);
                 
+                // Get global rank
+                const rankResult = await window.walletWarsAPI.getChampionRank(profileData.champion_id);
+                if (rankResult.success && rankResult.rank) {
+                    document.getElementById('globalRank').textContent = rankResult.rank;
+                }
+                
                 // Update UI with data
                 updateProfileUI();
                 showProfileContent();
@@ -915,37 +922,18 @@
         // Load tournament data for the champion
         async function loadTournamentData(championId) {
             try {
-                // This would need a new API method to get tournaments by champion
-                // For now, we'll simulate with sample data
                 console.log(`🎮 Loading tournaments for champion ${championId}...`);
                 
-                // TODO: Implement API method to fetch champion's tournament entries
-                // const result = await window.walletWarsAPI.getChampionTournaments(championId);
+                // Use the new API method to get real tournament data
+                const result = await window.walletWarsAPI.getChampionTournaments(championId);
                 
-                // Sample data for demonstration
-                tournamentsData = [
-                    {
-                        id: 1,
-                        name: 'Weekly Pure Wallet Championship',
-                        status: 'active',
-                        rank: 3,
-                        participants: 25,
-                        performance: '+12.5%',
-                        startDate: '2024-01-22',
-                        endDate: '2024-01-29'
-                    },
-                    {
-                        id: 2,
-                        name: 'Monthly Trading Masters',
-                        status: 'completed',
-                        rank: 1,
-                        participants: 50,
-                        performance: '+28.3%',
-                        startDate: '2024-01-01',
-                        endDate: '2024-01-31',
-                        prizesWon: 5.0
-                    }
-                ];
+                if (result.success) {
+                    tournamentsData = result.tournaments;
+                    console.log(`✅ Loaded ${tournamentsData.length} tournaments`);
+                } else {
+                    console.error('❌ Failed to load tournaments:', result.error);
+                    tournamentsData = [];
+                }
                 
             } catch (error) {
                 console.error('❌ Failed to load tournament data:', error);
@@ -1032,6 +1020,7 @@
             document.getElementById('globalRank').textContent = globalRank;
         }
 
+        // Update the updateTournamentsList function to show real data
         function updateTournamentsList() {
             const listContainer = document.getElementById('tournamentsList');
             const noTournamentsDiv = document.getElementById('noTournaments');
@@ -1047,22 +1036,55 @@
             
             let html = '';
             tournamentsData.forEach(tournament => {
-                const statusClass = `status-${tournament.status}`;
-                const statusIcon = tournament.status === 'active' ? '⚡' : 
-                                 tournament.status === 'completed' ? '✅' : '📅';
+                // Determine status icon and class
+                let statusClass = 'status-upcoming';
+                let statusIcon = '📅';
+                let statusText = 'Registered';
+                
+                if (tournament.status === 'active') {
+                    statusClass = 'status-active';
+                    statusIcon = '⚡';
+                    statusText = 'Live';
+                } else if (tournament.status === 'complete' || tournament.status === 'ended') {
+                    statusClass = 'status-completed';
+                    statusIcon = '✅';
+                    statusText = tournament.rank ? `Rank #${tournament.rank}` : 'Completed';
+                } else if (tournament.status === 'cancelled') {
+                    statusIcon = '❌';
+                    statusText = 'Cancelled';
+                }
+                
+                // Format dates
+                const startDate = tournament.startTime ? new Date(tournament.startTime).toLocaleDateString() : 'TBD';
+                const endDate = tournament.endTime ? new Date(tournament.endTime).toLocaleDateString() : 'TBD';
+                
+                // Performance display
+                let performanceDisplay = '--';
+                if (tournament.performance !== null) {
+                    const perfValue = parseFloat(tournament.performance);
+                    performanceDisplay = perfValue >= 0 ? `+${tournament.performance}%` : `${tournament.performance}%`;
+                }
+                
+                // Prize display
+                let prizeDisplay = '';
+                if (tournament.prizesWon > 0) {
+                    prizeDisplay = `<div style="color: #10b981; font-size: 0.85rem;">🏆 Won ${tournament.prizesWon.toFixed(2)} SOL</div>`;
+                }
                 
                 html += `
-                    <div class="tournament-item" onclick="viewTournamentDetails(${tournament.id})">
+                    <div class="tournament-item" onclick="viewTournamentDetails(${tournament.tournamentId})">
                         <div class="tournament-status-icon ${statusClass}">${statusIcon}</div>
                         <div class="tournament-item-info">
                             <div class="tournament-item-name">${tournament.name}</div>
                             <div class="tournament-item-meta">
-                                ${tournament.startDate} → ${tournament.endDate} • ${tournament.participants} players
+                                ${startDate} → ${endDate} • ${tournament.participantCount} players
+                                ${tournament.isDisqualified ? ' • <span style="color: #ef4444;">Disqualified</span>' : ''}
                             </div>
                         </div>
                         <div class="tournament-item-stats">
-                            <div class="tournament-rank">#${tournament.rank}</div>
-                            <div class="tournament-performance">${tournament.performance}</div>
+                            <div class="tournament-rank">${statusText}</div>
+                            <div class="tournament-performance">${performanceDisplay}</div>
+                            ${prizeDisplay}
                         </div>
                     </div>
                 `;
@@ -1164,14 +1186,66 @@
             noHistoryDiv.style.display = 'none';
         }
 
+        // Update performance stats to use real data
         function updatePerformanceStats() {
-            // Calculate performance statistics
             if (tournamentsData.length > 0) {
-                // Mock calculations - would be done server-side
-                document.getElementById('avgPerformance').textContent = '+15.2%';
-                document.getElementById('bestPerformance').textContent = '+28.3%';
-                document.getElementById('avgRank').textContent = '4.5';
-                document.getElementById('profitLoss').textContent = `+${(profileData.total_sol_earned || 0).toFixed(2)} SOL`;
+                // Calculate real statistics
+                let totalPerformance = 0;
+                let bestPerformance = null;
+                let worstPerformance = null;
+                let totalRank = 0;
+                let rankedCount = 0;
+                let totalProfitLoss = 0;
+                
+                tournamentsData.forEach(tournament => {
+                    // Only count completed tournaments
+                    if (tournament.status === 'complete' || tournament.status === 'ended') {
+                        // Performance calculations
+                        if (tournament.performance !== null) {
+                            const perf = parseFloat(tournament.performance);
+                            totalPerformance += perf;
+                            
+                            if (bestPerformance === null || perf > bestPerformance) {
+                                bestPerformance = perf;
+                            }
+                            if (worstPerformance === null || perf < worstPerformance) {
+                                worstPerformance = perf;
+                            }
+                        }
+                        
+                        // Rank calculations
+                        if (tournament.rank) {
+                            totalRank += tournament.rank;
+                            rankedCount++;
+                        }
+                        
+                        // Profit/Loss calculations
+                        totalProfitLoss += (tournament.prizesWon - tournament.entryFee);
+                    }
+                });
+                
+                // Update display
+                const completedCount = tournamentsData.filter(t => 
+                    t.status === 'complete' || t.status === 'ended'
+                ).length;
+                
+                if (completedCount > 0 && totalPerformance !== 0) {
+                    document.getElementById('avgPerformance').textContent = 
+                        `${(totalPerformance / completedCount).toFixed(2)}%`;
+                }
+                
+                if (bestPerformance !== null) {
+                    document.getElementById('bestPerformance').textContent = 
+                        `${bestPerformance >= 0 ? '+' : ''}${bestPerformance.toFixed(2)}%`;
+                }
+                
+                if (rankedCount > 0) {
+                    document.getElementById('avgRank').textContent = 
+                        (totalRank / rankedCount).toFixed(1);
+                }
+                
+                document.getElementById('profitLoss').textContent = 
+                    `${totalProfitLoss >= 0 ? '+' : ''}${totalProfitLoss.toFixed(2)} SOL`;
             }
         }
 
