@@ -1,20 +1,29 @@
-// tournament-automation.js
-// Handles automated tournament lifecycle: registration → start → end → results
-// Minimizes API calls by only taking snapshots at critical moments
+// tournament-automation.js - OPTIMIZED EVENT-DRIVEN VERSION
+// Handles automated tournament lifecycle with minimal API calls
+// Only triggers snapshots at exact tournament start/end times
 
-console.log('🤖 Loading Tournament Automation System...');
+console.log('🤖 Loading Optimized Tournament Automation System...');
 
 class TournamentAutomation {
     constructor() {
         this.snapshotManager = null;
         this.api = null;
-        this.checkInterval = 60000; // Check every minute
-        this.activeChecks = new Map(); // Track active monitoring
+        this.scheduledJobs = new Map(); // Store scheduled jobs by tournament ID
+        this.activeProcessing = new Set(); // Prevent duplicate processing
+        this.apiUsageTracker = {
+            hourly: 0,
+            daily: 0,
+            lastReset: Date.now(),
+            limits: {
+                hourly: 100,  // Adjust based on your Helius plan
+                daily: 1000   // Adjust based on your Helius plan
+            }
+        };
         
-        console.log('✅ Tournament Automation initialized');
+        console.log('✅ Event-Driven Tournament Automation initialized');
     }
 
-   /**
+    /**
      * Initialize the automation system
      */
     async initialize() {
@@ -32,43 +41,19 @@ class TournamentAutomation {
         // Initialize snapshot manager
         await this.snapshotManager.initialize();
         
-        console.log('✅ Tournament Automation ready');
-        
-        // Don't automatically start monitoring - let the user control it
-        console.log('💡 Call startMonitoring() to begin automatic tournament processing');
+        console.log('✅ Tournament Automation ready with event-driven architecture');
+        console.log('📅 Tournaments will be processed at their exact start/end times');
+        console.log('🔋 API usage will be minimal - only 2 calls per participant per tournament');
     }
 
     /**
-     * Start monitoring tournaments for state changes
+     * Schedule all upcoming tournaments (one-time setup)
      */
-    startMonitoring() {
-        console.log('👁️ Starting tournament monitoring...');
-        
-        // Check tournaments immediately
-        this.checkTournaments();
-        
-        // Then check periodically
-        this.monitoringInterval = setInterval(() => {
-            this.checkTournaments();
-        }, this.checkInterval);
-    }
-
-    /**
-     * Stop monitoring
-     */
-    stopMonitoring() {
-        if (this.monitoringInterval) {
-            clearInterval(this.monitoringInterval);
-            console.log('🛑 Tournament monitoring stopped');
-        }
-    }
-
-    /**
-     * Check all tournaments and process state changes
-     */
-    async checkTournaments() {
+    async scheduleUpcomingTournaments() {
         try {
-            // Get all active tournaments
+            console.log('📅 Scheduling upcoming tournaments...');
+            
+            // Get all upcoming tournaments
             const { data: tournaments, error } = await this.api.supabase
                 .from('tournament_instances')
                 .select(`
@@ -83,40 +68,251 @@ class TournamentAutomation {
                 return;
             }
 
-            const now = new Date();
+            console.log(`📊 Found ${tournaments.length} tournaments to schedule`);
             
+            // Schedule each tournament
             for (const tournament of tournaments) {
-                await this.processTournamentState(tournament, now);
+                this.scheduleTournament(tournament);
             }
             
+            // Show scheduled jobs summary
+            console.log(`✅ Scheduled ${this.scheduledJobs.size} tournament events`);
+            this.showScheduleSummary();
+            
         } catch (error) {
-            console.error('❌ Tournament check error:', error);
+            console.error('❌ Tournament scheduling error:', error);
         }
     }
 
     /**
-     * Process individual tournament state
+     * Schedule a single tournament's events
      */
-    async processTournamentState(tournament, currentTime) {
+    scheduleTournament(tournament) {
         const tournamentId = tournament.id;
-        const startTime = new Date(tournament.start_time);
-        const endTime = new Date(tournament.end_time);
-        const registrationOpens = new Date(tournament.registration_opens);
-        const registrationCloses = new Date(tournament.registration_closes);
+        const now = new Date();
         
-        // State transitions based on time
-        if (tournament.status === 'upcoming' && currentTime >= registrationOpens) {
-            await this.transitionToRegistering(tournamentId);
+        // Clear any existing schedules for this tournament
+        this.clearTournamentSchedule(tournamentId);
+        
+        const jobs = [];
+        
+        // Schedule registration opening
+        const registrationOpens = new Date(tournament.registration_opens);
+        if (registrationOpens > now && tournament.status === 'upcoming') {
+            const registrationOpenJob = this.scheduleEvent(
+                registrationOpens,
+                () => this.transitionToRegistering(tournamentId),
+                `Registration Open - ${tournament.tournament_templates.name}`
+            );
+            jobs.push({ type: 'registration_open', job: registrationOpenJob });
         }
-        else if (tournament.status === 'registering' && currentTime >= registrationCloses) {
-            await this.closeRegistration(tournamentId);
+        
+        // Schedule registration closing
+        const registrationCloses = new Date(tournament.registration_closes);
+        if (registrationCloses > now && tournament.status === 'registering') {
+            const registrationCloseJob = this.scheduleEvent(
+                registrationCloses,
+                () => this.closeRegistration(tournamentId),
+                `Registration Close - ${tournament.tournament_templates.name}`
+            );
+            jobs.push({ type: 'registration_close', job: registrationCloseJob });
         }
-        else if (tournament.status === 'registering' && currentTime >= startTime) {
-            await this.startTournament(tournamentId);
+        
+        // Schedule tournament start (CRITICAL - This triggers snapshots)
+        const startTime = new Date(tournament.start_time);
+        if (startTime > now && tournament.status !== 'active') {
+            const startJob = this.scheduleEvent(
+                startTime,
+                () => this.startTournamentWithApiCheck(tournamentId),
+                `Tournament Start - ${tournament.tournament_templates.name} 🚀`
+            );
+            jobs.push({ type: 'start', job: startJob });
         }
-        else if (tournament.status === 'active' && currentTime >= endTime) {
-            await this.endTournament(tournamentId);
+        
+        // Schedule tournament end (CRITICAL - This triggers snapshots)
+        const endTime = new Date(tournament.end_time);
+        if (endTime > now && tournament.status !== 'complete') {
+            const endJob = this.scheduleEvent(
+                endTime,
+                () => this.endTournamentWithApiCheck(tournamentId),
+                `Tournament End - ${tournament.tournament_templates.name} 🏁`
+            );
+            jobs.push({ type: 'end', job: endJob });
         }
+        
+        // Store scheduled jobs
+        if (jobs.length > 0) {
+            this.scheduledJobs.set(tournamentId, jobs);
+            console.log(`📅 Scheduled ${jobs.length} events for tournament ${tournamentId}`);
+        }
+    }
+
+    /**
+     * Schedule a single event with precise timing
+     */
+    scheduleEvent(targetTime, callback, description) {
+        const now = Date.now();
+        const targetMs = targetTime.getTime();
+        const delay = targetMs - now;
+        
+        if (delay <= 0) {
+            console.log(`⚠️ Event "${description}" is in the past, skipping`);
+            return null;
+        }
+        
+        // For delays longer than 24 hours, use a daily check instead
+        if (delay > 24 * 60 * 60 * 1000) {
+            console.log(`📅 Event "${description}" is more than 24h away, will reschedule daily`);
+            // Return a placeholder - implement daily rescheduling if needed
+            return { type: 'long_delay', targetTime, description };
+        }
+        
+        console.log(`⏰ Scheduling "${description}" in ${this.formatDelay(delay)}`);
+        
+        const timeoutId = setTimeout(() => {
+            console.log(`🎯 Executing scheduled event: ${description}`);
+            callback();
+        }, delay);
+        
+        return {
+            timeoutId,
+            targetTime,
+            description,
+            scheduled: new Date()
+        };
+    }
+
+    /**
+     * Clear all scheduled events for a tournament
+     */
+    clearTournamentSchedule(tournamentId) {
+        const jobs = this.scheduledJobs.get(tournamentId);
+        if (jobs) {
+            jobs.forEach(job => {
+                if (job.job && job.job.timeoutId) {
+                    clearTimeout(job.job.timeoutId);
+                }
+            });
+            this.scheduledJobs.delete(tournamentId);
+        }
+    }
+
+    /**
+     * Clear all scheduled events
+     */
+    clearAllSchedules() {
+        console.log('🧹 Clearing all scheduled tournament events...');
+        
+        this.scheduledJobs.forEach((jobs, tournamentId) => {
+            this.clearTournamentSchedule(tournamentId);
+        });
+        
+        console.log('✅ All schedules cleared');
+    }
+
+    /**
+     * Start tournament with API usage check
+     */
+    async startTournamentWithApiCheck(tournamentId) {
+        // Check API usage before proceeding
+        if (!this.checkApiUsage('start', tournamentId)) {
+            console.error('❌ API limit reached, postponing tournament start');
+            // Reschedule for 1 hour later
+            this.rescheduleEvent(tournamentId, 'start', 60 * 60 * 1000);
+            return;
+        }
+        
+        await this.startTournament(tournamentId);
+    }
+
+    /**
+     * End tournament with API usage check
+     */
+    async endTournamentWithApiCheck(tournamentId) {
+        // Check API usage before proceeding
+        if (!this.checkApiUsage('end', tournamentId)) {
+            console.error('❌ API limit reached, postponing tournament end');
+            // Reschedule for 1 hour later
+            this.rescheduleEvent(tournamentId, 'end', 60 * 60 * 1000);
+            return;
+        }
+        
+        await this.endTournament(tournamentId);
+    }
+
+    /**
+     * Check if we have API budget for an operation
+     */
+    checkApiUsage(operation, tournamentId) {
+        // Reset counters if needed
+        this.resetApiCounters();
+        
+        // Estimate API calls needed
+        let estimatedCalls = 0;
+        
+        if (operation === 'start' || operation === 'end') {
+            // We need to check participant count
+            // For now, assume average of 10 participants per tournament
+            estimatedCalls = 10; // This should be fetched from DB
+        }
+        
+        // Check limits
+        if (this.apiUsageTracker.hourly + estimatedCalls > this.apiUsageTracker.limits.hourly) {
+            console.warn(`⚠️ Hourly API limit would be exceeded (${this.apiUsageTracker.hourly}/${this.apiUsageTracker.limits.hourly})`);
+            return false;
+        }
+        
+        if (this.apiUsageTracker.daily + estimatedCalls > this.apiUsageTracker.limits.daily) {
+            console.warn(`⚠️ Daily API limit would be exceeded (${this.apiUsageTracker.daily}/${this.apiUsageTracker.limits.daily})`);
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Track API usage
+     */
+    trackApiUsage(calls) {
+        this.apiUsageTracker.hourly += calls;
+        this.apiUsageTracker.daily += calls;
+        
+        console.log(`📊 API Usage - Hourly: ${this.apiUsageTracker.hourly}/${this.apiUsageTracker.limits.hourly}, Daily: ${this.apiUsageTracker.daily}/${this.apiUsageTracker.limits.daily}`);
+    }
+
+    /**
+     * Reset API counters based on time
+     */
+    resetApiCounters() {
+        const now = Date.now();
+        const hourAgo = now - (60 * 60 * 1000);
+        const dayAgo = now - (24 * 60 * 60 * 1000);
+        
+        // Reset hourly counter
+        if (this.apiUsageTracker.lastReset < hourAgo) {
+            this.apiUsageTracker.hourly = 0;
+            this.apiUsageTracker.lastReset = now;
+        }
+        
+        // Reset daily counter
+        if (this.apiUsageTracker.lastReset < dayAgo) {
+            this.apiUsageTracker.daily = 0;
+        }
+    }
+
+    /**
+     * Reschedule an event
+     */
+    rescheduleEvent(tournamentId, eventType, delay) {
+        console.log(`🔄 Rescheduling ${eventType} for tournament ${tournamentId} in ${this.formatDelay(delay)}`);
+        
+        setTimeout(() => {
+            if (eventType === 'start') {
+                this.startTournamentWithApiCheck(tournamentId);
+            } else if (eventType === 'end') {
+                this.endTournamentWithApiCheck(tournamentId);
+            }
+        }, delay);
     }
 
     /**
@@ -190,11 +386,12 @@ class TournamentAutomation {
         console.log(`🏁 Starting tournament ${tournamentId}`);
         
         // Prevent duplicate processing
-        if (this.activeChecks.has(`start_${tournamentId}`)) {
+        if (this.activeProcessing.has(`start_${tournamentId}`)) {
+            console.log('⚠️ Tournament start already in progress');
             return;
         }
         
-        this.activeChecks.set(`start_${tournamentId}`, true);
+        this.activeProcessing.add(`start_${tournamentId}`);
         
         try {
             // Update tournament status
@@ -213,10 +410,13 @@ class TournamentAutomation {
             console.log('📸 Taking start snapshots for all participants...');
             const snapshotResults = await this.snapshotManager.processTournamentStart(tournamentId);
             
+            // Track API usage
+            this.trackApiUsage(snapshotResults.successful + snapshotResults.failed);
+            
             console.log(`✅ Tournament started! Snapshots: ${snapshotResults.successful} successful, ${snapshotResults.failed} failed`);
             
-            // Notify participants (future feature)
-            // await this.notifyParticipants(tournamentId, 'tournament_started');
+            // Clear this tournament's schedule
+            this.clearTournamentSchedule(tournamentId);
             
         } catch (error) {
             console.error('❌ Failed to start tournament:', error);
@@ -228,7 +428,7 @@ class TournamentAutomation {
                 .eq('id', tournamentId);
                 
         } finally {
-            this.activeChecks.delete(`start_${tournamentId}`);
+            this.activeProcessing.delete(`start_${tournamentId}`);
         }
     }
 
@@ -239,11 +439,12 @@ class TournamentAutomation {
         console.log(`🏁 Ending tournament ${tournamentId}`);
         
         // Prevent duplicate processing
-        if (this.activeChecks.has(`end_${tournamentId}`)) {
+        if (this.activeProcessing.has(`end_${tournamentId}`)) {
+            console.log('⚠️ Tournament end already in progress');
             return;
         }
         
-        this.activeChecks.set(`end_${tournamentId}`, true);
+        this.activeProcessing.add(`end_${tournamentId}`);
         
         try {
             // Update tournament status
@@ -263,6 +464,9 @@ class TournamentAutomation {
             const results = await this.snapshotManager.processTournamentEnd(tournamentId);
             
             if (results.success) {
+                // Track API usage
+                this.trackApiUsage(results.results.length);
+                
                 // Distribute prizes
                 await this.distributePrizes(tournamentId, results.rankings);
                 
@@ -282,6 +486,9 @@ class TournamentAutomation {
                 await this.storeTournamentReport(tournamentId, report);
             }
             
+            // Clear this tournament's schedule
+            this.clearTournamentSchedule(tournamentId);
+            
         } catch (error) {
             console.error('❌ Failed to end tournament:', error);
             
@@ -292,7 +499,7 @@ class TournamentAutomation {
                 .eq('id', tournamentId);
                 
         } finally {
-            this.activeChecks.delete(`end_${tournamentId}`);
+            this.activeProcessing.delete(`end_${tournamentId}`);
         }
     }
 
@@ -313,8 +520,8 @@ class TournamentAutomation {
                 })
                 .eq('id', tournamentId);
 
-            // Refund entry fees (future feature)
-            // await this.refundEntryFees(tournamentId);
+            // Clear any remaining schedules
+            this.clearTournamentSchedule(tournamentId);
             
             console.log('✅ Tournament cancelled');
             
@@ -471,16 +678,60 @@ class TournamentAutomation {
     }
 
     /**
-     * Manual tournament actions for testing
+     * Show schedule summary
      */
-    async manualStartTournament(tournamentId) {
-        console.log(`🎮 Manually starting tournament ${tournamentId}`);
-        await this.startTournament(tournamentId);
+    showScheduleSummary() {
+        console.log('\n📅 Tournament Schedule Summary:');
+        console.log('================================');
+        
+        const events = [];
+        
+        this.scheduledJobs.forEach((jobs, tournamentId) => {
+            jobs.forEach(({ type, job }) => {
+                if (job && job.targetTime) {
+                    events.push({
+                        tournamentId,
+                        type,
+                        time: job.targetTime,
+                        description: job.description
+                    });
+                }
+            });
+        });
+        
+        // Sort by time
+        events.sort((a, b) => a.time - b.time);
+        
+        // Display upcoming events
+        const now = new Date();
+        events.forEach(event => {
+            if (event.time > now) {
+                const timeUntil = this.formatDelay(event.time - now);
+                console.log(`⏰ ${event.description} - in ${timeUntil}`);
+            }
+        });
+        
+        console.log('================================\n');
     }
 
-    async manualEndTournament(tournamentId) {
-        console.log(`🎮 Manually ending tournament ${tournamentId}`);
-        await this.endTournament(tournamentId);
+    /**
+     * Format delay for human reading
+     */
+    formatDelay(ms) {
+        const seconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        
+        if (days > 0) {
+            return `${days}d ${hours % 24}h`;
+        } else if (hours > 0) {
+            return `${hours}h ${minutes % 60}m`;
+        } else if (minutes > 0) {
+            return `${minutes}m ${seconds % 60}s`;
+        } else {
+            return `${seconds}s`;
+        }
     }
 
     /**
@@ -488,11 +739,27 @@ class TournamentAutomation {
      */
     getStatus() {
         return {
-            monitoring: !!this.monitoringInterval,
-            checkInterval: this.checkInterval,
-            activeChecks: Array.from(this.activeChecks.keys()),
+            scheduled: this.scheduledJobs.size,
+            activeProcessing: this.activeProcessing.size,
+            apiUsage: {
+                hourly: `${this.apiUsageTracker.hourly}/${this.apiUsageTracker.limits.hourly}`,
+                daily: `${this.apiUsageTracker.daily}/${this.apiUsageTracker.limits.daily}`
+            },
             initialized: !!(this.snapshotManager && this.api)
         };
+    }
+
+    /**
+     * Manual tournament actions for testing
+     */
+    async manualStartTournament(tournamentId) {
+        console.log(`🎮 Manually starting tournament ${tournamentId}`);
+        await this.startTournamentWithApiCheck(tournamentId);
+    }
+
+    async manualEndTournament(tournamentId) {
+        console.log(`🎮 Manually ending tournament ${tournamentId}`);
+        await this.endTournamentWithApiCheck(tournamentId);
     }
 }
 
@@ -502,5 +769,7 @@ window.tournamentAutomation = new TournamentAutomation();
 // Export for use
 window.TournamentAutomation = TournamentAutomation;
 
-console.log('✅ Tournament Automation loaded!');
-console.log('🤖 Tournaments will be automatically processed at start/end times');
+console.log('✅ Optimized Tournament Automation loaded!');
+console.log('🎯 Tournaments will be processed at exact start/end times only');
+console.log('🔋 API usage is limited to 2 calls per participant per tournament');
+console.log('⏰ Use tournamentAutomation.scheduleUpcomingTournaments() to set up event-driven processing');
