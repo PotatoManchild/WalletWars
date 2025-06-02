@@ -1188,80 +1188,95 @@
         // TOURNAMENT LOADING WITH GLOBAL WALLET MANAGER
         // ========================================
 
-        // Load tournaments from database with enhanced wallet service
-        async function loadTournaments() {
-            if (isLoading) return;
-            
-            isLoading = true;
-            showLoadingState();
-            
-            try {
-                console.log('🎮 Loading tournaments with enhanced wallet service and GlobalWalletManager...');
-                
-                // Check if API is available
-                if (!window.walletWarsAPI) {
-                    throw new Error('WalletWars API not available');
-                }
-                
-                // Test database connection first
-                const connected = await window.walletWarsAPI.testConnection();
-                if (!connected) {
-                    throw new Error('Database connection failed');
-                }
-                
-                // Check enhanced wallet service status
-                if (window.enhancedWalletService) {
-                    console.log('🚀 Enhanced wallet service detected');
-                    try {
-                        const walletStatus = await window.enhancedWalletService.getServiceStatus();
-                        console.log(`💰 Wallet service status: ${walletStatus.provider} - ${walletStatus.online ? 'Online' : 'Offline'}`);
-                        
-                        // Check if Helius API key is configured
-                        if (window.enhancedWalletService.isApiKeyConfigured && window.enhancedWalletService.isApiKeyConfigured()) {
-                            console.log('✅ Helius API key configured');
-                        }
-                    } catch (walletError) {
-                        console.warn('⚠️ Wallet service status check failed:', walletError);
-                    }
-                } else {
-                    console.log('📡 Enhanced wallet service not detected, using fallback');
-                }
-                
-                // Check GlobalWalletManager status
-                if (window.globalWalletManager) {
-                    const globalStatus = window.getWalletStatus();
-                    console.log(`🔗 GlobalWalletManager status: ${globalStatus.isConnected ? 'Connected' : 'Disconnected'}`);
-                    if (globalStatus.isConnected) {
-                        console.log(`👑 Connected champion: ${globalStatus.championName}`);
-                    }
-                }
-                
-                // Check Hybrid Snapshot System
-                checkHybridSnapshotSystem();
-                
-                // Load upcoming tournaments
-                const result = await window.walletWarsAPI.getUpcomingTournaments(20);
-                
-                if (result.success && result.tournaments.length > 0) {
-                    realTournamentData = result.tournaments;
-                    console.log(`✅ Loaded ${realTournamentData.length} tournaments from database`);
-                    
-                    // Convert to display format
-                    processTournamentData();
-                    renderTournamentsFromDatabase();
-                    showMainContent();
-                } else {
-                    console.warn('⚠️ No tournaments found in database, creating demo data');
-                    await createDemoTournamentIfNeeded();
-                }
-                
-            } catch (error) {
-                console.error('❌ Error loading tournaments:', error);
-                showErrorState(error.message);
-            }
-            
-            isLoading = false;
+// Load tournaments from database with enhanced wallet service
+async function loadTournaments() {
+    if (isLoading) return;
+    
+    isLoading = true;
+    showLoadingState();
+    
+    try {
+        console.log('🎮 Loading tournaments with enhanced wallet service and GlobalWalletManager...');
+        
+        // Check if API is available
+        if (!window.walletWarsAPI) {
+            throw new Error('WalletWars API not available');
         }
+        
+        // Test database connection first
+        const connected = await window.walletWarsAPI.testConnection();
+        if (!connected) {
+            throw new Error('Database connection failed');
+        }
+        
+        // Check enhanced wallet service status
+        if (window.enhancedWalletService) {
+            console.log('🚀 Enhanced wallet service detected');
+            try {
+                const walletStatus = await window.enhancedWalletService.getServiceStatus();
+                console.log(`💰 Wallet service status: ${walletStatus.provider} - ${walletStatus.online ? 'Online' : 'Offline'}`);
+                
+                // Check if Helius API key is configured
+                if (window.enhancedWalletService.isApiKeyConfigured && window.enhancedWalletService.isApiKeyConfigured()) {
+                    console.log('✅ Helius API key configured');
+                }
+            } catch (walletError) {
+                console.warn('⚠️ Wallet service status check failed:', walletError);
+            }
+        } else {
+            console.log('📡 Enhanced wallet service not detected, using fallback');
+        }
+        
+        // Check GlobalWalletManager status
+        if (window.globalWalletManager) {
+            const globalStatus = window.getWalletStatus();
+            console.log(`🔗 GlobalWalletManager status: ${globalStatus.isConnected ? 'Connected' : 'Disconnected'}`);
+            if (globalStatus.isConnected) {
+                console.log(`👑 Connected champion: ${globalStatus.championName}`);
+            }
+        }
+        
+        // Check Hybrid Snapshot System
+        checkHybridSnapshotSystem();
+        
+        // Load upcoming tournaments - FIXED: Properly check for scheduled/registering tournaments
+        const result = await window.walletWarsAPI.getUpcomingTournaments(50);
+        
+        if (result.success) {
+            // Filter for tournaments that are actually upcoming (not ended/complete)
+            const upcomingTournaments = result.tournaments.filter(t => 
+                t.status === 'scheduled' || 
+                t.status === 'registering' || 
+                t.status === 'pending_start' ||
+                t.status === 'active'
+            );
+            
+            if (upcomingTournaments.length > 0) {
+                realTournamentData = upcomingTournaments;
+                console.log(`✅ Loaded ${realTournamentData.length} active/upcoming tournaments from database`);
+                
+                // Convert to display format
+                processTournamentData();
+                renderTournamentsFromDatabase();
+                showMainContent();
+            } else {
+                console.log('📋 No active tournaments found, showing empty state');
+                realTournamentData = [];
+                renderTournamentsFromDatabase();
+                showMainContent();
+            }
+        } else {
+            console.error('❌ Failed to load tournaments:', result.error);
+            showErrorState(result.error || 'Failed to load tournaments');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error loading tournaments:', error);
+        showErrorState(error.message);
+    }
+    
+    isLoading = false;
+}
 
         // Process tournament data for display
         function processTournamentData() {
