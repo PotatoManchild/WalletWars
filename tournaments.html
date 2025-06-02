@@ -41,127 +41,6 @@
             background-clip: text;
         }
 
-        function filterByStatus(status) {
-            currentFilter.status = status;
-            updateFilterButtons('.filter-group:nth-child(4) .filter-btn', status);
-            applyAllFilters();
-        }
-
-        function updateFilterButtons(selector, value) {
-            const buttons = document.querySelectorAll(selector);
-            buttons.forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.toLowerCase().includes(value) || 
-                    (value === 'all' && btn.textContent.toLowerCase() === 'all')) {
-                    btn.classList.add('active');
-                }
-            });
-        }
-
-        function applyAllFilters() {
-            const cards = document.querySelectorAll('.tournament-card');
-            
-            cards.forEach(card => {
-                let show = true;
-                
-                // Type filter
-                if (currentFilter.type !== 'all' && !card.classList.contains('show-' + currentFilter.type)) {
-                    show = false;
-                }
-                
-                // Trading style filter
-                if (currentFilter.tradingStyle !== 'all' && !card.classList.contains('show-' + currentFilter.tradingStyle)) {
-                    show = false;
-                }
-                
-                // Fee filter
-                if (currentFilter.fee !== 'all' && !card.classList.contains('show-' + currentFilter.fee)) {
-                    show = false;
-                }
-                
-                // Status filter
-                if (currentFilter.status !== 'all' && !card.classList.contains('show-' + currentFilter.status)) {
-                    show = false;
-                }
-                
-                card.style.display = show ? 'block' : 'none';
-            });
-        }
-
-        // ========================================
-        // ENHANCED INITIALIZATION WITH GLOBAL WALLET MANAGER
-        // ========================================
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize mobile navigation
-            initializeMobileNavigation();
-            handleWindowResize();
-            
-            console.log('🎮 WalletWars Tournaments page loading with GlobalWalletManager and Hybrid Snapshots...');
-            
-            // Check for GlobalWalletManager connection immediately
-            const hasConnection = checkGlobalWalletConnection();
-            if (hasConnection) {
-                console.log('✅ GlobalWalletManager connection restored on tournaments page');
-            }
-            
-            // Enhanced API loading with better timeout handling
-            let initAttempts = 0;
-            const maxAttempts = 15; // Increased timeout
-            
-            function tryLoadTournaments() {
-                initAttempts++;
-                console.log(`⏳ Checking APIs... (${initAttempts}/${maxAttempts})`);
-                
-                // Check for required APIs
-                const hasWalletWarsAPI = !!window.walletWarsAPI;
-                const hasGlobalWalletManager = !!window.globalWalletManager;
-                const hasWalletService = !!(window.enhancedWalletService || window.solscanService);
-                const hasWeb3 = !!window.solanaWeb3;
-                const hasSnapshotManager = !!window.tournamentSnapshotManager;
-                const hasAutomation = !!window.tournamentAutomation;
-                
-                console.log(`📊 API Status: WalletWarsAPI=${hasWalletWarsAPI}, GlobalWalletManager=${hasGlobalWalletManager}, WalletService=${hasWalletService}, Web3=${hasWeb3}, SnapshotManager=${hasSnapshotManager}, Automation=${hasAutomation}`);
-                
-                if (hasWalletWarsAPI && hasGlobalWalletManager && hasWeb3) {
-                    console.log('✅ Core APIs ready, loading tournaments...');
-                    
-                    // Give wallet service a moment to initialize
-                    setTimeout(() => {
-                        loadTournaments();
-                    }, 1000);
-                    
-                } else if (initAttempts < maxAttempts) {
-                    setTimeout(tryLoadTournaments, 1000);
-                } else {
-                    console.warn('⚠️ APIs not ready after timeout, attempting to load anyway...');
-                    
-                    // Fallback: try to load tournaments even if some services aren't ready
-                    if (hasWalletWarsAPI) {
-                        loadTournaments();
-                    } else {
-                        showSetupInstructions();
-                    }
-                }
-            }
-            
-            // Start the loading process
-            tryLoadTournaments();
-            
-            // Refresh tournament data every 30 seconds
-            setInterval(function() {
-                if (!isLoading && window.walletWarsAPI) {
-                    console.log('🔄 Auto-refreshing tournament data...');
-                    loadTournaments();
-                }
-            }, 30000);
-        });
-
-        console.log('✅ WalletWars Tournaments page with GlobalWalletManager and Hybrid Snapshots integration loaded!');
-    </script>
-</body>
-</html>
-
         /* Loading State */
         .loading-container {
             display: flex;
@@ -1051,6 +930,24 @@
     
     <script>
         // ========================================
+        // GLOBAL VARIABLES (FIXED SCOPE)
+        // ========================================
+        var tournamentData = {};
+        var realTournamentData = [];
+        var championData = {
+            championId: null,
+            championName: null,
+            isConnected: false
+        };
+        var isLoading = false;
+        var currentFilter = {
+            type: 'all',
+            tradingStyle: 'all',
+            fee: 'all',
+            status: 'all'
+        };
+
+        // ========================================
         // GLOBAL WALLET MANAGER INTEGRATION
         // ========================================
 
@@ -1165,355 +1062,245 @@
         }
 
         // ========================================
-        // TOURNAMENT DATA AND STATE
-        // ========================================
-
-        // Global tournament data - loaded from database
-        var tournamentData = {};
-        var realTournamentData = [];
-        var championData = {
-            championId: null,
-            championName: null,
-            isConnected: false
-        };
-        var isLoading = false;
-        var currentFilter = {
-            type: 'all',
-            tradingStyle: 'all',
-            fee: 'all',
-            status: 'all'
-        };
-
-        // ========================================
         // TOURNAMENT LOADING WITH GLOBAL WALLET MANAGER
         // ========================================
 
-// Load tournaments from database with enhanced wallet service
-async function loadTournaments() {
-    if (isLoading) return;
-    
-    isLoading = true;
-    showLoadingState();
-    
-    try {
-        console.log('🎮 Loading tournaments with enhanced wallet service and GlobalWalletManager...');
-        
-        // Check if API is available
-        if (!window.walletWarsAPI) {
-            throw new Error('WalletWars API not available');
-        }
-        
-        // Test database connection first
-        const connected = await window.walletWarsAPI.testConnection();
-        if (!connected) {
-            throw new Error('Database connection failed');
-        }
-        
-        // Check enhanced wallet service status
-        if (window.enhancedWalletService) {
-            console.log('🚀 Enhanced wallet service detected');
+        // Load tournaments from database with enhanced wallet service
+        async function loadTournaments() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            showLoadingState();
+            
             try {
-                const walletStatus = await window.enhancedWalletService.getServiceStatus();
-                console.log(`💰 Wallet service status: ${walletStatus.provider} - ${walletStatus.online ? 'Online' : 'Offline'}`);
+                console.log('🎮 Loading tournaments with enhanced wallet service and GlobalWalletManager...');
                 
-                // Check if Helius API key is configured
-                if (window.enhancedWalletService.isApiKeyConfigured && window.enhancedWalletService.isApiKeyConfigured()) {
-                    console.log('✅ Helius API key configured');
+                // Check if API is available
+                if (!window.walletWarsAPI) {
+                    throw new Error('WalletWars API not available');
                 }
-            } catch (walletError) {
-                console.warn('⚠️ Wallet service status check failed:', walletError);
-            }
-        } else {
-            console.log('📡 Enhanced wallet service not detected, using fallback');
-        }
-        
-        // Check GlobalWalletManager status
-        if (window.globalWalletManager) {
-            const globalStatus = window.getWalletStatus();
-            console.log(`🔗 GlobalWalletManager status: ${globalStatus.isConnected ? 'Connected' : 'Disconnected'}`);
-            if (globalStatus.isConnected) {
-                console.log(`👑 Connected champion: ${globalStatus.championName}`);
-            }
-        }
-        
-        // Check Hybrid Snapshot System
-        checkHybridSnapshotSystem();
-        
-        // Load upcoming tournaments - FIXED: Properly check for scheduled/registering tournaments
-        const result = await window.walletWarsAPI.getUpcomingTournaments(50);
-        
-        if (result.success) {
-            // Filter for tournaments that are actually upcoming (not ended/complete)
-            const upcomingTournaments = result.tournaments.filter(t => 
-                t.status === 'scheduled' || 
-                t.status === 'registering' || 
-                t.status === 'pending_start' ||
-                t.status === 'active'
-            );
-            
-            if (upcomingTournaments.length > 0) {
-                realTournamentData = upcomingTournaments;
-                console.log(`✅ Loaded ${realTournamentData.length} active/upcoming tournaments from database`);
                 
-                // Convert to display format
-                processTournamentData();
-                renderTournamentsFromDatabase();
-                showMainContent();
-            } else {
-                console.log('📋 No active tournaments found, showing empty state');
-                realTournamentData = [];
-                renderTournamentsFromDatabase();
-                showMainContent();
+                // Test database connection first
+                const connected = await window.walletWarsAPI.testConnection();
+                if (!connected) {
+                    throw new Error('Database connection failed');
+                }
+                
+                // Check enhanced wallet service status
+                if (window.enhancedWalletService) {
+                    console.log('🚀 Enhanced wallet service detected');
+                    try {
+                        const walletStatus = await window.enhancedWalletService.getServiceStatus();
+                        console.log(`💰 Wallet service status: ${walletStatus.provider} - ${walletStatus.online ? 'Online' : 'Offline'}`);
+                        
+                        // Check if Helius API key is configured
+                        if (window.enhancedWalletService.isApiKeyConfigured && window.enhancedWalletService.isApiKeyConfigured()) {
+                            console.log('✅ Helius API key configured');
+                        }
+                    } catch (walletError) {
+                        console.warn('⚠️ Wallet service status check failed:', walletError);
+                    }
+                } else {
+                    console.log('📡 Enhanced wallet service not detected, using fallback');
+                }
+                
+                // Check GlobalWalletManager status
+                if (window.globalWalletManager) {
+                    const globalStatus = window.getWalletStatus();
+                    console.log(`🔗 GlobalWalletManager status: ${globalStatus.isConnected ? 'Connected' : 'Disconnected'}`);
+                    if (globalStatus.isConnected) {
+                        console.log(`👑 Connected champion: ${globalStatus.championName}`);
+                    }
+                }
+                
+                // Check Hybrid Snapshot System
+                checkHybridSnapshotSystem();
+                
+                // Load upcoming tournaments - FIXED: Properly check for scheduled/registering tournaments
+                const result = await window.walletWarsAPI.getUpcomingTournaments(50);
+                
+                if (result.success) {
+                    // Filter for tournaments that are actually upcoming (not ended/complete)
+                    const upcomingTournaments = result.tournaments.filter(t => 
+                        t.status === 'scheduled' || 
+                        t.status === 'registering' || 
+                        t.status === 'pending_start' ||
+                        t.status === 'active'
+                    );
+                    
+                    if (upcomingTournaments.length > 0) {
+                        realTournamentData = upcomingTournaments;
+                        console.log(`✅ Loaded ${realTournamentData.length} active/upcoming tournaments from database`);
+                        
+                        // Convert to display format
+                        processTournamentData();
+                        renderTournamentsFromDatabase();
+                        showMainContent();
+                    } else {
+                        console.log('📋 No active tournaments found, showing empty state');
+                        realTournamentData = [];
+                        renderTournamentsFromDatabase();
+                        showMainContent();
+                    }
+                } else {
+                    console.error('❌ Failed to load tournaments:', result.error);
+                    showErrorState(result.error || 'Failed to load tournaments');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading tournaments:', error);
+                showErrorState(error.message);
             }
-        } else {
-            console.error('❌ Failed to load tournaments:', result.error);
-            showErrorState(result.error || 'Failed to load tournaments');
+            
+            isLoading = false;
         }
-        
-    } catch (error) {
-        console.error('❌ Error loading tournaments:', error);
-        showErrorState(error.message);
-    }
-    
-    isLoading = false;
-}
 
-     // Process tournament data for display
-function processTournamentData() {
-    tournamentData = {};
-    
-    if (!realTournamentData || realTournamentData.length === 0) {
-        console.log('⚠️ No tournament data to process');
-        return;
-    }
-    
-    realTournamentData.forEach((tournament, index) => {
-        // Handle tournaments with missing templates
-        const template = tournament.tournament_templates || {
-            name: tournament.tournament_name || 'Tournament',
-            tournament_type: 'weekly',
-            trading_style: 'pure_wallet',
-            entry_fee: 0.01,
-            max_participants: 100,
-            prize_pool_percentage: 85
-        };
-        
-        const id = tournament.id || index + 1;
-        
-        // Calculate derived values
-        const currentTime = new Date();
-        const startTime = new Date(tournament.start_time);
-        const registrationOpens = new Date(tournament.registration_opens || tournament.registration_opens_at || tournament.created_at);
-        const registrationCloses = new Date(tournament.registration_closes || tournament.registration_closes_at || tournament.start_time);
-        
-        // Determine actual status based on times
-        let actualStatus = tournament.status;
-        if (actualStatus === 'scheduled' || actualStatus === 'upcoming') {
-            if (currentTime >= registrationOpens && currentTime < registrationCloses) {
-                actualStatus = 'registering';
+        // Process tournament data for display
+        function processTournamentData() {
+            tournamentData = {};
+            
+            if (!realTournamentData || realTournamentData.length === 0) {
+                console.log('⚠️ No tournament data to process');
+                return;
             }
+            
+            realTournamentData.forEach((tournament, index) => {
+                // Handle tournaments with missing templates
+                const template = tournament.tournament_templates || {
+                    name: tournament.tournament_name || 'Tournament',
+                    tournament_type: 'weekly',
+                    trading_style: 'pure_wallet',
+                    entry_fee: 0.01,
+                    max_participants: 100,
+                    prize_pool_percentage: 85
+                };
+                
+                const id = tournament.id || index + 1;
+                
+                // Calculate derived values
+                const currentTime = new Date();
+                const startTime = new Date(tournament.start_time);
+                const registrationOpens = new Date(tournament.registration_opens || tournament.registration_opens_at || tournament.created_at);
+                const registrationCloses = new Date(tournament.registration_closes || tournament.registration_closes_at || tournament.start_time);
+                
+                // Determine actual status based on times
+                let actualStatus = tournament.status;
+                if (actualStatus === 'scheduled' || actualStatus === 'upcoming') {
+                    if (currentTime >= registrationOpens && currentTime < registrationCloses) {
+                        actualStatus = 'registering';
+                    }
+                }
+                
+                tournamentData[id] = {
+                    id: tournament.id,
+                    templateId: tournament.template_id,
+                    type: template.tournament_type || 'weekly',
+                    registered: tournament.participant_count || 0,
+                    maxPlayers: template.max_participants || 100,
+                    entryFee: parseFloat(template.entry_fee || 0.01),
+                    prizePool: parseFloat(tournament.total_prize_pool || 0),
+                    duration: template.tournament_type === 'monthly' ? '30 days' : '7 days',
+                    title: template.name || tournament.tournament_name || 'Unnamed Tournament',
+                    tradingStyle: template.trading_style || 'pure_wallet',
+                    startDay: template.start_day || 'variable',
+                    status: actualStatus,
+                    startTime: tournament.start_time,
+                    endTime: tournament.end_time,
+                    registrationOpens: tournament.registration_opens || tournament.registration_opens_at,
+                    registrationCloses: tournament.registration_closes || tournament.registration_closes_at,
+                    bracket: getBracketFromEntryFee(template.entry_fee || 0.01),
+                    minParticipants: tournament.min_participants || 10
+                };
+            });
+            
+            console.log(`✅ Processed ${Object.keys(tournamentData).length} tournaments`);
         }
-        
-        tournamentData[id] = {
-            id: tournament.id,
-            templateId: tournament.template_id,
-            type: template.tournament_type || 'weekly',
-            registered: tournament.participant_count || 0,
-            maxPlayers: template.max_participants || 100,
-            entryFee: parseFloat(template.entry_fee || 0.01),
-            prizePool: parseFloat(tournament.total_prize_pool || 0),
-            duration: template.tournament_type === 'monthly' ? '30 days' : '7 days',
-            title: template.name || tournament.tournament_name || 'Unnamed Tournament',
-            tradingStyle: template.trading_style || 'pure_wallet',
-            startDay: template.start_day || 'variable',
-            status: actualStatus,
-            startTime: tournament.start_time,
-            endTime: tournament.end_time,
-            registrationOpens: tournament.registration_opens || tournament.registration_opens_at,
-            registrationCloses: tournament.registration_closes || tournament.registration_closes_at,
-            bracket: getBracketFromEntryFee(template.entry_fee || 0.01),
-            minParticipants: tournament.min_participants || 10
-        };
-    });
-    
-    console.log(`✅ Processed ${Object.keys(tournamentData).length} tournaments`);
-}
 
-// Also update createTournamentCardFromData to handle missing templates:
-function createTournamentCardFromData(tournament, displayId) {
-    // Handle missing template
-    const template = tournament.tournament_templates || {
-        name: tournament.tournament_name || 'Tournament',
-        tournament_type: 'weekly',
-        trading_style: 'pure_wallet',
-        entry_fee: 0.01,
-        max_participants: 100,
-        start_day: 'variable'
-    };
-    
-    const card = document.createElement('div');
-    
-    // Determine CSS classes for filtering
-    const typeClass = `show-${template.tournament_type}`;
-    const feeClass = getFeeClass(template.entry_fee);
-    const prizeClass = getPrizeClass(tournament.total_prize_pool);
-    const bracketClass = getBracketFromEntryFee(template.entry_fee);
-    const statusClass = `show-${tournament.status}`;
-    const tradingStyleClass = `show-${template.trading_style}`;
-    
-    card.className = `tournament-card show-all ${typeClass} ${feeClass} ${prizeClass} ${bracketClass} ${statusClass} ${tradingStyleClass}`;
-    card.onclick = () => showTournamentDetails(displayId);
-    
-    // Get status display
-    const statusInfo = getTournamentStatusInfo(tournament);
-    
-    // Check if hybrid system is active
-    const hybridActive = window.tournamentSnapshotManager ? ' • Hybrid Snapshots Active' : '';
-    
-    card.innerHTML = `
-        <div class="card-front">
-            <div class="tournament-header-compact">
-                <div>
-                    <h3 class="tournament-title">${template.name || tournament.tournament_name || 'Tournament'}</h3>
-                    <div class="tournament-subtitle">
-                        <span class="bracket-badge bracket-${bracketClass}">${capitalizeFirst(bracketClass)}</span>
-                        <span class="trading-badge ${template.trading_style}">
-                            ${template.trading_style === 'pure_wallet' ? '📊 Pure Wallet' : '⚡ Open Trading'}
-                        </span>
-                        <span class="schedule-badge">
-                            ${new Date(tournament.start_time).toLocaleDateString()}
-                        </span>
+        // Render tournaments from database data
+        function renderTournamentsFromDatabase() {
+            console.log('🎨 Starting renderTournamentsFromDatabase...');
+            
+            const grid = document.getElementById('tournamentsGrid');
+            if (!grid) {
+                console.error('❌ Tournament grid element not found!');
+                return;
+            }
+            
+            // Clear existing tournaments
+            grid.innerHTML = '';
+            console.log(`📊 realTournamentData length: ${realTournamentData ? realTournamentData.length : 'null'}`);
+            
+            // Check if we have real tournament data
+            if (!realTournamentData || realTournamentData.length === 0) {
+                console.log('⚠️ No tournament data to render');
+                grid.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #9ca3af; grid-column: 1 / -1;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🎮</div>
+                        <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">No tournaments available</div>
+                        <div style="font-size: 0.9rem;">Check back later or refresh the page</div>
+                        <button onclick="loadTournaments()" style="
+                            margin-top: 1rem;
+                            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+                            border: none;
+                            color: white;
+                            padding: 0.75rem 1.5rem;
+                            border-radius: 0.75rem;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">Refresh Tournaments</button>
                     </div>
-                </div>
-                <div class="status-badge ${statusInfo.class}">${statusInfo.text}</div>
-            </div>
-            
-            <div class="key-info">
-                <div class="key-info-item">
-                    <div class="key-info-label">Entry</div>
-                    <div class="key-info-value">${template.entry_fee || '0.01'} SOL</div>
-                </div>
-                <div class="key-info-item">
-                    <div class="key-info-label">Prize Pool</div>
-                    <div class="key-info-value">${parseFloat(tournament.total_prize_pool || 0).toFixed(2)} SOL</div>
-                </div>
-                <div class="key-info-item">
-                    <div class="key-info-label">Players</div>
-                    <div class="key-info-value">${tournament.participant_count || 0}/${template.max_participants || 100}</div>
-                </div>
-                <div class="key-info-item">
-                    <div class="key-info-label">Duration</div>
-                    <div class="key-info-value">${template.tournament_type === 'weekly' ? '7 days' : '30 days'}</div>
-                </div>
-            </div>
-            
-            <div class="tap-hint">
-                Tap for details & registration${hybridActive}
-            </div>
-        </div>
-    `;
-    
-    return card;
-}
-
-        // Helper function to determine bracket from entry fee
-        function getBracketFromEntryFee(entryFee) {
-            const fee = parseFloat(entryFee);
-            if (fee <= 0.01) return 'rookie';
-            if (fee <= 0.05) return 'warrior'; 
-            if (fee <= 0.1) return 'elite';
-            return 'master';
-        }
-
- // Render tournaments from database data
-function renderTournamentsFromDatabase() {
-    console.log('🎨 Starting renderTournamentsFromDatabase...');
-    
-    const grid = document.getElementById('tournamentsGrid');
-    if (!grid) {
-        console.error('❌ Tournament grid element not found!');
-        return;
-    }
-    
-    // Clear existing tournaments
-    grid.innerHTML = '';
-    console.log(`📊 realTournamentData length: ${realTournamentData ? realTournamentData.length : 'null'}`);
-    
-    // Check if we have real tournament data
-    if (!realTournamentData || realTournamentData.length === 0) {
-        console.log('⚠️ No tournament data to render');
-        grid.innerHTML = `
-            <div style="text-align: center; padding: 3rem; color: #9ca3af; grid-column: 1 / -1;">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">🎮</div>
-                <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">No tournaments available</div>
-                <div style="font-size: 0.9rem;">Check back later or refresh the page</div>
-                <button onclick="loadTournaments()" style="
-                    margin-top: 1rem;
-                    background: linear-gradient(135deg, #8b5cf6, #ec4899);
-                    border: none;
-                    color: white;
-                    padding: 0.75rem 1.5rem;
-                    border-radius: 0.75rem;
-                    font-weight: 600;
-                    cursor: pointer;
-                ">Refresh Tournaments</button>
-            </div>
-        `;
-        return;
-    }
-    
-    // Process and display each tournament
-    let renderedCount = 0;
-    realTournamentData.forEach((tournament, index) => {
-        console.log(`🎮 Processing tournament ${index}:`, tournament);
-        
-        // Skip if tournament is missing
-        if (!tournament) {
-            console.warn(`⚠️ Skipping null tournament at index ${index}`);
-            return;
-        }
-        
-        // Log template status
-        if (!tournament.tournament_templates) {
-            console.warn(`⚠️ Tournament ${tournament.id} has no template!`);
-        }
-        
-        try {
-            const card = createTournamentCardFromData(tournament, index + 1);
-            if (card) {
-                grid.appendChild(card);
-                renderedCount++;
-                console.log(`✅ Rendered tournament ${index + 1}`);
-            } else {
-                console.error(`❌ Failed to create card for tournament ${index}`);
+                `;
+                return;
             }
-        } catch (error) {
-            console.error(`❌ Error rendering tournament ${index}:`, error);
+            
+            // Process and display each tournament
+            let renderedCount = 0;
+            realTournamentData.forEach((tournament, index) => {
+                console.log(`🎮 Processing tournament ${index}:`, tournament);
+                
+                // Skip if tournament is missing
+                if (!tournament) {
+                    console.warn(`⚠️ Skipping null tournament at index ${index}`);
+                    return;
+                }
+                
+                // Log template status
+                if (!tournament.tournament_templates) {
+                    console.warn(`⚠️ Tournament ${tournament.id} has no template!`);
+                }
+                
+                try {
+                    const card = createTournamentCardFromData(tournament, index + 1);
+                    if (card) {
+                        grid.appendChild(card);
+                        renderedCount++;
+                        console.log(`✅ Rendered tournament ${index + 1}`);
+                    } else {
+                        console.error(`❌ Failed to create card for tournament ${index}`);
+                    }
+                } catch (error) {
+                    console.error(`❌ Error rendering tournament ${index}:`, error);
+                }
+            });
+            
+            console.log(`✅ Rendered ${renderedCount} tournament cards`);
+            
+            // Apply current filters
+            applyAllFilters();
         }
-    });
-    
-    console.log(`✅ Rendered ${renderedCount} tournament cards`);
-    
-    // Apply current filters
-    applyAllFilters();
-}
-
-// Also update the loadTournaments success case to log the data:
-// Find this part in loadTournaments and update it:
-if (upcomingTournaments.length > 0) {
-    realTournamentData = upcomingTournaments;
-    console.log(`✅ Loaded ${realTournamentData.length} active/upcoming tournaments`);
-    console.log('📊 Tournament data:', realTournamentData);
-    
-    // Convert to display format
-    processTournamentData();
-    renderTournamentsFromDatabase();
-    showMainContent();
-}
 
         // Create tournament card from database data
         function createTournamentCardFromData(tournament, displayId) {
-            const template = tournament.tournament_templates;
+            // Handle missing template
+            const template = tournament.tournament_templates || {
+                name: tournament.tournament_name || 'Tournament',
+                tournament_type: 'weekly',
+                trading_style: 'pure_wallet',
+                entry_fee: 0.01,
+                max_participants: 100,
+                start_day: 'variable'
+            };
+            
             const card = document.createElement('div');
             
             // Determine CSS classes for filtering
@@ -1537,14 +1324,14 @@ if (upcomingTournaments.length > 0) {
                 <div class="card-front">
                     <div class="tournament-header-compact">
                         <div>
-                            <h3 class="tournament-title">${template.name}</h3>
+                            <h3 class="tournament-title">${template.name || tournament.tournament_name || 'Tournament'}</h3>
                             <div class="tournament-subtitle">
                                 <span class="bracket-badge bracket-${bracketClass}">${capitalizeFirst(bracketClass)}</span>
                                 <span class="trading-badge ${template.trading_style}">
                                     ${template.trading_style === 'pure_wallet' ? '📊 Pure Wallet' : '⚡ Open Trading'}
                                 </span>
-                                <span class="schedule-badge ${template.start_day}">
-                                    ${capitalizeFirst(template.start_day)} Start
+                                <span class="schedule-badge">
+                                    ${new Date(tournament.start_time).toLocaleDateString()}
                                 </span>
                             </div>
                         </div>
@@ -1554,7 +1341,7 @@ if (upcomingTournaments.length > 0) {
                     <div class="key-info">
                         <div class="key-info-item">
                             <div class="key-info-label">Entry</div>
-                            <div class="key-info-value">${template.entry_fee} SOL</div>
+                            <div class="key-info-value">${template.entry_fee || '0.01'} SOL</div>
                         </div>
                         <div class="key-info-item">
                             <div class="key-info-label">Prize Pool</div>
@@ -1562,7 +1349,7 @@ if (upcomingTournaments.length > 0) {
                         </div>
                         <div class="key-info-item">
                             <div class="key-info-label">Players</div>
-                            <div class="key-info-value">${tournament.participant_count}/${template.max_participants}</div>
+                            <div class="key-info-value">${tournament.participant_count || 0}/${template.max_participants || 100}</div>
                         </div>
                         <div class="key-info-item">
                             <div class="key-info-label">Duration</div>
@@ -1577,6 +1364,15 @@ if (upcomingTournaments.length > 0) {
             `;
             
             return card;
+        }
+
+        // Helper function to determine bracket from entry fee
+        function getBracketFromEntryFee(entryFee) {
+            const fee = parseFloat(entryFee);
+            if (fee <= 0.01) return 'rookie';
+            if (fee <= 0.05) return 'warrior'; 
+            if (fee <= 0.1) return 'elite';
+            return 'master';
         }
 
         // Get tournament status info with better time handling
@@ -1899,3 +1695,125 @@ if (upcomingTournaments.length > 0) {
             currentFilter.fee = fee;
             updateFilterButtons('.filter-group:nth-child(3) .filter-btn', fee);
             applyAllFilters();
+        }
+
+        function filterByStatus(status) {
+            currentFilter.status = status;
+            updateFilterButtons('.filter-group:nth-child(4) .filter-btn', status);
+            applyAllFilters();
+        }
+
+        function updateFilterButtons(selector, value) {
+            const buttons = document.querySelectorAll(selector);
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(value) || 
+                    (value === 'all' && btn.textContent.toLowerCase() === 'all')) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function applyAllFilters() {
+            const cards = document.querySelectorAll('.tournament-card');
+            
+            cards.forEach(card => {
+                let show = true;
+                
+                // Type filter
+                if (currentFilter.type !== 'all' && !card.classList.contains('show-' + currentFilter.type)) {
+                    show = false;
+                }
+                
+                // Trading style filter
+                if (currentFilter.tradingStyle !== 'all' && !card.classList.contains('show-' + currentFilter.tradingStyle)) {
+                    show = false;
+                }
+                
+                // Fee filter
+                if (currentFilter.fee !== 'all' && !card.classList.contains('show-' + currentFilter.fee)) {
+                    show = false;
+                }
+                
+                // Status filter
+                if (currentFilter.status !== 'all' && !card.classList.contains('show-' + currentFilter.status)) {
+                    show = false;
+                }
+                
+                card.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        // ========================================
+        // ENHANCED INITIALIZATION WITH GLOBAL WALLET MANAGER
+        // ========================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize mobile navigation
+            initializeMobileNavigation();
+            handleWindowResize();
+            
+            console.log('🎮 WalletWars Tournaments page loading with GlobalWalletManager and Hybrid Snapshots...');
+            
+            // Check for GlobalWalletManager connection immediately
+            const hasConnection = checkGlobalWalletConnection();
+            if (hasConnection) {
+                console.log('✅ GlobalWalletManager connection restored on tournaments page');
+            }
+            
+            // Enhanced API loading with better timeout handling
+            let initAttempts = 0;
+            const maxAttempts = 15; // Increased timeout
+            
+            function tryLoadTournaments() {
+                initAttempts++;
+                console.log(`⏳ Checking APIs... (${initAttempts}/${maxAttempts})`);
+                
+                // Check for required APIs
+                const hasWalletWarsAPI = !!window.walletWarsAPI;
+                const hasGlobalWalletManager = !!window.globalWalletManager;
+                const hasWalletService = !!(window.enhancedWalletService || window.solscanService);
+                const hasWeb3 = !!window.solanaWeb3;
+                const hasSnapshotManager = !!window.tournamentSnapshotManager;
+                const hasAutomation = !!window.tournamentAutomation;
+                
+                console.log(`📊 API Status: WalletWarsAPI=${hasWalletWarsAPI}, GlobalWalletManager=${hasGlobalWalletManager}, WalletService=${hasWalletService}, Web3=${hasWeb3}, SnapshotManager=${hasSnapshotManager}, Automation=${hasAutomation}`);
+                
+                if (hasWalletWarsAPI && hasGlobalWalletManager && hasWeb3) {
+                    console.log('✅ Core APIs ready, loading tournaments...');
+                    
+                    // Give wallet service a moment to initialize
+                    setTimeout(() => {
+                        loadTournaments();
+                    }, 1000);
+                    
+                } else if (initAttempts < maxAttempts) {
+                    setTimeout(tryLoadTournaments, 1000);
+                } else {
+                    console.warn('⚠️ APIs not ready after timeout, attempting to load anyway...');
+                    
+                    // Fallback: try to load tournaments even if some services aren't ready
+                    if (hasWalletWarsAPI) {
+                        loadTournaments();
+                    } else {
+                        showSetupInstructions();
+                    }
+                }
+            }
+            
+            // Start the loading process
+            tryLoadTournaments();
+            
+            // Refresh tournament data every 30 seconds
+            setInterval(function() {
+                if (!isLoading && window.walletWarsAPI) {
+                    console.log('🔄 Auto-refreshing tournament data...');
+                    loadTournaments();
+                }
+            }, 30000);
+        });
+
+        console.log('✅ WalletWars Tournaments page with GlobalWalletManager and Hybrid Snapshots integration loaded!');
+    </script>
+</body>
+</html>
