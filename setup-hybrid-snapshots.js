@@ -1,215 +1,446 @@
-// setup-hybrid-snapshots.js - OPTIMIZED EVENT-DRIVEN VERSION
-// Setup script for the optimized hybrid snapshot system
+// setup-hybrid-snapshots.js - SAFE VERSION WITH CIRCUIT BREAKERS
+// This version prevents infinite loops and runaway API calls
 
-console.log('🚀 Initializing Optimized Hybrid Snapshot System...');
+console.log('🛡️ Loading SAFE Hybrid Snapshot Setup with Circuit Breakers...');
 
-async function setupHybridSnapshots() {
-    try {
-        console.log('📋 Optimized Hybrid Snapshot System Setup');
-        console.log('=====================================');
-        
-        // Step 1: Load required scripts
-        console.log('\n1️⃣ Loading required components...');
-        
-        const scriptsToLoad = [
-            { name: 'Tournament Snapshot Manager', check: () => window.tournamentSnapshotManager },
-            { name: 'Tournament Automation', check: () => window.tournamentAutomation },
-            { name: 'Enhanced Wallet Service', check: () => window.enhancedWalletService },
-            { name: 'WalletWars API', check: () => window.walletWarsAPI }
-        ];
-        
-        let allLoaded = true;
-        for (const script of scriptsToLoad) {
-            if (script.check()) {
-                console.log(`✅ ${script.name} loaded`);
+// Global safety controls
+const SETUP_SAFETY = {
+    maxSetupAttempts: 3,
+    maxApiCallsPerMinute: 20,
+    retryDelayMs: 5000,
+    exponentialBackoff: true,
+    autoSetupEnabled: false, // NEVER auto-run setup
+    setupInProgress: false,
+    lastSetupAttempt: null,
+    apiCallsThisMinute: 0,
+    apiCallResetTime: Date.now()
+};
+
+// Circuit breaker for API calls
+class CircuitBreaker {
+    constructor(name, options = {}) {
+        this.name = name;
+        this.failureThreshold = options.failureThreshold || 5;
+        this.resetTimeout = options.resetTimeout || 60000; // 1 minute
+        this.state = 'CLOSED'; // CLOSED, OPEN, HALF_OPEN
+        this.failures = 0;
+        this.lastFailureTime = null;
+        this.successCount = 0;
+    }
+
+    async execute(fn) {
+        if (this.state === 'OPEN') {
+            const now = Date.now();
+            if (now - this.lastFailureTime > this.resetTimeout) {
+                this.state = 'HALF_OPEN';
+                console.log(`🔄 Circuit breaker ${this.name} attempting recovery...`);
             } else {
-                console.log(`❌ ${script.name} not loaded`);
-                allLoaded = false;
+                throw new Error(`Circuit breaker ${this.name} is OPEN - API calls blocked`);
             }
         }
+
+        try {
+            const result = await fn();
+            this.onSuccess();
+            return result;
+        } catch (error) {
+            this.onFailure();
+            throw error;
+        }
+    }
+
+    onSuccess() {
+        this.failures = 0;
+        if (this.state === 'HALF_OPEN') {
+            this.state = 'CLOSED';
+            console.log(`✅ Circuit breaker ${this.name} recovered`);
+        }
+        this.successCount++;
+    }
+
+    onFailure() {
+        this.failures++;
+        this.lastFailureTime = Date.now();
         
-        if (!allLoaded) {
-            throw new Error('Not all required components are loaded');
+        if (this.failures >= this.failureThreshold) {
+            this.state = 'OPEN';
+            console.error(`🚫 Circuit breaker ${this.name} OPENED after ${this.failures} failures`);
+        }
+    }
+
+    getStatus() {
+        return {
+            name: this.name,
+            state: this.state,
+            failures: this.failures,
+            successCount: this.successCount,
+            lastFailureTime: this.lastFailureTime
+        };
+    }
+}
+
+// Create circuit breakers for different services
+const circuitBreakers = {
+    wallet: new CircuitBreaker('WalletService', { failureThreshold: 3, resetTimeout: 30000 }),
+    database: new CircuitBreaker('Database', { failureThreshold: 5, resetTimeout: 60000 }),
+    setup: new CircuitBreaker('Setup', { failureThreshold: 2, resetTimeout: 120000 })
+};
+
+// API call rate limiter
+function checkApiRateLimit() {
+    const now = Date.now();
+    
+    // Reset counter every minute
+    if (now - SETUP_SAFETY.apiCallResetTime > 60000) {
+        SETUP_SAFETY.apiCallsThisMinute = 0;
+        SETUP_SAFETY.apiCallResetTime = now;
+    }
+    
+    if (SETUP_SAFETY.apiCallsThisMinute >= SETUP_SAFETY.maxApiCallsPerMinute) {
+        throw new Error(`API rate limit exceeded: ${SETUP_SAFETY.apiCallsThisMinute}/${SETUP_SAFETY.maxApiCallsPerMinute} calls per minute`);
+    }
+    
+    SETUP_SAFETY.apiCallsThisMinute++;
+}
+
+// Safe wallet service wrapper
+async function safeWalletServiceCall(method, ...args) {
+    checkApiRateLimit();
+    
+    return await circuitBreakers.wallet.execute(async () => {
+        if (!window.enhancedWalletService) {
+            throw new Error('Enhanced wallet service not available');
         }
         
-        // Step 2: Update Helius API key configuration
-        console.log('\n2️⃣ Configuring new Helius API key...');
+        return await window.enhancedWalletService[method](...args);
+    });
+}
+
+// Main setup function with safety controls
+async function setupHybridSnapshots(options = {}) {
+    // Prevent concurrent setup attempts
+    if (SETUP_SAFETY.setupInProgress) {
+        console.warn('⚠️ Setup already in progress, skipping...');
+        return false;
+    }
+    
+    // Check if setup was recently attempted
+    if (SETUP_SAFETY.lastSetupAttempt) {
+        const timeSinceLastAttempt = Date.now() - SETUP_SAFETY.lastSetupAttempt;
+        if (timeSinceLastAttempt < 10000) { // 10 seconds
+            console.warn(`⚠️ Setup attempted ${Math.floor(timeSinceLastAttempt/1000)}s ago, please wait...`);
+            return false;
+        }
+    }
+    
+    SETUP_SAFETY.setupInProgress = true;
+    SETUP_SAFETY.lastSetupAttempt = Date.now();
+    
+    try {
+        return await circuitBreakers.setup.execute(async () => {
+            console.log('📋 SAFE Hybrid Snapshot System Setup');
+            console.log('=====================================');
+            
+            // Step 1: Validate environment
+            console.log('\n1️⃣ Validating environment...');
+            
+            const requiredComponents = [
+                { name: 'Tournament Snapshot Manager', check: () => window.tournamentSnapshotManager },
+                { name: 'Tournament Automation', check: () => window.tournamentAutomation },
+                { name: 'Enhanced Wallet Service', check: () => window.enhancedWalletService },
+                { name: 'WalletWars API', check: () => window.walletWarsAPI }
+            ];
+            
+            for (const component of requiredComponents) {
+                if (!component.check()) {
+                    throw new Error(`Required component missing: ${component.name}`);
+                }
+                console.log(`✅ ${component.name} loaded`);
+            }
+            
+            // Step 2: Configure with new API key (safely)
+            console.log('\n2️⃣ Configuring Helius API key...');
+            
+            if (window.enhancedWalletService.config && window.enhancedWalletService.config.backup) {
+                window.enhancedWalletService.config.backup.rpcUrl = 
+                    'https://mainnet.helius-rpc.com/?api-key=cbfd228c-6be2-4493-ae67-5df7dc20a3e8';
+                console.log('✅ New Helius API key configured');
+            }
+            
+            // Step 3: Test wallet service (with circuit breaker)
+            console.log('\n3️⃣ Testing wallet service safely...');
+            
+            const testWallet = 'So11111111111111111111111111111111111111112';
+            
+            try {
+                const snapshot = await safeWalletServiceCall('getFullWalletSnapshot', testWallet);
+                console.log(`✅ Wallet service working - Test balance: ${snapshot.solBalance} SOL`);
+            } catch (error) {
+                console.error('❌ Wallet service test failed:', error.message);
+                throw new Error('Cannot proceed without working wallet service');
+            }
+            
+            // Step 4: Initialize automation (safely)
+            console.log('\n4️⃣ Initializing safe tournament automation...');
+            
+            await window.tournamentAutomation.initialize();
+            
+            // Override dangerous methods with safe versions
+            const originalSchedule = window.tournamentAutomation.scheduleUpcomingTournaments;
+            window.tournamentAutomation.scheduleUpcomingTournaments = async function() {
+                console.log('🛡️ Using safe tournament scheduling...');
+                checkApiRateLimit();
+                return await originalSchedule.call(this);
+            };
+            
+            console.log('✅ Tournament automation initialized with safety controls');
+            
+            // Step 5: DO NOT auto-schedule tournaments
+            console.log('\n5️⃣ Tournament scheduling available (manual trigger required)');
+            console.log('⚠️ Auto-scheduling is DISABLED for safety');
+            console.log('💡 To schedule tournaments, manually run: scheduleTournamentsSafely()');
+            
+            // Success summary
+            console.log('\n✅ SAFE HYBRID SNAPSHOT SYSTEM READY!');
+            console.log('=====================================');
+            console.log('🛡️ Safety Features Active:');
+            console.log('   • Circuit breakers prevent cascade failures');
+            console.log('   • API rate limiting (20 calls/minute max)');
+            console.log('   • No automatic setup or scheduling');
+            console.log('   • Retry limits with exponential backoff');
+            console.log('   • Concurrent execution prevention');
+            
+            return true;
+        });
         
-        if (window.enhancedWalletService.config && window.enhancedWalletService.config.backup) {
-            // Update with new API key
-            window.enhancedWalletService.config.backup.rpcUrl = 
-                'https://mainnet.helius-rpc.com/?api-key=cbfd228c-6be2-4493-ae67-5df7dc20a3e8';
-            console.log('✅ New Helius API key configured');
+    } catch (error) {
+        console.error('❌ Setup failed:', error.message);
+        return false;
+        
+    } finally {
+        SETUP_SAFETY.setupInProgress = false;
+    }
+}
+
+// Safe tournament scheduling function
+async function scheduleTournamentsSafely() {
+    console.log('🛡️ Attempting to schedule tournaments safely...');
+    
+    try {
+        // Check all circuit breakers
+        const allCircuitsClosed = Object.values(circuitBreakers).every(cb => cb.state !== 'OPEN');
+        if (!allCircuitsClosed) {
+            console.error('❌ Cannot schedule - some circuit breakers are open');
+            showCircuitBreakerStatus();
+            return false;
         }
         
-        // Step 3: Test wallet service with new key
-        console.log('\n3️⃣ Testing wallet service with new API key...');
+        // Check API rate limit
+        if (SETUP_SAFETY.apiCallsThisMinute >= SETUP_SAFETY.maxApiCallsPerMinute - 5) {
+            console.warn('⚠️ Approaching API rate limit, please wait before scheduling');
+            return false;
+        }
         
-        const testWallet = 'So11111111111111111111111111111111111111112';
-        const snapshot = await window.enhancedWalletService.getFullWalletSnapshot(testWallet);
-        console.log(`✅ Wallet service working - Test balance: ${snapshot.solBalance} SOL`);
-        
-        // Step 4: Initialize automation system
-        console.log('\n4️⃣ Initializing event-driven tournament automation...');
-        
-        await window.tournamentAutomation.initialize();
-        console.log('✅ Tournament automation initialized');
-        
-        // Step 5: Schedule existing tournaments
-        console.log('\n5️⃣ Scheduling tournaments for event-driven processing...');
-        
-        await window.tournamentAutomation.scheduleUpcomingTournaments();
-        
-        // Step 6: Summary
-        console.log('\n✅ OPTIMIZED HYBRID SNAPSHOT SYSTEM READY!');
-        console.log('==========================================');
-        console.log('📸 Snapshots will ONLY be taken at:');
-        console.log('   • Tournament start (all participants)');
-        console.log('   • Tournament end (all participants)');
-        console.log('\n💰 API Usage Efficiency:');
-        console.log('   • EXACTLY 2 API calls per participant per tournament');
-        console.log('   • NO continuous monitoring or polling');
-        console.log('   • Event-driven architecture based on tournament times');
-        console.log('\n🔋 API Budget Protection:');
-        console.log('   • Hourly limit: 100 calls (configurable)');
-        console.log('   • Daily limit: 1000 calls (configurable)');
-        console.log('   • Automatic postponement if limits reached');
-        console.log('\n🤖 Automation Features:');
-        console.log('   • Precise tournament state transitions');
-        console.log('   • Scheduled events based on tournament times');
-        console.log('   • No wasteful periodic checking');
-        console.log('   • Automatic prize distribution');
-        
-        // Show current status
-        const status = window.tournamentAutomation.getStatus();
-        console.log('\n📊 Current Status:', status);
+        // Schedule with confirmation
+        const count = await window.tournamentAutomation.scheduleUpcomingTournaments();
+        console.log('✅ Tournaments scheduled successfully');
         
         return true;
         
     } catch (error) {
-        console.error('❌ Setup failed:', error);
+        console.error('❌ Failed to schedule tournaments:', error.message);
         return false;
     }
 }
 
-// Enhanced test functions for development
+// Setup with retry logic and exponential backoff
+async function setupWithRetry(maxAttempts = 3) {
+    let attempts = 0;
+    
+    async function attempt() {
+        attempts++;
+        console.log(`\n🔄 Setup attempt ${attempts}/${maxAttempts}`);
+        
+        try {
+            const result = await setupHybridSnapshots();
+            if (result) {
+                console.log('✅ Setup completed successfully!');
+                return true;
+            } else {
+                throw new Error('Setup returned false');
+            }
+        } catch (error) {
+            console.error(`❌ Attempt ${attempts} failed:`, error.message);
+            
+            if (attempts < maxAttempts) {
+                const delay = SETUP_SAFETY.exponentialBackoff 
+                    ? Math.pow(2, attempts) * SETUP_SAFETY.retryDelayMs 
+                    : SETUP_SAFETY.retryDelayMs;
+                    
+                console.log(`⏳ Waiting ${delay/1000} seconds before retry...`);
+                
+                await new Promise(resolve => setTimeout(resolve, delay));
+                return attempt();
+            } else {
+                console.error('❌ All setup attempts failed');
+                showTroubleshootingGuide();
+                return false;
+            }
+        }
+    }
+    
+    return attempt();
+}
+
+// Circuit breaker status display
+function showCircuitBreakerStatus() {
+    console.log('\n📊 Circuit Breaker Status:');
+    console.log('========================');
+    
+    Object.entries(circuitBreakers).forEach(([name, breaker]) => {
+        const status = breaker.getStatus();
+        const icon = status.state === 'CLOSED' ? '✅' : 
+                    status.state === 'OPEN' ? '🚫' : '🔄';
+        
+        console.log(`${icon} ${status.name}: ${status.state}`);
+        console.log(`   Failures: ${status.failures}, Successes: ${status.successCount}`);
+    });
+}
+
+// Safety status display
+function showSafetyStatus() {
+    console.log('\n🛡️ Safety System Status:');
+    console.log('======================');
+    console.log(`Setup Attempts: ${SETUP_SAFETY.maxSetupAttempts} max`);
+    console.log(`API Calls This Minute: ${SETUP_SAFETY.apiCallsThisMinute}/${SETUP_SAFETY.maxApiCallsPerMinute}`);
+    console.log(`Setup In Progress: ${SETUP_SAFETY.setupInProgress}`);
+    console.log(`Auto-Setup: ${SETUP_SAFETY.autoSetupEnabled ? 'ENABLED ⚠️' : 'DISABLED ✅'}`);
+    
+    showCircuitBreakerStatus();
+}
+
+// Troubleshooting guide
+function showTroubleshootingGuide() {
+    console.log('\n🔧 Troubleshooting Guide:');
+    console.log('=======================');
+    console.log('1. Check your internet connection');
+    console.log('2. Verify Helius API key is valid');
+    console.log('3. Wait 1-2 minutes for rate limits to reset');
+    console.log('4. Try: resetSafetySystem()');
+    console.log('5. Check browser console for specific errors');
+    console.log('6. If issues persist, regenerate your Helius API key');
+}
+
+// Reset safety system
+function resetSafetySystem() {
+    console.log('🔄 Resetting safety system...');
+    
+    // Reset safety controls
+    SETUP_SAFETY.apiCallsThisMinute = 0;
+    SETUP_SAFETY.apiCallResetTime = Date.now();
+    SETUP_SAFETY.setupInProgress = false;
+    SETUP_SAFETY.lastSetupAttempt = null;
+    
+    // Reset circuit breakers
+    Object.values(circuitBreakers).forEach(breaker => {
+        breaker.state = 'CLOSED';
+        breaker.failures = 0;
+        breaker.successCount = 0;
+    });
+    
+    console.log('✅ Safety system reset complete');
+}
+
+// Enhanced test hybrid system with safety
 window.testHybridSystem = {
-    // Manually process a tournament start
+    // Safe manual tournament start
     async startTournament(tournamentId) {
-        console.log(`🎮 Manually starting tournament ${tournamentId}...`);
-        await window.tournamentAutomation.manualStartTournament(tournamentId);
+        try {
+            checkApiRateLimit();
+            console.log(`🎮 Safely starting tournament ${tournamentId}...`);
+            await window.tournamentAutomation.manualStartTournament(tournamentId);
+        } catch (error) {
+            console.error('❌ Failed to start tournament:', error.message);
+        }
     },
     
-    // Manually process a tournament end
+    // Safe manual tournament end
     async endTournament(tournamentId) {
-        console.log(`🎮 Manually ending tournament ${tournamentId}...`);
-        await window.tournamentAutomation.manualEndTournament(tournamentId);
+        try {
+            checkApiRateLimit();
+            console.log(`🎮 Safely ending tournament ${tournamentId}...`);
+            await window.tournamentAutomation.manualEndTournament(tournamentId);
+        } catch (error) {
+            console.error('❌ Failed to end tournament:', error.message);
+        }
     },
     
-    // Test snapshot for a specific wallet
+    // Safe wallet snapshot test
     async testSnapshot(walletAddress) {
-        console.log(`📸 Testing snapshot for ${walletAddress}...`);
-        const snapshot = await window.enhancedWalletService.getFullWalletSnapshot(walletAddress);
-        console.log('Snapshot result:', snapshot);
-        return snapshot;
+        try {
+            console.log(`📸 Safely testing snapshot for ${walletAddress}...`);
+            const snapshot = await safeWalletServiceCall('getFullWalletSnapshot', walletAddress);
+            console.log('Snapshot result:', snapshot);
+            return snapshot;
+        } catch (error) {
+            console.error('❌ Snapshot test failed:', error.message);
+            return null;
+        }
     },
     
-    // Check automation status
+    // System status checks
     checkStatus() {
-        const status = window.tournamentAutomation.getStatus();
-        console.log('🤖 Automation Status:', status);
-        return status;
+        showSafetyStatus();
+        
+        if (window.tournamentAutomation) {
+            const status = window.tournamentAutomation.getStatus();
+            console.log('\n🤖 Automation Status:', status);
+        }
     },
     
-    // View scheduled tournaments
     viewSchedule() {
-        window.tournamentAutomation.showScheduleSummary();
+        if (window.tournamentAutomation) {
+            window.tournamentAutomation.showScheduleSummary();
+        }
     },
     
-    // Clear all schedules (emergency stop)
     emergencyStop() {
         window.tournamentAutomation.clearAllSchedules();
         console.log('🛑 All tournament schedules cleared');
-    },
-    
-    // Reschedule tournaments
-    async reschedule() {
-        console.log('🔄 Rescheduling all tournaments...');
-        window.tournamentAutomation.clearAllSchedules();
-        await window.tournamentAutomation.scheduleUpcomingTournaments();
-        console.log('✅ Tournaments rescheduled');
-    },
-    
-    // Check API usage
-    checkApiUsage() {
-        const status = window.tournamentAutomation.getStatus();
-        console.log('📊 API Usage:', status.apiUsage);
-        return status.apiUsage;
+        resetSafetySystem();
     }
 };
 
-// API Usage Monitor
-window.apiUsageMonitor = {
-    // Get current usage stats
-    getUsage() {
-        if (!window.tournamentAutomation) {
-            console.error('Tournament automation not initialized');
-            return null;
-        }
-        
-        const tracker = window.tournamentAutomation.apiUsageTracker;
-        return {
-            hourly: {
-                used: tracker.hourly,
-                limit: tracker.limits.hourly,
-                percentage: (tracker.hourly / tracker.limits.hourly * 100).toFixed(1) + '%'
-            },
-            daily: {
-                used: tracker.daily,
-                limit: tracker.limits.daily,
-                percentage: (tracker.daily / tracker.limits.daily * 100).toFixed(1) + '%'
-            },
-            lastReset: new Date(tracker.lastReset).toLocaleString()
-        };
+// API monitor with safety features
+window.apiMonitor = {
+    showStatus() {
+        showSafetyStatus();
     },
     
-    // Update API limits (based on your Helius plan)
-    updateLimits(hourly, daily) {
-        if (!window.tournamentAutomation) {
-            console.error('Tournament automation not initialized');
-            return;
-        }
-        
-        window.tournamentAutomation.apiUsageTracker.limits.hourly = hourly;
-        window.tournamentAutomation.apiUsageTracker.limits.daily = daily;
-        console.log(`✅ API limits updated - Hourly: ${hourly}, Daily: ${daily}`);
+    reset() {
+        resetSafetySystem();
     },
     
-    // Show usage report
-    showReport() {
-        const usage = this.getUsage();
-        if (!usage) return;
-        
-        console.log('📊 API Usage Report');
-        console.log('==================');
-        console.log(`Hourly: ${usage.hourly.used}/${usage.hourly.limit} (${usage.hourly.percentage})`);
-        console.log(`Daily: ${usage.daily.used}/${usage.daily.limit} (${usage.daily.percentage})`);
-        console.log(`Last Reset: ${usage.lastReset}`);
+    setLimits(perMinute) {
+        SETUP_SAFETY.maxApiCallsPerMinute = perMinute;
+        console.log(`✅ API limit set to ${perMinute} calls per minute`);
     }
 };
 
-// Auto-run setup if all dependencies are loaded
-let autoRunAttempted = false;
-setTimeout(() => {
-    if (!autoRunAttempted && window.tournamentSnapshotManager && window.tournamentAutomation) {
-        autoRunAttempted = true;
-        console.log('🔄 Dependencies detected, optimized hybrid snapshot setup ready');
-        console.log('💡 Run setupHybridSnapshots() when ready to initialize');
-        console.log('🔑 New Helius API key ready: cbfd228c-6be2-4493-ae67-5df7dc20a3e8');
-    }
-}, 2000);
+// Export safe functions
+window.setupHybridSnapshots = setupHybridSnapshots;
+window.setupWithRetry = setupWithRetry;
+window.scheduleTournamentsSafely = scheduleTournamentsSafely;
+window.showSafetyStatus = showSafetyStatus;
+window.resetSafetySystem = resetSafetySystem;
 
-console.log('✅ Optimized Hybrid Snapshot Setup Script loaded!');
-console.log('🚀 Run setupHybridSnapshots() to initialize the event-driven system');
-console.log('📊 Use apiUsageMonitor.showReport() to check API usage');
-console.log('⏰ Use testHybridSystem.viewSchedule() to see scheduled tournaments');
+// DO NOT AUTO-RUN ANYTHING!
+console.log('\n✅ SAFE Hybrid Snapshot Setup loaded!');
+console.log('🛡️ All safety systems active');
+console.log('');
+console.log('📋 Quick Start Commands:');
+console.log('  setupWithRetry()        - Run setup with automatic retry');
+console.log('  showSafetyStatus()      - Check all safety systems');
+console.log('  scheduleTournamentsSafely() - Schedule tournaments (after setup)');
+console.log('');
+console.log('⚠️ IMPORTANT: Nothing will auto-run. You have full control.');
