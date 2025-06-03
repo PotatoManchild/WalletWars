@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WalletWars Escrow Testing</title>
+    <title>WalletWars Escrow Testing - Fixed</title>
     
-    <!-- Solana Web3.js -->
+    <!-- CRITICAL: Load Solana Web3.js first -->
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
     
-    <!-- Anchor -->
-    <script src="https://unpkg.com/@project-serum/anchor@latest/dist/browser/index.js"></script>
+    <!-- Then load Anchor browser bundle -->
+    <script src="https://unpkg.com/@project-serum/anchor@0.26.0/dist/browser/index.js"></script>
     
     <style>
         body {
@@ -152,7 +152,7 @@
             <div class="status info" style="margin-top: 1rem;">
                 <strong>Program ID:</strong> AXMwpemCzKXiozQhcMtxajPGQwiz4SWfb3xvH42RXuT7<br>
                 <strong>Network:</strong> Devnet<br>
-                <strong>Platform Wallet:</strong> <input type="text" id="platformWallet" placeholder="Enter your platform wallet address">
+                <strong>Platform Wallet:</strong> 5RLDuPHsa7ohaKUSNc5iYvtgveL1qrCcVdxVHXPeG3b8
             </div>
         </div>
         
@@ -173,7 +173,7 @@
                 </div>
                 <div>
                     <label>Platform Fee (%):</label>
-                    <input type="number" id="platformFee" value="10" min="0" max="100">
+                    <input type="number" id="platformFee" value="10" min="0" max="20">
                 </div>
             </div>
             <button onclick="createTournament()">Create Tournament On-Chain</button>
@@ -198,7 +198,7 @@
                 <h3>Winners Configuration:</h3>
                 <div class="winner-entry">
                     <input type="text" class="winner-address" placeholder="Winner wallet address">
-                    <input type="number" class="winner-percentage" placeholder="Prize %" min="0" max="100">
+                    <input type="number" class="winner-percentage" placeholder="Prize %" min="0" max="100" value="100">
                 </div>
             </div>
             <button onclick="addWinner()">Add Winner</button>
@@ -217,11 +217,37 @@
     </div>
 
     <script>
+        // Wait for libraries to load
+        window.addEventListener('load', async () => {
+            console.log('Page loaded, checking libraries...');
+            
+            // Check if libraries are available
+            if (typeof solanaWeb3 === 'undefined') {
+                console.error('Solana Web3.js not loaded!');
+                alert('Solana Web3.js failed to load. Please refresh the page.');
+                return;
+            }
+            
+            if (typeof anchor === 'undefined') {
+                console.error('Anchor not loaded!');
+                alert('Anchor failed to load. Please refresh the page.');
+                return;
+            }
+            
+            console.log('✅ All libraries loaded successfully');
+            console.log('Solana Web3.js version:', solanaWeb3.VERSION);
+        });
+
         let walletAdapter = null;
         let escrowClient = null;
         
+        // Use the global objects that the libraries create
+        const { Connection, PublicKey, SystemProgram, LAMPORTS_PER_SOL } = solanaWeb3;
+        const { AnchorProvider, Program, BN } = anchor;
+        
         // Program configuration
         const PROGRAM_ID = new PublicKey('AXMwpemCzKXiozQhcMtxajPGQwiz4SWfb3xvH42RXuT7');
+        const PLATFORM_WALLET = new PublicKey('5RLDuPHsa7ohaKUSNc5iYvtgveL1qrCcVdxVHXPeG3b8');
         
         // Your IDL from Solana Playground
         const IDL = {"version":"0.1.0","name":"walletwars_escrow","instructions":[{"name":"initializeTournament","accounts":[{"name":"tournament","isMut":true,"isSigner":false},{"name":"escrowAccount","isMut":false,"isSigner":false},{"name":"authority","isMut":true,"isSigner":true},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[{"name":"tournamentId","type":"string"},{"name":"entryFee","type":"u64"},{"name":"maxPlayers","type":"u32"},{"name":"platformFeePercentage","type":"u8"},{"name":"startTime","type":"i64"},{"name":"endTime","type":"i64"}]},{"name":"registerPlayer","accounts":[{"name":"tournament","isMut":true,"isSigner":false},{"name":"playerRegistration","isMut":true,"isSigner":false},{"name":"escrowAccount","isMut":true,"isSigner":false},{"name":"player","isMut":true,"isSigner":true},{"name":"playerWallet","isMut":true,"isSigner":false},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[]},{"name":"finalizeTournament","accounts":[{"name":"tournament","isMut":true,"isSigner":false},{"name":"authority","isMut":false,"isSigner":true}],"args":[{"name":"winnerAddresses","type":{"vec":"publicKey"}},{"name":"prizePercentages","type":"bytes"}]},{"name":"distributePrize","accounts":[{"name":"tournament","isMut":true,"isSigner":false},{"name":"escrowAccount","isMut":true,"isSigner":false},{"name":"winner","isMut":true,"isSigner":false},{"name":"authority","isMut":false,"isSigner":true},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[{"name":"winnerIndex","type":"u8"},{"name":"prizePercentage","type":"u8"}]},{"name":"collectPlatformFees","accounts":[{"name":"tournament","isMut":false,"isSigner":false},{"name":"escrowAccount","isMut":true,"isSigner":false},{"name":"platformWallet","isMut":true,"isSigner":false},{"name":"authority","isMut":false,"isSigner":true},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[]},{"name":"cancelTournament","accounts":[{"name":"tournament","isMut":true,"isSigner":false},{"name":"authority","isMut":false,"isSigner":true}],"args":[]},{"name":"refundPlayer","accounts":[{"name":"tournament","isMut":false,"isSigner":false},{"name":"playerRegistration","isMut":true,"isSigner":false},{"name":"escrowAccount","isMut":true,"isSigner":false},{"name":"player","isMut":true,"isSigner":false},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[]}],"accounts":[{"name":"Tournament","type":{"kind":"struct","fields":[{"name":"authority","type":"publicKey"},{"name":"tournamentId","type":"string"},{"name":"entryFee","type":"u64"},{"name":"maxPlayers","type":"u32"},{"name":"currentPlayers","type":"u32"},{"name":"platformFeePercentage","type":"u8"},{"name":"totalPrizePool","type":"u64"},{"name":"platformFeesCollected","type":"u64"},{"name":"startTime","type":"i64"},{"name":"endTime","type":"i64"},{"name":"isActive","type":"bool"},{"name":"isFinalized","type":"bool"},{"name":"escrowBump","type":"u8"}]}},{"name":"PlayerRegistration","type":{"kind":"struct","fields":[{"name":"player","type":"publicKey"},{"name":"tournament","type":"publicKey"},{"name":"isRegistered","type":"bool"},{"name":"isRefunded","type":"bool"},{"name":"registrationTime","type":"i64"}]}}],"errors":[{"code":6000,"name":"InvalidFeePercentage","msg":"Invalid fee percentage. Must be 20% or less"},{"code":6001,"name":"InvalidEntryFee","msg":"Invalid entry fee. Must be greater than 0"},{"code":6002,"name":"InvalidMaxPlayers","msg":"Invalid max players. Must be between 1 and 1000"},{"code":6003,"name":"InvalidTimeRange","msg":"Invalid time range. End time must be after start time"},{"code":6004,"name":"TournamentNotActive","msg":"Tournament is not active"},{"code":6005,"name":"TournamentFinalized","msg":"Tournament has been finalized"},{"code":6006,"name":"TournamentFull","msg":"Tournament is full"},{"code":6007,"name":"TournamentEnded","msg":"Tournament has ended"},{"code":6008,"name":"AlreadyRegistered","msg":"Player already registered"},{"code":6009,"name":"TournamentNotEnded","msg":"Tournament has not ended yet"},{"code":6010,"name":"AlreadyFinalized","msg":"Tournament already finalized"},{"code":6011,"name":"MismatchedWinnersData","msg":"Mismatched winners and prize data"},{"code":6012,"name":"InvalidPrizeDistribution","msg":"Prize percentages must add up to 100"},{"code":6013,"name":"NotFinalized","msg":"Tournament not finalized"},{"code":6014,"name":"NoFeesToCollect","msg":"No fees to collect"},{"code":6015,"name":"TournamentStillActive","msg":"Tournament still active"},{"code":6016,"name":"NotRegistered","msg":"Player not registered"},{"code":6017,"name":"AlreadyRefunded","msg":"Player already refunded"}]};
@@ -240,24 +266,23 @@
                     return;
                 }
                 
-                await window.solana.connect();
+                const resp = await window.solana.connect();
                 walletAdapter = window.solana;
                 
+                console.log('Wallet connected:', walletAdapter.publicKey.toString());
+                
                 // Initialize escrow client
-                const connection = new solanaWeb3.Connection(
-                    'https://api.devnet.solana.com',
-                    'confirmed'
-                );
-                const provider = new anchor.AnchorProvider(
+                const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
+                const provider = new AnchorProvider(
                     connection,
                     walletAdapter,
                     { commitment: 'confirmed' }
                 );
                 
                 // Create program interface
-                const program = new anchor.Program(IDL, PROGRAM_ID, provider);
+                const program = new Program(IDL, PROGRAM_ID, provider);
                 
-                // Initialize escrow client
+                // Store for easy access
                 escrowClient = {
                     program,
                     connection,
@@ -267,12 +292,13 @@
                 updateWalletInfo();
                 log('createResults', 'Wallet connected successfully!');
             } catch (error) {
+                console.error('Connection error:', error);
                 log('createResults', `Connection failed: ${error.message}`, true);
             }
         }
         
         async function updateWalletInfo() {
-            if (!walletAdapter) return;
+            if (!walletAdapter || !escrowClient) return;
             
             const address = walletAdapter.publicKey.toString();
             document.getElementById('walletAddress').textContent = 
@@ -280,9 +306,13 @@
             
             document.getElementById('network').textContent = 'Devnet';
             
-            const balance = await escrowClient.connection.getBalance(walletAdapter.publicKey);
-            document.getElementById('balance').textContent = 
-                (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + ' SOL';
+            try {
+                const balance = await escrowClient.connection.getBalance(walletAdapter.publicKey);
+                document.getElementById('balance').textContent = 
+                    (balance / LAMPORTS_PER_SOL).toFixed(4) + ' SOL';
+            } catch (error) {
+                console.error('Balance check error:', error);
+            }
         }
         
         async function checkBalance() {
@@ -294,20 +324,7 @@
         }
         
         async function switchToDevnet() {
-            if (!walletAdapter) {
-                alert('Please connect wallet first!');
-                return;
-            }
-            
-            try {
-                await walletAdapter.request({
-                    method: "connect",
-                    params: { network: "devnet" }
-                });
-                log('createResults', 'Switched to devnet');
-            } catch (error) {
-                log('createResults', `Network switch failed: ${error.message}`, true);
-            }
+            alert('Please switch to Devnet in your Phantom wallet settings:\n\n1. Open Phantom\n2. Click Settings (gear icon)\n3. Click "Change Network"\n4. Select "Devnet"');
         }
         
         async function createTournament() {
@@ -317,12 +334,6 @@
             }
             
             try {
-                const platformWallet = document.getElementById('platformWallet').value;
-                if (!platformWallet) {
-                    alert('Please enter platform wallet address!');
-                    return;
-                }
-                
                 const tournamentId = 'test_' + Date.now();
                 document.getElementById('tournamentId').value = tournamentId;
                 
@@ -333,12 +344,12 @@
                 log('createResults', 'Creating tournament...');
                 
                 // Generate PDAs
-                const [tournamentPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                const [tournamentPDA] = await PublicKey.findProgramAddress(
                     [Buffer.from('tournament'), Buffer.from(tournamentId)],
                     PROGRAM_ID
                 );
                 
-                const [escrowPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                const [escrowPDA] = await PublicKey.findProgramAddress(
                     [Buffer.from('escrow'), Buffer.from(tournamentId)],
                     PROGRAM_ID
                 );
@@ -347,17 +358,17 @@
                 const tx = await escrowClient.program.methods
                     .initializeTournament(
                         tournamentId,
-                        new anchor.BN(entryFee * solanaWeb3.LAMPORTS_PER_SOL),
+                        new BN(entryFee * LAMPORTS_PER_SOL),
                         maxPlayers,
                         platformFee,
-                        new anchor.BN(Math.floor(Date.now() / 1000) + 300),
-                        new anchor.BN(Math.floor(Date.now() / 1000) + 3600)
+                        new BN(Math.floor(Date.now() / 1000) + 300), // Start in 5 minutes
+                        new BN(Math.floor(Date.now() / 1000) + 3600) // End in 1 hour
                     )
                     .accounts({
                         tournament: tournamentPDA,
                         escrowAccount: escrowPDA,
                         authority: walletAdapter.publicKey,
-                        systemProgram: solanaWeb3.SystemProgram.programId,
+                        systemProgram: SystemProgram.programId,
                     })
                     .rpc();
                 
@@ -369,6 +380,7 @@
                 document.getElementById('queryTournamentId').value = tournamentId;
                 
             } catch (error) {
+                console.error('Create error:', error);
                 log('createResults', `Failed: ${error.message}`, true);
             }
         }
@@ -389,17 +401,17 @@
                 log('registerResults', 'Registering player...');
                 
                 // Generate PDAs
-                const [tournamentPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                const [tournamentPDA] = await PublicKey.findProgramAddress(
                     [Buffer.from('tournament'), Buffer.from(tournamentId)],
                     PROGRAM_ID
                 );
                 
-                const [escrowPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                const [escrowPDA] = await PublicKey.findProgramAddress(
                     [Buffer.from('escrow'), Buffer.from(tournamentId)],
                     PROGRAM_ID
                 );
                 
-                const [registrationPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                const [registrationPDA] = await PublicKey.findProgramAddress(
                     [Buffer.from('registration'), tournamentPDA.toBuffer(), walletAdapter.publicKey.toBuffer()],
                     PROGRAM_ID
                 );
@@ -412,13 +424,18 @@
                         playerRegistration: registrationPDA,
                         escrowAccount: escrowPDA,
                         player: walletAdapter.publicKey,
-                        systemProgram: solanaWeb3.SystemProgram.programId,
+                        playerWallet: walletAdapter.publicKey,
+                        systemProgram: SystemProgram.programId,
                     })
                     .rpc();
                 
                 log('registerResults', `Registration successful!\nTx: ${tx}`);
                 
+                // Update balance
+                await updateWalletInfo();
+                
             } catch (error) {
+                console.error('Register error:', error);
                 log('registerResults', `Failed: ${error.message}`, true);
             }
         }
@@ -436,13 +453,13 @@
                     return;
                 }
                 
-                const [escrowPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                const [escrowPDA] = await PublicKey.findProgramAddress(
                     [Buffer.from('escrow'), Buffer.from(tournamentId)],
                     PROGRAM_ID
                 );
                 
                 const balance = await escrowClient.connection.getBalance(escrowPDA);
-                const balanceSOL = balance / solanaWeb3.LAMPORTS_PER_SOL;
+                const balanceSOL = balance / LAMPORTS_PER_SOL;
                 
                 log('registerResults', `Escrow balance: ${balanceSOL} SOL`);
                 
@@ -475,41 +492,27 @@
                     return;
                 }
                 
-                // Collect winners
-                const winnerEntries = document.querySelectorAll('.winner-entry');
-                const winners = [];
-                
-                winnerEntries.forEach(entry => {
-                    const address = entry.querySelector('.winner-address').value;
-                    const percentage = parseInt(entry.querySelector('.winner-percentage').value);
-                    if (address && percentage) {
-                        winners.push({ address, percentage });
-                    }
-                });
-                
-                if (winners.length === 0) {
-                    // Default to current wallet as winner
-                    winners.push({
-                        address: walletAdapter.publicKey.toString(),
-                        percentage: 100
-                    });
-                }
+                // Collect winners - default to current wallet as winner
+                const winners = [{
+                    address: walletAdapter.publicKey.toString(),
+                    percentage: 100
+                }];
                 
                 log('finalizeResults', 'Finalizing tournament...');
                 
-                const [tournamentPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                const [tournamentPDA] = await PublicKey.findProgramAddress(
                     [Buffer.from('tournament'), Buffer.from(tournamentId)],
                     PROGRAM_ID
                 );
                 
-                const [escrowPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                const [escrowPDA] = await PublicKey.findProgramAddress(
                     [Buffer.from('escrow'), Buffer.from(tournamentId)],
                     PROGRAM_ID
                 );
                 
                 // Finalize
-                const winnerAddresses = winners.map(w => new solanaWeb3.PublicKey(w.address));
-                const prizePercentages = winners.map(w => w.percentage);
+                const winnerAddresses = winners.map(w => new PublicKey(w.address));
+                const prizePercentages = Buffer.from(winners.map(w => w.percentage));
                 
                 const finalizeTx = await escrowClient.program.methods
                     .finalizeTournament(winnerAddresses, prizePercentages)
@@ -530,9 +533,9 @@
                         .accounts({
                             tournament: tournamentPDA,
                             escrowAccount: escrowPDA,
-                            winner: new solanaWeb3.PublicKey(winners[i].address),
+                            winner: new PublicKey(winners[i].address),
                             authority: walletAdapter.publicKey,
-                            systemProgram: solanaWeb3.SystemProgram.programId,
+                            systemProgram: SystemProgram.programId,
                         })
                         .rpc();
                     
@@ -540,23 +543,24 @@
                 }
                 
                 // Collect platform fees
-                const platformWallet = document.getElementById('platformWallet').value;
-                if (platformWallet) {
-                    const feeTx = await escrowClient.program.methods
-                        .collectPlatformFees()
-                        .accounts({
-                            tournament: tournamentPDA,
-                            escrowAccount: escrowPDA,
-                            platformWallet: new solanaWeb3.PublicKey(platformWallet),
-                            authority: walletAdapter.publicKey,
-                            systemProgram: solanaWeb3.SystemProgram.programId,
-                        })
-                        .rpc();
-                    
-                    log('finalizeResults', `Platform fees collected! Tx: ${feeTx}`);
-                }
+                const feeTx = await escrowClient.program.methods
+                    .collectPlatformFees()
+                    .accounts({
+                        tournament: tournamentPDA,
+                        escrowAccount: escrowPDA,
+                        platformWallet: PLATFORM_WALLET,
+                        authority: walletAdapter.publicKey,
+                        systemProgram: SystemProgram.programId,
+                    })
+                    .rpc();
+                
+                log('finalizeResults', `Platform fees collected! Tx: ${feeTx}`);
+                
+                // Update balance
+                await updateWalletInfo();
                 
             } catch (error) {
+                console.error('Finalize error:', error);
                 log('finalizeResults', `Failed: ${error.message}`, true);
             }
         }
@@ -574,7 +578,7 @@
                     return;
                 }
                 
-                const [tournamentPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                const [tournamentPDA] = await PublicKey.findProgramAddress(
                     [Buffer.from('tournament'), Buffer.from(tournamentId)],
                     PROGRAM_ID
                 );
@@ -584,11 +588,11 @@
                 const data = {
                     authority: tournament.authority.toString(),
                     tournamentId: tournament.tournamentId,
-                    entryFee: tournament.entryFee.toNumber() / solanaWeb3.LAMPORTS_PER_SOL + ' SOL',
+                    entryFee: tournament.entryFee.toNumber() / LAMPORTS_PER_SOL + ' SOL',
                     maxPlayers: tournament.maxPlayers,
                     currentPlayers: tournament.currentPlayers,
                     platformFeePercentage: tournament.platformFeePercentage + '%',
-                    totalPrizePool: tournament.totalPrizePool.toNumber() / solanaWeb3.LAMPORTS_PER_SOL + ' SOL',
+                    totalPrizePool: tournament.totalPrizePool.toNumber() / LAMPORTS_PER_SOL + ' SOL',
                     isActive: tournament.isActive,
                     isFinalized: tournament.isFinalized
                 };
@@ -613,13 +617,13 @@
                     return;
                 }
                 
-                const [escrowPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                const [escrowPDA] = await PublicKey.findProgramAddress(
                     [Buffer.from('escrow'), Buffer.from(tournamentId)],
                     PROGRAM_ID
                 );
                 
                 const balance = await escrowClient.connection.getBalance(escrowPDA);
-                const balanceSOL = balance / solanaWeb3.LAMPORTS_PER_SOL;
+                const balanceSOL = balance / LAMPORTS_PER_SOL;
                 
                 log('queryResults', `Escrow PDA: ${escrowPDA.toString()}\nBalance: ${balanceSOL} SOL`);
                 
