@@ -2011,25 +2011,6 @@
                 }
             }, 30000);
         });
-
-        console.log('✅ WalletWars Tiered Tournaments page loaded!');
-
-         // TEMPORARY TEST FUNCTION - Add right here, before the closing </script>
-        function testEscrowIntegration() {
-            console.log('Testing escrow integration...');
-            if (window.WalletWarsEscrowIntegration) {
-                console.log('✅ Escrow integration loaded successfully!');
-                alert('Escrow integration is ready! You can now test tournament registration.');
-            } else {
-                console.log('❌ Escrow integration not loaded');
-                alert('Escrow integration not found. Check if walletwars-escrow-integration.js is loaded.');
-            }
-        }
-
-        // Run test when page loads
-        window.addEventListener('DOMContentLoaded', function() {
-            setTimeout(testEscrowIntegration, 3000); // Wait 3 seconds for everything to load
-        });
     
     </script>
 </body>
