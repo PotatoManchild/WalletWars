@@ -21,9 +21,9 @@
     <script src="tournament-setup.js"></script>
 
     <!-- Escrow Integration Scripts -->
-<script src="https://unpkg.com/buffer@6.0.3/index.js"></script>
-<script src="https://unpkg.com/@project-serum/anchor@latest/dist/browser/index.js"></script>
-<script src="walletwars-escrow-integration.js"></script>
+    <script src="https://unpkg.com/buffer@6.0.3/index.js"></script>
+    <script src="https://unpkg.com/@project-serum/anchor@latest/dist/browser/index.js"></script>
+    <script src="walletwars-escrow-integration.js"></script>
     
     <!-- Hybrid Snapshot System Scripts -->
     <script src="tournament-snapshot-manager.js"></script>
@@ -1708,6 +1708,48 @@
                 closeRegistrationModal();
                 return;
             }
+
+            async function proceedToRegisterWithEscrow(tournamentId, tradingStyle, entryFee) {
+    const walletStatus = window.getWalletStatus();
+    
+    if (!walletStatus.isConnected || !walletStatus.championId) {
+        alert('❌ Wallet connection lost. Please reconnect your wallet.');
+        closeRegistrationModal();
+        return;
+    }
+    
+    try {
+        console.log(`🎮 Registering for tournament ${tournamentId} with escrow payment...`);
+        
+        // Initialize escrow client
+        const escrow = new WalletWarsEscrowIntegration(window.solana);
+        
+        // Register with escrow (this handles the payment)
+        const escrowResult = await escrow.registerPlayer(tournamentId);
+        
+        if (escrowResult.success) {
+            // Now update the database
+            const result = await window.walletWarsAPI.registerForTournament(
+                walletStatus.championId,
+                tournamentId,
+                tradingStyle
+            );
+            
+            if (result.success) {
+                alert(`🎉 Registration Successful!\n\nEntry fee of ${entryFee} SOL has been paid to escrow.\nTransaction: ${escrowResult.signature.slice(0, 8)}...`);
+                closeRegistrationModal();
+                setTimeout(() => loadTournaments(), 1000);
+            } else {
+                alert(`❌ Database registration failed: ${result.error}\n\nNote: Your entry fee was paid. Contact support if needed.`);
+            }
+        } else {
+            alert(`❌ Escrow payment failed: ${escrowResult.error}`);
+        }
+    } catch (error) {
+        console.error('❌ Registration error:', error);
+        alert(`❌ Registration failed: ${error.message}`);
+    }
+}
             
             const confirmPayment = confirm(`⚠️ Tournament Registration\n\nThis will require a payment of ${entryFee} SOL as the entry fee.\n\nThe payment system is currently being implemented. For now, this will simulate the registration.\n\nProceed with registration?`);
             
