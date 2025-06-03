@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WalletWars Escrow Testing</title>
+    
+    <!-- Solana Web3.js -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    
+    <!-- Anchor -->
+    <script src="https://unpkg.com/@project-serum/anchor@latest/dist/browser/index.js"></script>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            color: #8b5cf6;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        .section h2 {
+            color: #ec4899;
+            margin-bottom: 1rem;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+            transition: all 0.3s;
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.5rem;
+            color: white;
+        }
+        
+        .status {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        .status.success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+        
+        .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+        
+        .status.info {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3b82f6;
+            color: #3b82f6;
+        }
+        
+        .results {
+            background: #000;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+        
+        .wallet-info {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 WalletWars Escrow Testing Dashboard</h1>
+        
+        <div class="wallet-info" id="walletInfo">
+            <strong>Wallet:</strong> <span id="walletAddress">Not connected</span><br>
+            <strong>Network:</strong> <span id="network">Unknown</span><br>
+            <strong>Balance:</strong> <span id="balance">0 SOL</span>
+        </div>
+        
+        <div class="section">
+            <h2>🔗 1. Setup & Connection</h2>
+            <button onclick="connectWallet()">Connect Phantom Wallet</button>
+            <button onclick="checkBalance()">Check Balance</button>
+            <button onclick="switchToDevnet()">Switch to Devnet</button>
+            
+            <div class="status info" style="margin-top: 1rem;">
+                <strong>Program ID:</strong> AXMwpemCzKXiozQhcMtxajPGQwiz4SWfb3xvH42RXuT7<br>
+                <strong>Network:</strong> Devnet<br>
+                <strong>Platform Wallet:</strong> <input type="text" id="platformWallet" placeholder="Enter your platform wallet address">
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🏆 2. Create Tournament</h2>
+            <div class="grid">
+                <div>
+                    <label>Tournament ID:</label>
+                    <input type="text" id="tournamentId" value="" placeholder="Auto-generated">
+                </div>
+                <div>
+                    <label>Entry Fee (SOL):</label>
+                    <input type="number" id="entryFee" value="0.01" step="0.001">
+                </div>
+                <div>
+                    <label>Max Players:</label>
+                    <input type="number" id="maxPlayers" value="10">
+                </div>
+                <div>
+                    <label>Platform Fee (%):</label>
+                    <input type="number" id="platformFee" value="10" min="0" max="100">
+                </div>
+            </div>
+            <button onclick="createTournament()">Create Tournament On-Chain</button>
+            <div class="results" id="createResults"></div>
+        </div>
+        
+        <div class="section">
+            <h2>👥 3. Player Registration</h2>
+            <label>Tournament ID:</label>
+            <input type="text" id="registerTournamentId" placeholder="Enter tournament ID from step 2">
+            <button onclick="registerPlayer()">Register & Pay Entry Fee</button>
+            <button onclick="checkEscrowBalance()">Check Escrow Balance</button>
+            <div class="results" id="registerResults"></div>
+        </div>
+        
+        <div class="section">
+            <h2>💰 4. Prize Distribution</h2>
+            <label>Tournament ID:</label>
+            <input type="text" id="finalizeTournamentId" placeholder="Enter tournament ID">
+            
+            <div id="winnersContainer">
+                <h3>Winners Configuration:</h3>
+                <div class="winner-entry">
+                    <input type="text" class="winner-address" placeholder="Winner wallet address">
+                    <input type="number" class="winner-percentage" placeholder="Prize %" min="0" max="100">
+                </div>
+            </div>
+            <button onclick="addWinner()">Add Winner</button>
+            <button onclick="finalizeTournament()">Finalize & Distribute Prizes</button>
+            <div class="results" id="finalizeResults"></div>
+        </div>
+        
+        <div class="section">
+            <h2>🔍 5. Query & Debug</h2>
+            <label>Tournament ID to Query:</label>
+            <input type="text" id="queryTournamentId" placeholder="Enter tournament ID">
+            <button onclick="getTournamentData()">Get Tournament Data</button>
+            <button onclick="getEscrowBalance()">Get Escrow Balance</button>
+            <div class="results" id="queryResults"></div>
+        </div>
+    </div>
+
+    <script>
+        let walletAdapter = null;
+        let escrowClient = null;
+        
+        // Program configuration
+        const PROGRAM_ID = new PublicKey('AXMwpemCzKXiozQhcMtxajPGQwiz4SWfb3xvH42RXuT7');
+        
+        // Your IDL from Solana Playground
+        const IDL = {"version":"0.1.0","name":"walletwars_escrow","instructions":[{"name":"initializeTournament","accounts":[{"name":"tournament","isMut":true,"isSigner":false},{"name":"escrowAccount","isMut":false,"isSigner":false},{"name":"authority","isMut":true,"isSigner":true},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[{"name":"tournamentId","type":"string"},{"name":"entryFee","type":"u64"},{"name":"maxPlayers","type":"u32"},{"name":"platformFeePercentage","type":"u8"},{"name":"startTime","type":"i64"},{"name":"endTime","type":"i64"}]},{"name":"registerPlayer","accounts":[{"name":"tournament","isMut":true,"isSigner":false},{"name":"playerRegistration","isMut":true,"isSigner":false},{"name":"escrowAccount","isMut":true,"isSigner":false},{"name":"player","isMut":true,"isSigner":true},{"name":"playerWallet","isMut":true,"isSigner":false},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[]},{"name":"finalizeTournament","accounts":[{"name":"tournament","isMut":true,"isSigner":false},{"name":"authority","isMut":false,"isSigner":true}],"args":[{"name":"winnerAddresses","type":{"vec":"publicKey"}},{"name":"prizePercentages","type":"bytes"}]},{"name":"distributePrize","accounts":[{"name":"tournament","isMut":true,"isSigner":false},{"name":"escrowAccount","isMut":true,"isSigner":false},{"name":"winner","isMut":true,"isSigner":false},{"name":"authority","isMut":false,"isSigner":true},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[{"name":"winnerIndex","type":"u8"},{"name":"prizePercentage","type":"u8"}]},{"name":"collectPlatformFees","accounts":[{"name":"tournament","isMut":false,"isSigner":false},{"name":"escrowAccount","isMut":true,"isSigner":false},{"name":"platformWallet","isMut":true,"isSigner":false},{"name":"authority","isMut":false,"isSigner":true},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[]},{"name":"cancelTournament","accounts":[{"name":"tournament","isMut":true,"isSigner":false},{"name":"authority","isMut":false,"isSigner":true}],"args":[]},{"name":"refundPlayer","accounts":[{"name":"tournament","isMut":false,"isSigner":false},{"name":"playerRegistration","isMut":true,"isSigner":false},{"name":"escrowAccount","isMut":true,"isSigner":false},{"name":"player","isMut":true,"isSigner":false},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[]}],"accounts":[{"name":"Tournament","type":{"kind":"struct","fields":[{"name":"authority","type":"publicKey"},{"name":"tournamentId","type":"string"},{"name":"entryFee","type":"u64"},{"name":"maxPlayers","type":"u32"},{"name":"currentPlayers","type":"u32"},{"name":"platformFeePercentage","type":"u8"},{"name":"totalPrizePool","type":"u64"},{"name":"platformFeesCollected","type":"u64"},{"name":"startTime","type":"i64"},{"name":"endTime","type":"i64"},{"name":"isActive","type":"bool"},{"name":"isFinalized","type":"bool"},{"name":"escrowBump","type":"u8"}]}},{"name":"PlayerRegistration","type":{"kind":"struct","fields":[{"name":"player","type":"publicKey"},{"name":"tournament","type":"publicKey"},{"name":"isRegistered","type":"bool"},{"name":"isRefunded","type":"bool"},{"name":"registrationTime","type":"i64"}]}}],"errors":[{"code":6000,"name":"InvalidFeePercentage","msg":"Invalid fee percentage. Must be 20% or less"},{"code":6001,"name":"InvalidEntryFee","msg":"Invalid entry fee. Must be greater than 0"},{"code":6002,"name":"InvalidMaxPlayers","msg":"Invalid max players. Must be between 1 and 1000"},{"code":6003,"name":"InvalidTimeRange","msg":"Invalid time range. End time must be after start time"},{"code":6004,"name":"TournamentNotActive","msg":"Tournament is not active"},{"code":6005,"name":"TournamentFinalized","msg":"Tournament has been finalized"},{"code":6006,"name":"TournamentFull","msg":"Tournament is full"},{"code":6007,"name":"TournamentEnded","msg":"Tournament has ended"},{"code":6008,"name":"AlreadyRegistered","msg":"Player already registered"},{"code":6009,"name":"TournamentNotEnded","msg":"Tournament has not ended yet"},{"code":6010,"name":"AlreadyFinalized","msg":"Tournament already finalized"},{"code":6011,"name":"MismatchedWinnersData","msg":"Mismatched winners and prize data"},{"code":6012,"name":"InvalidPrizeDistribution","msg":"Prize percentages must add up to 100"},{"code":6013,"name":"NotFinalized","msg":"Tournament not finalized"},{"code":6014,"name":"NoFeesToCollect","msg":"No fees to collect"},{"code":6015,"name":"TournamentStillActive","msg":"Tournament still active"},{"code":6016,"name":"NotRegistered","msg":"Player not registered"},{"code":6017,"name":"AlreadyRefunded","msg":"Player already refunded"}]};
+        
+        function log(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = isError ? '❌' : '✅';
+            element.textContent = `[${timestamp}] ${prefix} ${message}\n` + element.textContent;
+        }
+        
+        async function connectWallet() {
+            try {
+                if (!window.solana) {
+                    alert('Please install Phantom wallet!');
+                    return;
+                }
+                
+                await window.solana.connect();
+                walletAdapter = window.solana;
+                
+                // Initialize escrow client
+                const connection = new solanaWeb3.Connection(
+                    'https://api.devnet.solana.com',
+                    'confirmed'
+                );
+                const provider = new anchor.AnchorProvider(
+                    connection,
+                    walletAdapter,
+                    { commitment: 'confirmed' }
+                );
+                
+                // Create program interface
+                const program = new anchor.Program(IDL, PROGRAM_ID, provider);
+                
+                // Initialize escrow client
+                escrowClient = {
+                    program,
+                    connection,
+                    wallet: walletAdapter
+                };
+                
+                updateWalletInfo();
+                log('createResults', 'Wallet connected successfully!');
+            } catch (error) {
+                log('createResults', `Connection failed: ${error.message}`, true);
+            }
+        }
+        
+        async function updateWalletInfo() {
+            if (!walletAdapter) return;
+            
+            const address = walletAdapter.publicKey.toString();
+            document.getElementById('walletAddress').textContent = 
+                address.substring(0, 8) + '...' + address.substring(address.length - 8);
+            
+            document.getElementById('network').textContent = 'Devnet';
+            
+            const balance = await escrowClient.connection.getBalance(walletAdapter.publicKey);
+            document.getElementById('balance').textContent = 
+                (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4) + ' SOL';
+        }
+        
+        async function checkBalance() {
+            if (!escrowClient) {
+                alert('Please connect wallet first!');
+                return;
+            }
+            await updateWalletInfo();
+        }
+        
+        async function switchToDevnet() {
+            if (!walletAdapter) {
+                alert('Please connect wallet first!');
+                return;
+            }
+            
+            try {
+                await walletAdapter.request({
+                    method: "connect",
+                    params: { network: "devnet" }
+                });
+                log('createResults', 'Switched to devnet');
+            } catch (error) {
+                log('createResults', `Network switch failed: ${error.message}`, true);
+            }
+        }
+        
+        async function createTournament() {
+            if (!escrowClient) {
+                alert('Please connect wallet first!');
+                return;
+            }
+            
+            try {
+                const platformWallet = document.getElementById('platformWallet').value;
+                if (!platformWallet) {
+                    alert('Please enter platform wallet address!');
+                    return;
+                }
+                
+                const tournamentId = 'test_' + Date.now();
+                document.getElementById('tournamentId').value = tournamentId;
+                
+                const entryFee = parseFloat(document.getElementById('entryFee').value);
+                const maxPlayers = parseInt(document.getElementById('maxPlayers').value);
+                const platformFee = parseInt(document.getElementById('platformFee').value);
+                
+                log('createResults', 'Creating tournament...');
+                
+                // Generate PDAs
+                const [tournamentPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                    [Buffer.from('tournament'), Buffer.from(tournamentId)],
+                    PROGRAM_ID
+                );
+                
+                const [escrowPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                    [Buffer.from('escrow'), Buffer.from(tournamentId)],
+                    PROGRAM_ID
+                );
+                
+                // Create transaction
+                const tx = await escrowClient.program.methods
+                    .initializeTournament(
+                        tournamentId,
+                        new anchor.BN(entryFee * solanaWeb3.LAMPORTS_PER_SOL),
+                        maxPlayers,
+                        platformFee,
+                        new anchor.BN(Math.floor(Date.now() / 1000) + 300),
+                        new anchor.BN(Math.floor(Date.now() / 1000) + 3600)
+                    )
+                    .accounts({
+                        tournament: tournamentPDA,
+                        escrowAccount: escrowPDA,
+                        authority: walletAdapter.publicKey,
+                        systemProgram: solanaWeb3.SystemProgram.programId,
+                    })
+                    .rpc();
+                
+                log('createResults', `Tournament created!\nID: ${tournamentId}\nTx: ${tx}\nTournament PDA: ${tournamentPDA.toString()}\nEscrow PDA: ${escrowPDA.toString()}`);
+                
+                // Auto-fill the tournament ID in other sections
+                document.getElementById('registerTournamentId').value = tournamentId;
+                document.getElementById('finalizeTournamentId').value = tournamentId;
+                document.getElementById('queryTournamentId').value = tournamentId;
+                
+            } catch (error) {
+                log('createResults', `Failed: ${error.message}`, true);
+            }
+        }
+        
+        async function registerPlayer() {
+            if (!escrowClient) {
+                alert('Please connect wallet first!');
+                return;
+            }
+            
+            try {
+                const tournamentId = document.getElementById('registerTournamentId').value;
+                if (!tournamentId) {
+                    alert('Please enter tournament ID!');
+                    return;
+                }
+                
+                log('registerResults', 'Registering player...');
+                
+                // Generate PDAs
+                const [tournamentPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                    [Buffer.from('tournament'), Buffer.from(tournamentId)],
+                    PROGRAM_ID
+                );
+                
+                const [escrowPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                    [Buffer.from('escrow'), Buffer.from(tournamentId)],
+                    PROGRAM_ID
+                );
+                
+                const [registrationPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                    [Buffer.from('registration'), tournamentPDA.toBuffer(), walletAdapter.publicKey.toBuffer()],
+                    PROGRAM_ID
+                );
+                
+                // Register
+                const tx = await escrowClient.program.methods
+                    .registerPlayer()
+                    .accounts({
+                        tournament: tournamentPDA,
+                        playerRegistration: registrationPDA,
+                        escrowAccount: escrowPDA,
+                        player: walletAdapter.publicKey,
+                        systemProgram: solanaWeb3.SystemProgram.programId,
+                    })
+                    .rpc();
+                
+                log('registerResults', `Registration successful!\nTx: ${tx}`);
+                
+            } catch (error) {
+                log('registerResults', `Failed: ${error.message}`, true);
+            }
+        }
+        
+        async function checkEscrowBalance() {
+            if (!escrowClient) {
+                alert('Please connect wallet first!');
+                return;
+            }
+            
+            try {
+                const tournamentId = document.getElementById('registerTournamentId').value;
+                if (!tournamentId) {
+                    alert('Please enter tournament ID!');
+                    return;
+                }
+                
+                const [escrowPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                    [Buffer.from('escrow'), Buffer.from(tournamentId)],
+                    PROGRAM_ID
+                );
+                
+                const balance = await escrowClient.connection.getBalance(escrowPDA);
+                const balanceSOL = balance / solanaWeb3.LAMPORTS_PER_SOL;
+                
+                log('registerResults', `Escrow balance: ${balanceSOL} SOL`);
+                
+            } catch (error) {
+                log('registerResults', `Failed: ${error.message}`, true);
+            }
+        }
+        
+        function addWinner() {
+            const container = document.getElementById('winnersContainer');
+            const entry = document.createElement('div');
+            entry.className = 'winner-entry';
+            entry.innerHTML = `
+                <input type="text" class="winner-address" placeholder="Winner wallet address">
+                <input type="number" class="winner-percentage" placeholder="Prize %" min="0" max="100">
+            `;
+            container.appendChild(entry);
+        }
+        
+        async function finalizeTournament() {
+            if (!escrowClient) {
+                alert('Please connect wallet first!');
+                return;
+            }
+            
+            try {
+                const tournamentId = document.getElementById('finalizeTournamentId').value;
+                if (!tournamentId) {
+                    alert('Please enter tournament ID!');
+                    return;
+                }
+                
+                // Collect winners
+                const winnerEntries = document.querySelectorAll('.winner-entry');
+                const winners = [];
+                
+                winnerEntries.forEach(entry => {
+                    const address = entry.querySelector('.winner-address').value;
+                    const percentage = parseInt(entry.querySelector('.winner-percentage').value);
+                    if (address && percentage) {
+                        winners.push({ address, percentage });
+                    }
+                });
+                
+                if (winners.length === 0) {
+                    // Default to current wallet as winner
+                    winners.push({
+                        address: walletAdapter.publicKey.toString(),
+                        percentage: 100
+                    });
+                }
+                
+                log('finalizeResults', 'Finalizing tournament...');
+                
+                const [tournamentPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                    [Buffer.from('tournament'), Buffer.from(tournamentId)],
+                    PROGRAM_ID
+                );
+                
+                const [escrowPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                    [Buffer.from('escrow'), Buffer.from(tournamentId)],
+                    PROGRAM_ID
+                );
+                
+                // Finalize
+                const winnerAddresses = winners.map(w => new solanaWeb3.PublicKey(w.address));
+                const prizePercentages = winners.map(w => w.percentage);
+                
+                const finalizeTx = await escrowClient.program.methods
+                    .finalizeTournament(winnerAddresses, prizePercentages)
+                    .accounts({
+                        tournament: tournamentPDA,
+                        authority: walletAdapter.publicKey,
+                    })
+                    .rpc();
+                
+                log('finalizeResults', `Tournament finalized!\nTx: ${finalizeTx}`);
+                
+                // Distribute prizes
+                for (let i = 0; i < winners.length; i++) {
+                    log('finalizeResults', `Distributing ${winners[i].percentage}% to ${winners[i].address.substring(0, 8)}...`);
+                    
+                    const distributeTx = await escrowClient.program.methods
+                        .distributePrize(i, winners[i].percentage)
+                        .accounts({
+                            tournament: tournamentPDA,
+                            escrowAccount: escrowPDA,
+                            winner: new solanaWeb3.PublicKey(winners[i].address),
+                            authority: walletAdapter.publicKey,
+                            systemProgram: solanaWeb3.SystemProgram.programId,
+                        })
+                        .rpc();
+                    
+                    log('finalizeResults', `Prize distributed! Tx: ${distributeTx}`);
+                }
+                
+                // Collect platform fees
+                const platformWallet = document.getElementById('platformWallet').value;
+                if (platformWallet) {
+                    const feeTx = await escrowClient.program.methods
+                        .collectPlatformFees()
+                        .accounts({
+                            tournament: tournamentPDA,
+                            escrowAccount: escrowPDA,
+                            platformWallet: new solanaWeb3.PublicKey(platformWallet),
+                            authority: walletAdapter.publicKey,
+                            systemProgram: solanaWeb3.SystemProgram.programId,
+                        })
+                        .rpc();
+                    
+                    log('finalizeResults', `Platform fees collected! Tx: ${feeTx}`);
+                }
+                
+            } catch (error) {
+                log('finalizeResults', `Failed: ${error.message}`, true);
+            }
+        }
+        
+        async function getTournamentData() {
+            if (!escrowClient) {
+                alert('Please connect wallet first!');
+                return;
+            }
+            
+            try {
+                const tournamentId = document.getElementById('queryTournamentId').value;
+                if (!tournamentId) {
+                    alert('Please enter tournament ID!');
+                    return;
+                }
+                
+                const [tournamentPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                    [Buffer.from('tournament'), Buffer.from(tournamentId)],
+                    PROGRAM_ID
+                );
+                
+                const tournament = await escrowClient.program.account.tournament.fetch(tournamentPDA);
+                
+                const data = {
+                    authority: tournament.authority.toString(),
+                    tournamentId: tournament.tournamentId,
+                    entryFee: tournament.entryFee.toNumber() / solanaWeb3.LAMPORTS_PER_SOL + ' SOL',
+                    maxPlayers: tournament.maxPlayers,
+                    currentPlayers: tournament.currentPlayers,
+                    platformFeePercentage: tournament.platformFeePercentage + '%',
+                    totalPrizePool: tournament.totalPrizePool.toNumber() / solanaWeb3.LAMPORTS_PER_SOL + ' SOL',
+                    isActive: tournament.isActive,
+                    isFinalized: tournament.isFinalized
+                };
+                
+                log('queryResults', JSON.stringify(data, null, 2));
+                
+            } catch (error) {
+                log('queryResults', `Failed: ${error.message}`, true);
+            }
+        }
+        
+        async function getEscrowBalance() {
+            if (!escrowClient) {
+                alert('Please connect wallet first!');
+                return;
+            }
+            
+            try {
+                const tournamentId = document.getElementById('queryTournamentId').value;
+                if (!tournamentId) {
+                    alert('Please enter tournament ID!');
+                    return;
+                }
+                
+                const [escrowPDA] = await solanaWeb3.PublicKey.findProgramAddress(
+                    [Buffer.from('escrow'), Buffer.from(tournamentId)],
+                    PROGRAM_ID
+                );
+                
+                const balance = await escrowClient.connection.getBalance(escrowPDA);
+                const balanceSOL = balance / solanaWeb3.LAMPORTS_PER_SOL;
+                
+                log('queryResults', `Escrow PDA: ${escrowPDA.toString()}\nBalance: ${balanceSOL} SOL`);
+                
+            } catch (error) {
+                log('queryResults', `Failed: ${error.message}`, true);
+            }
+        }
+    </script>
+</body>
+</html>
