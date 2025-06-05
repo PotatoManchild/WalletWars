@@ -2486,7 +2486,6 @@
                     participant_count: 0,
                     min_participants: parseInt(formData.get('minParticipants')),
                     total_prize_pool: 0,
-                    escrow_address: escrowPDA,
                     platform_wallet: PLATFORM_WALLET,
                     deployment_metadata: {
                         tier: formData.get('tier'),
@@ -2512,7 +2511,7 @@
                 const result = await window.walletWarsAPI.createTournamentInstance(tournamentData);
                 
                 if (result.success) {
-                    alert(`✅ Tournament created successfully!\n\nTournament ID: ${result.instance.id}\nEscrow PDA: ${escrowPDA}`);
+                    alert(`✅ Tournament created successfully!\n\nTournament ID: ${result.instance.id}`);
                     closeCreateTournamentModal();
                     
                     // Reload tournaments
