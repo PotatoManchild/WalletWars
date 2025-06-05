@@ -380,7 +380,7 @@
         /* Tournament Cards - Enhanced for Tiers */
         .tournaments-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid--columns: 1fr;
             gap: 1rem;
             margin-bottom: 2rem;
             perspective: 1000px;
@@ -2476,35 +2476,34 @@
                 const escrowPDA = await calculateEscrowPDA(tournamentId);
                 
                 // Prepare tournament data
-                const tournamentData = {
-                    tournament_name: formData.get('name'),
-                    status: 'scheduled',
-                    start_time: new Date(formData.get('startTime')).toISOString(),
-                    end_time: new Date(formData.get('endTime')).toISOString(),
-                    registration_opens: new Date(formData.get('registrationOpens')).toISOString(),
-                    registration_closes: new Date(formData.get('registrationCloses')).toISOString(),
-                    participant_count: 0,
-                    min_participants: parseInt(formData.get('minParticipants')),
-                    total_prize_pool: 0,
-                    deployment_metadata: {
-                        tier: formData.get('tier'),
-                        type: formData.get('tournamentType'),
-                        baseVariantName: formData.get('name'),
-                        expectedPrizePool: calculateExpectedPrizePool(
-                            parseFloat(formData.get('entryFee')),
-                            parseInt(formData.get('maxParticipants')),
-                            parseInt(formData.get('prizePoolPercentage'))
-                        )
-                    },
-                    tournament_templates: {
-                        name: formData.get('name'),
-                        tournament_type: formData.get('tournamentType'),
-                        trading_style: formData.get('tradingStyle'),
-                        entry_fee: parseFloat(formData.get('entryFee')),
-                        max_participants: parseInt(formData.get('maxParticipants')),
-                        prize_pool_percentage: parseInt(formData.get('prizePoolPercentage'))
-                    }
-                };
+               const tournamentData = {
+    tournament_name: formData.get('name'),
+    status: 'scheduled',
+    start_time: new Date(formData.get('startTime')).toISOString(),
+    end_time: new Date(formData.get('endTime')).toISOString(),
+    registration_opens: new Date(formData.get('registrationOpens')).toISOString(),
+    registration_closes: new Date(formData.get('registrationCloses')).toISOString(),
+    participant_count: 0,
+    min_participants: parseInt(formData.get('minParticipants')),
+    total_prize_pool: 0,
+    // Remove template_id since we don't have one
+    deployment_metadata: {
+        tier: formData.get('tier'),
+        type: formData.get('tournamentType'),
+        baseVariantName: formData.get('name'),
+        expectedPrizePool: calculateExpectedPrizePool(
+            parseFloat(formData.get('entryFee')),
+            parseInt(formData.get('maxParticipants')),
+            parseInt(formData.get('prizePoolPercentage'))
+        ),
+        // Store all the template-like data here
+        entry_fee: parseFloat(formData.get('entryFee')),
+        max_participants: parseInt(formData.get('maxParticipants')),
+        prize_pool_percentage: parseInt(formData.get('prizePoolPercentage')),
+        trading_style: formData.get('tradingStyle'),
+        tournament_type: formData.get('tournamentType')
+    }
+};
                 
                 // Create tournament in database
                 const result = await window.walletWarsAPI.createTournamentInstance(tournamentData);
