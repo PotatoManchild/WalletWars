@@ -1202,7 +1202,7 @@
     <button class="admin-toggle-btn" onclick="toggleAdminMode()">
         👑 Admin Mode: <span id="adminModeStatus">OFF</span>
     </button>
-</div>
+    </div>
     
     <!-- Page Container -->
     <div class="page-container">
@@ -1242,6 +1242,13 @@
 
             <!-- Main Content -->
             <div id="mainContent" style="display: none;">
+            <!-- Admin Create Tournament Section -->
+                <div class="admin-create-section" id="adminCreateSection">
+                    <button class="create-tournament-btn" onclick="showCreateTournamentModal()">
+                        ➕ Create New Tournament
+                    </button>
+                </div>
+                
                 <!-- Enhanced Tournament Filters for Tiers -->
                 <div class="tournament-filters">
                     <div class="filter-toggle" onclick="toggleFilters()">
