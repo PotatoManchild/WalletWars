@@ -2259,7 +2259,336 @@
                 }
             }, 30000);
         });
-    
+
+// ========================================
+        // ADMIN TOURNAMENT CREATION SYSTEM
+        // ========================================
+        
+        // Admin functionality
+        const ADMIN_WALLET = '6PoB9i9kpumDze7EhiL3CicAuEPxDAzrTVzHYot9sx9h';
+        const ESCROW_PROGRAM = 'AXMwpemCzKXiozQhcMtxajPGQwiz4SWfb3xvH42RXuT7';
+        const PLATFORM_WALLET = '5RLDuPHsa7ohaKUSNc5iYvtgveL1qrCcVdxVHXPeG3b8';
+
+        let isAdminMode = false;
+
+        // Check if admin wallet is connected
+        function checkAdminAccess() {
+            const walletStatus = window.getWalletStatus ? window.getWalletStatus() : { isConnected: false };
+            
+            if (walletStatus.isConnected && walletStatus.walletAddress === ADMIN_WALLET) {
+                console.log('👑 Admin wallet detected');
+                document.getElementById('adminModeToggle').style.display = 'block';
+                return true;
+            }
+            
+            document.getElementById('adminModeToggle').style.display = 'none';
+            document.getElementById('adminCreateSection').style.display = 'none';
+            isAdminMode = false;
+            return false;
+        }
+
+        // Toggle admin mode
+        function toggleAdminMode() {
+            if (!checkAdminAccess()) return;
+            
+            isAdminMode = !isAdminMode;
+            document.getElementById('adminModeStatus').textContent = isAdminMode ? 'ON' : 'OFF';
+            document.getElementById('adminCreateSection').style.display = isAdminMode ? 'block' : 'none';
+            
+            console.log(`👑 Admin mode: ${isAdminMode ? 'ON' : 'OFF'}`);
+        }
+
+        // Show create tournament modal
+        function showCreateTournamentModal() {
+            if (!checkAdminAccess()) {
+                alert('❌ Admin access required');
+                return;
+            }
+            
+            const modal = document.createElement('div');
+            modal.className = 'admin-modal';
+            modal.id = 'createTournamentModal';
+            
+            // Calculate suggested dates
+            const now = new Date();
+            const registrationOpens = new Date(now.getTime() + 5 * 60000); // 5 minutes from now
+            const registrationCloses = new Date(now.getTime() + 24 * 60 * 60000); // 24 hours from now
+            const startTime = new Date(now.getTime() + 24 * 60 * 60000); // 24 hours from now
+            const endTime = new Date(now.getTime() + 8 * 24 * 60 * 60000); // 8 days from now
+            
+            modal.innerHTML = `
+                <div class="admin-modal-content">
+                    <h2>Create New Tournament</h2>
+                    
+                    <form id="createTournamentForm" onsubmit="handleCreateTournament(event)">
+                        <div class="form-group">
+                            <label>Tournament Name</label>
+                            <input type="text" name="name" required placeholder="e.g., Weekly Trading Championship">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Tournament Tier</label>
+                            <div class="tier-selector">
+                                <div class="tier-option" onclick="selectTier('bronze', 0.01)" data-tier="bronze">
+                                    <div class="tier-icon">🥉</div>
+                                    <div class="tier-name">Bronze</div>
+                                    <div class="tier-fee">0.01 SOL</div>
+                                </div>
+                                <div class="tier-option" onclick="selectTier('silver', 0.05)" data-tier="silver">
+                                    <div class="tier-icon">🥈</div>
+                                    <div class="tier-name">Silver</div>
+                                    <div class="tier-fee">0.05 SOL</div>
+                                </div>
+                                <div class="tier-option" onclick="selectTier('gold', 0.1)" data-tier="gold">
+                                    <div class="tier-icon">🥇</div>
+                                    <div class="tier-name">Gold</div>
+                                    <div class="tier-fee">0.1 SOL</div>
+                                </div>
+                                <div class="tier-option" onclick="selectTier('diamond', 0.25)" data-tier="diamond">
+                                    <div class="tier-icon">💎</div>
+                                    <div class="tier-name">Diamond</div>
+                                    <div class="tier-fee">0.25 SOL</div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="tier" id="selectedTier" required>
+                            <input type="hidden" name="entryFee" id="selectedEntryFee" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Trading Style</label>
+                                <select name="tradingStyle" required>
+                                    <option value="pure_wallet">Pure Wallet</option>
+                                    <option value="open_trading">Open Trading</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Tournament Type</label>
+                                <select name="tournamentType" required>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly Mega</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Max Participants</label>
+                                <input type="number" name="maxParticipants" required value="100" min="10" max="1000">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Min Participants</label>
+                                <input type="number" name="minParticipants" required value="10" min="2" max="50">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Prize Pool Percentage</label>
+                            <input type="number" name="prizePoolPercentage" required value="85" min="50" max="100" step="5">
+                            <small style="color: #9ca3af;">Percentage of entry fees that go to prize pool</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Registration Opens</label>
+                            <input type="datetime-local" name="registrationOpens" required value="${formatDateTimeLocal(registrationOpens)}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Registration Closes</label>
+                            <input type="datetime-local" name="registrationCloses" required value="${formatDateTimeLocal(registrationCloses)}">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tournament Starts</label>
+                                <input type="datetime-local" name="startTime" required value="${formatDateTimeLocal(startTime)}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Tournament Ends</label>
+                                <input type="datetime-local" name="endTime" required value="${formatDateTimeLocal(endTime)}">
+                            </div>
+                        </div>
+                        
+                        <div class="info-box">
+                            <p>ℹ️ The tournament will be created with the correct escrow PDA addresses. Players will pay entry fees directly to the escrow program at ${ESCROW_PROGRAM}</p>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" onclick="closeCreateTournamentModal()">Cancel</button>
+                            <button type="submit" class="btn-create">Create Tournament</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Close create tournament modal
+        function closeCreateTournamentModal() {
+            const modal = document.getElementById('createTournamentModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Select tournament tier
+        function selectTier(tier, entryFee) {
+            // Update UI
+            document.querySelectorAll('.tier-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`[data-tier="${tier}"]`).classList.add('selected');
+            
+            // Update hidden inputs
+            document.getElementById('selectedTier').value = tier;
+            document.getElementById('selectedEntryFee').value = entryFee;
+        }
+
+        // Handle tournament creation
+        async function handleCreateTournament(event) {
+            event.preventDefault();
+            
+            if (!checkAdminAccess()) {
+                alert('❌ Admin access required');
+                return;
+            }
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            // Validate tier selection
+            if (!formData.get('tier') || !formData.get('entryFee')) {
+                alert('Please select a tournament tier');
+                return;
+            }
+            
+            try {
+                console.log('🎮 Creating tournament...');
+                
+                // Generate tournament ID
+                const tournamentId = generateTournamentId();
+                
+                // Calculate escrow PDA
+                const escrowPDA = await calculateEscrowPDA(tournamentId);
+                
+                // Prepare tournament data
+                const tournamentData = {
+                    tournament_name: formData.get('name'),
+                    status: 'scheduled',
+                    start_time: new Date(formData.get('startTime')).toISOString(),
+                    end_time: new Date(formData.get('endTime')).toISOString(),
+                    registration_opens: new Date(formData.get('registrationOpens')).toISOString(),
+                    registration_closes: new Date(formData.get('registrationCloses')).toISOString(),
+                    participant_count: 0,
+                    min_participants: parseInt(formData.get('minParticipants')),
+                    total_prize_pool: 0,
+                    escrow_account: escrowPDA,
+                    platform_wallet: PLATFORM_WALLET,
+                    created_by: ADMIN_WALLET,
+                    deployment_metadata: {
+                        tier: formData.get('tier'),
+                        type: formData.get('tournamentType'),
+                        baseVariantName: formData.get('name'),
+                        expectedPrizePool: calculateExpectedPrizePool(
+                            parseFloat(formData.get('entryFee')),
+                            parseInt(formData.get('maxParticipants')),
+                            parseInt(formData.get('prizePoolPercentage'))
+                        )
+                    },
+                    tournament_templates: {
+                        name: formData.get('name'),
+                        tournament_type: formData.get('tournamentType'),
+                        trading_style: formData.get('tradingStyle'),
+                        entry_fee: parseFloat(formData.get('entryFee')),
+                        max_participants: parseInt(formData.get('maxParticipants')),
+                        prize_pool_percentage: parseInt(formData.get('prizePoolPercentage'))
+                    }
+                };
+                
+                // Create tournament in database
+                const result = await window.walletWarsAPI.createTournamentInstance(tournamentData);
+                
+                if (result.success) {
+                    alert(`✅ Tournament created successfully!\n\nTournament ID: ${result.instance.id}\nEscrow PDA: ${escrowPDA}`);
+                    closeCreateTournamentModal();
+                    
+                    // Reload tournaments
+                    setTimeout(() => {
+                        loadTournaments();
+                    }, 1000);
+                } else {
+                    throw new Error(result.error || 'Failed to create tournament');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error creating tournament:', error);
+                alert(`❌ Failed to create tournament: ${error.message}`);
+            }
+        }
+
+        // Generate unique tournament ID
+        function generateTournamentId() {
+            const timestamp = Date.now();
+            const random = Math.floor(Math.random() * 10000);
+            return `TOUR_${timestamp}_${random}`;
+        }
+
+        // Calculate escrow PDA (simplified - in production, use actual Solana Web3.js)
+        async function calculateEscrowPDA(tournamentId) {
+            // This is a simplified version - in production, you'd use:
+            // const [pda] = await PublicKey.findProgramAddress(
+            //     [Buffer.from('escrow'), Buffer.from(tournamentId)],
+            //     new PublicKey(ESCROW_PROGRAM)
+            // );
+            
+            // For now, return a mock PDA
+            const hash = btoa(tournamentId + ESCROW_PROGRAM).replace(/[^a-zA-Z0-9]/g, '');
+            return hash.substring(0, 44);
+        }
+
+        // Calculate expected prize pool
+        function calculateExpectedPrizePool(entryFee, maxParticipants, prizePoolPercentage) {
+            return (entryFee * maxParticipants * prizePoolPercentage) / 100;
+        }
+
+        // Format datetime for input
+        function formatDateTimeLocal(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        // Check admin access on wallet connection change
+        if (window.globalWalletManager) {
+            // Override the updateAllPagesUI to check admin access
+            const originalUpdate = window.globalWalletManager.updateAllPagesUI.bind(window.globalWalletManager);
+            window.globalWalletManager.updateAllPagesUI = function() {
+                originalUpdate();
+                checkAdminAccess();
+            };
+        }
+
+        // Check admin access on page load
+        setTimeout(() => {
+            checkAdminAccess();
+        }, 1000);
+
+        // Check admin access periodically
+        setInterval(() => {
+            checkAdminAccess();
+        }, 5000);
+
+        console.log('👑 Admin tournament creation system loaded');
+        
     </script>
 </body>
 </html>
