@@ -954,7 +954,7 @@
                 <li><a href="profile.html">Profile</a></li>
                 
                 <!-- Disconnected State -->
-                <li id="connectWalletBtn"><a href="#" class="btn-primary" onclick="openWalletModal()">Connect Wallet</a></li>
+                <li id="connectWalletBtn"><a href="#" class="btn-primary" onclick="window.openWalletModal ? window.openWalletModal() : alert('Wallet system loading...')">Connect Wallet</a></li>
                 
                 <!-- Connected State (Hidden by default) -->
                 <li id="championInfo" style="display: none;">
@@ -983,7 +983,7 @@
                 <h1 class="hero-title">WalletWars</h1>
                 <p class="hero-motto">Solana's first winrate battleground</p>
                 <div class="cta-buttons">
-                    <a href="#" class="btn-hero-primary" onclick="openWalletModal()">Connect Wallet</a>
+                    <a href="#" class="btn-hero-primary" onclick="window.openWalletModal ? window.openWalletModal() : alert('Wallet system loading...')">Connect Wallet</a>
                     <a href="#learn-more" class="btn-secondary">Learn More</a>
                 </div>
             </div>
@@ -1550,3 +1550,394 @@
             if (nameCheckTimeout) {
                 clearTimeout(nameCheckTimeout);
             }
+
+             // Validate name (basic checks)
+            let valid = true;
+            let errorMessage = '';
+            
+            if (name.length < 3) {
+                valid = false;
+                errorMessage = 'Name must be at least 3 characters';
+            } else if (name.length > 20) {
+                valid = false;
+                errorMessage = 'Name must be 20 characters or less';
+            }
+            
+            // Enable/disable create button
+            const createBtn = document.getElementById('createChampionBtn');
+            if (createBtn) {
+                createBtn.disabled = !valid;
+            }
+            
+            // Check name availability with debounce
+            if (valid && name !== lastCheckedName) {
+                nameCheckTimeout = setTimeout(() => {
+                    checkNameAvailability(name);
+                }, 500);
+            }
+        }
+
+        // Check if champion name is available
+        async function checkNameAvailability(name) {
+            if (nameCheckInProgress || !name || name.length < 3) return;
+            
+            nameCheckInProgress = true;
+            lastCheckedName = name;
+            
+            try {
+                console.log(`🔍 Checking availability for: ${name}`);
+                
+                // Show checking status
+                showNameStatus('checking', 'Checking availability...');
+                
+                // Check with API
+                const result = await window.walletWarsAPI.checkChampionNameAvailability(name);
+                
+                if (result.available) {
+                    showNameStatus('success', '✅ Name available!');
+                    document.getElementById('createChampionBtn').disabled = false;
+                } else {
+                    showNameStatus('error', '❌ Name already taken');
+                    document.getElementById('createChampionBtn').disabled = true;
+                }
+                
+            } catch (error) {
+                console.error('❌ Name check failed:', error);
+                showNameStatus('warning', '⚠️ Could not verify name');
+                // Allow creation on error
+                document.getElementById('createChampionBtn').disabled = false;
+            } finally {
+                nameCheckInProgress = false;
+            }
+        }
+
+        // Show name availability status
+        function showNameStatus(type, message) {
+            // Remove existing status
+            const existingStatus = document.querySelector('.name-status');
+            if (existingStatus) {
+                existingStatus.remove();
+            }
+            
+            // Create new status element
+            const status = document.createElement('div');
+            status.className = `name-status ${type}`;
+            
+            let icon = '';
+            switch (type) {
+                case 'checking':
+                    icon = '<div class="loading-spinner"></div>';
+                    break;
+                case 'success':
+                    icon = '✅';
+                    break;
+                case 'error':
+                    icon = '❌';
+                    break;
+                case 'warning':
+                    icon = '⚠️';
+                    break;
+            }
+            
+            status.innerHTML = `
+                <div class="status-icon">${icon}</div>
+                <div class="status-message">${message}</div>
+            `;
+            
+            // Insert after input
+            const nameInput = document.getElementById('championName');
+            if (nameInput && nameInput.parentElement) {
+                nameInput.parentElement.appendChild(status);
+            }
+        }
+
+        // Update avatar selection
+        function selectAvatar(avatar) {
+            selectedAvatar = avatar;
+            championData.avatar = avatar;
+            
+            // Update avatar grid selection
+            document.querySelectorAll('.avatar-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`[data-avatar="${avatar}"]`).classList.add('selected');
+            
+            // Update preview
+            updateChampionPreview();
+        }
+
+        // Toggle agreement checkbox
+        function toggleAgreement() {
+            const checkbox = document.getElementById('agreementCheckbox');
+            const finalizeBtn = document.getElementById('finalizeBtn');
+            
+            checkbox.classList.toggle('checked');
+            finalizeBtn.disabled = !checkbox.classList.contains('checked');
+        }
+
+        // Navigation step functions
+        function goToStep(stepNum) {
+            currentStep = stepNum;
+            
+            // Update step indicators
+            for (let i = 1; i <= 5; i++) {
+                const indicator = document.getElementById(`step${i}Indicator`);
+                const content = document.getElementById(`step${i}Content`);
+                
+                if (indicator) {
+                    indicator.classList.remove('active', 'completed');
+                    if (i < stepNum) indicator.classList.add('completed');
+                    if (i === stepNum) indicator.classList.add('active');
+                }
+                
+                if (content) {
+                    content.classList.remove('active');
+                    if (i === stepNum) content.classList.add('active');
+                }
+            }
+            
+            // Handle step 2.5
+            const step2_5 = document.getElementById('step2_5Content');
+            if (step2_5) {
+                step2_5.classList.remove('active');
+                if (stepNum === 2.5) step2_5.classList.add('active');
+            }
+            
+            // Update modal title based on step
+            updateModalTitle(stepNum);
+        }
+
+        // Update modal title
+        function updateModalTitle(step) {
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            
+            switch (step) {
+                case 1:
+                    title.textContent = 'Connect Wallet';
+                    subtitle.textContent = 'Choose your preferred Solana wallet to get started';
+                    break;
+                case 2:
+                    title.textContent = 'Connecting...';
+                    subtitle.textContent = 'Please approve the connection in your wallet';
+                    break;
+                case 2.5:
+                    title.textContent = 'Wallet Connected';
+                    subtitle.textContent = 'Confirming wallet details';
+                    break;
+                case 3:
+                    title.textContent = 'Create Your Champion';
+                    subtitle.textContent = 'Choose a unique name and avatar';
+                    break;
+                case 4:
+                    title.textContent = 'Tournament Rules';
+                    subtitle.textContent = 'Important information before you start';
+                    break;
+                case 5:
+                    title.textContent = 'Welcome Champion!';
+                    subtitle.textContent = 'You\'re ready to compete';
+                    break;
+            }
+        }
+
+        // Show wallet confirmation
+        function showWalletConfirmation(walletType, walletAddress) {
+            goToStep(2.5);
+            
+            // Update wallet type
+            document.getElementById('connectedWalletType').textContent = 
+                walletType.charAt(0).toUpperCase() + walletType.slice(1);
+            
+            // Update wallet address
+            document.getElementById('connectedWalletAddress').textContent = walletAddress;
+            
+            // Start checking for champion
+            updateChampionStatus('checking', 'Checking for existing champion profile...');
+        }
+
+        // Update champion status
+        function updateChampionStatus(status, message) {
+            const statusDiv = document.querySelector('.champion-status-check');
+            const icon = document.getElementById('championStatusIcon');
+            const text = document.getElementById('championStatusText');
+            
+            statusDiv.className = `champion-status-check ${status}`;
+            text.textContent = message;
+            
+            switch (status) {
+                case 'checking':
+                    icon.textContent = '🔍';
+                    break;
+                case 'found':
+                    icon.textContent = '✅';
+                    break;
+                case 'new':
+                    icon.textContent = '🌟';
+                    break;
+            }
+        }
+
+        // Show continue button
+        function showContinueButton(type, buttonText) {
+            const actions = document.getElementById('confirmationActions');
+            const continueBtn = document.getElementById('continueBtn');
+            
+            if (actions) actions.style.display = 'flex';
+            if (continueBtn) continueBtn.textContent = buttonText;
+        }
+
+        // Continue from confirmation
+        function continueFromConfirmation() {
+            if (nextAction === 'loadExisting') {
+                // Load existing champion
+                completedOnboarding();
+            } else if (nextAction === 'createNew') {
+                // Go to champion creation
+                goToStep(3);
+            }
+        }
+
+        // Show connection error
+        function showConnectionError(message) {
+            goToStep(1);
+            alert(`❌ Connection Failed\n\n${message}`);
+        }
+
+        // Modal control functions
+        window.openWalletModal = function() {
+            const modal = document.getElementById('walletModal');
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                checkWalletAvailability();
+                goToStep(1);
+            }
+        }
+
+        function closeWalletModal() {
+            const modal = document.getElementById('walletModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // ========================================
+        // MOBILE NAVIGATION
+        // ========================================
+
+        function initializeMobileNavigation() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            if (!mobileToggle || !navLinks || !hamburger) return;
+            
+            mobileToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isOpen = navLinks.classList.contains('active');
+                if (isOpen) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            });
+            
+            const navLinksItems = navLinks.querySelectorAll('a');
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', function() {
+                    closeMobileMenu();
+                });
+            });
+            
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navLinks.contains(event.target) || 
+                                        mobileToggle.contains(event.target);
+                if (!isClickInsideNav && navLinks.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+            });
+        }
+
+        function openMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.add('active');
+            hamburger.classList.add('active');
+            mobileToggle.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const hamburger = document.querySelector('.hamburger');
+            
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('active');
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        function handleWindowResize() {
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    closeMobileMenu();
+                }
+            });
+        }
+
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎮 WalletWars Landing Page loaded!');
+            
+            // Initialize mobile navigation
+            initializeMobileNavigation();
+            handleWindowResize();
+            
+            // Check for GlobalWalletManager
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            function checkWalletManager() {
+                attempts++;
+                
+                if (window.globalWalletManager && window.getWalletStatus) {
+                    const status = window.getWalletStatus();
+                    console.log('🔗 GlobalWalletManager status:', status);
+                    
+                    if (status.isConnected) {
+                        console.log('✅ Wallet already connected via GlobalWalletManager');
+                        // UI should already be updated by GlobalWalletManager
+                    }
+                } else if (attempts < maxAttempts) {
+                    setTimeout(checkWalletManager, 500);
+                }
+            }
+            
+            checkWalletManager();
+            
+            // Modal close handlers
+            document.addEventListener('click', function(event) {
+                const modal = document.getElementById('walletModal');
+                if (event.target === modal) {
+                    closeWalletModal();
+                }
+            });
+            
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeWalletModal();
+                }
+            });
+        });
+
+        console.log('✅ WalletWars Landing Page scripts loaded!');
+    </script>
+</body>
+</html>
