@@ -2448,83 +2448,153 @@
             document.getElementById('selectedEntryFee').value = entryFee;
         }
 
-        // Handle tournament creation
-        async function handleCreateTournament(event) {
-            event.preventDefault();
-            
-            if (!checkAdminAccess()) {
-                alert('❌ Admin access required');
-                return;
-            }
-            
-            const form = event.target;
-            const formData = new FormData(form);
-            
-            // Validate tier selection
-            if (!formData.get('tier') || !formData.get('entryFee')) {
-                alert('Please select a tournament tier');
-                return;
-            }
-            
-            try {
-                console.log('🎮 Creating tournament...');
-                
-                // Generate tournament ID
-                const tournamentId = generateTournamentId();
-                
-                // Calculate escrow PDA
-                const escrowPDA = await calculateEscrowPDA(tournamentId);
-                
-                // Prepare tournament data
-               const tournamentData = {
-    tournament_name: formData.get('name'),
-    status: 'scheduled',
-    start_time: new Date(formData.get('startTime')).toISOString(),
-    end_time: new Date(formData.get('endTime')).toISOString(),
-    registration_opens: new Date(formData.get('registrationOpens')).toISOString(),
-    registration_closes: new Date(formData.get('registrationCloses')).toISOString(),
-    participant_count: 0,
-    min_participants: parseInt(formData.get('minParticipants')),
-    total_prize_pool: 0,
-    // Remove template_id since we don't have one
-    deployment_metadata: {
-        tier: formData.get('tier'),
-        type: formData.get('tournamentType'),
-        baseVariantName: formData.get('name'),
-        expectedPrizePool: calculateExpectedPrizePool(
-            parseFloat(formData.get('entryFee')),
-            parseInt(formData.get('maxParticipants')),
-            parseInt(formData.get('prizePoolPercentage'))
-        ),
-        // Store all the template-like data here
-        entry_fee: parseFloat(formData.get('entryFee')),
-        max_participants: parseInt(formData.get('maxParticipants')),
-        prize_pool_percentage: parseInt(formData.get('prizePoolPercentage')),
-        trading_style: formData.get('tradingStyle'),
-        tournament_type: formData.get('tournamentType')
+   // Handle tournament creation
+async function handleCreateTournament(event) {
+    event.preventDefault();
+    
+    if (!checkAdminAccess()) {
+        alert('❌ Admin access required');
+        return;
     }
-};
-                
-                // Create tournament in database
-                const result = await window.walletWarsAPI.createTournamentInstance(tournamentData);
-                
-                if (result.success) {
-                    alert(`✅ Tournament created successfully!\n\nTournament ID: ${result.instance.id}`);
-                    closeCreateTournamentModal();
-                    
-                    // Reload tournaments
-                    setTimeout(() => {
-                        loadTournaments();
-                    }, 1000);
-                } else {
-                    throw new Error(result.error || 'Failed to create tournament');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error creating tournament:', error);
-                alert(`❌ Failed to create tournament: ${error.message}`);
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    // Validate tier selection
+    if (!formData.get('tier') || !formData.get('entryFee')) {
+        alert('Please select a tournament tier');
+        return;
+    }
+    
+    try {
+        console.log('🎮 Creating tournament...');
+        
+        // First, check if we should create a template
+        const createTemplate = confirm('Would you like to save this as a reusable template?\n\nYes = Can be used for automation\nNo = One-time tournament only');
+        
+        let templateId = null;
+        let templateData = null;
+        
+        if (createTemplate) {
+            // Create a template first
+            const templateName = formData.get('name') + ' Template';
+            templateData = {
+                name: templateName,
+                tournament_type: formData.get('tournamentType'),
+                trading_style: formData.get('tradingStyle'),
+                start_day: 'variable', // Admin templates are flexible
+                entry_fee: parseFloat(formData.get('entryFee')),
+                max_participants: parseInt(formData.get('maxParticipants')),
+                min_participants: parseInt(formData.get('minParticipants')),
+                prize_pool_percentage: parseInt(formData.get('prizePoolPercentage')),
+                is_active: true
+            };
+            
+            const templateResult = await window.walletWarsAPI.createTournamentTemplate(templateData);
+            
+            if (templateResult.success) {
+                console.log('✅ Template created:', templateResult.template.id);
+                templateId = templateResult.template.id;
+                // Store the full template data for the tournament
+                templateData = templateResult.template;
+            } else {
+                console.warn('⚠️ Template creation failed, continuing without template');
             }
         }
+        
+        // Calculate times
+        const startTime = new Date(formData.get('startTime'));
+        const endTime = new Date(formData.get('endTime'));
+        const registrationOpens = new Date(formData.get('registrationOpens'));
+        const registrationCloses = new Date(formData.get('registrationCloses'));
+        
+        // Create tournament data
+        const tournamentData = {
+            tournament_name: formData.get('name'),
+            status: 'scheduled',
+            start_time: startTime.toISOString(),
+            end_time: endTime.toISOString(),
+            registration_opens: registrationOpens.toISOString(),
+            registration_closes: registrationCloses.toISOString(),
+            participant_count: 0,
+            min_participants: parseInt(formData.get('minParticipants')),
+            total_prize_pool: 0,
+            // Add these for compatibility
+            registration_opens_at: registrationOpens.toISOString(),
+            registration_closes_at: registrationCloses.toISOString(),
+            // Include template_id if we created one
+            template_id: templateId,
+            // Always include deployment metadata
+            deployment_metadata: {
+                tier: formData.get('tier'),
+                type: formData.get('tournamentType'),
+                baseVariantName: formData.get('name'),
+                expectedPrizePool: calculateExpectedPrizePool(
+                    parseFloat(formData.get('entryFee')),
+                    parseInt(formData.get('maxParticipants')),
+                    parseInt(formData.get('prizePoolPercentage'))
+                ),
+                entry_fee: parseFloat(formData.get('entryFee')),
+                max_participants: parseInt(formData.get('maxParticipants')),
+                prize_pool_percentage: parseInt(formData.get('prizePoolPercentage')),
+                trading_style: formData.get('tradingStyle'),
+                tournament_type: formData.get('tournamentType'),
+                createdBy: ADMIN_WALLET,
+                createdAt: new Date().toISOString(),
+                manuallyCreated: true,
+                hasTemplate: !!templateId
+            }
+        };
+        
+        // If no template was created, add template data directly for display
+        if (!templateId) {
+            tournamentData.tournament_templates = {
+                name: formData.get('name'),
+                tournament_type: formData.get('tournamentType'),
+                trading_style: formData.get('tradingStyle'),
+                entry_fee: parseFloat(formData.get('entryFee')),
+                max_participants: parseInt(formData.get('maxParticipants')),
+                prize_pool_percentage: parseInt(formData.get('prizePoolPercentage'))
+            };
+        }
+        
+        // Create tournament
+        const result = await window.walletWarsAPI.createTournamentInstance(tournamentData);
+        
+        if (result.success) {
+            let message = `✅ Tournament created successfully!\n\nTournament ID: ${result.instance.id}`;
+            
+            if (templateId) {
+                message += `\n\n📋 Template created! This tournament configuration can now be used for automation.`;
+            }
+            
+            alert(message);
+            closeCreateTournamentModal();
+            
+            // Schedule lifecycle events if automation is available
+            if (window.tournamentLifecycleManager && result.instance) {
+                try {
+                    const deploymentManager = new window.TournamentDeploymentManager();
+                    await deploymentManager.scheduleLifecycleEvents(result.instance);
+                    console.log('⏰ Lifecycle events scheduled for tournament');
+                } catch (error) {
+                    console.warn('⚠️ Could not schedule lifecycle events:', error);
+                }
+            }
+            
+            // Reload tournaments
+            setTimeout(() => {
+                loadTournaments();
+            }, 1000);
+        } else {
+            throw new Error(result.error || 'Failed to create tournament');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error creating tournament:', error);
+        alert(`❌ Failed to create tournament: ${error.message}`);
+    }
+}
 
         // Generate unique tournament ID
         function generateTournamentId() {
