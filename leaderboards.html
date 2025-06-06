@@ -972,6 +972,39 @@
         });
 
         console.log('✅ WalletWars Leaderboards page with GlobalWalletManager integration loaded!');
+
+              // Simple wallet connection for non-index pages
+        function attemptQuickConnect() {
+            if (window.globalWalletManager) {
+                // Try to connect with Phantom by default
+                window.connectWallet('phantom').then(success => {
+                    if (success) {
+                        alert('Wallet connected! Please visit the home page to complete champion setup.');
+                        window.location.href = 'index.html';
+                    }
+                }).catch(error => {
+                    alert('Failed to connect wallet. Please try from the home page.');
+                    window.location.href = 'index.html';
+                });
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Override the connect button behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            const connectBtn = document.querySelector('#connectWalletBtn a');
+            if (connectBtn) {
+                connectBtn.onclick = function(e) {
+                    e.preventDefault();
+                    attemptQuickConnect();
+                };
+            }
+        });
+        
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>
