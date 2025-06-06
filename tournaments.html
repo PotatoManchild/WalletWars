@@ -1996,12 +1996,18 @@ function showTournamentDetails(tournamentId) {
                 return;
             }
 
-            async function proceedToRegisterWithEscrow(tournamentId, tradingStyle, entryFee) {
+       async function proceedToRegister(tournamentId, tradingStyle, entryFee) {
     const walletStatus = window.getWalletStatus();
     
     if (!walletStatus.isConnected || !walletStatus.championId) {
         alert('❌ Wallet connection lost. Please reconnect your wallet.');
         closeRegistrationModal();
+        return;
+    }
+
+    // Check if escrow integration is available
+    if (!window.WalletWarsEscrowIntegration || !window.solana) {
+        alert('⚠️ Tournament Registration Unavailable\n\nThe escrow payment system is currently being set up. Please check back later to register for tournaments.\n\nEntry fees will be collected via secure Solana escrow contracts.');
         return;
     }
     
@@ -2011,42 +2017,39 @@ function showTournamentDetails(tournamentId) {
         // Initialize escrow client
         const escrow = new WalletWarsEscrowIntegration(window.solana);
         
-        // Register with escrow (this handles the payment)
-        const escrowResult = await escrow.registerPlayer(tournamentId);
+        // Show payment confirmation
+        const confirmPayment = confirm(
+            `⚠️ Tournament Registration\n\n` +
+            `Entry Fee: ${entryFee} SOL\n\n` +
+            `This payment will be processed through the WalletWars escrow system.\n\n` +
+            `✅ If minimum participants are reached: Prize pool distributed to winners\n` +
+            `❌ If minimum participants NOT reached: Full refund will be issued\n\n` +
+            `Proceed with registration?`
+        );
         
-        if (escrowResult.success) {
-            // Now update the database
-            const result = await window.walletWarsAPI.registerForTournament(
-                walletStatus.championId,
-                tournamentId,
-                tradingStyle
-            );
-            
-            if (result.success) {
-                alert(`🎉 Registration Successful!\n\nEntry fee of ${entryFee} SOL has been paid to escrow.\nTransaction: ${escrowResult.signature.slice(0, 8)}...`);
-                closeRegistrationModal();
-                setTimeout(() => loadTournaments(), 1000);
-            } else {
-                alert(`❌ Database registration failed: ${result.error}\n\nNote: Your entry fee was paid. Contact support if needed.`);
-            }
-        } else {
-            alert(`❌ Escrow payment failed: ${escrowResult.error}`);
+        if (!confirmPayment) {
+            return;
         }
-    } catch (error) {
-        console.error('❌ Registration error:', error);
-        alert(`❌ Registration failed: ${error.message}`);
-    }
-}
+        
+        // Show loading state
+        const loadingAlert = document.createElement('div');
+        loadingAlert.innerHTML = `
+            <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                        background: rgba(31, 41, 55, 0.95); border: 2px solid #8b5cf6; 
+                        border-radius: 1rem; padding: 2rem; z-index: 10000; text-align: center;">
+                <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                <div style="color: #8b5cf6; font-weight: 600;">Processing Payment...</div>
+                <div style="color: #9ca3af; font-size: 0.9rem; margin-top: 0.5rem;">Please approve the transaction in your wallet</div>
+            </div>
+        `;
+        document.body.appendChild(loadingAlert);
+        
+        try {
+            // Register with escrow (this handles the payment)
+            const escrowResult = await escrow.registerPlayer(tournamentId);
             
-            const confirmPayment = confirm(`⚠️ Tournament Registration\n\nThis will require a payment of ${entryFee} SOL as the entry fee.\n\nThe payment system is currently being implemented. For now, this will simulate the registration.\n\nProceed with registration?`);
-            
-            if (!confirmPayment) {
-                return;
-            }
-            
-            try {
-                console.log(`🎮 Registering for tournament ${tournamentId}...`);
-                
+            if (escrowResult.success) {
+                // Payment successful, now update the database
                 const result = await window.walletWarsAPI.registerForTournament(
                     walletStatus.championId,
                     tournamentId,
@@ -2054,24 +2057,45 @@ function showTournamentDetails(tournamentId) {
                 );
                 
                 if (result.success) {
-                    alert(`🎉 Registration Successful!\n\nYou are now registered for the tournament!\n\nNote: Payment system coming soon. Entry fees will be collected via Solana escrow.`);
+                    document.body.removeChild(loadingAlert);
+                    alert(
+                        `🎉 Registration Successful!\n\n` +
+                        `✅ Entry fee of ${entryFee} SOL has been paid to escrow\n` +
+                        `📋 Transaction: ${escrowResult.signature.slice(0, 8)}...${escrowResult.signature.slice(-8)}\n\n` +
+                        `Good luck in the tournament!`
+                    );
                     closeRegistrationModal();
                     setTimeout(() => loadTournaments(), 1000);
                 } else {
-                    alert(`❌ Registration Failed\n\n${result.error}`);
+                    document.body.removeChild(loadingAlert);
+                    alert(
+                        `⚠️ Registration Issue\n\n` +
+                        `Your payment was successful but database registration failed.\n` +
+                        `Error: ${result.error}\n\n` +
+                        `⚠️ IMPORTANT: Your entry fee has been paid. Please contact support with this transaction:\n` +
+                        `${escrowResult.signature}`
+                    );
                 }
-            } catch (error) {
-                console.error('❌ Registration error:', error);
-                alert(`❌ Registration failed: ${error.message}`);
+            } else {
+                document.body.removeChild(loadingAlert);
+                alert(`❌ Payment Failed\n\n${escrowResult.error}\n\nNo funds have been deducted from your wallet.`);
             }
-        }
-
-        function closeRegistrationModal() {
-            const modal = document.querySelector('.tournament-registration-modal');
-            if (modal) {
-                modal.remove();
+        } catch (error) {
+            if (loadingAlert.parentNode) {
+                document.body.removeChild(loadingAlert);
             }
+            throw error;
         }
+        
+    } catch (error) {
+        console.error('❌ Registration error:', error);
+        alert(
+            `❌ Registration Failed\n\n` +
+            `${error.message}\n\n` +
+            `If you believe this is an error, please contact support.`
+        );
+    }
+}
 
         // ========================================
         // ENHANCED FILTER FUNCTIONS FOR TIERS
