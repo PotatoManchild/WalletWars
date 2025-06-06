@@ -1785,97 +1785,136 @@
         // ENHANCED TOURNAMENT DETAILS FOR TIERS
         // ========================================
 
-        function showTournamentDetails(tournamentId) {
-            const tournament = tournamentData[tournamentId];
-            if (!tournament) {
-                console.error(`Tournament ${tournamentId} not found`);
-                return;
-            }
+function showTournamentDetails(tournamentId) {
+    // First, try to find the tournament in tournamentData
+    let tournament = tournamentData[tournamentId];
+    
+    // If not found in tournamentData, search in realTournamentData by actual ID
+    if (!tournament && realTournamentData) {
+        const realTournament = realTournamentData.find(t => 
+            t.id === tournamentId || 
+            // Also check if tournamentId is just an index
+            realTournamentData[tournamentId - 1] === t
+        );
+        
+        if (realTournament) {
+            // Create tournament object from real data
+            tournament = {
+                id: realTournament.id,
+                title: realTournament.tournament_name || 'Tournament',
+                entryFee: realTournament.deployment_metadata?.entry_fee || 
+                         realTournament.tournament_templates?.entry_fee || 0.01,
+                maxPlayers: realTournament.deployment_metadata?.max_participants || 
+                           realTournament.tournament_templates?.max_participants || 100,
+                registered: realTournament.participant_count || 0,
+                minParticipants: realTournament.min_participants || 10,
+                prizePool: realTournament.total_prize_pool || 0,
+                tradingStyle: realTournament.deployment_metadata?.trading_style || 
+                             realTournament.tournament_templates?.trading_style || 'pure_wallet',
+                duration: '7 days',
+                status: realTournament.status,
+                startTime: realTournament.start_time,
+                endTime: realTournament.end_time,
+                registrationCloses: realTournament.registration_closes || realTournament.registration_closes_at,
+                tier: realTournament.deployment_metadata?.tier || 'bronze',
+                metadata: realTournament.deployment_metadata || {}
+            };
+        }
+    }
+    
+    if (!tournament) {
+        console.error(`Tournament ${tournamentId} not found in any data source`);
+        alert('Tournament details not found. Please refresh the page and try again.');
+        return;
+    }
+    
+    // Rest of the function continues as before...
+    const tournamentInstance = realTournamentData.find(t => t.id === tournament.id);
+    if (!tournamentInstance) {
+        console.error(`Tournament instance ${tournament.id} not found`);
+        alert('Tournament details not available. Please refresh the page.');
+        return;
+    }
+    
+    const metadata = tournamentInstance.deployment_metadata || {};
+    const tier = metadata.tier || tournament.tier || 'bronze';
+    const isMonthly = metadata.type === 'monthly_mega';
+    const tierConfig = window.TOURNAMENT_CONFIG?.weeklyTiers?.[tier];
+    
+    // Calculate prize breakdown
+    const maxPrizePool = isMonthly ? metadata.expectedPrizePool : 
+        (tierConfig ? tierConfig.entryFee * tierConfig.maxParticipants * (tierConfig.prizePoolPercentage / 100) : tournament.prizePool);
+    const winnerShare = isMonthly ? 25 : (tierConfig?.winnerShare || 50);
+    const winnerPrize = maxPrizePool * (winnerShare / 100);
+    
+    const walletStatus = window.getWalletStatus ? window.getWalletStatus() : { isConnected: false };
+    
+    // Create and show the modal (rest of the code remains the same)
+    const modal = document.createElement('div');
+    modal.className = 'tournament-registration-modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h2>${tournament.title}</h2>
             
-            const tournamentInstance = realTournamentData.find(t => t.id === tournament.id);
-            if (!tournamentInstance) {
-                console.error(`Tournament instance ${tournament.id} not found`);
-                return;
-            }
-            
-            const metadata = tournamentInstance.deployment_metadata || {};
-            const tier = metadata.tier || tournament.tier || 'bronze';
-            const isMonthly = metadata.type === 'monthly_mega';
-            const tierConfig = window.TOURNAMENT_CONFIG?.weeklyTiers?.[tier];
-            
-            // Calculate prize breakdown
-            const maxPrizePool = isMonthly ? metadata.expectedPrizePool : 
-                (tierConfig ? tierConfig.entryFee * tierConfig.maxParticipants * (tierConfig.prizePoolPercentage / 100) : tournament.prizePool);
-            const winnerShare = isMonthly ? 25 : (tierConfig?.winnerShare || 50);
-            const winnerPrize = maxPrizePool * (winnerShare / 100);
-            
-            const walletStatus = window.getWalletStatus ? window.getWalletStatus() : { isConnected: false };
-            
-            const modal = document.createElement('div');
-            modal.className = 'tournament-registration-modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <h2>${tournament.title}</h2>
-                    
-                    <div class="tournament-tier-info">
-                        <div class="tier-display tier-${tier}">
-                            <div class="tier-icon">${getTierIcon(tier, isMonthly)}</div>
-                            <div class="tier-details">
-                                <div class="tier-name">${tier.toUpperCase()} TIER${isMonthly ? ' - MONTHLY MEGA' : ''}</div>
-                                <div class="tier-description">${getTierDescription(tier, isMonthly)}</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tournament-info">
-                        <p><strong>Entry Fee:</strong> ${tournament.entryFee} SOL</p>
-                        <p><strong>Maximum Prize Pool:</strong> ${maxPrizePool.toFixed(2)} SOL (~$${(maxPrizePool * 150).toLocaleString()})</p>
-                        <p><strong>Winner Prize:</strong> ~${winnerPrize.toFixed(1)} SOL (~$${(winnerPrize * 150).toLocaleString()})</p>
-                        <p><strong>Participants:</strong> ${tournament.registered}/${tournament.maxPlayers} (Min: ${tournament.minParticipants})</p>
-                        <p><strong>Trading Style:</strong> ${tournament.tradingStyle === 'pure_wallet' ? '📊 Pure Wallet Only' : '⚡ Open Trading Allowed'}</p>
-                        <p><strong>Duration:</strong> ${isMonthly ? '30 days' : tournament.duration}</p>
-                        <p><strong>Status:</strong> ${getTournamentStatusInfo(tournamentInstance).text}</p>
-                        <p><strong>Start Time:</strong> ${new Date(tournament.startTime).toLocaleString()}</p>
-                        <p><strong>Registration Closes:</strong> ${new Date(tournament.registrationCloses).toLocaleString()}</p>
-                        ${metadata.theme ? `<p><strong>Theme:</strong> ${metadata.theme}</p>` : ''}
-                    </div>
-                    
-                    <div class="prize-breakdown">
-                        <h4>Prize Distribution</h4>
-                        <div class="prize-list">
-                            ${generatePrizeBreakdown(maxPrizePool, isMonthly, tournament.registered || tournament.minParticipants)}
-                        </div>
-                    </div>
-                    
-                    ${!walletStatus.isConnected ? `
-                        <div class="warning-box">
-                            <p>🔗 Please connect your wallet to register for tournaments</p>
-                        </div>
-                    ` : tournament.status !== 'registering' && tournament.status !== 'scheduled' ? `
-                        <div class="warning-box">
-                            <p>⚠️ Registration is not currently open for this tournament</p>
-                        </div>
-                    ` : `
-                        <div class="success-box">
-                            <p>✅ Ready to register as ${walletStatus.championName}</p>
-                            <p>💡 ${tier.toUpperCase()} tier tournaments are ${getTierAdvice(tier)}</p>
-                        </div>
-                    `}
-                    
-                    <div class="registration-actions">
-                        <button onclick="closeRegistrationModal()">Close</button>
-                        ${walletStatus.isConnected && (tournament.status === 'registering' || tournament.status === 'scheduled') ? `
-                            <button onclick="proceedToRegister('${tournament.id}', '${tournament.tradingStyle}', ${tournament.entryFee})" 
-                                    class="register-btn tier-${tier}">
-                                Register (${tournament.entryFee} SOL)
-                            </button>
-                        ` : ''}
+            <div class="tournament-tier-info">
+                <div class="tier-display tier-${tier}">
+                    <div class="tier-icon">${getTierIcon(tier, isMonthly)}</div>
+                    <div class="tier-details">
+                        <div class="tier-name">${tier.toUpperCase()} TIER${isMonthly ? ' - MONTHLY MEGA' : ''}</div>
+                        <div class="tier-description">${getTierDescription(tier, isMonthly)}</div>
                     </div>
                 </div>
-            `;
+            </div>
             
-            document.body.appendChild(modal);
-        }
+            <div class="tournament-info">
+                <p><strong>Entry Fee:</strong> ${tournament.entryFee} SOL</p>
+                <p><strong>Maximum Prize Pool:</strong> ${maxPrizePool.toFixed(2)} SOL (~$${(maxPrizePool * 150).toLocaleString()})</p>
+                <p><strong>Winner Prize:</strong> ~${winnerPrize.toFixed(1)} SOL (~$${(winnerPrize * 150).toLocaleString()})</p>
+                <p><strong>Participants:</strong> ${tournament.registered}/${tournament.maxPlayers} (Min: ${tournament.minParticipants})</p>
+                <p><strong>Trading Style:</strong> ${tournament.tradingStyle === 'pure_wallet' ? '📊 Pure Wallet Only' : '⚡ Open Trading Allowed'}</p>
+                <p><strong>Duration:</strong> ${isMonthly ? '30 days' : tournament.duration}</p>
+                <p><strong>Status:</strong> ${getTournamentStatusInfo(tournamentInstance).text}</p>
+                <p><strong>Start Time:</strong> ${new Date(tournament.startTime).toLocaleString()}</p>
+                <p><strong>Registration Closes:</strong> ${new Date(tournament.registrationCloses).toLocaleString()}</p>
+                ${metadata.theme ? `<p><strong>Theme:</strong> ${metadata.theme}</p>` : ''}
+            </div>
+            
+            <div class="prize-breakdown">
+                <h4>Prize Distribution</h4>
+                <div class="prize-list">
+                    ${generatePrizeBreakdown(maxPrizePool, isMonthly, tournament.registered || tournament.minParticipants)}
+                </div>
+            </div>
+            
+            ${!walletStatus.isConnected ? `
+                <div class="warning-box">
+                    <p>🔗 Please connect your wallet to register for tournaments</p>
+                </div>
+            ` : tournament.status !== 'registering' && tournament.status !== 'scheduled' ? `
+                <div class="warning-box">
+                    <p>⚠️ Registration is not currently open for this tournament</p>
+                </div>
+            ` : `
+                <div class="success-box">
+                    <p>✅ Ready to register as ${walletStatus.championName}</p>
+                    <p>💡 ${tier.toUpperCase()} tier tournaments are ${getTierAdvice(tier)}</p>
+                </div>
+            `}
+            
+            <div class="registration-actions">
+                <button onclick="closeRegistrationModal()">Close</button>
+                ${walletStatus.isConnected && (tournament.status === 'registering' || tournament.status === 'scheduled') ? `
+                    <button onclick="proceedToRegister('${tournament.id}', '${tournament.tradingStyle}', ${tournament.entryFee})" 
+                            class="register-btn tier-${tier}">
+                        Register (${tournament.entryFee} SOL)
+                    </button>
+                ` : ''}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
 
         function getTierIcon(tier, isMonthly) {
             if (isMonthly) return '🏆';
