@@ -13,6 +13,18 @@ class WalletWarsEscrowIntegration {
         this.SystemProgram = solanaWeb3.SystemProgram;
         this.LAMPORTS_PER_SOL = solanaWeb3.LAMPORTS_PER_SOL;
         
+        // Ensure Buffer is available globally
+        if (typeof window !== 'undefined' && typeof window.Buffer === 'undefined') {
+            if (typeof buffer !== 'undefined' && buffer.Buffer) {
+                window.Buffer = buffer.Buffer;
+            } else {
+                throw new Error('Buffer is not available. Please ensure buffer polyfill is loaded.');
+            }
+        }
+        
+        // Store Buffer reference
+        this.Buffer = window.Buffer;
+        
         // Anchor globals (if available)
         if (typeof anchor !== 'undefined') {
             this.AnchorProvider = anchor.AnchorProvider;
@@ -72,14 +84,14 @@ class WalletWarsEscrowIntegration {
         try {
             console.log(`🎮 Initializing tournament ${tournamentId} on-chain...`);
 
-            // Generate PDAs
+            // Generate PDAs using stored Buffer reference
             const [tournamentPDA] = await this.PublicKey.findProgramAddress(
-                [Buffer.from('tournament'), Buffer.from(tournamentId)],
+                [this.Buffer.from('tournament'), this.Buffer.from(tournamentId)],
                 this.PROGRAM_ID
             );
 
             const [escrowPDA] = await this.PublicKey.findProgramAddress(
-                [Buffer.from('escrow'), Buffer.from(tournamentId)],
+                [this.Buffer.from('escrow'), this.Buffer.from(tournamentId)],
                 this.PROGRAM_ID
             );
 
@@ -133,19 +145,19 @@ class WalletWarsEscrowIntegration {
         try {
             console.log(`📝 Registering player for tournament ${tournamentId}...`);
 
-            // Generate PDAs
+            // Generate PDAs using stored Buffer reference
             const [tournamentPDA] = await this.PublicKey.findProgramAddress(
-                [Buffer.from('tournament'), Buffer.from(tournamentId)],
+                [this.Buffer.from('tournament'), this.Buffer.from(tournamentId)],
                 this.PROGRAM_ID
             );
 
             const [escrowPDA] = await this.PublicKey.findProgramAddress(
-                [Buffer.from('escrow'), Buffer.from(tournamentId)],
+                [this.Buffer.from('escrow'), this.Buffer.from(tournamentId)],
                 this.PROGRAM_ID
             );
 
             const [registrationPDA] = await this.PublicKey.findProgramAddress(
-                [Buffer.from('registration'), tournamentPDA.toBuffer(), player.toBuffer()],
+                [this.Buffer.from('registration'), tournamentPDA.toBuffer(), player.toBuffer()],
                 this.PROGRAM_ID
             );
 
@@ -205,7 +217,7 @@ class WalletWarsEscrowIntegration {
     async getTournamentOnChain(tournamentId) {
         try {
             const [tournamentPDA] = await this.PublicKey.findProgramAddress(
-                [Buffer.from('tournament'), Buffer.from(tournamentId)],
+                [this.Buffer.from('tournament'), this.Buffer.from(tournamentId)],
                 this.PROGRAM_ID
             );
 
@@ -246,12 +258,12 @@ class WalletWarsEscrowIntegration {
         try {
             const player = new this.PublicKey(playerAddress);
             const [tournamentPDA] = await this.PublicKey.findProgramAddress(
-                [Buffer.from('tournament'), Buffer.from(tournamentId)],
+                [this.Buffer.from('tournament'), this.Buffer.from(tournamentId)],
                 this.PROGRAM_ID
             );
 
             const [registrationPDA] = await this.PublicKey.findProgramAddress(
-                [Buffer.from('registration'), tournamentPDA.toBuffer(), player.toBuffer()],
+                [this.Buffer.from('registration'), tournamentPDA.toBuffer(), player.toBuffer()],
                 this.PROGRAM_ID
             );
 
@@ -286,10 +298,10 @@ class WalletWarsEscrowIntegration {
             const programInfo = await this.connection.getAccountInfo(this.PROGRAM_ID);
             console.log('✅ Escrow program found:', !!programInfo);
             
-            // Test 3: Generate test PDAs
+            // Test 3: Generate test PDAs using stored Buffer reference
             const testId = 'test_' + Date.now();
             const [tournamentPDA] = await this.PublicKey.findProgramAddress(
-                [Buffer.from('tournament'), Buffer.from(testId)],
+                [this.Buffer.from('tournament'), this.Buffer.from(testId)],
                 this.PROGRAM_ID
             );
             console.log('✅ Can generate PDAs:', tournamentPDA.toString());
