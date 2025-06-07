@@ -29,7 +29,7 @@ class TournamentAutomation {
     async initialize() {
         // Wait for dependencies
         if (!window.tournamentSnapshotManager) {
-            throw new Error('Tournament Snapshot Manager not available');
+            console.warn('⚠️ Tournament Snapshot Manager not available - automation will run without snapshots');
         }
         if (!window.walletWarsAPI) {
             throw new Error('WalletWars API not available');
@@ -38,8 +38,10 @@ class TournamentAutomation {
         this.snapshotManager = window.tournamentSnapshotManager;
         this.api = window.walletWarsAPI;
         
-        // Initialize snapshot manager
-        await this.snapshotManager.initialize();
+        // Initialize snapshot manager if available
+        if (this.snapshotManager && this.snapshotManager.initialize) {
+            await this.snapshotManager.initialize();
+        }
         
         console.log('✅ Tournament Automation ready with event-driven architecture');
         console.log('📅 Tournaments will be processed at their exact start/end times');
@@ -407,13 +409,17 @@ class TournamentAutomation {
             if (updateError) throw updateError;
 
             // Take start snapshots for all participants
-            console.log('📸 Taking start snapshots for all participants...');
-            const snapshotResults = await this.snapshotManager.processTournamentStart(tournamentId);
-            
-            // Track API usage
-            this.trackApiUsage(snapshotResults.successful + snapshotResults.failed);
-            
-            console.log(`✅ Tournament started! Snapshots: ${snapshotResults.successful} successful, ${snapshotResults.failed} failed`);
+            if (this.snapshotManager && this.snapshotManager.processTournamentStart) {
+                console.log('📸 Taking start snapshots for all participants...');
+                const snapshotResults = await this.snapshotManager.processTournamentStart(tournamentId);
+                
+                // Track API usage
+                this.trackApiUsage(snapshotResults.successful + snapshotResults.failed);
+                
+                console.log(`✅ Tournament started! Snapshots: ${snapshotResults.successful} successful, ${snapshotResults.failed} failed`);
+            } else {
+                console.log('⚠️ Snapshot manager not available - tournament started without snapshots');
+            }
             
             // Clear this tournament's schedule
             this.clearTournamentSchedule(tournamentId);
@@ -460,17 +466,38 @@ class TournamentAutomation {
             if (updateError) throw updateError;
 
             // Process end snapshots and calculate results
-            console.log('📸 Taking end snapshots and calculating results...');
-            const results = await this.snapshotManager.processTournamentEnd(tournamentId);
-            
-            if (results.success) {
-                // Track API usage
-                this.trackApiUsage(results.results.length);
+            if (this.snapshotManager && this.snapshotManager.processTournamentEnd) {
+                console.log('📸 Taking end snapshots and calculating results...');
+                const results = await this.snapshotManager.processTournamentEnd(tournamentId);
                 
-                // Distribute prizes
-                await this.distributePrizes(tournamentId, results.rankings);
+                if (results.success) {
+                    // Track API usage
+                    this.trackApiUsage(results.results.length);
+                    
+                    // Distribute prizes
+                    await this.distributePrizes(tournamentId, results.rankings);
+                    
+                    // Mark tournament as complete
+                    await this.api.supabase
+                        .from('tournament_instances')
+                        .update({ 
+                            status: 'complete',
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', tournamentId);
+                    
+                    console.log(`✅ Tournament completed! ${results.rankings.length} valid participants`);
+                    
+                    // Generate and store report
+                    if (this.snapshotManager.generateTournamentReport) {
+                        const report = await this.snapshotManager.generateTournamentReport(tournamentId);
+                        await this.storeTournamentReport(tournamentId, report);
+                    }
+                }
+            } else {
+                console.log('⚠️ Snapshot manager not available - marking tournament as ended without results');
                 
-                // Mark tournament as complete
+                // Mark tournament as complete without results
                 await this.api.supabase
                     .from('tournament_instances')
                     .update({ 
@@ -478,12 +505,6 @@ class TournamentAutomation {
                         updated_at: new Date().toISOString()
                     })
                     .eq('id', tournamentId);
-                
-                console.log(`✅ Tournament completed! ${results.rankings.length} valid participants`);
-                
-                // Generate and store report
-                const report = await this.snapshotManager.generateTournamentReport(tournamentId);
-                await this.storeTournamentReport(tournamentId, report);
             }
             
             // Clear this tournament's schedule
@@ -596,7 +617,23 @@ class TournamentAutomation {
      * Calculate prize distribution based on total pool and number of winners
      */
     calculatePrizeDistribution(totalPool, participants) {
-        // Standard distribution percentages
+        // Use tournament config if available
+        if (window.TOURNAMENT_CONFIG && window.TOURNAMENT_CONFIG.prizeDistribution) {
+            const config = window.TOURNAMENT_CONFIG.prizeDistribution;
+            let distribution;
+            
+            if (participants >= 500) {
+                distribution = config.tier3?.distribution || config.large?.distribution || [30, 20, 15, 10, 8, 7, 5, 3, 2];
+            } else if (participants >= 100) {
+                distribution = config.tier2?.distribution || config.medium?.distribution || [35, 25, 15, 10, 8, 7];
+            } else {
+                distribution = config.tier1?.distribution || config.small?.distribution || [50, 30, 20];
+            }
+            
+            return distribution.map(percentage => (totalPool * percentage) / 100);
+        }
+        
+        // Fallback: Standard distribution percentages
         const distributions = {
             2: [70, 30],
             3: [50, 30, 20],
@@ -639,9 +676,9 @@ class TournamentAutomation {
             const { error: updateError } = await this.api.supabase
                 .from('champion_stats')
                 .update({
-                    tournaments_played: stats.tournaments_played + 1,
-                    tournaments_won: stats.tournaments_won + (updates.tournamentsWon || 0),
-                    total_sol_earned: stats.total_sol_earned + (updates.solEarned || 0),
+                    tournaments_played: (stats?.tournaments_played || 0) + 1,
+                    tournaments_won: (stats?.tournaments_won || 0) + (updates.tournamentsWon || 0),
+                    total_sol_earned: (stats?.total_sol_earned || 0) + (updates.solEarned || 0),
                     updated_at: new Date().toISOString()
                 })
                 .eq('champion_id', championId);
