@@ -1482,15 +1482,36 @@ async function loadTournaments() {
         const result = await window.walletWarsAPI.getUpcomingTournaments(50);
         
         if (result.success) {
-            const upcomingTournaments = result.tournaments.filter(t => 
-                t.status === 'scheduled' || 
-                t.status === 'registering' || 
-                t.status === 'pending_start' ||
-                t.status === 'active'
-            );
+            // UPDATED FILTER: Include scheduled tournaments that are coming soon
+            const now = new Date();
+            const twoWeeksFromNow = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000); // Show tournaments up to 2 weeks out
             
-            realTournamentData = upcomingTournaments;
+            const upcomingTournaments = result.tournaments.filter(t => {
+                // Include if status is suitable
+                const validStatus = t.status === 'scheduled' || 
+                                  t.status === 'registering' || 
+                                  t.status === 'pending_start' ||
+                                  t.status === 'active';
+                
+                // Only show scheduled tournaments that start within 2 weeks
+                if (t.status === 'scheduled') {
+                    const startTime = new Date(t.start_time);
+                    return validStatus && startTime <= twoWeeksFromNow;
+                }
+                
+                return validStatus;
+            });
+            
+            // Sort by start time so nearest tournaments appear first
+            upcomingTournaments.sort((a, b) => {
+                return new Date(a.start_time) - new Date(b.start_time);
+            });
+            
+            // Limit to reasonable number (e.g., next 12 tournaments)
+            realTournamentData = upcomingTournaments.slice(0, 12);
+            
             console.log(`✅ Loaded ${realTournamentData.length} tiered tournaments from database`);
+            console.log(`📅 Showing tournaments starting within the next 2 weeks`);
             
             processTournamentData();
             renderTournamentsFromDatabase();
@@ -1724,57 +1745,103 @@ async function loadTournaments() {
             return 'diamond';
         }
 
-        function getTournamentStatusInfo(tournament) {
-            const currentTime = new Date();
-            const startTime = new Date(tournament.start_time);
-            const endTime = new Date(tournament.end_time);
-            const registrationOpens = new Date(tournament.registration_opens || tournament.registration_opens_at);
-            const registrationCloses = new Date(tournament.registration_closes || tournament.registration_closes_at);
-            
-            if (tournament.status === 'cancelled') {
-                return { class: 'status-upcoming', text: 'Cancelled' };
-            }
-            
-            if (tournament.status === 'complete') {
-                return { class: 'status-upcoming', text: 'Complete' };
-            }
-            
-            if (currentTime < registrationOpens) {
-                const daysUntil = Math.ceil((registrationOpens - currentTime) / (1000 * 60 * 60 * 24));
-                return { class: 'status-upcoming', text: `Opens in ${daysUntil}d` };
-            }
-            
-            if (currentTime >= registrationOpens && currentTime < registrationCloses) {
-                return { class: 'status-registering', text: 'Open' };
-            }
-            
-            if (currentTime >= registrationCloses && currentTime < startTime) {
-                return { class: 'status-upcoming', text: 'Starting Soon' };
-            }
-            
-            if (currentTime >= startTime && currentTime < endTime) {
-                return { class: 'status-active', text: 'Live' };
-            }
-            
-            if (currentTime >= endTime) {
-                return { class: 'status-upcoming', text: 'Ended' };
-            }
-            
-            switch (tournament.status) {
-                case 'scheduled':
-                    return { class: 'status-upcoming', text: 'Scheduled' };
-                case 'registering':
-                    return { class: 'status-registering', text: 'Open' };
-                case 'pending_start':
-                    return { class: 'status-upcoming', text: 'Starting Soon' };
-                case 'active':
-                    return { class: 'status-active', text: 'Live' };
-                case 'ended':
-                    return { class: 'status-upcoming', text: 'Ended' };
-                default:
-                    return { class: 'status-upcoming', text: tournament.status };
-            }
+     // Add this enhanced getTournamentStatusInfo function to tournaments.html
+// It provides better status messages for scheduled tournaments
+
+function getTournamentStatusInfo(tournament) {
+    const currentTime = new Date();
+    const startTime = new Date(tournament.start_time);
+    const endTime = new Date(tournament.end_time);
+    const registrationOpens = new Date(tournament.registration_opens || tournament.registration_opens_at);
+    const registrationCloses = new Date(tournament.registration_closes || tournament.registration_closes_at);
+    
+    if (tournament.status === 'cancelled') {
+        return { class: 'status-upcoming', text: 'Cancelled' };
+    }
+    
+    if (tournament.status === 'complete') {
+        return { class: 'status-upcoming', text: 'Complete' };
+    }
+    
+    // ENHANCED: Show when registration opens for scheduled tournaments
+    if (currentTime < registrationOpens) {
+        const timeUntil = registrationOpens - currentTime;
+        const hoursUntil = Math.floor(timeUntil / (1000 * 60 * 60));
+        const daysUntil = Math.floor(hoursUntil / 24);
+        
+        if (daysUntil > 1) {
+            return { 
+                class: 'status-upcoming', 
+                text: `Opens in ${daysUntil}d`,
+                tooltip: `Registration opens ${registrationOpens.toLocaleDateString()} at ${registrationOpens.toLocaleTimeString()}`
+            };
+        } else if (hoursUntil > 1) {
+            return { 
+                class: 'status-upcoming', 
+                text: `Opens in ${hoursUntil}h`,
+                tooltip: `Registration opens at ${registrationOpens.toLocaleTimeString()}`
+            };
+        } else {
+            const minutesUntil = Math.floor(timeUntil / (1000 * 60));
+            return { 
+                class: 'status-upcoming', 
+                text: `Opens in ${minutesUntil}m`,
+                tooltip: 'Registration opening soon!'
+            };
         }
+    }
+    
+    // ENHANCED: Show time remaining for registration
+    if (currentTime >= registrationOpens && currentTime < registrationCloses) {
+        const timeLeft = registrationCloses - currentTime;
+        const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+        const daysLeft = Math.floor(hoursLeft / 24);
+        
+        if (daysLeft > 1) {
+            return { 
+                class: 'status-registering', 
+                text: `Open (${daysLeft}d left)`,
+                tooltip: `Registration closes ${registrationCloses.toLocaleDateString()} at ${registrationCloses.toLocaleTimeString()}`
+            };
+        } else if (hoursLeft > 1) {
+            return { 
+                class: 'status-registering', 
+                text: `Open (${hoursLeft}h left)`,
+                tooltip: `Registration closes at ${registrationCloses.toLocaleTimeString()}`
+            };
+        } else {
+            const minutesLeft = Math.floor(timeLeft / (1000 * 60));
+            return { 
+                class: 'status-registering', 
+                text: `Open (${minutesLeft}m left)`,
+                tooltip: 'Registration closing soon!'
+            };
+        }
+    }
+    
+    if (currentTime >= registrationCloses && currentTime < startTime) {
+        const timeUntilStart = startTime - currentTime;
+        const hoursUntilStart = Math.floor(timeUntilStart / (1000 * 60 * 60));
+        
+        if (hoursUntilStart > 1) {
+            return { class: 'status-upcoming', text: `Starts in ${hoursUntilStart}h` };
+        } else {
+            const minutesUntilStart = Math.floor(timeUntilStart / (1000 * 60));
+            return { class: 'status-upcoming', text: `Starts in ${minutesUntilStart}m` };
+        }
+    }
+    
+    if (currentTime >= startTime && currentTime < endTime) {
+        return { class: 'status-active', text: 'Live' };
+    }
+    
+    if (currentTime >= endTime) {
+        return { class: 'status-upcoming', text: 'Ended' };
+    }
+    
+    // Fallback
+    return { class: 'status-upcoming', text: tournament.status };
+}
 
         function getFeeClass(entryFee) {
             const fee = parseFloat(entryFee);
