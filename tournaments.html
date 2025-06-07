@@ -2453,16 +2453,16 @@ function showTournamentDetails(tournamentId) {
                     
                 } else if (initAttempts < maxAttempts) {
                     setTimeout(tryLoadTournaments, 1000);
-                } else {
-                    console.warn('⚠️ Tiered APIs not ready after timeout, attempting to load anyway...');
-                    
-                    if (hasWalletWarsAPI) {
-                        loadTournaments();
                     } else {
-                        showSetupInstructions();
-                    }
-                }
+            console.warn('⚠️ Tiered APIs not ready after timeout, attempting to load anyway...');
+            
+            if (hasWalletWarsAPI) {
+                loadTournaments();
+            } else {
+                showSetupInstructions();
             }
+        }
+    }
             
             // Start the loading process
             tryLoadTournaments();
