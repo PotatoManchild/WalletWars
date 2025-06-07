@@ -2,7 +2,7 @@
 // This file stores all configuration settings for the platform
 
 // API Keys
-window.HELIUS_API_KEY = 'your-helius-api-key-here'; // Replace with your actual Helius API key
+window.HELIUS_API_KEY = 'cbfd228c-6be2-4493-ae67-5df7dc20a3e8';
 
 // Solana Configuration
 window.SOLANA_NETWORK = 'devnet'; // Options: 'devnet', 'mainnet-beta', 'testnet'
