@@ -2140,15 +2140,6 @@ function showTournamentDetails(tournamentId) {
             return num + (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0]);
         }
 
-        async function proceedToRegister(tournamentId, tradingStyle, entryFee) {
-            const walletStatus = window.getWalletStatus();
-            
-            if (!walletStatus.isConnected || !walletStatus.championId) {
-                alert('❌ Wallet connection lost. Please reconnect your wallet.');
-                closeRegistrationModal();
-                return;
-            }
-
        async function proceedToRegister(tournamentId, tradingStyle, entryFee) {
     const walletStatus = window.getWalletStatus();
     
