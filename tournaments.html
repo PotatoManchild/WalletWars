@@ -2408,52 +2408,52 @@ function showTournamentDetails(tournamentId) {
             showMainContent();
         }
 
-        // ========================================
-        // ENHANCED INITIALIZATION WITH TIERED SYSTEM
-        // ========================================
+    // ========================================
+// ENHANCED INITIALIZATION WITH TIERED SYSTEM
+// ========================================
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize mobile navigation
-            initializeMobileNavigation();
-            handleWindowResize();
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize mobile navigation
+    initializeMobileNavigation();
+    handleWindowResize();
+    
+    console.log('🎮 WalletWars Tiered Tournaments page loading...');
+    
+    // Check for GlobalWalletManager connection immediately
+    const hasConnection = checkGlobalWalletConnection();
+    if (hasConnection) {
+        console.log('✅ GlobalWalletManager connection restored on tournaments page');
+    }
+    
+    // Enhanced API loading with better timeout handling
+    let initAttempts = 0;
+    const maxAttempts = 15;
+    
+    function tryLoadTournaments() {
+        initAttempts++;
+        console.log(`⏳ Checking tiered APIs... (${initAttempts}/${maxAttempts})`);
+        
+        // Check for required APIs
+        const hasWalletWarsAPI = !!window.walletWarsAPI;
+        const hasGlobalWalletManager = !!window.globalWalletManager;
+        const hasTieredConfig = !!window.TOURNAMENT_CONFIG;
+        const hasTieredSelector = !!window.TieredTournamentSelector;
+        const hasTieredDeployment = !!window.TieredTournamentDeploymentManager;
+        const hasWeb3 = !!window.solanaWeb3;
+        
+        console.log(`📊 Tiered API Status: WalletWarsAPI=${hasWalletWarsAPI}, GlobalWalletManager=${hasGlobalWalletManager}, TieredConfig=${hasTieredConfig}, TieredSelector=${hasTieredSelector}, TieredDeployment=${hasTieredDeployment}, Web3=${hasWeb3}`);
+        
+        if (hasWalletWarsAPI && hasGlobalWalletManager && hasWeb3 && hasTieredConfig) {
+            console.log('✅ Core tiered APIs ready, loading tournaments...');
             
-            console.log('🎮 WalletWars Tiered Tournaments page loading...');
+            // Give systems a moment to initialize
+            setTimeout(() => {
+                loadTournaments();
+            }, 1000);
             
-            // Check for GlobalWalletManager connection immediately
-            const hasConnection = checkGlobalWalletConnection();
-            if (hasConnection) {
-                console.log('✅ GlobalWalletManager connection restored on tournaments page');
-            }
-            
-            // Enhanced API loading with better timeout handling
-            let initAttempts = 0;
-            const maxAttempts = 15;
-            
-            function tryLoadTournaments() {
-                initAttempts++;
-                console.log(`⏳ Checking tiered APIs... (${initAttempts}/${maxAttempts})`);
-                
-                // Check for required APIs
-                const hasWalletWarsAPI = !!window.walletWarsAPI;
-                const hasGlobalWalletManager = !!window.globalWalletManager;
-                const hasTieredConfig = !!window.TOURNAMENT_CONFIG;
-                const hasTieredSelector = !!window.TieredTournamentSelector;
-                const hasTieredDeployment = !!window.TieredTournamentDeploymentManager;
-                const hasWeb3 = !!window.solanaWeb3;
-                
-                console.log(`📊 Tiered API Status: WalletWarsAPI=${hasWalletWarsAPI}, GlobalWalletManager=${hasGlobalWalletManager}, TieredConfig=${hasTieredConfig}, TieredSelector=${hasTieredSelector}, TieredDeployment=${hasTieredDeployment}, Web3=${hasWeb3}`);
-                
-                if (hasWalletWarsAPI && hasGlobalWalletManager && hasWeb3 && hasTieredConfig) {
-                    console.log('✅ Core tiered APIs ready, loading tournaments...');
-                    
-                    // Give systems a moment to initialize
-                    setTimeout(() => {
-                        loadTournaments();
-                    }, 1000);
-                    
-                } else if (initAttempts < maxAttempts) {
-                    setTimeout(tryLoadTournaments, 1000);
-                    } else {
+        } else if (initAttempts < maxAttempts) {
+            setTimeout(tryLoadTournaments, 1000);
+        } else {
             console.warn('⚠️ Tiered APIs not ready after timeout, attempting to load anyway...');
             
             if (hasWalletWarsAPI) {
@@ -2462,20 +2462,20 @@ function showTournamentDetails(tournamentId) {
                 showSetupInstructions();
             }
         }
-    }
+    } // This closes the tryLoadTournaments function
+    
+    // Start the loading process
+    tryLoadTournaments();
+    
+    // Refresh tournament data every 30 seconds
+    setInterval(function() {
+        if (!isLoading && window.walletWarsAPI) {
+            console.log('🔄 Auto-refreshing tiered tournament data...');
+            loadTournaments();
+        }
+    }, 30000);
+});
             
-            // Start the loading process
-            tryLoadTournaments();
-            
-            // Refresh tournament data every 30 seconds
-            setInterval(function() {
-                if (!isLoading && window.walletWarsAPI) {
-                    console.log('🔄 Auto-refreshing tiered tournament data...');
-                    loadTournaments();
-                }
-            }, 30000);
-        });
-
 // ========================================
         // ADMIN TOURNAMENT CREATION SYSTEM
         // ========================================
