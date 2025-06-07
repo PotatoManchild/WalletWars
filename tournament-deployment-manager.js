@@ -1,21 +1,20 @@
 // tournament-deployment-manager.js
-// Tiered tournament deployment with escalating stakes
+// Fixed version - prevents excessive tournament creation
 
-console.log('📅 Loading Tiered Tournament Deployment Manager...');
+console.log('📅 Loading Tournament Deployment Manager (Fixed)...');
 
-class TieredTournamentDeploymentManager {
+class TournamentDeploymentManager {
     constructor() {
         this.config = window.TOURNAMENT_CONFIG;
         this.deploymentSchedule = null;
         this.lastDeploymentCheck = null;
-        this.tournamentSelector = new window.TieredTournamentSelector();
     }
     
     /**
      * Start automated tournament deployment
      */
     async startAutomatedDeployment() {
-        console.log('🚀 Starting tiered tournament deployment system...');
+        console.log('🚀 Starting automated tournament deployment system...');
         
         // Run initial deployment
         await this.deployUpcomingTournaments();
@@ -25,17 +24,14 @@ class TieredTournamentDeploymentManager {
             await this.deployUpcomingTournaments();
         }, 24 * 60 * 60 * 1000); // Daily
         
-        // Schedule monthly tournament deployment
-        this.scheduleMonthlyDeployments();
-        
-        console.log('✅ Tiered tournament deployment system active');
+        console.log('✅ Tournament deployment system active');
     }
     
     /**
-     * Deploy weekly tournaments with tier requirements
+     * Deploy tournaments for the next 4 weeks - FIXED VERSION
      */
     async deployUpcomingTournaments() {
-        console.log('📅 Checking tiered tournament deployment needs...');
+        console.log('📅 Checking tournament deployment needs...');
         
         // Prevent multiple simultaneous deployments
         if (this.lastDeploymentCheck && (Date.now() - this.lastDeploymentCheck) < 60000) {
@@ -50,73 +46,31 @@ class TieredTournamentDeploymentManager {
         for (const date of deploymentDates) {
             console.log(`📅 Checking date: ${date.toLocaleDateString()}`);
             
-            // Check existing tournaments for this date
-            const existingTournaments = await this.getExistingTournamentsForDate(date);
-            console.log(`📊 Found ${existingTournaments.length} existing tournaments for ${date.toLocaleDateString()}`);
+            // Check existing tournaments for this date first
+            const existingCount = await this.getExistingTournamentsForDate(date);
+            console.log(`📊 Found ${existingCount} existing tournaments for ${date.toLocaleDateString()}`);
             
-            // Check if we have the required tier coverage
-            const needsDeployment = await this.checkTierCoverage(date, existingTournaments);
-            
-            if (needsDeployment.length > 0) {
-                const created = await this.deployTieredTournamentsForDate(date, needsDeployment);
+            // Only create if we don't have enough tournaments for this date
+            if (existingCount < this.config.tournamentVariants.length) {
+                const created = await this.deployTournamentsForDate(date);
                 totalCreated += created;
             } else {
-                console.log(`✅ Date ${date.toLocaleDateString()} has complete tier coverage`);
+                console.log(`✅ Date ${date.toLocaleDateString()} already has sufficient tournaments (${existingCount})`);
             }
         }
         
-        console.log(`✅ Tiered tournament deployment complete - Created ${totalCreated} new tournaments`);
+        console.log(`✅ Tournament deployment complete - Created ${totalCreated} new tournaments`);
     }
     
     /**
-     * Check if date has proper tier coverage based on day schedule
-     */
-    async checkTierCoverage(targetDate, existingTournaments) {
-        const dayName = targetDate.toLocaleDateString('en-US', { weekday: 'lowercase' });
-        const requiredTiers = this.config.weeklySchedule[dayName];
-        
-        if (!requiredTiers) {
-            console.log(`📅 No tier schedule for ${dayName}`);
-            return [];
-        }
-        
-        console.log(`🎯 Required tiers for ${dayName}: ${requiredTiers.join(', ')}`);
-        
-        // Check which tiers are missing
-        const missingTiers = [];
-        const tradingStyles = ['pure_wallet', 'open_trading'];
-        
-        for (let i = 0; i < tradingStyles.length; i++) {
-            const style = tradingStyles[i];
-            const requiredTier = requiredTiers[i];
-            
-            // Check if we have a tournament for this style/tier combination
-            const hasTournament = existingTournaments.some(tournament => {
-                const metadata = tournament.deployment_metadata;
-                return metadata && 
-                       metadata.tradingStyle === style && 
-                       metadata.tier === requiredTier;
-            });
-            
-            if (!hasTournament) {
-                missingTiers.push({ style, tier: requiredTier });
-                console.log(`❌ Missing: ${style} ${requiredTier}`);
-            } else {
-                console.log(`✅ Found: ${style} ${requiredTier}`);
-            }
-        }
-        
-        return missingTiers;
-    }
-    
-    /**
-     * Get upcoming deployment dates
+     * Get dates that need tournaments (next 4 weeks of Mondays and Thursdays)
      */
     getUpcomingDeploymentDates() {
         const dates = [];
         const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0); // Start from beginning of today
         
+        // Look ahead for the configured number of days
         for (let i = 0; i < this.config.timing.advanceDeploymentDays; i++) {
             const checkDate = new Date(today);
             checkDate.setDate(today.getDate() + i);
@@ -124,24 +78,27 @@ class TieredTournamentDeploymentManager {
             const dayName = checkDate.toLocaleDateString('en-US', { weekday: 'lowercase' });
             
             if (this.config.deploymentDays.includes(dayName)) {
+                // Set to deployment time (14:00 UTC)
                 const [hours, minutes, seconds] = this.config.deploymentTime.split(':');
                 checkDate.setUTCHours(parseInt(hours), parseInt(minutes), parseInt(seconds), 0);
                 
+                // Only include future dates
                 if (checkDate > new Date()) {
                     dates.push(checkDate);
                 }
             }
         }
         
-        console.log(`📅 Found ${dates.length} deployment dates`);
-        return dates.slice(0, 6);
+        console.log(`📅 Found ${dates.length} deployment dates in next ${this.config.timing.advanceDeploymentDays} days`);
+        return dates.slice(0, 8); // Limit to next 8 deployment dates max
     }
     
     /**
-     * Get existing tournaments for a specific date with metadata
+     * Count existing tournaments for a specific date
      */
     async getExistingTournamentsForDate(targetDate) {
         try {
+            // Create date range for the target day (start and end of day)
             const startOfDay = new Date(targetDate);
             startOfDay.setUTCHours(0, 0, 0, 0);
             
@@ -150,257 +107,116 @@ class TieredTournamentDeploymentManager {
             
             const { data, error } = await window.walletWarsAPI.supabase
                 .from('tournament_instances')
-                .select('id, tournament_name, start_time, deployment_metadata, tournament_templates(trading_style)')
+                .select('id, tournament_name, start_time')
                 .gte('start_time', startOfDay.toISOString())
                 .lte('start_time', endOfDay.toISOString())
                 .not('status', 'eq', 'cancelled');
             
             if (error) {
                 console.error('❌ Error checking existing tournaments:', error);
-                return [];
+                return 0;
             }
             
-            return data || [];
+            return data ? data.length : 0;
         } catch (error) {
             console.error('❌ Error in getExistingTournamentsForDate:', error);
-            return [];
+            return 0;
         }
     }
     
     /**
-     * Deploy tiered tournaments for a specific date
+     * Deploy all tournament variants for a specific date
      */
-    async deployTieredTournamentsForDate(targetDate, missingTiers) {
-        console.log(`🎲 Deploying missing tiers for ${targetDate.toLocaleDateString()}...`);
-        
+    async deployTournamentsForDate(targetDate) {
         let createdCount = 0;
         
-        for (const { style, tier } of missingTiers) {
-            const tournamentConfig = this.tournamentSelector.selectTournamentFromTier(style, tier, targetDate);
+        for (const variant of this.config.tournamentVariants) {
+            const exists = await this.tournamentExistsExact(targetDate, variant);
             
-            if (tournamentConfig) {
-                const created = await this.createTieredTournament(targetDate, tournamentConfig);
+            if (!exists) {
+                const created = await this.createTournament(targetDate, variant);
                 if (created) {
                     createdCount++;
-                    await new Promise(resolve => setTimeout(resolve, 200));
+                    // Add small delay between creations to prevent race conditions
+                    await new Promise(resolve => setTimeout(resolve, 100));
                 }
+            } else {
+                console.log(`✅ Tournament already exists: ${variant.name} for ${targetDate.toLocaleDateString()}`);
             }
         }
         
-        console.log(`🎯 Created ${createdCount} tiered tournaments for ${targetDate.toLocaleDateString()}`);
         return createdCount;
     }
     
     /**
-     * Create a tiered tournament instance
+     * Check if a specific tournament variant already exists for exact date/time - FIXED VERSION
      */
-    async createTieredTournament(startDate, tournamentConfig) {
-        console.log(`📋 Creating tiered tournament: ${tournamentConfig.name} (${tournamentConfig.tier}) for ${startDate.toLocaleDateString()}`);
+    async tournamentExistsExact(startDate, variant) {
+        try {
+            // Create a more precise time window (±1 hour around target start time)
+            const startWindow = new Date(startDate.getTime() - 60 * 60 * 1000); // 1 hour before
+            const endWindow = new Date(startDate.getTime() + 60 * 60 * 1000);   // 1 hour after
+            
+            const { data, error } = await window.walletWarsAPI.supabase
+                .from('tournament_instances')
+                .select('id, tournament_name, start_time')
+                .eq('tournament_name', variant.name)
+                .gte('start_time', startWindow.toISOString())
+                .lte('start_time', endWindow.toISOString())
+                .not('status', 'eq', 'cancelled')
+                .limit(1);
+            
+            if (error) {
+                console.error('❌ Error checking tournament existence:', error);
+                return false;
+            }
+            
+            const exists = data && data.length > 0;
+            if (exists) {
+                console.log(`🔍 Found existing: ${variant.name} at ${data[0].start_time}`);
+            }
+            
+            return exists;
+        } catch (error) {
+            console.error('❌ Error in tournamentExistsExact:', error);
+            return false; // If we can't check, allow creation (but log the error)
+        }
+    }
+    
+    /**
+     * Create a new tournament instance - IMPROVED VERSION
+     */
+    async createTournament(startDate, variant) {
+        console.log(`📋 Creating tournament: ${variant.name} for ${startDate.toLocaleDateString()}`);
         
         try {
-            // Get tier configuration
-            const tierConfig = tournamentConfig.tierConfig;
-            
             // Calculate times
             const registrationOpens = new Date(startDate);
-            registrationOpens.setDate(registrationOpens.getDate() - 3);
+            registrationOpens.setDate(registrationOpens.getDate() - 3); // Open 3 days before
             
             const registrationCloses = new Date(startDate);
             registrationCloses.setMinutes(registrationCloses.getMinutes() - this.config.timing.registrationCloseBeforeStart);
             
             const endTime = new Date(startDate);
-            endTime.setDate(endTime.getDate() + tournamentConfig.duration);
+            endTime.setDate(endTime.getDate() + variant.duration);
             
-            // Create or get template for this tiered tournament
-            const template = await this.getOrCreateTieredTemplate(tournamentConfig);
+            // First, get or create a template
+            const template = await this.getOrCreateTemplate(variant);
             if (!template) {
-                console.error('❌ Failed to get/create tiered template');
+                console.error('❌ Failed to get/create template for', variant.name);
                 return null;
             }
             
-            // Create unique tournament name
-            const uniqueName = `${tournamentConfig.name} - ${startDate.toLocaleDateString('en-US', { 
+            // Create unique tournament name with date to prevent conflicts
+            const uniqueName = `${variant.name} - ${startDate.toLocaleDateString('en-US', { 
                 month: 'short', 
                 day: 'numeric', 
                 year: 'numeric' 
             })}`;
             
-            // Calculate expected prize pool
-            const maxPrizePool = tierConfig.entryFee * tierConfig.maxParticipants;
-            const platformFee = maxPrizePool * (this.config.platformFees.weekly / 100);
-            const expectedPrizePool = maxPrizePool - platformFee;
-            
             const tournamentData = {
                 template_id: template.id,
-                tournament_name: uniqueName,
-                status: 'scheduled',
-                start_time: startDate.toISOString(),
-                end_time: endTime.toISOString(),
-                registration_opens: registrationOpens.toISOString(),
-                registration_closes: registrationCloses.toISOString(),
-                participant_count: 0,
-                total_prize_pool: 0, // Will be calculated when participants register
-                min_participants: tierConfig.minParticipants,
-                registration_opens_at: registrationOpens.toISOString(),
-                registration_closes_at: registrationCloses.toISOString(),
-                deployment_metadata: {
-                    deployedAt: new Date().toISOString(),
-                    baseVariantName: tournamentConfig.name,
-                    tradingStyle: tournamentConfig.tradingStyle,
-                    tier: tournamentConfig.tier,
-                    theme: tournamentConfig.theme,
-                    entryFee: tierConfig.entryFee,
-                    maxParticipants: tierConfig.maxParticipants,
-                    expectedPrizePool: expectedPrizePool,
-                    platformFeePercentage: this.config.platformFees.weekly,
-                    tieredSystem: true,
-                    deploymentBatch: `${startDate.toISOString().split('T')[0]}-tiered`
-                }
-            };
-            
-            const { data, error } = await window.walletWarsAPI.supabase
-                .from('tournament_instances')
-                .insert([tournamentData])
-                .select()
-                .single();
-            
-            if (error) {
-                console.error(`❌ Failed to create tiered tournament: ${error.message}`);
-                return null;
-            }
-            
-            console.log(`✅ Created tiered tournament ${data.id}: ${uniqueName}`);
-            console.log(`💰 Tier: ${tournamentConfig.tier} | Entry: ${tierConfig.entryFee} SOL | Max Prize: ${expectedPrizePool.toFixed(2)} SOL`);
-            
-            // Schedule lifecycle events
-            await this.scheduleLifecycleEvents(data);
-            
-            return data;
-            
-        } catch (error) {
-            console.error(`❌ Error creating tiered tournament:`, error);
-            return null;
-        }
-    }
-    
-    /**
-     * Get or create template for tiered tournament
-     */
-    async getOrCreateTieredTemplate(tournamentConfig) {
-        try {
-            const tierConfig = tournamentConfig.tierConfig;
-            
-            // Create template name that includes tier
-            const templateName = `${tournamentConfig.tier.toUpperCase()} - ${tournamentConfig.name}`;
-            
-            // Check if template exists
-            const { data: existing } = await window.walletWarsAPI.supabase
-                .from('tournament_templates')
-                .select('*')
-                .eq('name', templateName)
-                .eq('trading_style', tournamentConfig.tradingStyle)
-                .single();
-            
-            if (existing) {
-                return existing;
-            }
-            
-            // Create new tiered template
-            const templateData = {
-                name: templateName,
-                tournament_type: 'weekly',
-                trading_style: tournamentConfig.tradingStyle,
-                start_day: 'variable',
-                entry_fee: tierConfig.entryFee,
-                max_participants: tierConfig.maxParticipants,
-                prize_pool_percentage: tierConfig.prizePoolPercentage,
-                is_active: true,
-                template_metadata: {
-                    tier: tournamentConfig.tier,
-                    theme: tournamentConfig.theme,
-                    description: tournamentConfig.description,
-                    tieredSystem: true,
-                    createdAt: new Date().toISOString()
-                }
-            };
-            
-            const { data, error } = await window.walletWarsAPI.supabase
-                .from('tournament_templates')
-                .insert([templateData])
-                .select()
-                .single();
-            
-            if (error) {
-                console.error('❌ Failed to create tiered template:', error);
-                return null;
-            }
-            
-            console.log(`✅ Created tiered template: ${templateName}`);
-            return data;
-            
-        } catch (error) {
-            console.error('❌ Error in getOrCreateTieredTemplate:', error);
-            return null;
-        }
-    }
-    
-    /**
-     * Schedule monthly mega tournaments
-     */
-    scheduleMonthlyDeployments() {
-        // Deploy on the 1st of each month at 12:00 UTC
-        const now = new Date();
-        const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1, 12, 0, 0);
-        const timeUntilNextMonth = nextMonth - now;
-        
-        setTimeout(() => {
-            this.deployMonthlyTournament();
-            
-            // Schedule monthly after that
-            setInterval(() => {
-                this.deployMonthlyTournament();
-            }, 30 * 24 * 60 * 60 * 1000); // Approximately monthly
-            
-        }, timeUntilNextMonth);
-        
-        console.log(`📅 Monthly tournament scheduled for ${nextMonth.toLocaleDateString()}`);
-    }
-    
-    /**
-     * Deploy monthly mega tournament
-     */
-    async deployMonthlyTournament() {
-        console.log('🏆 Deploying monthly mega tournament...');
-        
-        try {
-            const now = new Date();
-            const monthlyTournament = this.tournamentSelector.selectMonthlyTournament(now.getMonth() + 1, now.getFullYear());
-            
-            // Monthly tournaments start on the 8th of the month
-            const startDate = new Date(now.getFullYear(), now.getMonth(), this.config.timing.monthlyStartDay, 14, 0, 0);
-            const registrationOpens = new Date(now.getFullYear(), now.getMonth(), 1, 12, 0, 0); // 1st of month
-            const registrationCloses = new Date(startDate.getTime() - 60 * 60 * 1000); // 1 hour before start
-            const endTime = new Date(startDate);
-            endTime.setDate(endTime.getDate() + monthlyTournament.duration);
-            
-            // Check if monthly tournament already exists for this month
-            const existing = await this.checkExistingMonthlyTournament(now.getMonth() + 1, now.getFullYear());
-            if (existing) {
-                console.log('✅ Monthly tournament already exists for this month');
-                return;
-            }
-            
-            const template = await this.getOrCreateMonthlyTemplate(monthlyTournament);
-            if (!template) {
-                console.error('❌ Failed to create monthly template');
-                return;
-            }
-            
-            const uniqueName = `${monthlyTournament.name} - ${now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
-            
-            const tournamentData = {
-                template_id: template.id,
-                tournament_name: uniqueName,
+                tournament_name: uniqueName, // Use unique name
                 status: 'scheduled',
                 start_time: startDate.toISOString(),
                 end_time: endTime.toISOString(),
@@ -408,18 +224,14 @@ class TieredTournamentDeploymentManager {
                 registration_closes: registrationCloses.toISOString(),
                 participant_count: 0,
                 total_prize_pool: 0,
-                min_participants: monthlyTournament.minParticipants,
+                min_participants: variant.minParticipants,
                 registration_opens_at: registrationOpens.toISOString(),
                 registration_closes_at: registrationCloses.toISOString(),
                 deployment_metadata: {
                     deployedAt: new Date().toISOString(),
-                    type: 'monthly_mega',
-                    tradingStyle: monthlyTournament.tradingStyle,
-                    month: now.getMonth() + 1,
-                    year: now.getFullYear(),
-                    entryFee: monthlyTournament.entryFee,
-                    expectedPrizePool: monthlyTournament.targetPrizePool,
-                    platformFeePercentage: this.config.platformFees.monthly
+                    variant: variant.name,
+                    deploymentBatch: `${startDate.toISOString().split('T')[0]}-${variant.tradingStyle}`,
+                    baseVariantName: variant.name // Store original variant name
                 }
             };
             
@@ -430,69 +242,49 @@ class TieredTournamentDeploymentManager {
                 .single();
             
             if (error) {
-                console.error('❌ Failed to create monthly tournament:', error);
-                return;
+                console.error(`❌ Failed to create tournament: ${error.message}`);
+                return null;
             }
             
-            console.log(`🏆 Created monthly mega tournament: ${uniqueName}`);
+            console.log(`✅ Created tournament ${data.id}: ${uniqueName}`);
+            
+            // Schedule lifecycle events
             await this.scheduleLifecycleEvents(data);
             
+            return data;
+            
         } catch (error) {
-            console.error('❌ Error deploying monthly tournament:', error);
+            console.error(`❌ Error creating tournament ${variant.name}:`, error);
+            return null;
         }
     }
     
     /**
-     * Check if monthly tournament exists
+     * Get or create tournament template
      */
-    async checkExistingMonthlyTournament(month, year) {
+    async getOrCreateTemplate(variant) {
         try {
-            const { data, error } = await window.walletWarsAPI.supabase
-                .from('tournament_instances')
-                .select('id')
-                .eq('deployment_metadata->>type', 'monthly_mega')
-                .eq('deployment_metadata->>month', month.toString())
-                .eq('deployment_metadata->>year', year.toString())
-                .limit(1);
-            
-            return data && data.length > 0;
-        } catch (error) {
-            console.error('❌ Error checking existing monthly tournament:', error);
-            return false;
-        }
-    }
-    
-    /**
-     * Create monthly tournament template
-     */
-    async getOrCreateMonthlyTemplate(monthlyTournament) {
-        try {
-            const templateName = `MONTHLY - ${monthlyTournament.name}`;
-            
+            // Check if template exists
             const { data: existing } = await window.walletWarsAPI.supabase
                 .from('tournament_templates')
                 .select('*')
-                .eq('name', templateName)
+                .eq('name', variant.name)
                 .single();
             
-            if (existing) return existing;
+            if (existing) {
+                return existing;
+            }
             
+            // Create new template
             const templateData = {
-                name: templateName,
-                tournament_type: 'monthly',
-                trading_style: monthlyTournament.tradingStyle,
+                name: variant.name,
+                tournament_type: 'weekly',
+                trading_style: variant.tradingStyle,
                 start_day: 'variable',
-                entry_fee: monthlyTournament.entryFee,
-                max_participants: monthlyTournament.maxParticipants,
-                prize_pool_percentage: monthlyTournament.prizePoolPercentage,
-                is_active: true,
-                template_metadata: {
-                    type: 'monthly_mega',
-                    description: monthlyTournament.description,
-                    duration: monthlyTournament.duration,
-                    winnerShare: monthlyTournament.winnerShare,
-                    createdAt: new Date().toISOString()
-                }
+                entry_fee: variant.entryFee,
+                max_participants: variant.maxParticipants,
+                prize_pool_percentage: variant.prizePoolPercentage,
+                is_active: true
             };
             
             const { data, error } = await window.walletWarsAPI.supabase
@@ -502,13 +294,15 @@ class TieredTournamentDeploymentManager {
                 .single();
             
             if (error) {
-                console.error('❌ Failed to create monthly template:', error);
+                console.error('❌ Failed to create template:', error);
                 return null;
             }
             
+            console.log(`✅ Created new template: ${variant.name}`);
             return data;
+            
         } catch (error) {
-            console.error('❌ Error in getOrCreateMonthlyTemplate:', error);
+            console.error('❌ Error in getOrCreateTemplate:', error);
             return null;
         }
     }
@@ -565,13 +359,13 @@ class TieredTournamentDeploymentManager {
     }
     
     /**
-     * Get comprehensive deployment status
+     * Get deployment status and statistics
      */
     async getDeploymentStatus() {
         try {
             const { data, error } = await window.walletWarsAPI.supabase
                 .from('tournament_instances')
-                .select('id, tournament_name, start_time, status, deployment_metadata')
+                .select('id, tournament_name, start_time, status')
                 .gte('start_time', new Date().toISOString())
                 .order('start_time', { ascending: true });
             
@@ -580,44 +374,85 @@ class TieredTournamentDeploymentManager {
                 return null;
             }
             
-            const byTier = {};
-            const byTradingStyle = {};
-            const monthly = [];
-            
-            data.forEach(t => {
-                const metadata = t.deployment_metadata;
-                if (metadata) {
-                    if (metadata.type === 'monthly_mega') {
-                        monthly.push(t);
-                    } else if (metadata.tier) {
-                        if (!byTier[metadata.tier]) byTier[metadata.tier] = 0;
-                        byTier[metadata.tier]++;
-                    }
-                    
-                    if (metadata.tradingStyle) {
-                        if (!byTradingStyle[metadata.tradingStyle]) byTradingStyle[metadata.tradingStyle] = 0;
-                        byTradingStyle[metadata.tradingStyle]++;
-                    }
-                }
-            });
+            const upcoming = data.filter(t => t.status === 'scheduled');
+            const registering = data.filter(t => t.status === 'registering');
             
             return {
                 total: data.length,
-                byTier,
-                byTradingStyle,
-                monthly: monthly.length,
-                tournaments: data,
-                selectionHistory: this.tournamentSelector.recentSelections
+                upcoming: upcoming.length,
+                registering: registering.length,
+                tournaments: data
             };
         } catch (error) {
             console.error('❌ Error in getDeploymentStatus:', error);
             return null;
         }
     }
+    
+    /**
+     * Clean up old tournaments (optional maintenance function)
+     */
+    async cleanupOldTournaments() {
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - 30); // Remove tournaments older than 30 days
+        
+        try {
+            const { data, error } = await window.walletWarsAPI.supabase
+                .from('tournament_instances')
+                .delete()
+                .lt('end_time', cutoffDate.toISOString())
+                .eq('status', 'complete');
+            
+            if (error) {
+                console.error('❌ Error cleaning up tournaments:', error);
+            } else {
+                console.log(`🧹 Cleaned up old tournaments`);
+            }
+        } catch (error) {
+            console.error('❌ Error in cleanupOldTournaments:', error);
+        }
+    }
+    
+    /**
+     * Stop automated deployment
+     */
+    stopAutomatedDeployment() {
+        if (this.deploymentSchedule) {
+            clearInterval(this.deploymentSchedule);
+            this.deploymentSchedule = null;
+            console.log('⏹️ Automated tournament deployment stopped');
+        }
+    }
+    
+    /**
+     * Get tier information from entry fee
+     */
+    getTierFromEntryFee(entryFee) {
+        if (entryFee <= 0.01) return 'bronze';
+        if (entryFee <= 0.05) return 'silver';
+        if (entryFee <= 0.1) return 'gold';
+        return 'diamond';
+    }
+    
+    /**
+     * Manual deployment for testing
+     */
+    async manualDeployTournament(variant, startDate) {
+        console.log('🎮 Manually deploying tournament...');
+        
+        if (!variant || !startDate) {
+            console.error('❌ Variant and startDate are required');
+            return null;
+        }
+        
+        return await this.createTournament(startDate, variant);
+    }
 }
 
 // Make it available globally
-window.TieredTournamentDeploymentManager = TieredTournamentDeploymentManager;
-window.TournamentDeploymentManager = TieredTournamentDeploymentManager; // Backward compatibility
+window.TournamentDeploymentManager = TournamentDeploymentManager;
 
-console.log('✅ Tiered Tournament Deployment Manager loaded!');
+console.log('✅ Tournament Deployment Manager (Fixed) loaded!');
+console.log('📅 Creates tournaments on Monday and Thursday');
+console.log('🎯 6 tournaments per deployment day (Bronze/Silver/Gold × Pure/Open)');
+console.log('🚀 Use new TournamentDeploymentManager().startAutomatedDeployment() to begin');
