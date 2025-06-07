@@ -1157,7 +1157,87 @@
     .tier-selector {
         grid-template-columns: repeat(2, 1fr);
     }
+    /* Scheduled tournament card styling */
+.tournament-card.scheduled {
+    opacity: 0.9;
+    border: 1px solid rgba(139, 92, 246, 0.2);
 }
+
+.tournament-card.scheduled:hover {
+    opacity: 1;
+    border-color: rgba(139, 92, 246, 0.4);
+}
+
+/* Enhanced status badges */
+.status-upcoming {
+    background: rgba(156, 163, 175, 0.2);
+    color: #9ca3af;
+    border: 1px solid #9ca3af;
+}
+
+.status-upcoming.opens-soon {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    border: 1px solid #fbbf24;
+    animation: pulse 2s infinite;
+}
+
+/* Registration countdown styling */
+.registration-timer {
+    font-size: 0.75rem;
+    color: #fbbf24;
+    margin-top: 0.25rem;
+    font-weight: 600;
+}
+
+/* "Coming Soon" overlay for scheduled tournaments */
+.coming-soon-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(139, 92, 246, 0.9);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0 1rem 0 1rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Tooltip styling for status badges */
+.status-badge {
+    position: relative;
+    cursor: help;
+}
+
+.status-badge[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(31, 41, 55, 0.95);
+    color: #d1d5db;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* Visual hierarchy - make open tournaments stand out more */
+.tournament-card.status-registering {
+    border: 2px solid rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+}
+
+.tournament-card.status-registering:hover {
+    border-color: rgba(16, 185, 129, 0.6);
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+}
+        
     </style>
 </head>
 <body>
