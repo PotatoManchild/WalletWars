@@ -22,6 +22,12 @@
 
     <!-- Escrow Integration Scripts -->
     <script src="https://unpkg.com/buffer@6.0.3/index.js"></script>
+    <script>
+        // Make Buffer available globally for Solana/Anchor
+        if (typeof window !== 'undefined' && typeof window.Buffer === 'undefined') {
+            window.Buffer = buffer.Buffer;
+        }
+    </script>
     <script src="https://unpkg.com/@project-serum/anchor@latest/dist/browser/index.js"></script>
     <script src="walletwars-escrow-integration.js"></script>
     
