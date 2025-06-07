@@ -24,8 +24,28 @@
     <script src="https://unpkg.com/buffer@6.0.3/index.js"></script>
     <script>
         // Make Buffer available globally for Solana/Anchor
-        if (typeof window !== 'undefined' && typeof window.Buffer === 'undefined') {
-            window.Buffer = buffer.Buffer;
+        if (typeof window !== 'undefined') {
+            // The buffer polyfill should have created a 'buffer' object
+            if (typeof buffer !== 'undefined' && buffer.Buffer) {
+                window.Buffer = buffer.Buffer;
+                console.log('✅ Buffer polyfill loaded successfully');
+            } else {
+                console.error('❌ Buffer polyfill did not load correctly');
+            }
+            
+            // Test Buffer availability
+            if (window.Buffer && window.Buffer.from) {
+                console.log('✅ Buffer.from is available');
+                // Test it
+                try {
+                    const test = window.Buffer.from('test', 'utf8');
+                    console.log('✅ Buffer.from test successful');
+                } catch (e) {
+                    console.error('❌ Buffer.from test failed:', e);
+                }
+            } else {
+                console.error('❌ Buffer.from is NOT available');
+            }
         }
     </script>
     <script src="https://unpkg.com/@project-serum/anchor@latest/dist/browser/index.js"></script>
