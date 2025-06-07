@@ -1440,67 +1440,72 @@
         // TIERED TOURNAMENT LOADING
         // ========================================
 
-        async function loadTournaments() {
-            if (isLoading) return;
-            
-            isLoading = true;
-            showLoadingState();
-            
-            try {
-                console.log('🎮 Loading tiered tournaments with enhanced system...');
-                
-                if (!window.walletWarsAPI) {
-                    throw new Error('WalletWars API not available');
-                }
-                
-                const connected = await window.walletWarsAPI.testConnection();
-                if (!connected) {
-                    throw new Error('Database connection failed');
-                }
-                
-                // Check tiered system status
-                checkTieredTournamentSystem();
-                
-                if (window.globalWalletManager) {
-                    const globalStatus = window.getWalletStatus();
-                    console.log(`🔗 GlobalWalletManager status: ${globalStatus.isConnected ? 'Connected' : 'Disconnected'}`);
-                }
-                
-                const result = await window.walletWarsAPI.getUpcomingTournaments(50);
-                
-                if (result.success) {
-                    const upcomingTournaments = result.tournaments.filter(t => 
-                        t.status === 'scheduled' || 
-                        t.status === 'registering' || 
-                        t.status === 'pending_start' ||
-                        t.status === 'active'
-                    );
-                    
-                    if (upcomingTournaments.length > 0) {
-                        realTournamentData = upcomingTournaments;
-                        console.log(`✅ Loaded ${realTournamentData.length} tiered tournaments from database`);
-                        
-                        processTournamentData();
-                        renderTournamentsFromDatabase();
-                        showMainContent();
-                    } else {
-                        console.log('📋 No active tournaments found, showing empty state');
-                        realTournamentData = [];
-                        renderTournamentsFromDatabase();
-                        showMainContent();
-                    }
-                } else {
-                    console.error('❌ Failed to load tournaments:', result.error);
-                    showErrorState(result.error || 'Failed to load tournaments');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error loading tournaments:', error);
-                showErrorState(error.message);
-            }
-            
-            isLoading = false;
+async function loadTournaments() {
+    if (isLoading) return;
+    
+    isLoading = true;
+    showLoadingState();
+    
+    try {
+        console.log('🎮 Loading tiered tournaments with enhanced system...');
+        
+        // Check if WalletWars API is available
+        if (!window.walletWarsAPI) {
+            console.error('❌ WalletWars API not available');
+            throw new Error('WalletWars API not available. Please refresh the page.');
         }
+        
+        // Test connection first
+        try {
+            const connected = await window.walletWarsAPI.testConnection();
+            if (!connected) {
+                throw new Error('Database connection failed');
+            }
+        } catch (connError) {
+            console.error('❌ Connection test failed:', connError);
+            throw new Error('Cannot connect to database. Please check your internet connection.');
+        }
+        
+        // Check tiered system status (optional, don't fail if missing)
+        if (window.checkTieredTournamentSystem) {
+            checkTieredTournamentSystem();
+        }
+        
+        // Check wallet connection status (optional)
+        if (window.globalWalletManager && window.getWalletStatus) {
+            const globalStatus = window.getWalletStatus();
+            console.log(`🔗 GlobalWalletManager status: ${globalStatus.isConnected ? 'Connected' : 'Disconnected'}`);
+        }
+        
+        // Get tournaments
+        const result = await window.walletWarsAPI.getUpcomingTournaments(50);
+        
+        if (result.success) {
+            const upcomingTournaments = result.tournaments.filter(t => 
+                t.status === 'scheduled' || 
+                t.status === 'registering' || 
+                t.status === 'pending_start' ||
+                t.status === 'active'
+            );
+            
+            realTournamentData = upcomingTournaments;
+            console.log(`✅ Loaded ${realTournamentData.length} tiered tournaments from database`);
+            
+            processTournamentData();
+            renderTournamentsFromDatabase();
+            showMainContent();
+        } else {
+            console.error('❌ Failed to load tournaments:', result.error);
+            throw new Error(result.error || 'Failed to load tournaments');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error loading tournaments:', error);
+        showErrorState(error.message || 'Failed to load tournaments. Please try again.');
+    } finally {
+        isLoading = false;
+    }
+}
 
         function processTournamentData() {
             tournamentData = {};
