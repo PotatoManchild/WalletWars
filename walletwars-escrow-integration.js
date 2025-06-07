@@ -14,16 +14,32 @@ class WalletWarsEscrowIntegration {
         this.LAMPORTS_PER_SOL = solanaWeb3.LAMPORTS_PER_SOL;
         
         // Ensure Buffer is available globally
-        if (typeof window !== 'undefined' && typeof window.Buffer === 'undefined') {
-            if (typeof buffer !== 'undefined' && buffer.Buffer) {
+        if (typeof window !== 'undefined') {
+            // Check for Buffer in various possible locations
+            if (typeof window.Buffer !== 'undefined' && window.Buffer.from) {
+                this.Buffer = window.Buffer;
+            } else if (typeof buffer !== 'undefined' && buffer.Buffer && buffer.Buffer.from) {
+                this.Buffer = buffer.Buffer;
                 window.Buffer = buffer.Buffer;
+            } else if (typeof global !== 'undefined' && global.Buffer && global.Buffer.from) {
+                this.Buffer = global.Buffer;
+                window.Buffer = global.Buffer;
             } else {
-                throw new Error('Buffer is not available. Please ensure buffer polyfill is loaded.');
+                // Try to find Buffer in the global scope
+                const potentialBuffer = window.buffer || window.Buffer || (typeof Buffer !== 'undefined' ? Buffer : null);
+                if (potentialBuffer && potentialBuffer.from) {
+                    this.Buffer = potentialBuffer;
+                } else if (potentialBuffer && potentialBuffer.Buffer && potentialBuffer.Buffer.from) {
+                    this.Buffer = potentialBuffer.Buffer;
+                    window.Buffer = potentialBuffer.Buffer;
+                } else {
+                    console.error('Buffer availability check failed. Available globals:', Object.keys(window).filter(k => k.toLowerCase().includes('buffer')));
+                    throw new Error('Buffer.from is not available. Please ensure buffer polyfill is properly loaded.');
+                }
             }
         }
         
-        // Store Buffer reference
-        this.Buffer = window.Buffer;
+        console.log('✅ Buffer initialized:', typeof this.Buffer.from === 'function' ? 'Buffer.from available' : 'Buffer.from NOT available');
         
         // Anchor globals (if available)
         if (typeof anchor !== 'undefined') {
