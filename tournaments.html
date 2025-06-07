@@ -2069,6 +2069,13 @@ function showTournamentDetails(tournamentId) {
     document.body.appendChild(modal);
 }
 
+        function closeRegistrationModal() {
+    const modal = document.querySelector('.tournament-registration-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
         function getTierIcon(tier, isMonthly) {
             if (isMonthly) return '🏆';
             const icons = {
