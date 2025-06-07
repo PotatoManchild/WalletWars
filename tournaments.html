@@ -2764,17 +2764,17 @@ function formatDateTimeLocal(date) {
             
             // Give other scripts time to load
             setTimeout(function() {
-                if (window.tournamentSystemStatus && !window.tournamentSystemStatus.ready) {
-                    console.log('⏳ Waiting for tournament system...');
-                    window.retryInitialization(10, 1000).then(function(success) {
-                        if (success && window.loadTournaments) {
-                            window.loadTournaments();
-                        }
-                    });
-                } else if (window.loadTournaments) {
-                    window.loadTournaments();
-                }
-            }, 500);
+    if (window.tournamentSystemStatus && !window.tournamentSystemStatus.ready) {
+        console.log('⏳ Waiting for tournament system...');
+        window.retryInitialization(10, 1000).then(function(success) {
+            if (success && window.loadTournaments) {
+                window.loadTournaments();
+            }
+        });
+    } else if (window.loadTournaments) {
+        window.loadTournaments();
+    }
+}, 500);
         });
               
     </script>
