@@ -2752,7 +2752,32 @@ async function handleCreateTournament(event) {
                 };
             }
         });
-        
+       
+        // Expose loadTournaments globally
+        window.loadTournaments = loadTournaments || async function() {
+            console.log('🔄 Loading tournaments...');
+            // The function will be defined by the existing script
+        };
+
+        // Fix initialization after everything loads
+        window.addEventListener('load', function() {
+            console.log('🚀 Page fully loaded, initializing tournaments...');
+            
+            // Give other scripts time to load
+            setTimeout(function() {
+                if (window.tournamentSystemStatus && !window.tournamentSystemStatus.ready) {
+                    console.log('⏳ Waiting for tournament system...');
+                    window.retryInitialization(10, 1000).then(function(success) {
+                        if (success && window.loadTournaments) {
+                            window.loadTournaments();
+                        }
+                    });
+                } else if (window.loadTournaments) {
+                    window.loadTournaments();
+                }
+            }, 500);
+        });
+              
     </script>
 </body>
 </html>
