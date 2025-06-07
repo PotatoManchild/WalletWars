@@ -1409,6 +1409,14 @@
             fee: 'all',
             status: 'all'
         };
+        
+        // Add closeRegistrationModal as a global function early in the script
+        window.closeRegistrationModal = function() {
+            const modal = document.querySelector('.tournament-registration-modal');
+            if (modal) {
+                modal.remove();
+            }
+        };
 
         // ========================================
         // GLOBAL WALLET MANAGER INTEGRATION
@@ -2021,8 +2029,8 @@ function showTournamentDetails(tournamentId) {
             
             <div class="tournament-info">
                 <p><strong>Entry Fee:</strong> ${tournament.entryFee} SOL</p>
-                <p><strong>Maximum Prize Pool:</strong> ${maxPrizePool.toFixed(2)} SOL (~$${(maxPrizePool * 150).toLocaleString()})</p>
-                <p><strong>Winner Prize:</strong> ~${winnerPrize.toFixed(1)} SOL (~$${(winnerPrize * 150).toLocaleString()})</p>
+                <p><strong>Maximum Prize Pool:</strong> ${maxPrizePool.toFixed(2)} SOL (~${(maxPrizePool * 150).toLocaleString()})</p>
+                <p><strong>Winner Prize:</strong> ~${winnerPrize.toFixed(1)} SOL (~${(winnerPrize * 150).toLocaleString()})</p>
                 <p><strong>Participants:</strong> ${tournament.registered}/${tournament.maxPlayers} (Min: ${tournament.minParticipants})</p>
                 <p><strong>Trading Style:</strong> ${tournament.tradingStyle === 'pure_wallet' ? '📊 Pure Wallet Only' : '⚡ Open Trading Allowed'}</p>
                 <p><strong>Duration:</strong> ${isMonthly ? '30 days' : tournament.duration}</p>
@@ -2067,13 +2075,6 @@ function showTournamentDetails(tournamentId) {
     `;
     
     document.body.appendChild(modal);
-}
-
-        function closeRegistrationModal() {
-    const modal = document.querySelector('.tournament-registration-modal');
-    if (modal) {
-        modal.remove();
-    }
 }
 
         function getTierIcon(tier, isMonthly) {
