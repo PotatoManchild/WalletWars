@@ -381,7 +381,7 @@
         /* Tournament Cards - Enhanced for Tiers */
         .tournaments-grid {
             display: grid;
-            grid--columns: 1fr;
+            grid-template-columns: 1fr;
             gap: 1rem;
             margin-bottom: 2rem;
             perspective: 1000px;
@@ -2408,7 +2408,7 @@ function showTournamentDetails(tournamentId) {
             showMainContent();
         }
 
-    // ========================================
+   // ========================================
 // ENHANCED INITIALIZATION WITH TIERED SYSTEM
 // ========================================
 
@@ -2462,7 +2462,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showSetupInstructions();
             }
         }
-    } // This closes the tryLoadTournaments function
+    }
     
     // Start the loading process
     tryLoadTournaments();
